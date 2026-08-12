@@ -1,0 +1,47 @@
+Kkdev92.HealthData
+Copyright (c) 2026 kkdev92
+
+Except for the third-party material identified below, the original source code of
+this project is licensed under the MIT License. See LICENSE, included alongside
+this file.
+
+This product includes, and is generated from, third-party material that is subject
+to separate license terms. That material, where it came from, and the license that
+applies to it are identified below.
+
+--------------------------------------------------------------------------------
+Third-party material
+--------------------------------------------------------------------------------
+
+This product includes material derived from Google Health API documentation,
+Copyright (c) Google LLC, licensed under the Creative Commons Attribution 4.0
+International License (CC BY 4.0).
+
+The Discovery document carries no license of its own. The wording reproduced here
+is the same wording Google publishes on the API reference pages below, and those
+pages carry the CC BY 4.0 notice.
+
+    https://creativecommons.org/licenses/by/4.0/
+    https://developers.google.com/health/reference/rest
+
+Specifically:
+
+  * spec/v4/discovery.json
+      A semantically unchanged, canonicalized snapshot of the Google Health API Discovery
+      document, retrieved from
+      https://health.googleapis.com/$discovery/rest?version=v4
+      (revision 20260805). Object keys are sorted and the document is
+      re-indented; no content is altered.
+
+  * Generated/**/*.g.cs and the accompanying XML documentation file
+      XML doc comments are generated from the "description" fields of that
+      Discovery document and therefore reproduce Google's wording.
+
+  * spec/v4/data-types.json, spec/v4/errors.json
+      Normalized from https://developers.google.com/health/data-types and
+      https://developers.google.com/health/reference/rest/v4/errors
+
+"Google", "Google Health" and related marks are trademarks of Google LLC.
+This product is not affiliated with, endorsed by, or sponsored by Google.
+Those marks are used here only to identify the API this software interoperates
+with.

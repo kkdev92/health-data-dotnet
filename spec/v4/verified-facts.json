@@ -1,0 +1,126 @@
+{
+  "$comment": [
+    "Facts taken from Google's per-method REST references, which docs/architecture.md ranks above",
+    "the Discovery document. Discovery is machine-readable and is diffed weekly by spec-check;",
+    "these pages are prose and were not watched at all, which is how two scope defects survived:",
+    "exportExerciseTcx needing two scopes together, and six read operations accepting scopes",
+    "Discovery does not list for them. Both are stated on the pages and invisible from Discovery.",
+    "",
+    "The scheduled check re-reads each page and compares the scope URLs it contains with the set",
+    "recorded here. It reports; it never edits. A difference is a question for a human, because",
+    "the answer may be to change the SDK, to change this file, or to record a new conflict.",
+    "",
+    "Matching is on the scope URLs the page contains, not on its markup, so a redesign of",
+    "developers.google.com does not produce a false alarm. A page that stops listing any scope at",
+    "all is reported as unreadable rather than as a change, since 'no scopes found' is much more",
+    "likely to mean the check broke than that Google removed authorization."
+  ],
+  "verifiedOn": "2026-08-12",
+  "methods": [
+    {
+      "operation": "health.users.dataTypes.dataPoints.exportExerciseTcx",
+      "url": "https://developers.google.com/health/reference/rest/v4/users.dataTypes.dataPoints/exportExerciseTcx",
+      "scopes": [
+        "https://www.googleapis.com/auth/googlehealth.activity_and_fitness.readonly",
+        "https://www.googleapis.com/auth/googlehealth.location.readonly"
+      ],
+      "mustContain": [
+        "this specific method requires the user to provide both one of the activity_and_fitness scopes"
+      ],
+      "note": "The mustContain phrase is the only place the AND requirement is stated. If it disappears, the allOf in semantics.json has lost its evidence and must be re-argued, not silently kept."
+    },
+    {
+      "operation": "health.users.dataTypes.dataPoints.list",
+      "url": "https://developers.google.com/health/reference/rest/v4/users.dataTypes.dataPoints/list",
+      "scopes": [
+        "https://www.googleapis.com/auth/googlehealth.activity_and_fitness.readonly",
+        "https://www.googleapis.com/auth/googlehealth.ecg.readonly",
+        "https://www.googleapis.com/auth/googlehealth.health_metrics_and_measurements.readonly",
+        "https://www.googleapis.com/auth/googlehealth.irn.readonly",
+        "https://www.googleapis.com/auth/googlehealth.location.readonly",
+        "https://www.googleapis.com/auth/googlehealth.nutrition.readonly",
+        "https://www.googleapis.com/auth/googlehealth.sleep.readonly"
+      ]
+    },
+    {
+      "operation": "health.users.dataTypes.dataPoints.get",
+      "url": "https://developers.google.com/health/reference/rest/v4/users.dataTypes.dataPoints/get",
+      "scopes": [
+        "https://www.googleapis.com/auth/googlehealth.activity_and_fitness.readonly",
+        "https://www.googleapis.com/auth/googlehealth.health_metrics_and_measurements.readonly",
+        "https://www.googleapis.com/auth/googlehealth.location.readonly",
+        "https://www.googleapis.com/auth/googlehealth.nutrition.readonly",
+        "https://www.googleapis.com/auth/googlehealth.sleep.readonly"
+      ]
+    },
+    {
+      "operation": "health.users.dataTypes.dataPoints.rollUp",
+      "url": "https://developers.google.com/health/reference/rest/v4/users.dataTypes.dataPoints/rollUp",
+      "scopes": [
+        "https://www.googleapis.com/auth/googlehealth.activity_and_fitness.readonly",
+        "https://www.googleapis.com/auth/googlehealth.health_metrics_and_measurements.readonly",
+        "https://www.googleapis.com/auth/googlehealth.location.readonly",
+        "https://www.googleapis.com/auth/googlehealth.nutrition.readonly",
+        "https://www.googleapis.com/auth/googlehealth.sleep.readonly"
+      ]
+    },
+    {
+      "operation": "health.users.dataTypes.dataPoints.dailyRollUp",
+      "url": "https://developers.google.com/health/reference/rest/v4/users.dataTypes.dataPoints/dailyRollUp",
+      "scopes": [
+        "https://www.googleapis.com/auth/googlehealth.activity_and_fitness.readonly",
+        "https://www.googleapis.com/auth/googlehealth.health_metrics_and_measurements.readonly",
+        "https://www.googleapis.com/auth/googlehealth.location.readonly",
+        "https://www.googleapis.com/auth/googlehealth.nutrition.readonly",
+        "https://www.googleapis.com/auth/googlehealth.sleep.readonly"
+      ]
+    },
+    {
+      "operation": "health.users.dataTypes.dataPoints.reconcile",
+      "url": "https://developers.google.com/health/reference/rest/v4/users.dataTypes.dataPoints/reconcile",
+      "scopes": [
+        "https://www.googleapis.com/auth/googlehealth.activity_and_fitness.readonly",
+        "https://www.googleapis.com/auth/googlehealth.health_metrics_and_measurements.readonly",
+        "https://www.googleapis.com/auth/googlehealth.location.readonly",
+        "https://www.googleapis.com/auth/googlehealth.nutrition.readonly",
+        "https://www.googleapis.com/auth/googlehealth.sleep.readonly"
+      ],
+      "note": "This page lists five readonly scopes. Discovery declares twelve for the same operation, adding eight writeonly ones the page omits. The generated set is the union of both; the page shrinking further is expected, not a signal to drop scopes."
+    },
+    {
+      "operation": "health.users.getIdentity",
+      "url": "https://developers.google.com/health/reference/rest/v4/users/getIdentity",
+      "scopes": [
+        "https://www.googleapis.com/auth/googlehealth.activity_and_fitness.readonly",
+        "https://www.googleapis.com/auth/googlehealth.ecg.readonly",
+        "https://www.googleapis.com/auth/googlehealth.health_metrics_and_measurements.readonly",
+        "https://www.googleapis.com/auth/googlehealth.irn.readonly",
+        "https://www.googleapis.com/auth/googlehealth.nutrition.readonly",
+        "https://www.googleapis.com/auth/googlehealth.profile.readonly",
+        "https://www.googleapis.com/auth/googlehealth.settings.readonly",
+        "https://www.googleapis.com/auth/googlehealth.sleep.readonly"
+      ],
+      "note": "This entry was first written by assuming the pattern of the data-point operations and was wrong in both directions — it listed location.readonly, which this page does not, and omitted settings.readonly, which it does. The check caught it before release, which is the argument for the check."
+    }
+  ],
+  "guides": [
+    {
+      "id": "webhooks.delivery",
+      "url": "https://developers.google.com/health/webhooks",
+      "mustContain": [
+        "stores pending notifications for up to 7 days",
+        "retries can cause duplicate notifications",
+        "Notifications older than 7 days are discarded"
+      ],
+      "note": "docs/webhooks.md states these as the delivery contract. If the wording moves, the documentation is making a promise on Google's behalf that Google no longer makes."
+    },
+    {
+      "id": "webhooks.userAgent",
+      "url": "https://developers.google.com/health/webhooks",
+      "mustContain": [
+        "Google-Health-API-Webhooks"
+      ],
+      "note": "The User-Agent the receiver documentation names."
+    }
+  ]
+}

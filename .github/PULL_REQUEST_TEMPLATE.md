@@ -1,0 +1,32 @@
+## Summary
+
+Brief description of changes.
+
+## Related Issue
+
+Fixes #(issue number)
+
+## Type of Change
+
+- [ ] Bug fix (non-breaking change that fixes an issue)
+- [ ] New feature (non-breaking change that adds functionality)
+- [ ] Breaking change (fix or feature that would cause existing functionality to not work as expected)
+- [ ] Specification change (refreshed snapshot or an edit under `spec/`)
+- [ ] Documentation update
+
+## Changes
+
+-
+-
+
+## Checklist
+
+- [ ] I have read the [CONTRIBUTING](../CONTRIBUTING.md) guidelines
+- [ ] Build is warning-free (`dotnet build HealthData.slnx -c Release`)
+- [ ] Tests pass (`dotnet test HealthData.slnx -c Release --filter "Category!=Integration"`)
+- [ ] Formatting passes (`dotnet format HealthData.slnx --verify-no-changes`)
+- [ ] Generated sources are current (`dotnet run --project tools/Kkdev92.HealthData.CodeGen -- verify`)
+- [ ] No file under `Generated/` was hand-edited
+- [ ] Public API changes are reflected in `tests/PublicApi` and reviewed in this diff
+- [ ] No health payload, token or user identifier reaches a log, an exception or `ToString()`
+- [ ] I have updated documentation if needed

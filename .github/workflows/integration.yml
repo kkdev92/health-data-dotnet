@@ -1,0 +1,130 @@
+name: integration
+
+# Real API smoke tests. Never a pull-request gate: they need
+# credentials, they touch a real person's health data, and they consume quota.
+#
+# Note that the errors catalog defines API_PRIVATE_PREVIEW_ACCESS_DENIED, so this may not be
+# runnable at all without Google-side allowlisting.
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 7 * * 1"
+
+permissions:
+  contents: read
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+
+jobs:
+  smoke:
+    name: real API smoke
+    runs-on: ubuntu-latest
+    environment: integration
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9 # v4
+        with:
+          global-json-file: global.json
+
+      # An access token lives an hour, so one pasted into a secret stops working the same day and
+      # every weekly run after that skips. A refresh token is what survives, and minting from it
+      # here is the same exchange GoogleOAuthClient.RefreshAsync performs. Done with curl so that
+      # the long-lived halves — the refresh token and the client secret — stay inside this step.
+      # The hour-long access token does go to the test process, because that is what it is for.
+      #
+      # Set GOOGLEHEALTH_REFRESH_TOKEN, GOOGLEHEALTH_CLIENT_ID and GOOGLEHEALTH_CLIENT_SECRET in
+      # the "integration" environment. GOOGLEHEALTH_ACCESS_TOKEN still works and is the quicker
+      # thing to use for a one-off manual run.
+      #
+      # A consent screen set to an external user type with a publishing status of Testing is
+      # issued refresh tokens that expire in seven days, which puts a weekly schedule right at the
+      # edge: expect to re-consent until the status changes. That is what the scheduled failure
+      # below is for — it is the notification.
+      - name: Obtain an access token
+        id: token
+        env:
+          REFRESH_TOKEN: ${{ secrets.GOOGLEHEALTH_REFRESH_TOKEN }}
+          CLIENT_ID: ${{ secrets.GOOGLEHEALTH_CLIENT_ID }}
+          CLIENT_SECRET: ${{ secrets.GOOGLEHEALTH_CLIENT_SECRET }}
+          ACCESS_TOKEN: ${{ secrets.GOOGLEHEALTH_ACCESS_TOKEN }}
+        run: |
+          token="${ACCESS_TOKEN}"
+
+          if [ -n "${REFRESH_TOKEN}" ] && [ -n "${CLIENT_ID}" ]; then
+            # --data-urlencode, not -d. A refresh token or a client secret containing +, & or =
+            # is sent verbatim by -d and means something else once the server parses the form,
+            # which comes back as an unhelpful invalid_grant.
+            response=$(curl -sS -X POST https://oauth2.googleapis.com/token \
+              --data-urlencode "client_id=${CLIENT_ID}" \
+              --data-urlencode "client_secret=${CLIENT_SECRET}" \
+              --data-urlencode "refresh_token=${REFRESH_TOKEN}" \
+              --data-urlencode "grant_type=refresh_token")
+
+            minted=$(printf '%s' "$response" | python3 -c \
+              'import json,sys; print(json.load(sys.stdin).get("access_token",""))' 2>/dev/null || true)
+
+            if [ -n "$minted" ]; then
+              token="$minted"
+            else
+              # An allowlist, not the server's string. "The code, never the body" was not enough:
+              # `error` is a field the server fills in too, so a token endpoint that echoed a
+              # submitted value back would have put a refresh token into a public workflow log —
+              # and a value containing :: could forge a workflow command besides.
+              reported=$(printf '%s' "$response" | python3 -c \
+                'import json,sys; print(json.load(sys.stdin).get("error",""))' 2>/dev/null || true)
+
+              case "$reported" in
+                invalid_request|invalid_client|invalid_grant) code="$reported" ;;
+                unauthorized_client|unsupported_grant_type|invalid_scope) code="$reported" ;;
+                *) code="an error code this workflow does not recognise" ;;
+              esac
+
+              echo "::warning::Refreshing the access token failed: ${code}"
+            fi
+          fi
+
+          # Masked before it is used, so nothing downstream can print it by accident.
+          if [ -n "$token" ]; then
+            echo "::add-mask::${token}"
+            echo "token=${token}" >> "$GITHUB_OUTPUT"
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      # A fork, or a manual run by someone without the secrets, gets a skip and a green tick —
+      # a red run there would say nothing about the code. A scheduled run is the opposite: it
+      # exists to notice that the live API still answers, and a skip means it noticed nothing.
+      # That used to be reported as success, which is how a monitor stops being one.
+      - name: Require credentials on a scheduled run
+        if: github.event_name == 'schedule' && steps.token.outputs.present != 'true'
+        run: |
+          echo "::error::No usable credential. The weekly live check cannot run, so it is failing" \
+               "rather than reporting a pass it did not earn. Refresh the secrets in the" \
+               "'integration' environment." >&2
+          exit 1
+
+      - name: Run integration tests
+        id: tests
+        env:
+          GOOGLEHEALTH_ACCESS_TOKEN: ${{ steps.token.outputs.token }}
+        run: dotnet test tests/Kkdev92.HealthData.IntegrationTests -c Release --filter "Category=Integration"
+
+      # So that "when did this last actually reach Google?" has an answer that is not inferred from
+      # a green tick. Keyed on the tests having passed rather than on a credential existing: the
+      # tests are the only thing here that makes a Health API request, so a token that was minted
+      # and then never used would otherwise have been recorded as a live check.
+      - name: Record what this run proved
+        if: always()
+        run: |
+          if [ "${{ steps.tests.outcome }}" = "success" ] && [ "${{ steps.token.outputs.present }}" = "true" ]; then
+            echo "Live API reached at $(date -u +'%Y-%m-%dT%H:%M:%SZ')." >> "$GITHUB_STEP_SUMMARY"
+          elif [ "${{ steps.token.outputs.present }}" != "true" ]; then
+            echo "No credential: the live API was **not** contacted by this run." >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "The tests did not pass, so this run proves nothing about the live API." >> "$GITHUB_STEP_SUMMARY"
+          fi

@@ -1,0 +1,58 @@
+{
+  "$comment": [
+    "Allowlist of operations this SDK exposes publicly.",
+    "Rules enforced by the generator:",
+    "  - an entry here that is absent from discovery.json is a generation FAILURE",
+    "  - an operation in discovery.json that is absent here is a WARNING plus a diff report",
+    "  - changes to this file require human review",
+    "Verified against Discovery revision 20260805 on 2026-08-09: 27 operations exist,",
+    "25 are allowed below and 2 are explicitly excluded."
+  ],
+
+  "operations": [
+    "health.projects.subscribers.create",
+    "health.projects.subscribers.delete",
+    "health.projects.subscribers.list",
+    "health.projects.subscribers.patch",
+
+    "health.projects.subscribers.subscriptions.create",
+    "health.projects.subscribers.subscriptions.delete",
+    "health.projects.subscribers.subscriptions.list",
+    "health.projects.subscribers.subscriptions.patch",
+
+    "health.users.getIdentity",
+    "health.users.getIrnProfile",
+    "health.users.getProfile",
+    "health.users.getSettings",
+    "health.users.updateProfile",
+    "health.users.updateSettings",
+
+    "health.users.dataTypes.dataPoints.batchDelete",
+    "health.users.dataTypes.dataPoints.create",
+    "health.users.dataTypes.dataPoints.dailyRollUp",
+    "health.users.dataTypes.dataPoints.exportExerciseTcx",
+    "health.users.dataTypes.dataPoints.get",
+    "health.users.dataTypes.dataPoints.list",
+    "health.users.dataTypes.dataPoints.patch",
+    "health.users.dataTypes.dataPoints.reconcile",
+    "health.users.dataTypes.dataPoints.rollUp",
+
+    "health.users.pairedDevices.get",
+    "health.users.pairedDevices.list"
+  ],
+
+  "excluded": [
+    {
+      "operation": "health.shl.m.getShlManifest",
+      "reason": "SMART Health Links. Not listed in the public REST reference, declares no OAuth scope, and FHIR-adjacent surface is an explicit non-goal.",
+      "verifiedOn": "2026-08-09"
+    },
+    {
+      "operation": "health.shl.r.get",
+      "reason": "SMART Health Links resource retrieval. Same rationale as health.shl.m.getShlManifest.",
+      "verifiedOn": "2026-08-09"
+    }
+  ],
+
+  "additionalSchemas": []
+}

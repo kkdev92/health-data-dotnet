@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>ReadSteps</RootNamespace>
+    <AssemblyName>ReadSteps</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../../src/Kkdev92.HealthData/Kkdev92.HealthData.csproj" />
+    <ProjectReference Include="../../src/Kkdev92.HealthData.Authentication/Kkdev92.HealthData.Authentication.csproj" />
+  </ItemGroup>
+
+</Project>

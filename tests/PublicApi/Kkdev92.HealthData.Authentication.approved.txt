@@ -1,0 +1,78 @@
+class Kkdev92.HealthData.Authentication.DelegateAccessTokenProvider
+    .ctor(Func<Kkdev92.HealthData.Authentication.HealthDataTokenRequest, System.Threading.CancellationToken, ValueTask<Kkdev92.HealthData.Authentication.HealthDataAccessToken>> resolve)
+    ValueTask<Kkdev92.HealthData.Authentication.HealthDataAccessToken> GetAccessTokenAsync(Kkdev92.HealthData.Authentication.HealthDataTokenRequest request, System.Threading.CancellationToken cancellationToken = default)
+class Kkdev92.HealthData.Authentication.HealthDataAccessToken
+    .ctor(System.String value, Nullable<System.DateTimeOffset> expiresAtUtc = default, IReadOnlyList<System.String> grantedScopes = default)
+    IReadOnlyList<System.String> GrantedScopes { get; }
+    Nullable<System.DateTimeOffset> ExpiresAtUtc { get; }
+    System.Boolean IsExpired(System.DateTimeOffset now, Nullable<System.TimeSpan> skew = default)
+    System.String ToString()
+    System.String Value { get; }
+class Kkdev92.HealthData.Authentication.HealthDataAuthorizationHandler
+    .ctor(Kkdev92.HealthData.Authentication.IHealthDataAccessTokenProvider tokenProvider)
+    IReadOnlyCollection<System.Uri> AdditionalTrustedOrigins { get; set; }
+class Kkdev92.HealthData.Authentication.HealthDataTokenRequest
+    .ctor()
+    Kkdev92.HealthData.Authentication.HealthDataTokenRequest FromDescriptor(Kkdev92.HealthData.Http.HealthDataOperationDescriptor descriptor)
+    Kkdev92.HealthData.Authentication.ScopeRequirement Scopes { get; set; }
+    System.Boolean RequiresProjectCredentials { get; set; }
+    System.String OperationId { get; set; }
+interface Kkdev92.HealthData.Authentication.IHealthDataAccessTokenProvider
+    ValueTask<Kkdev92.HealthData.Authentication.HealthDataAccessToken> GetAccessTokenAsync(Kkdev92.HealthData.Authentication.HealthDataTokenRequest request, System.Threading.CancellationToken cancellationToken = default)
+class Kkdev92.HealthData.Authentication.OAuth.GoogleOAuthClient
+    .ctor(System.Net.Http.HttpClient httpClient, Kkdev92.HealthData.Authentication.OAuth.GoogleOAuthOptions options)
+    Kkdev92.HealthData.Authentication.HealthDataAccessToken ToAccessToken(Kkdev92.HealthData.Authentication.OAuth.GoogleTokenResponse response, System.TimeProvider timeProvider = default)
+    System.Uri CreateAuthorizationUrl(IEnumerable<System.String> scopes, System.String state = default, Kkdev92.HealthData.Authentication.OAuth.PkceCodeChallenge pkce = default, System.Boolean offlineAccess = default, System.Boolean forceConsent = default, System.String loginHint = default)
+    Task<Kkdev92.HealthData.Authentication.OAuth.GoogleTokenResponse> ExchangeCodeAsync(System.String code, Kkdev92.HealthData.Authentication.OAuth.PkceCodeChallenge pkce = default, System.Threading.CancellationToken cancellationToken = default)
+    Task<Kkdev92.HealthData.Authentication.OAuth.GoogleTokenResponse> RefreshAsync(System.String refreshToken, System.Threading.CancellationToken cancellationToken = default)
+class Kkdev92.HealthData.Authentication.OAuth.GoogleOAuthError
+    .ctor()
+    System.Boolean IsEmpty { get; }
+    System.String Error { get; set; }
+    System.String ErrorDescription { get; set; }
+    System.String ErrorSubtype { get; set; }
+    System.String ErrorUri { get; set; }
+    System.String ToString()
+class Kkdev92.HealthData.Authentication.OAuth.GoogleOAuthException
+    .ctor(System.Net.HttpStatusCode statusCode, Kkdev92.HealthData.Authentication.OAuth.GoogleOAuthError error = default, System.Exception innerException = default)
+    Kkdev92.HealthData.Authentication.OAuth.GoogleOAuthError Error { get; }
+    System.String ErrorCode { get; }
+class Kkdev92.HealthData.Authentication.OAuth.GoogleOAuthOptions
+    .ctor()
+    System.Boolean AllowCustomCredentialEndpoints { get; set; }
+    System.String ClientId { get; set; }
+    System.String ClientSecret { get; set; }
+    System.Uri AuthorizationEndpoint { get; set; }
+    System.Uri RedirectUri { get; set; }
+    System.Uri TokenEndpoint { get; set; }
+class Kkdev92.HealthData.Authentication.OAuth.GoogleTokenResponse
+    .ctor()
+    Nullable<System.Int32> ExpiresIn { get; set; }
+    System.String AccessToken { get; set; }
+    System.String RefreshToken { get; set; }
+    System.String Scope { get; set; }
+    System.String TokenType { get; set; }
+class Kkdev92.HealthData.Authentication.OAuth.PkceCodeChallenge
+    Kkdev92.HealthData.Authentication.OAuth.PkceCodeChallenge Create(System.Int32 verifierLength = default)
+    Kkdev92.HealthData.Authentication.OAuth.PkceCodeChallenge FromVerifier(System.String codeVerifier)
+    System.String CodeChallenge { get; }
+    System.String CodeChallengeMethod { get; }
+    System.String CodeVerifier { get; }
+    System.String ComputeChallenge(System.String codeVerifier)
+    System.String ToString()
+enum Kkdev92.HealthData.Authentication.ScopeCombination
+    System.Int32 value__
+    const Kkdev92.HealthData.Authentication.ScopeCombination AllOf
+    const Kkdev92.HealthData.Authentication.ScopeCombination AnyOf
+class Kkdev92.HealthData.Authentication.ScopeRequirement
+    IReadOnlyList<System.String> Scopes { get; }
+    Kkdev92.HealthData.Authentication.ScopeCombination Combination { get; }
+    Kkdev92.HealthData.Authentication.ScopeRequirement AllOf(IEnumerable<System.String> scopes)
+    Kkdev92.HealthData.Authentication.ScopeRequirement AnyOf(IEnumerable<System.String> scopes)
+    System.Boolean IsEmpty { get; }
+    System.Boolean IsSatisfiedBy(IEnumerable<System.String> grantedScopes)
+    System.String ToString()
+class Kkdev92.HealthData.Authentication.StaticAccessTokenProvider
+    .ctor(Kkdev92.HealthData.Authentication.HealthDataAccessToken token)
+    .ctor(System.String token)
+    ValueTask<Kkdev92.HealthData.Authentication.HealthDataAccessToken> GetAccessTokenAsync(Kkdev92.HealthData.Authentication.HealthDataTokenRequest request, System.Threading.CancellationToken cancellationToken = default)

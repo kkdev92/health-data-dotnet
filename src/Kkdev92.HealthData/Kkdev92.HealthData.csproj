@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Description>Unofficial .NET SDK for the Google Health API. Reflection-free, Native AOT friendly, with zero third-party runtime dependencies.</Description>
+    <!-- Core has no package references at all, so reference verification is meaningful here. -->
+    <VerifyReferenceAotCompatibility>true</VerifyReferenceAotCompatibility>
+  </PropertyGroup>
+
+</Project>

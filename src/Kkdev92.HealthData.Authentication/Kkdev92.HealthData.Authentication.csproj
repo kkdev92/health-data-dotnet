@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Description>OAuth helpers and token provider abstractions for Kkdev92.HealthData. Does not implement production token storage.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../Kkdev92.HealthData/Kkdev92.HealthData.csproj" />
+  </ItemGroup>
+
+</Project>
