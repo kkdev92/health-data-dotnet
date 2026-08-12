@@ -24,6 +24,9 @@ Fixes #(issue number)
 - [ ] I have read the [CONTRIBUTING](../CONTRIBUTING.md) guidelines
 - [ ] Build is warning-free (`dotnet build HealthData.slnx -c Release`)
 - [ ] Tests pass (`dotnet test HealthData.slnx -c Release --filter "Category!=Integration"`)
+- [ ] A change in behaviour brings a test; a fix brings one seen to fail without the fix
+      (see [CONTRIBUTING.md](../CONTRIBUTING.md#what-a-change-has-to-bring-with-it)) — or the
+      pull request says why the change cannot be tested
 - [ ] Formatting passes (`dotnet format HealthData.slnx --verify-no-changes`)
 - [ ] Generated sources are current (`dotnet run --project tools/Kkdev92.HealthData.CodeGen -- verify`)
 - [ ] No file under `Generated/` was hand-edited
