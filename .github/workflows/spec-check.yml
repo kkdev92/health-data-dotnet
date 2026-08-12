@@ -20,6 +20,12 @@ permissions:
   contents: read
   issues: write
 
+# One at a time, but never cancelled: a cancelled run could stop after opening an issue
+# and before commenting on it.
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
 env:
   DOTNET_NOLOGO: true
   DOTNET_CLI_TELEMETRY_OPTOUT: true

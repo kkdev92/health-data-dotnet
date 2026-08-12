@@ -12,6 +12,13 @@ on:
 permissions:
   contents: read
 
+# Supersede a run when the same branch is pushed again. The other repositories in this
+# account do the same. Safe here because every job is a check: nothing it cancels had
+# side effects worth keeping.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 env:
   DOTNET_NOLOGO: true
   DOTNET_CLI_TELEMETRY_OPTOUT: true
@@ -59,6 +66,16 @@ jobs:
         uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
         with:
           global-json-file: global.json
+
+      # Actions cache is free on public repositories, 10 GB per repository, evicted after seven
+      # days unused. Keyed on the manifests that decide the restore graph, with no restore-keys:
+      # a near-miss that seeded this folder from a different dependency set would quietly change
+      # what the build resolves.
+      - name: Cache NuGet packages
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.nuget/packages
+          key: nuget-${{ runner.os }}-${{ hashFiles('Directory.Packages.props', 'global.json') }}
 
       - name: Restore
         run: dotnet restore HealthData.slnx
@@ -194,6 +211,16 @@ jobs:
         uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
         with:
           global-json-file: global.json
+
+      # Actions cache is free on public repositories, 10 GB per repository, evicted after seven
+      # days unused. Keyed on the manifests that decide the restore graph, with no restore-keys:
+      # a near-miss that seeded this folder from a different dependency set would quietly change
+      # what the build resolves.
+      - name: Cache NuGet packages
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.nuget/packages
+          key: nuget-${{ runner.os }}-${{ hashFiles('Directory.Packages.props', 'global.json') }}
 
       # A library that merely builds is not evidence of AOT compatibility; a consumer
       # application has to publish. CI is the gate for this, because a local Windows checkout
