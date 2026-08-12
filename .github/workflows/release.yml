@@ -43,7 +43,7 @@ jobs:
       # `git fetch`, which needs the remote to be readable — and would stop working the day this
       # repository is made private. The mitigation that matters is above: this job's token can
       # only read, so build code that takes it cannot push, tag or release.
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           # Source Link is in the SDK from .NET 8 on and needs real commit history to point at.
           fetch-depth: 0
