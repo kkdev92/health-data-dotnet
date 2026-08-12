@@ -1,0 +1,399 @@
+{
+  "$comment": [
+    "Behaviour that the Discovery document cannot express.",
+    "Every override carries provenance. Where Google's own documents disagree, the conflict is",
+    "recorded rather than silently resolved."
+  ],
+  "defaults": {
+    "retryClassification": {
+      "GET": "safe",
+      "POST": "never",
+      "PATCH": "never",
+      "DELETE": "idempotent"
+    },
+    "$comment": "Per-operation entries below override these defaults."
+  },
+  "operations": {
+    "health.users.dataTypes.dataPoints.list": {
+      "pagination": {
+        "kind": "query",
+        "pageSize": "pageSize",
+        "pageToken": "pageToken",
+        "nextPageToken": "nextPageToken",
+        "items": "dataPoints"
+      },
+      "scopeRequirement": {
+        "combination": "anyOf",
+        "scopes": [
+          "https://www.googleapis.com/auth/googlehealth.activity_and_fitness.readonly",
+          "https://www.googleapis.com/auth/googlehealth.ecg.readonly",
+          "https://www.googleapis.com/auth/googlehealth.health_metrics_and_measurements.readonly",
+          "https://www.googleapis.com/auth/googlehealth.irn.readonly",
+          "https://www.googleapis.com/auth/googlehealth.location.readonly",
+          "https://www.googleapis.com/auth/googlehealth.nutrition.readonly",
+          "https://www.googleapis.com/auth/googlehealth.sleep.readonly"
+        ]
+      },
+      "scopeNote": "Discovery omits ecg.readonly, irn.readonly, nutrition.readonly for this operation; the per-method reference lists 7 scopes in total. The union is recorded because the two Google sources each omit scopes the other lists, and an accepted-scope list only causes harm when it is too small: a provider cannot select a token it is not told about. Verified against the per-method page on 2026-08-12."
+    },
+    "health.users.dataTypes.dataPoints.reconcile": {
+      "pagination": {
+        "kind": "query",
+        "pageSize": "pageSize",
+        "pageToken": "pageToken",
+        "nextPageToken": "nextPageToken",
+        "items": "dataPoints"
+      },
+      "scopeRequirement": {
+        "combination": "anyOf",
+        "scopes": [
+          "https://www.googleapis.com/auth/googlehealth.activity_and_fitness.readonly",
+          "https://www.googleapis.com/auth/googlehealth.activity_and_fitness.writeonly",
+          "https://www.googleapis.com/auth/googlehealth.health_metrics_and_measurements.readonly",
+          "https://www.googleapis.com/auth/googlehealth.health_metrics_and_measurements.writeonly",
+          "https://www.googleapis.com/auth/googlehealth.location.readonly",
+          "https://www.googleapis.com/auth/googlehealth.location.writeonly",
+          "https://www.googleapis.com/auth/googlehealth.logged_symptoms.writeonly",
+          "https://www.googleapis.com/auth/googlehealth.mindfulness.writeonly",
+          "https://www.googleapis.com/auth/googlehealth.nutrition.readonly",
+          "https://www.googleapis.com/auth/googlehealth.nutrition.writeonly",
+          "https://www.googleapis.com/auth/googlehealth.reproductive_health.writeonly",
+          "https://www.googleapis.com/auth/googlehealth.sleep.readonly",
+          "https://www.googleapis.com/auth/googlehealth.sleep.writeonly"
+        ]
+      },
+      "scopeNote": "Discovery omits nutrition.readonly for this operation; the per-method reference lists 13 scopes in total. The union is recorded because the two Google sources each omit scopes the other lists, and an accepted-scope list only causes harm when it is too small: a provider cannot select a token it is not told about. Verified against the per-method page on 2026-08-12.",
+      "retryClassification": "safe",
+      "rationale": "reconcile is a GET that returns a merged view; it has no server-side side effects."
+    },
+    "health.users.dataTypes.dataPoints.rollUp": {
+      "pagination": {
+        "kind": "body",
+        "pageSize": "pageSize",
+        "pageToken": "pageToken",
+        "nextPageToken": "nextPageToken",
+        "items": "rollupDataPoints"
+      },
+      "scopeRequirement": {
+        "combination": "anyOf",
+        "scopes": [
+          "https://www.googleapis.com/auth/googlehealth.activity_and_fitness.readonly",
+          "https://www.googleapis.com/auth/googlehealth.health_metrics_and_measurements.readonly",
+          "https://www.googleapis.com/auth/googlehealth.location.readonly",
+          "https://www.googleapis.com/auth/googlehealth.nutrition.readonly",
+          "https://www.googleapis.com/auth/googlehealth.sleep.readonly"
+        ]
+      },
+      "scopeNote": "Discovery omits nutrition.readonly for this operation; the per-method reference lists 5 scopes in total. The union is recorded because the two Google sources each omit scopes the other lists, and an accepted-scope list only causes harm when it is too small: a provider cannot select a token it is not told about. Verified against the per-method page on 2026-08-12.",
+      "retryClassification": "semanticallySafe",
+      "rationale": "POST is used to carry a request body, but the operation only aggregates existing data. Page size and page token live in the request body, not the query string.",
+      "sources": [
+        {
+          "url": "https://health.googleapis.com/$discovery/rest?version=v4",
+          "kind": "discovery",
+          "verifiedOn": "2026-08-09"
+        }
+      ]
+    },
+    "health.users.dataTypes.dataPoints.dailyRollUp": {
+      "pagination": {
+        "kind": "requestOnly",
+        "pageSize": "pageSize",
+        "pageToken": "pageToken"
+      },
+      "scopeRequirement": {
+        "combination": "anyOf",
+        "scopes": [
+          "https://www.googleapis.com/auth/googlehealth.activity_and_fitness.readonly",
+          "https://www.googleapis.com/auth/googlehealth.health_metrics_and_measurements.readonly",
+          "https://www.googleapis.com/auth/googlehealth.location.readonly",
+          "https://www.googleapis.com/auth/googlehealth.nutrition.readonly",
+          "https://www.googleapis.com/auth/googlehealth.sleep.readonly"
+        ]
+      },
+      "scopeNote": "Discovery omits nutrition.readonly for this operation; the per-method reference lists 5 scopes in total. The union is recorded because the two Google sources each omit scopes the other lists, and an accepted-scope list only causes harm when it is too small: a provider cannot select a token it is not told about. Verified against the per-method page on 2026-08-12.",
+      "retryClassification": "semanticallySafe",
+      "rationale": "DailyRollUpDataPointsRequest declares pageSize and pageToken, but DailyRollUpDataPointsResponse has no nextPageToken. The generator must therefore NOT emit an EnumerateAsync overload for this operation.",
+      "knownDocumentationConflict": true,
+      "conflict": "Request is paginated but the response provides no continuation token. Re-check on every Discovery revision bump; if a nextPageToken appears, switch kind to \"body\".",
+      "sources": [
+        {
+          "url": "https://health.googleapis.com/$discovery/rest?version=v4",
+          "kind": "discovery",
+          "verifiedOn": "2026-08-09"
+        }
+      ]
+    },
+    "health.users.dataTypes.dataPoints.exportExerciseTcx": {
+      "responseKind": "mediaOrJson",
+      "mediaQuery": {
+        "alt": "media"
+      },
+      "jsonResponseSchema": "ExportExerciseTcxResponse",
+      "retryClassification": "safe",
+      "rationale": "Discovery declares supportsMediaDownload=true AND a JSON response schema (ExportExerciseTcxResponse.tcxData). Both forms are real, so the generator emits a stream-first overload (alt=media) and a JSON overload. Treating this as media-only would discard the typed response.",
+      "scopeRequirement": {
+        "combination": "allOf",
+        "scopes": [
+          "https://www.googleapis.com/auth/googlehealth.activity_and_fitness.readonly",
+          "https://www.googleapis.com/auth/googlehealth.location.readonly"
+        ]
+      },
+      "scopeNote": "Discovery lists these two scopes as a flat array, which by convention means any one of them suffices. For this method the convention is wrong. The per-method reference carries an explicit note: \"While the Authorization section below states that any one of the listed scopes is accepted, this specific method requires the user to provide both one of the activity_and_fitness scopes (normal or readonly) AND one of the location scopes (normal or readonly) in their access token to succeed.\" That page outranks Discovery under the source precedence in docs/architecture.md, so allOf is recorded here. The note's \"normal\" variants do not exist: neither Discovery nor the Scopes guide declares an unsuffixed googlehealth scope, and the only alternative to each readonly scope is a writeonly one, which cannot authorize a read. Both readonly scopes together is therefore the only combination the note can describe. An earlier draft declared this allOf and retracted it on 2026-08-10 as an assumption. The retraction was sound for the sources consulted then, which were Discovery and the REST index; it was reinstated on 2026-08-12 after reading the per-method page that states it outright.",
+      "integrationTestRequired": [
+        "whether useMediaDownloadService=true implies a /download/ URL prefix",
+        "Content-Type returned for alt=media"
+      ],
+      "sources": [
+        {
+          "url": "https://developers.google.com/health/reference/rest/v4/users.dataTypes.dataPoints/exportExerciseTcx",
+          "kind": "per-method-reference",
+          "verifiedOn": "2026-08-12",
+          "note": "States the activity-and-fitness AND location requirement that Discovery cannot express. Highest precedence source under docs/architecture.md."
+        },
+        {
+          "url": "https://health.googleapis.com/$discovery/rest?version=v4",
+          "kind": "discovery",
+          "verifiedOn": "2026-08-09"
+        },
+        {
+          "url": "https://developers.google.com/health/reference/rest",
+          "kind": "rest-index",
+          "verifiedOn": "2026-08-09"
+        }
+      ]
+    },
+    "health.users.dataTypes.dataPoints.patch": {
+      "rationale": "Unlike the other PATCH operations in this API, dataPoints.patch declares no updateMask parameter. The errors catalog documents UPDATE_ONLY_UPSERT_SUPPORTED, which suggests upsert semantics.",
+      "integrationTestRequired": [
+        "actual upsert behaviour and the trigger for UPDATE_ONLY_UPSERT_SUPPORTED"
+      ],
+      "sources": [
+        {
+          "url": "https://developers.google.com/health/reference/rest/v4/errors",
+          "kind": "errors",
+          "verifiedOn": "2026-08-09"
+        }
+      ]
+    },
+    "health.projects.subscribers.create": {
+      "responseKind": "operation",
+      "rationale": "The Webhooks guide's example reads as if a Subscriber is returned directly. The per-method REST reference and Discovery revision 20260805 both declare Operation.",
+      "knownDocumentationConflict": true,
+      "sources": [
+        {
+          "url": "https://health.googleapis.com/$discovery/rest?version=v4",
+          "kind": "discovery",
+          "verifiedOn": "2026-08-09"
+        },
+        {
+          "url": "https://developers.google.com/health/webhooks",
+          "kind": "guide",
+          "verifiedOn": "2026-08-09"
+        }
+      ]
+    },
+    "health.projects.subscribers.patch": {
+      "responseKind": "operation",
+      "knownDocumentationConflict": true,
+      "rationale": "Same conflict as health.projects.subscribers.create."
+    },
+    "health.projects.subscribers.subscriptions.create": {
+      "responseKind": "resource",
+      "rationale": "Subscriptions are NOT long-running: create and patch return Subscription directly and delete returns Empty. This asymmetry with the Subscriber resource is intentional in the wire contract and must not be normalised away.",
+      "sources": [
+        {
+          "url": "https://health.googleapis.com/$discovery/rest?version=v4",
+          "kind": "discovery",
+          "verifiedOn": "2026-08-09"
+        }
+      ]
+    },
+    "health.projects.subscribers.list": {
+      "pagination": {
+        "kind": "query",
+        "pageSize": "pageSize",
+        "pageToken": "pageToken",
+        "nextPageToken": "nextPageToken",
+        "items": "subscribers"
+      }
+    },
+    "health.projects.subscribers.subscriptions.list": {
+      "pagination": {
+        "kind": "query",
+        "pageSize": "pageSize",
+        "pageToken": "pageToken",
+        "nextPageToken": "nextPageToken",
+        "items": "subscriptions"
+      }
+    },
+    "health.users.pairedDevices.list": {
+      "pagination": {
+        "kind": "query",
+        "pageSize": "pageSize",
+        "pageToken": "pageToken",
+        "nextPageToken": "nextPageToken",
+        "items": "pairedDevices"
+      }
+    },
+    "health.users.dataTypes.dataPoints.get": {
+      "scopeRequirement": {
+        "combination": "anyOf",
+        "scopes": [
+          "https://www.googleapis.com/auth/googlehealth.activity_and_fitness.readonly",
+          "https://www.googleapis.com/auth/googlehealth.health_metrics_and_measurements.readonly",
+          "https://www.googleapis.com/auth/googlehealth.location.readonly",
+          "https://www.googleapis.com/auth/googlehealth.nutrition.readonly",
+          "https://www.googleapis.com/auth/googlehealth.sleep.readonly"
+        ]
+      },
+      "scopeNote": "Discovery omits nutrition.readonly for this operation; the per-method reference lists 5 scopes in total. The union is recorded because the two Google sources each omit scopes the other lists, and an accepted-scope list only causes harm when it is too small: a provider cannot select a token it is not told about. Verified against the per-method page on 2026-08-12."
+    },
+    "health.users.getIdentity": {
+      "scopeRequirement": {
+        "combination": "anyOf",
+        "scopes": [
+          "https://www.googleapis.com/auth/googlehealth.activity_and_fitness.readonly",
+          "https://www.googleapis.com/auth/googlehealth.ecg.readonly",
+          "https://www.googleapis.com/auth/googlehealth.health_metrics_and_measurements.readonly",
+          "https://www.googleapis.com/auth/googlehealth.irn.readonly",
+          "https://www.googleapis.com/auth/googlehealth.nutrition.readonly",
+          "https://www.googleapis.com/auth/googlehealth.profile.readonly",
+          "https://www.googleapis.com/auth/googlehealth.settings.readonly",
+          "https://www.googleapis.com/auth/googlehealth.sleep.readonly"
+        ]
+      },
+      "scopeNote": "Discovery omits nutrition.readonly for this operation; the per-method reference lists 8 scopes in total. The union is recorded because the two Google sources each omit scopes the other lists, and an accepted-scope list only causes harm when it is too small: a provider cannot select a token it is not told about. Verified against the per-method page on 2026-08-12."
+    }
+  },
+  "resourceNaming": {
+    "flatten": [
+      "users.dataTypes"
+    ],
+    "$comment": [
+      "Resource path segments collapsed away in the C# surface, so that callers write",
+      "client.Users.DataPoints rather than client.Users.DataTypes.DataPoints.",
+      "dataTypes declares no methods of its own: the data type is selected by the parent",
+      "resource name, for example users/me/dataTypes/heart-rate. projects also declares no",
+      "methods but is NOT flattened, because it is a real namespace in the public surface.",
+      "This is an explicit list rather than a heuristic so the API shape stays reviewable."
+    ]
+  },
+  "generation": {
+    "pruneUnreachableSchemas": true,
+    "$comment": [
+      "Discovery revision 20260805 contains 147 schemas; 138 are reachable from the allowlisted",
+      "operations. Without pruning the generator would emit dead types such as HttpBody,",
+      "ManifestParams, DateTime, TimeZone, HttpHeader and HttpResponse."
+    ]
+  },
+  "scopeCrossCheck": {
+    "$comment": [
+      "Discovery supplies the scope list; the per-method REST reference outranks it where the two",
+      "disagree, which is the source precedence docs/architecture.md already declares. The Scopes",
+      "guide is a cross-check only. Compared on 2026-08-10, Discovery and the guide disagree in",
+      "both directions, which is why the rule exists.",
+      "A Discovery scopes array carries no combination, and the convention that any one entry",
+      "suffices holds everywhere except dataPoints.exportExerciseTcx, whose per-method page says an",
+      "activity-and-fitness scope and a location scope are both required. That operation declares",
+      "allOf; every other operation is anyOf. Re-read the per-method pages on a revision bump, not",
+      "just Discovery: this exception is invisible from Discovery alone."
+    ],
+    "comparedOn": "2026-08-10",
+    "inDiscoveryOnly": [
+      {
+        "scope": "https://www.googleapis.com/auth/cloud-platform",
+        "note": "Project credentials for projects.subscribers.*. Not an end-user scope, so its absence from the Scopes guide is expected."
+      },
+      {
+        "scope": "https://www.googleapis.com/auth/googlehealth.location.writeonly",
+        "note": "Accepted by dataPoints batchDelete, create, patch and reconcile, but absent from the Scopes guide. Generated from Discovery."
+      }
+    ],
+    "inScopesGuideOnly": [
+      {
+        "scope": "https://www.googleapis.com/auth/googlehealth.nutrition.readonly",
+        "note": "Declared by no operation in Discovery revision 20260805, but listed by the Scopes guide AND by the per-method reference of every read operation that returns data points. It was previously not generated, on the grounds that no operation accepted it; that conclusion came from reading Discovery alone. It is now generated from additionalScopes below.",
+        "generated": true
+      }
+    ],
+    "additionalScopes": [
+      {
+        "url": "https://www.googleapis.com/auth/googlehealth.nutrition.readonly",
+        "description": "See your Google Health nutrition data.",
+        "$comment": [
+          "Discovery's auth.oauth2.scopes omits this scope, so it cannot come from the snapshot,",
+          "and the snapshot is a verbatim copy that is hash-checked and must not be edited to",
+          "add it. Declaring it here keeps the snapshot faithful and the addition reviewable.",
+          "The description is Google's own wording, from the Scopes guide."
+        ],
+        "sources": [
+          {
+            "url": "https://developers.google.com/health/scopes",
+            "kind": "guide",
+            "verifiedOn": "2026-08-12"
+          },
+          {
+            "url": "https://developers.google.com/health/reference/rest/v4/users.dataTypes.dataPoints/list",
+            "kind": "per-method-reference",
+            "verifiedOn": "2026-08-12"
+          }
+        ]
+      }
+    ]
+  },
+  "authentication": {
+    "cloudPlatformOperations": [
+      "health.projects.subscribers.create",
+      "health.projects.subscribers.delete",
+      "health.projects.subscribers.list",
+      "health.projects.subscribers.patch",
+      "health.projects.subscribers.subscriptions.create",
+      "health.projects.subscribers.subscriptions.delete",
+      "health.projects.subscribers.subscriptions.list",
+      "health.projects.subscribers.subscriptions.patch"
+    ],
+    "$comment": "These use project/IAM credentials (cloud-platform), not end-user OAuth."
+  },
+  "unions": {
+    "$comment": [
+      "Which schemas are unions, and which of their message-typed members are not alternatives.",
+      "Discovery has no way to say 'exactly one of these', so the shape is inferred; without this",
+      "the generator treats every $ref property as a member and the first one alphabetically wins."
+    ],
+    "DataPoint": {
+      "roundTripNote": "Reading a data point and sending it back is what dataPoints.patch is, so a member dropped on the way in would be removed from a person's record on the way out.",
+      "excludeMembers": [
+        "dataSource"
+      ],
+      "rationale": "dataSource is metadata carried by every data point, not one of the things a data point can be. Google: \"Data Source definition to track the origin of data. Each health data point, regardless of the complexity or data model (whether a simple step count or a detailed sleep session) must retain information about its source of origin.\" It sorts before heartRate, sleep and steps, so including it made GetKind() return DataSource for every real measurement. It stays a normal property; only the union helpers ignore it.",
+      "sources": [
+        {
+          "url": "https://health.googleapis.com/$discovery/rest?version=v4",
+          "kind": "discovery",
+          "verifiedOn": "2026-08-10"
+        }
+      ]
+    },
+    "RollupDataPoint": {
+      "roundTripNote": "Roll-ups are computed by the service and never sent back to it, so nothing can be lost from a person's record this way. What is at stake is the caller's own copy: a member dropped here would be missing from whatever it stores or forwards.",
+      "excludeMembers": [],
+      "rationale": "All 21 message-typed members are measurements; this schema has no dataSource."
+    },
+    "DailyRollupDataPoint": {
+      "roundTripNote": "Roll-ups are computed by the service and never sent back to it, so nothing can be lost from a person's record this way. What is at stake is the caller's own copy: a member dropped here would be missing from whatever it stores or forwards.",
+      "excludeMembers": [
+        "civilStartTime",
+        "civilEndTime"
+      ],
+      "rationale": "The window this row aggregates over, not something aggregated. Both are CivilDateTime and both sort before every measurement, so including them would make GetKind() answer civilEndTime for every daily roll-up — the same failure dataSource caused on DataPoint. They stay normal properties; the caller needs them to know which day the row is.",
+      "sources": [
+        {
+          "url": "https://health.googleapis.com/$discovery/rest?version=v4",
+          "kind": "discovery",
+          "verifiedOn": "2026-08-10"
+        }
+      ]
+    }
+  }
+}

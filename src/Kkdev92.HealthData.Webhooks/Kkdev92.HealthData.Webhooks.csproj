@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Description>Webhook signature verification and receiver helpers for the Google Health API. Verifies Tink-format ECDSA signatures using only System.Security.Cryptography.</Description>
+    <VerifyReferenceAotCompatibility>true</VerifyReferenceAotCompatibility>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../Kkdev92.HealthData/Kkdev92.HealthData.csproj" />
+  </ItemGroup>
+
+</Project>

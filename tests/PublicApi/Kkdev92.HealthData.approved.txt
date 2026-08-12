@@ -1,0 +1,2900 @@
+class Kkdev92.HealthData.ActiveEnergyBurned
+    .ctor()
+    Kkdev92.HealthData.ObservationTimeInterval Interval { get; set; }
+    Nullable<System.Double> Kcal { get; set; }
+class Kkdev92.HealthData.ActiveEnergyBurnedRollupValue
+    .ctor()
+    Nullable<System.Double> KcalSum { get; set; }
+class Kkdev92.HealthData.ActiveMinutes
+    .ctor()
+    IReadOnlyList<Kkdev92.HealthData.ActiveMinutesByActivityLevel> ActiveMinutesByActivityLevel { get; set; }
+    Kkdev92.HealthData.ObservationTimeInterval Interval { get; set; }
+class Kkdev92.HealthData.ActiveMinutesByActivityLevel
+    .ctor()
+    Nullable<Kkdev92.HealthData.ActiveMinutesByActivityLevelActivityLevel> ActivityLevel { get; set; }
+    Nullable<System.Int64> ActiveMinutes { get; set; }
+struct Kkdev92.HealthData.ActiveMinutesByActivityLevelActivityLevel
+    .ctor(System.String Value)
+    Kkdev92.HealthData.ActiveMinutesByActivityLevelActivityLevel ActivityLevelUnspecified { get; }
+    Kkdev92.HealthData.ActiveMinutesByActivityLevelActivityLevel FromValue(System.String value)
+    Kkdev92.HealthData.ActiveMinutesByActivityLevelActivityLevel Light { get; }
+    Kkdev92.HealthData.ActiveMinutesByActivityLevelActivityLevel Moderate { get; }
+    Kkdev92.HealthData.ActiveMinutesByActivityLevelActivityLevel Vigorous { get; }
+    System.Boolean Equals(Kkdev92.HealthData.ActiveMinutesByActivityLevelActivityLevel other)
+    System.Boolean Equals(System.Object obj)
+    System.Int32 GetHashCode()
+    System.String ToString()
+    System.String Value { get; set; }
+    System.Void Deconstruct(System.String& Value)
+class Kkdev92.HealthData.ActiveMinutesRollupByActivityLevel
+    .ctor()
+    Nullable<Kkdev92.HealthData.ActiveMinutesRollupByActivityLevelActivityLevel> ActivityLevel { get; set; }
+    Nullable<System.Int64> ActiveMinutesSum { get; set; }
+struct Kkdev92.HealthData.ActiveMinutesRollupByActivityLevelActivityLevel
+    .ctor(System.String Value)
+    Kkdev92.HealthData.ActiveMinutesRollupByActivityLevelActivityLevel ActivityLevelUnspecified { get; }
+    Kkdev92.HealthData.ActiveMinutesRollupByActivityLevelActivityLevel FromValue(System.String value)
+    Kkdev92.HealthData.ActiveMinutesRollupByActivityLevelActivityLevel Light { get; }
+    Kkdev92.HealthData.ActiveMinutesRollupByActivityLevelActivityLevel Moderate { get; }
+    Kkdev92.HealthData.ActiveMinutesRollupByActivityLevelActivityLevel Vigorous { get; }
+    System.Boolean Equals(Kkdev92.HealthData.ActiveMinutesRollupByActivityLevelActivityLevel other)
+    System.Boolean Equals(System.Object obj)
+    System.Int32 GetHashCode()
+    System.String ToString()
+    System.String Value { get; set; }
+    System.Void Deconstruct(System.String& Value)
+class Kkdev92.HealthData.ActiveMinutesRollupValue
+    .ctor()
+    IReadOnlyList<Kkdev92.HealthData.ActiveMinutesRollupByActivityLevel> ActiveMinutesRollupByActivityLevel { get; set; }
+class Kkdev92.HealthData.ActiveZoneMinutes
+    .ctor()
+    Kkdev92.HealthData.ObservationTimeInterval Interval { get; set; }
+    Nullable<Kkdev92.HealthData.ActiveZoneMinutesHeartRateZone> HeartRateZone { get; set; }
+    Nullable<System.Int64> ActiveZoneMinutesValue { get; set; }
+struct Kkdev92.HealthData.ActiveZoneMinutesHeartRateZone
+    .ctor(System.String Value)
+    Kkdev92.HealthData.ActiveZoneMinutesHeartRateZone Cardio { get; }
+    Kkdev92.HealthData.ActiveZoneMinutesHeartRateZone FatBurn { get; }
+    Kkdev92.HealthData.ActiveZoneMinutesHeartRateZone FromValue(System.String value)
+    Kkdev92.HealthData.ActiveZoneMinutesHeartRateZone HeartRateZoneUnspecified { get; }
+    Kkdev92.HealthData.ActiveZoneMinutesHeartRateZone Peak { get; }
+    System.Boolean Equals(Kkdev92.HealthData.ActiveZoneMinutesHeartRateZone other)
+    System.Boolean Equals(System.Object obj)
+    System.Int32 GetHashCode()
+    System.String ToString()
+    System.String Value { get; set; }
+    System.Void Deconstruct(System.String& Value)
+class Kkdev92.HealthData.ActiveZoneMinutesRollupValue
+    .ctor()
+    Nullable<System.Int64> SumInCardioHeartZone { get; set; }
+    Nullable<System.Int64> SumInFatBurnHeartZone { get; set; }
+    Nullable<System.Int64> SumInPeakHeartZone { get; set; }
+class Kkdev92.HealthData.ActivityLevel
+    .ctor()
+    Kkdev92.HealthData.ObservationTimeInterval Interval { get; set; }
+    Nullable<Kkdev92.HealthData.ActivityLevelActivityLevelType> ActivityLevelType { get; set; }
+struct Kkdev92.HealthData.ActivityLevelActivityLevelType
+    .ctor(System.String Value)
+    Kkdev92.HealthData.ActivityLevelActivityLevelType ActivityLevelTypeUnspecified { get; }
+    Kkdev92.HealthData.ActivityLevelActivityLevelType FromValue(System.String value)
+    Kkdev92.HealthData.ActivityLevelActivityLevelType LightlyActive { get; }
+    Kkdev92.HealthData.ActivityLevelActivityLevelType ModeratelyActive { get; }
+    Kkdev92.HealthData.ActivityLevelActivityLevelType Sedentary { get; }
+    Kkdev92.HealthData.ActivityLevelActivityLevelType VeryActive { get; }
+    System.Boolean Equals(Kkdev92.HealthData.ActivityLevelActivityLevelType other)
+    System.Boolean Equals(System.Object obj)
+    System.Int32 GetHashCode()
+    System.String ToString()
+    System.String Value { get; set; }
+    System.Void Deconstruct(System.String& Value)
+class Kkdev92.HealthData.ActivityLevelRollupByActivityLevelType
+    .ctor()
+    Nullable<Kkdev92.HealthData.ActivityLevelRollupByActivityLevelTypeActivityLevelType> ActivityLevelType { get; set; }
+    Nullable<Kkdev92.HealthData.GoogleDuration> TotalDuration { get; set; }
+struct Kkdev92.HealthData.ActivityLevelRollupByActivityLevelTypeActivityLevelType
+    .ctor(System.String Value)
+    Kkdev92.HealthData.ActivityLevelRollupByActivityLevelTypeActivityLevelType ActivityLevelTypeUnspecified { get; }
+    Kkdev92.HealthData.ActivityLevelRollupByActivityLevelTypeActivityLevelType FromValue(System.String value)
+    Kkdev92.HealthData.ActivityLevelRollupByActivityLevelTypeActivityLevelType LightlyActive { get; }
+    Kkdev92.HealthData.ActivityLevelRollupByActivityLevelTypeActivityLevelType ModeratelyActive { get; }
+    Kkdev92.HealthData.ActivityLevelRollupByActivityLevelTypeActivityLevelType Sedentary { get; }
+    Kkdev92.HealthData.ActivityLevelRollupByActivityLevelTypeActivityLevelType VeryActive { get; }
+    System.Boolean Equals(Kkdev92.HealthData.ActivityLevelRollupByActivityLevelTypeActivityLevelType other)
+    System.Boolean Equals(System.Object obj)
+    System.Int32 GetHashCode()
+    System.String ToString()
+    System.String Value { get; set; }
+    System.Void Deconstruct(System.String& Value)
+class Kkdev92.HealthData.ActivityLevelRollupValue
+    .ctor()
+    IReadOnlyList<Kkdev92.HealthData.ActivityLevelRollupByActivityLevelType> ActivityLevelRollupsByActivityLevelType { get; set; }
+class Kkdev92.HealthData.AlertWindow
+    .ctor()
+    IReadOnlyList<Kkdev92.HealthData.HeartBeat> HeartBeats { get; set; }
+    Kkdev92.HealthData.CivilDateTime CivilEndTime { get; set; }
+    Kkdev92.HealthData.CivilDateTime CivilStartTime { get; set; }
+    Nullable<Kkdev92.HealthData.GoogleDuration> EndUtcOffset { get; set; }
+    Nullable<Kkdev92.HealthData.GoogleDuration> StartUtcOffset { get; set; }
+    Nullable<Kkdev92.HealthData.GoogleTimestamp> EndTime { get; set; }
+    Nullable<Kkdev92.HealthData.GoogleTimestamp> StartTime { get; set; }
+    Nullable<System.Boolean> Positive { get; set; }
+class Kkdev92.HealthData.Altitude
+    .ctor()
+    Kkdev92.HealthData.ObservationTimeInterval Interval { get; set; }
+    Nullable<System.Int64> GainMillimeters { get; set; }
+class Kkdev92.HealthData.AltitudeRollupValue
+    .ctor()
+    Nullable<System.Int64> GainMillimetersSum { get; set; }
+class Kkdev92.HealthData.Application
+    .ctor()
+    System.String GoogleWebClientId { get; set; }
+    System.String PackageName { get; set; }
+    System.String WebClientId { get; set; }
+class Kkdev92.HealthData.BasalEnergyBurned
+    .ctor()
+    Kkdev92.HealthData.ObservationTimeInterval Interval { get; set; }
+    Nullable<System.Double> Kcal { get; set; }
+class Kkdev92.HealthData.BatchDeleteDataPointsRequest
+    .ctor()
+    IReadOnlyList<System.String> Names { get; set; }
+class Kkdev92.HealthData.BatchDeleteRequest
+    .ctor()
+    Kkdev92.HealthData.BatchDeleteDataPointsRequest Body { get; set; }
+    System.String Parent { get; set; }
+class Kkdev92.HealthData.BloodGlucose
+    .ctor()
+    Kkdev92.HealthData.ObservationSampleTime SampleTime { get; set; }
+    Nullable<Kkdev92.HealthData.BloodGlucoseMealType> MealType { get; set; }
+    Nullable<Kkdev92.HealthData.BloodGlucoseMeasurementSource> MeasurementSource { get; set; }
+    Nullable<Kkdev92.HealthData.BloodGlucoseMeasurementTiming> MeasurementTiming { get; set; }
+    Nullable<Kkdev92.HealthData.BloodGlucoseSpecimen> Specimen { get; set; }
+    Nullable<System.Double> BloodGlucoseMilligramsPerDeciliter { get; set; }
+    System.String Notes { get; set; }
+struct Kkdev92.HealthData.BloodGlucoseMealType
+    .ctor(System.String Value)
+    Kkdev92.HealthData.BloodGlucoseMealType Breakfast { get; }
+    Kkdev92.HealthData.BloodGlucoseMealType Dinner { get; }
+    Kkdev92.HealthData.BloodGlucoseMealType FromValue(System.String value)
+    Kkdev92.HealthData.BloodGlucoseMealType Lunch { get; }
+    Kkdev92.HealthData.BloodGlucoseMealType MealTypeUnspecified { get; }
+    Kkdev92.HealthData.BloodGlucoseMealType Snack { get; }
+    System.Boolean Equals(Kkdev92.HealthData.BloodGlucoseMealType other)
+    System.Boolean Equals(System.Object obj)
+    System.Int32 GetHashCode()
+    System.String ToString()
+    System.String Value { get; set; }
+    System.Void Deconstruct(System.String& Value)
+struct Kkdev92.HealthData.BloodGlucoseMeasurementSource
+    .ctor(System.String Value)
+    Kkdev92.HealthData.BloodGlucoseMeasurementSource ContinuousGlucoseMonitoring { get; }
+    Kkdev92.HealthData.BloodGlucoseMeasurementSource FromValue(System.String value)
+    Kkdev92.HealthData.BloodGlucoseMeasurementSource LabTest { get; }
+    Kkdev92.HealthData.BloodGlucoseMeasurementSource MeasurementSourceUnspecified { get; }
+    Kkdev92.HealthData.BloodGlucoseMeasurementSource SelfMonitoringBloodGlucose { get; }
+    System.Boolean Equals(Kkdev92.HealthData.BloodGlucoseMeasurementSource other)
+    System.Boolean Equals(System.Object obj)
+    System.Int32 GetHashCode()
+    System.String ToString()
+    System.String Value { get; set; }
+    System.Void Deconstruct(System.String& Value)
+struct Kkdev92.HealthData.BloodGlucoseMeasurementTiming
+    .ctor(System.String Value)
+    Kkdev92.HealthData.BloodGlucoseMeasurementTiming AfterMeal { get; }
+    Kkdev92.HealthData.BloodGlucoseMeasurementTiming BeforeBed { get; }
+    Kkdev92.HealthData.BloodGlucoseMeasurementTiming BeforeMeal { get; }
+    Kkdev92.HealthData.BloodGlucoseMeasurementTiming Fasting { get; }
+    Kkdev92.HealthData.BloodGlucoseMeasurementTiming FromValue(System.String value)
+    Kkdev92.HealthData.BloodGlucoseMeasurementTiming General { get; }
+    Kkdev92.HealthData.BloodGlucoseMeasurementTiming MeasurementTimingUnspecified { get; }
+    Kkdev92.HealthData.BloodGlucoseMeasurementTiming OverNight { get; }
+    System.Boolean Equals(Kkdev92.HealthData.BloodGlucoseMeasurementTiming other)
+    System.Boolean Equals(System.Object obj)
+    System.Int32 GetHashCode()
+    System.String ToString()
+    System.String Value { get; set; }
+    System.Void Deconstruct(System.String& Value)
+class Kkdev92.HealthData.BloodGlucoseRollupValue
+    .ctor()
+    Nullable<System.Double> BloodGlucoseMilligramsPerDeciliterAvg { get; set; }
+struct Kkdev92.HealthData.BloodGlucoseSpecimen
+    .ctor(System.String Value)
+    Kkdev92.HealthData.BloodGlucoseSpecimen CapillaryBlood { get; }
+    Kkdev92.HealthData.BloodGlucoseSpecimen FromValue(System.String value)
+    Kkdev92.HealthData.BloodGlucoseSpecimen InterstitialFluid { get; }
+    Kkdev92.HealthData.BloodGlucoseSpecimen Plasma { get; }
+    Kkdev92.HealthData.BloodGlucoseSpecimen Serum { get; }
+    Kkdev92.HealthData.BloodGlucoseSpecimen SpecimenUnspecified { get; }
+    Kkdev92.HealthData.BloodGlucoseSpecimen Tears { get; }
+    Kkdev92.HealthData.BloodGlucoseSpecimen WholeBlood { get; }
+    System.Boolean Equals(Kkdev92.HealthData.BloodGlucoseSpecimen other)
+    System.Boolean Equals(System.Object obj)
+    System.Int32 GetHashCode()
+    System.String ToString()
+    System.String Value { get; set; }
+    System.Void Deconstruct(System.String& Value)
+class Kkdev92.HealthData.BodyFat
+    .ctor()
+    Kkdev92.HealthData.ObservationSampleTime SampleTime { get; set; }
+    Nullable<System.Double> Percentage { get; set; }
+class Kkdev92.HealthData.BodyFatRollupValue
+    .ctor()
+    Nullable<System.Double> BodyFatPercentageAvg { get; set; }
+class Kkdev92.HealthData.CaloriesInHeartRateZoneRollupValue
+    .ctor()
+    IReadOnlyList<Kkdev92.HealthData.CaloriesInHeartRateZoneValue> CaloriesInHeartRateZones { get; set; }
+class Kkdev92.HealthData.CaloriesInHeartRateZoneValue
+    .ctor()
+    Nullable<Kkdev92.HealthData.CaloriesInHeartRateZoneValueHeartRateZone> HeartRateZone { get; set; }
+    Nullable<System.Double> Kcal { get; set; }
+struct Kkdev92.HealthData.CaloriesInHeartRateZoneValueHeartRateZone
+    .ctor(System.String Value)
+    Kkdev92.HealthData.CaloriesInHeartRateZoneValueHeartRateZone FromValue(System.String value)
+    Kkdev92.HealthData.CaloriesInHeartRateZoneValueHeartRateZone HeartRateZoneTypeUnspecified { get; }
+    Kkdev92.HealthData.CaloriesInHeartRateZoneValueHeartRateZone Light { get; }
+    Kkdev92.HealthData.CaloriesInHeartRateZoneValueHeartRateZone Moderate { get; }
+    Kkdev92.HealthData.CaloriesInHeartRateZoneValueHeartRateZone Peak { get; }
+    Kkdev92.HealthData.CaloriesInHeartRateZoneValueHeartRateZone Vigorous { get; }
+    System.Boolean Equals(Kkdev92.HealthData.CaloriesInHeartRateZoneValueHeartRateZone other)
+    System.Boolean Equals(System.Object obj)
+    System.Int32 GetHashCode()
+    System.String ToString()
+    System.String Value { get; set; }
+    System.Void Deconstruct(System.String& Value)
+class Kkdev92.HealthData.CivilDateTime
+    .ctor()
+    Kkdev92.HealthData.Date Date { get; set; }
+    Kkdev92.HealthData.TimeOfDay Time { get; set; }
+class Kkdev92.HealthData.CivilTimeInterval
+    .ctor()
+    Kkdev92.HealthData.CivilDateTime End { get; set; }
+    Kkdev92.HealthData.CivilDateTime Start { get; set; }
+class Kkdev92.HealthData.CoreBodyTemperature
+    .ctor()
+    Kkdev92.HealthData.ObservationSampleTime SampleTime { get; set; }
+    Nullable<Kkdev92.HealthData.CoreBodyTemperatureMeasurementLocation> MeasurementLocation { get; set; }
+    Nullable<System.Double> TemperatureCelsius { get; set; }
+    System.String Id { get; set; }
+struct Kkdev92.HealthData.CoreBodyTemperatureMeasurementLocation
+    .ctor(System.String Value)
+    Kkdev92.HealthData.CoreBodyTemperatureMeasurementLocation Armpit { get; }
+    Kkdev92.HealthData.CoreBodyTemperatureMeasurementLocation Body { get; }
+    Kkdev92.HealthData.CoreBodyTemperatureMeasurementLocation Ear { get; }
+    Kkdev92.HealthData.CoreBodyTemperatureMeasurementLocation EarDrum { get; }
+    Kkdev92.HealthData.CoreBodyTemperatureMeasurementLocation Finger { get; }
+    Kkdev92.HealthData.CoreBodyTemperatureMeasurementLocation Forehead { get; }
+    Kkdev92.HealthData.CoreBodyTemperatureMeasurementLocation FromValue(System.String value)
+    Kkdev92.HealthData.CoreBodyTemperatureMeasurementLocation GastroIntestinal { get; }
+    Kkdev92.HealthData.CoreBodyTemperatureMeasurementLocation MeasurementLocationUnspecified { get; }
+    Kkdev92.HealthData.CoreBodyTemperatureMeasurementLocation Mouth { get; }
+    Kkdev92.HealthData.CoreBodyTemperatureMeasurementLocation Nasal { get; }
+    Kkdev92.HealthData.CoreBodyTemperatureMeasurementLocation Nasopharyngeal { get; }
+    Kkdev92.HealthData.CoreBodyTemperatureMeasurementLocation Other { get; }
+    Kkdev92.HealthData.CoreBodyTemperatureMeasurementLocation Rectum { get; }
+    Kkdev92.HealthData.CoreBodyTemperatureMeasurementLocation TemporalArtery { get; }
+    Kkdev92.HealthData.CoreBodyTemperatureMeasurementLocation Toe { get; }
+    Kkdev92.HealthData.CoreBodyTemperatureMeasurementLocation UrinaryBladder { get; }
+    Kkdev92.HealthData.CoreBodyTemperatureMeasurementLocation Vagina { get; }
+    Kkdev92.HealthData.CoreBodyTemperatureMeasurementLocation Wrist { get; }
+    System.Boolean Equals(Kkdev92.HealthData.CoreBodyTemperatureMeasurementLocation other)
+    System.Boolean Equals(System.Object obj)
+    System.Int32 GetHashCode()
+    System.String ToString()
+    System.String Value { get; set; }
+    System.Void Deconstruct(System.String& Value)
+class Kkdev92.HealthData.CoreBodyTemperatureRollupValue
+    .ctor()
+    Nullable<System.Double> TemperatureCelsiusAvg { get; set; }
+    Nullable<System.Double> TemperatureCelsiusMax { get; set; }
+    Nullable<System.Double> TemperatureCelsiusMin { get; set; }
+class Kkdev92.HealthData.CreateDataPointsRequest
+    .ctor()
+    Kkdev92.HealthData.DataPoint Body { get; set; }
+    System.String Parent { get; set; }
+class Kkdev92.HealthData.CreateSubscriberPayload
+    .ctor()
+    IReadOnlyList<Kkdev92.HealthData.SubscriberConfig> SubscriberConfigs { get; set; }
+    Kkdev92.HealthData.EndpointAuthorization EndpointAuthorization { get; set; }
+    System.String EndpointUri { get; set; }
+class Kkdev92.HealthData.CreateSubscribersRequest
+    .ctor()
+    Kkdev92.HealthData.CreateSubscriberPayload Body { get; set; }
+    System.String Parent { get; set; }
+    System.String SubscriberId { get; set; }
+class Kkdev92.HealthData.CreateSubscriptionPayload
+    .ctor()
+    IReadOnlyList<System.String> DataTypes { get; set; }
+    System.String User { get; set; }
+class Kkdev92.HealthData.CreateSubscriptionsRequest
+    .ctor()
+    Kkdev92.HealthData.CreateSubscriptionPayload Body { get; set; }
+    System.String Parent { get; set; }
+    System.String SubscriptionId { get; set; }
+class Kkdev92.HealthData.DailyHeartRateVariability
+    .ctor()
+    Kkdev92.HealthData.Date Date { get; set; }
+    Nullable<System.Double> AverageHeartRateVariabilityMilliseconds { get; set; }
+    Nullable<System.Double> DeepSleepRootMeanSquareOfSuccessiveDifferencesMilliseconds { get; set; }
+    Nullable<System.Double> Entropy { get; set; }
+    Nullable<System.Int64> NonRemHeartRateBeatsPerMinute { get; set; }
+class Kkdev92.HealthData.DailyHeartRateZones
+    .ctor()
+    IReadOnlyList<Kkdev92.HealthData.HeartRateZone> HeartRateZones { get; set; }
+    Kkdev92.HealthData.Date Date { get; set; }
+class Kkdev92.HealthData.DailyOxygenSaturation
+    .ctor()
+    Kkdev92.HealthData.Date Date { get; set; }
+    Nullable<System.Double> AveragePercentage { get; set; }
+    Nullable<System.Double> LowerBoundPercentage { get; set; }
+    Nullable<System.Double> StandardDeviationPercentage { get; set; }
+    Nullable<System.Double> UpperBoundPercentage { get; set; }
+class Kkdev92.HealthData.DailyRespiratoryRate
+    .ctor()
+    Kkdev92.HealthData.Date Date { get; set; }
+    Nullable<System.Double> BreathsPerMinute { get; set; }
+class Kkdev92.HealthData.DailyRestingHeartRate
+    .ctor()
+    Kkdev92.HealthData.DailyRestingHeartRateMetadata DailyRestingHeartRateMetadata { get; set; }
+    Kkdev92.HealthData.Date Date { get; set; }
+    Nullable<System.Int64> BeatsPerMinute { get; set; }
+class Kkdev92.HealthData.DailyRestingHeartRateMetadata
+    .ctor()
+    Nullable<Kkdev92.HealthData.DailyRestingHeartRateMetadataCalculationMethod> CalculationMethod { get; set; }
+struct Kkdev92.HealthData.DailyRestingHeartRateMetadataCalculationMethod
+    .ctor(System.String Value)
+    Kkdev92.HealthData.DailyRestingHeartRateMetadataCalculationMethod CalculationMethodUnspecified { get; }
+    Kkdev92.HealthData.DailyRestingHeartRateMetadataCalculationMethod FromValue(System.String value)
+    Kkdev92.HealthData.DailyRestingHeartRateMetadataCalculationMethod OnlyWithAwakeData { get; }
+    Kkdev92.HealthData.DailyRestingHeartRateMetadataCalculationMethod WithSleep { get; }
+    System.Boolean Equals(Kkdev92.HealthData.DailyRestingHeartRateMetadataCalculationMethod other)
+    System.Boolean Equals(System.Object obj)
+    System.Int32 GetHashCode()
+    System.String ToString()
+    System.String Value { get; set; }
+    System.Void Deconstruct(System.String& Value)
+class Kkdev92.HealthData.DailyRollUpDataPointsRequest
+    .ctor()
+    Kkdev92.HealthData.CivilTimeInterval Range { get; set; }
+    Nullable<System.Int32> PageSize { get; set; }
+    Nullable<System.Int32> WindowSizeDays { get; set; }
+    System.String DataSourceFamily { get; set; }
+    System.String PageToken { get; set; }
+class Kkdev92.HealthData.DailyRollUpDataPointsResponse
+    .ctor()
+    IReadOnlyList<Kkdev92.HealthData.DailyRollupDataPoint> RollupDataPoints { get; set; }
+class Kkdev92.HealthData.DailyRollUpRequest
+    .ctor()
+    Kkdev92.HealthData.DailyRollUpDataPointsRequest Body { get; set; }
+    System.String Parent { get; set; }
+class Kkdev92.HealthData.DailyRollupDataPoint
+    .ctor()
+    IDictionary<System.String, System.Text.Json.JsonElement> ExtensionData { get; set; }
+    Kkdev92.HealthData.ActiveEnergyBurnedRollupValue ActiveEnergyBurned { get; set; }
+    Kkdev92.HealthData.ActiveMinutesRollupValue ActiveMinutes { get; set; }
+    Kkdev92.HealthData.ActiveZoneMinutesRollupValue ActiveZoneMinutes { get; set; }
+    Kkdev92.HealthData.ActivityLevelRollupValue ActivityLevel { get; set; }
+    Kkdev92.HealthData.AltitudeRollupValue Altitude { get; set; }
+    Kkdev92.HealthData.BloodGlucoseRollupValue BloodGlucose { get; set; }
+    Kkdev92.HealthData.BodyFatRollupValue BodyFat { get; set; }
+    Kkdev92.HealthData.CaloriesInHeartRateZoneRollupValue CaloriesInHeartRateZone { get; set; }
+    Kkdev92.HealthData.CivilDateTime CivilEndTime { get; set; }
+    Kkdev92.HealthData.CivilDateTime CivilStartTime { get; set; }
+    Kkdev92.HealthData.CoreBodyTemperatureRollupValue CoreBodyTemperature { get; set; }
+    Kkdev92.HealthData.DistanceRollupValue Distance { get; set; }
+    Kkdev92.HealthData.FloorsRollupValue Floors { get; set; }
+    Kkdev92.HealthData.HeartRateRollupValue HeartRate { get; set; }
+    Kkdev92.HealthData.HeartRateVariabilityPersonalRangeRollupValue HeartRateVariabilityPersonalRange { get; set; }
+    Kkdev92.HealthData.HydrationLogRollupValue HydrationLog { get; set; }
+    Kkdev92.HealthData.NutritionLogRollupValue NutritionLog { get; set; }
+    Kkdev92.HealthData.RestingHeartRatePersonalRangeRollupValue RestingHeartRatePersonalRange { get; set; }
+    Kkdev92.HealthData.RunVO2MaxRollupValue RunVo2Max { get; set; }
+    Kkdev92.HealthData.SedentaryPeriodRollupValue SedentaryPeriod { get; set; }
+    Kkdev92.HealthData.StepsRollupValue Steps { get; set; }
+    Kkdev92.HealthData.SwimLengthsDataRollupValue SwimLengthsData { get; set; }
+    Kkdev92.HealthData.TimeInHeartRateZoneRollupValue TimeInHeartRateZone { get; set; }
+    Kkdev92.HealthData.TotalCaloriesRollupValue TotalCalories { get; set; }
+    Kkdev92.HealthData.WeightRollupValue Weight { get; set; }
+static class Kkdev92.HealthData.DailyRollupDataPointExtensions
+    Kkdev92.HealthData.DailyRollupDataPointKind GetKind(Kkdev92.HealthData.DailyRollupDataPoint value)
+    System.Object GetValue(Kkdev92.HealthData.DailyRollupDataPoint value)
+enum Kkdev92.HealthData.DailyRollupDataPointKind
+    System.Int32 value__
+    const Kkdev92.HealthData.DailyRollupDataPointKind ActiveEnergyBurned
+    const Kkdev92.HealthData.DailyRollupDataPointKind ActiveMinutes
+    const Kkdev92.HealthData.DailyRollupDataPointKind ActiveZoneMinutes
+    const Kkdev92.HealthData.DailyRollupDataPointKind ActivityLevel
+    const Kkdev92.HealthData.DailyRollupDataPointKind Altitude
+    const Kkdev92.HealthData.DailyRollupDataPointKind BloodGlucose
+    const Kkdev92.HealthData.DailyRollupDataPointKind BodyFat
+    const Kkdev92.HealthData.DailyRollupDataPointKind CaloriesInHeartRateZone
+    const Kkdev92.HealthData.DailyRollupDataPointKind CoreBodyTemperature
+    const Kkdev92.HealthData.DailyRollupDataPointKind Distance
+    const Kkdev92.HealthData.DailyRollupDataPointKind Floors
+    const Kkdev92.HealthData.DailyRollupDataPointKind HeartRate
+    const Kkdev92.HealthData.DailyRollupDataPointKind HeartRateVariabilityPersonalRange
+    const Kkdev92.HealthData.DailyRollupDataPointKind HydrationLog
+    const Kkdev92.HealthData.DailyRollupDataPointKind None
+    const Kkdev92.HealthData.DailyRollupDataPointKind NutritionLog
+    const Kkdev92.HealthData.DailyRollupDataPointKind RestingHeartRatePersonalRange
+    const Kkdev92.HealthData.DailyRollupDataPointKind RunVo2Max
+    const Kkdev92.HealthData.DailyRollupDataPointKind SedentaryPeriod
+    const Kkdev92.HealthData.DailyRollupDataPointKind Steps
+    const Kkdev92.HealthData.DailyRollupDataPointKind SwimLengthsData
+    const Kkdev92.HealthData.DailyRollupDataPointKind TimeInHeartRateZone
+    const Kkdev92.HealthData.DailyRollupDataPointKind TotalCalories
+    const Kkdev92.HealthData.DailyRollupDataPointKind Unknown
+    const Kkdev92.HealthData.DailyRollupDataPointKind Weight
+class Kkdev92.HealthData.DailySleepTemperatureDerivations
+    .ctor()
+    Kkdev92.HealthData.Date Date { get; set; }
+    Nullable<System.Double> BaselineTemperatureCelsius { get; set; }
+    Nullable<System.Double> NightlyTemperatureCelsius { get; set; }
+    Nullable<System.Double> RelativeNightlyStddev30dCelsius { get; set; }
+class Kkdev92.HealthData.DailyVO2Max
+    .ctor()
+    Kkdev92.HealthData.Date Date { get; set; }
+    Nullable<Kkdev92.HealthData.DailyVO2MaxCardioFitnessLevel> CardioFitnessLevel { get; set; }
+    Nullable<System.Boolean> Estimated { get; set; }
+    Nullable<System.Double> Vo2Max { get; set; }
+    Nullable<System.Double> Vo2MaxCovariance { get; set; }
+struct Kkdev92.HealthData.DailyVO2MaxCardioFitnessLevel
+    .ctor(System.String Value)
+    Kkdev92.HealthData.DailyVO2MaxCardioFitnessLevel Average { get; }
+    Kkdev92.HealthData.DailyVO2MaxCardioFitnessLevel CardioFitnessLevelUnspecified { get; }
+    Kkdev92.HealthData.DailyVO2MaxCardioFitnessLevel Excellent { get; }
+    Kkdev92.HealthData.DailyVO2MaxCardioFitnessLevel Fair { get; }
+    Kkdev92.HealthData.DailyVO2MaxCardioFitnessLevel FromValue(System.String value)
+    Kkdev92.HealthData.DailyVO2MaxCardioFitnessLevel Good { get; }
+    Kkdev92.HealthData.DailyVO2MaxCardioFitnessLevel Poor { get; }
+    Kkdev92.HealthData.DailyVO2MaxCardioFitnessLevel VeryGood { get; }
+    System.Boolean Equals(Kkdev92.HealthData.DailyVO2MaxCardioFitnessLevel other)
+    System.Boolean Equals(System.Object obj)
+    System.Int32 GetHashCode()
+    System.String ToString()
+    System.String Value { get; set; }
+    System.Void Deconstruct(System.String& Value)
+class Kkdev92.HealthData.DataPoint
+    .ctor()
+    IDictionary<System.String, System.Text.Json.JsonElement> ExtensionData { get; set; }
+    Kkdev92.HealthData.ActiveEnergyBurned ActiveEnergyBurned { get; set; }
+    Kkdev92.HealthData.ActiveMinutes ActiveMinutes { get; set; }
+    Kkdev92.HealthData.ActiveZoneMinutes ActiveZoneMinutes { get; set; }
+    Kkdev92.HealthData.ActivityLevel ActivityLevel { get; set; }
+    Kkdev92.HealthData.Altitude Altitude { get; set; }
+    Kkdev92.HealthData.BasalEnergyBurned BasalEnergyBurned { get; set; }
+    Kkdev92.HealthData.BloodGlucose BloodGlucose { get; set; }
+    Kkdev92.HealthData.BodyFat BodyFat { get; set; }
+    Kkdev92.HealthData.CoreBodyTemperature CoreBodyTemperature { get; set; }
+    Kkdev92.HealthData.DailyHeartRateVariability DailyHeartRateVariability { get; set; }
+    Kkdev92.HealthData.DailyHeartRateZones DailyHeartRateZones { get; set; }
+    Kkdev92.HealthData.DailyOxygenSaturation DailyOxygenSaturation { get; set; }
+    Kkdev92.HealthData.DailyRespiratoryRate DailyRespiratoryRate { get; set; }
+    Kkdev92.HealthData.DailyRestingHeartRate DailyRestingHeartRate { get; set; }
+    Kkdev92.HealthData.DailySleepTemperatureDerivations DailySleepTemperatureDerivations { get; set; }
+    Kkdev92.HealthData.DailyVO2Max DailyVo2Max { get; set; }
+    Kkdev92.HealthData.DataSource DataSource { get; set; }
+    Kkdev92.HealthData.Distance Distance { get; set; }
+    Kkdev92.HealthData.Electrocardiogram Electrocardiogram { get; set; }
+    Kkdev92.HealthData.Exercise Exercise { get; set; }
+    Kkdev92.HealthData.Floors Floors { get; set; }
+    Kkdev92.HealthData.Food Food { get; set; }
+    Kkdev92.HealthData.FoodMeasurementUnit FoodMeasurementUnit { get; set; }
+    Kkdev92.HealthData.HeartRate HeartRate { get; set; }
+    Kkdev92.HealthData.HeartRateVariability HeartRateVariability { get; set; }
+    Kkdev92.HealthData.Height Height { get; set; }
+    Kkdev92.HealthData.HydrationLog HydrationLog { get; set; }
+    Kkdev92.HealthData.IrregularRhythmNotification IrregularRhythmNotification { get; set; }
+    Kkdev92.HealthData.MenstrualPeriod MenstrualPeriod { get; set; }
+    Kkdev92.HealthData.Moods Moods { get; set; }
+    Kkdev92.HealthData.NutritionLog NutritionLog { get; set; }
+    Kkdev92.HealthData.OvulationTest OvulationTest { get; set; }
+    Kkdev92.HealthData.OxygenSaturation OxygenSaturation { get; set; }
+    Kkdev92.HealthData.RespiratoryRateSleepSummary RespiratoryRateSleepSummary { get; set; }
+    Kkdev92.HealthData.RunVO2Max RunVo2Max { get; set; }
+    Kkdev92.HealthData.SedentaryPeriod SedentaryPeriod { get; set; }
+    Kkdev92.HealthData.Sleep Sleep { get; set; }
+    Kkdev92.HealthData.Steps Steps { get; set; }
+    Kkdev92.HealthData.SwimLengthsData SwimLengthsData { get; set; }
+    Kkdev92.HealthData.Symptoms Symptoms { get; set; }
+    Kkdev92.HealthData.TimeInHeartRateZone TimeInHeartRateZone { get; set; }
+    Kkdev92.HealthData.VO2Max Vo2Max { get; set; }
+    Kkdev92.HealthData.Weight Weight { get; set; }
+    System.String Name { get; set; }
+static class Kkdev92.HealthData.DataPointExtensions
+    Kkdev92.HealthData.DataPointKind GetKind(Kkdev92.HealthData.DataPoint value)
+    System.Object GetValue(Kkdev92.HealthData.DataPoint value)
+enum Kkdev92.HealthData.DataPointKind
+    System.Int32 value__
+    const Kkdev92.HealthData.DataPointKind ActiveEnergyBurned
+    const Kkdev92.HealthData.DataPointKind ActiveMinutes
+    const Kkdev92.HealthData.DataPointKind ActiveZoneMinutes
+    const Kkdev92.HealthData.DataPointKind ActivityLevel
+    const Kkdev92.HealthData.DataPointKind Altitude
+    const Kkdev92.HealthData.DataPointKind BasalEnergyBurned
+    const Kkdev92.HealthData.DataPointKind BloodGlucose
+    const Kkdev92.HealthData.DataPointKind BodyFat
+    const Kkdev92.HealthData.DataPointKind CoreBodyTemperature
+    const Kkdev92.HealthData.DataPointKind DailyHeartRateVariability
+    const Kkdev92.HealthData.DataPointKind DailyHeartRateZones
+    const Kkdev92.HealthData.DataPointKind DailyOxygenSaturation
+    const Kkdev92.HealthData.DataPointKind DailyRespiratoryRate
+    const Kkdev92.HealthData.DataPointKind DailyRestingHeartRate
+    const Kkdev92.HealthData.DataPointKind DailySleepTemperatureDerivations
+    const Kkdev92.HealthData.DataPointKind DailyVo2Max
+    const Kkdev92.HealthData.DataPointKind Distance
+    const Kkdev92.HealthData.DataPointKind Electrocardiogram
+    const Kkdev92.HealthData.DataPointKind Exercise
+    const Kkdev92.HealthData.DataPointKind Floors
+    const Kkdev92.HealthData.DataPointKind Food
+    const Kkdev92.HealthData.DataPointKind FoodMeasurementUnit
+    const Kkdev92.HealthData.DataPointKind HeartRate
+    const Kkdev92.HealthData.DataPointKind HeartRateVariability
+    const Kkdev92.HealthData.DataPointKind Height
+    const Kkdev92.HealthData.DataPointKind HydrationLog
+    const Kkdev92.HealthData.DataPointKind IrregularRhythmNotification
+    const Kkdev92.HealthData.DataPointKind MenstrualPeriod
+    const Kkdev92.HealthData.DataPointKind Moods
+    const Kkdev92.HealthData.DataPointKind None
+    const Kkdev92.HealthData.DataPointKind NutritionLog
+    const Kkdev92.HealthData.DataPointKind OvulationTest
+    const Kkdev92.HealthData.DataPointKind OxygenSaturation
+    const Kkdev92.HealthData.DataPointKind RespiratoryRateSleepSummary
+    const Kkdev92.HealthData.DataPointKind RunVo2Max
+    const Kkdev92.HealthData.DataPointKind SedentaryPeriod
+    const Kkdev92.HealthData.DataPointKind Sleep
+    const Kkdev92.HealthData.DataPointKind Steps
+    const Kkdev92.HealthData.DataPointKind SwimLengthsData
+    const Kkdev92.HealthData.DataPointKind Symptoms
+    const Kkdev92.HealthData.DataPointKind TimeInHeartRateZone
+    const Kkdev92.HealthData.DataPointKind Unknown
+    const Kkdev92.HealthData.DataPointKind Vo2Max
+    const Kkdev92.HealthData.DataPointKind Weight
+class Kkdev92.HealthData.DataPointsResource
+    IAsyncEnumerable<Kkdev92.HealthData.DataPoint> EnumerateAsync(Kkdev92.HealthData.ListDataPointsRequest request, System.Threading.CancellationToken cancellationToken = default)
+    IAsyncEnumerable<Kkdev92.HealthData.ReconciledDataPoint> EnumerateAsync(Kkdev92.HealthData.ReconcileRequest request, System.Threading.CancellationToken cancellationToken = default)
+    System.Threading.Tasks.Task ExportExerciseTcxAsync(Kkdev92.HealthData.ExportExerciseTcxRequest request, System.IO.Stream destination, System.Threading.CancellationToken cancellationToken = default)
+    Task<Kkdev92.HealthData.DailyRollUpDataPointsResponse> DailyRollUpAsync(Kkdev92.HealthData.DailyRollUpRequest request, System.Threading.CancellationToken cancellationToken = default)
+    Task<Kkdev92.HealthData.DataPoint> GetAsync(Kkdev92.HealthData.GetDataPointsRequest request, System.Threading.CancellationToken cancellationToken = default)
+    Task<Kkdev92.HealthData.ExportExerciseTcxResponse> ExportExerciseTcxAsync(Kkdev92.HealthData.ExportExerciseTcxRequest request, System.Threading.CancellationToken cancellationToken = default)
+    Task<Kkdev92.HealthData.ListDataPointsResponse> ListAsync(Kkdev92.HealthData.ListDataPointsRequest request, System.Threading.CancellationToken cancellationToken = default)
+    Task<Kkdev92.HealthData.Operation> BatchDeleteAsync(Kkdev92.HealthData.BatchDeleteRequest request, System.Threading.CancellationToken cancellationToken = default)
+    Task<Kkdev92.HealthData.Operation> CreateAsync(Kkdev92.HealthData.CreateDataPointsRequest request, System.Threading.CancellationToken cancellationToken = default)
+    Task<Kkdev92.HealthData.Operation> PatchAsync(Kkdev92.HealthData.PatchDataPointsRequest request, System.Threading.CancellationToken cancellationToken = default)
+    Task<Kkdev92.HealthData.ReconcileDataPointsResponse> ReconcileAsync(Kkdev92.HealthData.ReconcileRequest request, System.Threading.CancellationToken cancellationToken = default)
+    Task<Kkdev92.HealthData.RollUpDataPointsResponse> RollUpAsync(Kkdev92.HealthData.RollUpRequest request, System.Threading.CancellationToken cancellationToken = default)
+class Kkdev92.HealthData.DataSource
+    .ctor()
+    Kkdev92.HealthData.Application Application { get; set; }
+    Kkdev92.HealthData.Device Device { get; set; }
+    Nullable<Kkdev92.HealthData.DataSourcePlatform> Platform { get; set; }
+    Nullable<Kkdev92.HealthData.DataSourceRecordingMethod> RecordingMethod { get; set; }
+struct Kkdev92.HealthData.DataSourcePlatform
+    .ctor(System.String Value)
+    Kkdev92.HealthData.DataSourcePlatform Fit { get; }
+    Kkdev92.HealthData.DataSourcePlatform Fitbit { get; }
+    Kkdev92.HealthData.DataSourcePlatform FitbitWebApi { get; }
+    Kkdev92.HealthData.DataSourcePlatform FromValue(System.String value)
+    Kkdev92.HealthData.DataSourcePlatform GooglePartnerIntegration { get; }
+    Kkdev92.HealthData.DataSourcePlatform GoogleWebApi { get; }
+    Kkdev92.HealthData.DataSourcePlatform HealthConnect { get; }
+    Kkdev92.HealthData.DataSourcePlatform HealthKit { get; }
+    Kkdev92.HealthData.DataSourcePlatform Nest { get; }
+    Kkdev92.HealthData.DataSourcePlatform PlatformUnspecified { get; }
+    System.Boolean Equals(Kkdev92.HealthData.DataSourcePlatform other)
+    System.Boolean Equals(System.Object obj)
+    System.Int32 GetHashCode()
+    System.String ToString()
+    System.String Value { get; set; }
+    System.Void Deconstruct(System.String& Value)
+struct Kkdev92.HealthData.DataSourceRecordingMethod
+    .ctor(System.String Value)
+    Kkdev92.HealthData.DataSourceRecordingMethod ActivelyMeasured { get; }
+    Kkdev92.HealthData.DataSourceRecordingMethod Derived { get; }
+    Kkdev92.HealthData.DataSourceRecordingMethod FromValue(System.String value)
+    Kkdev92.HealthData.DataSourceRecordingMethod Manual { get; }
+    Kkdev92.HealthData.DataSourceRecordingMethod PassivelyMeasured { get; }
+    Kkdev92.HealthData.DataSourceRecordingMethod RecordingMethodUnspecified { get; }
+    Kkdev92.HealthData.DataSourceRecordingMethod Unknown { get; }
+    System.Boolean Equals(Kkdev92.HealthData.DataSourceRecordingMethod other)
+    System.Boolean Equals(System.Object obj)
+    System.Int32 GetHashCode()
+    System.String ToString()
+    System.String Value { get; set; }
+    System.Void Deconstruct(System.String& Value)
+class Kkdev92.HealthData.Date
+    .ctor()
+    Nullable<System.Int32> Day { get; set; }
+    Nullable<System.Int32> Month { get; set; }
+    Nullable<System.Int32> Year { get; set; }
+class Kkdev92.HealthData.DeleteSubscribersRequest
+    .ctor()
+    Nullable<System.Boolean> Force { get; set; }
+    System.String Name { get; set; }
+class Kkdev92.HealthData.DeleteSubscriptionsRequest
+    .ctor()
+    System.String Name { get; set; }
+class Kkdev92.HealthData.Device
+    .ctor()
+    Nullable<Kkdev92.HealthData.DeviceFormFactor> FormFactor { get; set; }
+    System.String DisplayName { get; set; }
+    System.String Manufacturer { get; set; }
+struct Kkdev92.HealthData.DeviceFormFactor
+    .ctor(System.String Value)
+    Kkdev92.HealthData.DeviceFormFactor ChestStrap { get; }
+    Kkdev92.HealthData.DeviceFormFactor FitnessBand { get; }
+    Kkdev92.HealthData.DeviceFormFactor FormFactorUnspecified { get; }
+    Kkdev92.HealthData.DeviceFormFactor FromValue(System.String value)
+    Kkdev92.HealthData.DeviceFormFactor HeadMounted { get; }
+    Kkdev92.HealthData.DeviceFormFactor Phone { get; }
+    Kkdev92.HealthData.DeviceFormFactor Ring { get; }
+    Kkdev92.HealthData.DeviceFormFactor Scale { get; }
+    Kkdev92.HealthData.DeviceFormFactor SmartDisplay { get; }
+    Kkdev92.HealthData.DeviceFormFactor Tablet { get; }
+    Kkdev92.HealthData.DeviceFormFactor Watch { get; }
+    System.Boolean Equals(Kkdev92.HealthData.DeviceFormFactor other)
+    System.Boolean Equals(System.Object obj)
+    System.Int32 GetHashCode()
+    System.String ToString()
+    System.String Value { get; set; }
+    System.Void Deconstruct(System.String& Value)
+static class Kkdev92.HealthData.Diagnostics.HealthDataActivityTags
+    const System.String ApiVersion
+    const System.String ErrorType
+    const System.String HttpRequestMethod
+    const System.String HttpResponseStatusCode
+    const System.String OperationId
+    const System.String RetryAttempt
+    const System.String ServerAddress
+static class Kkdev92.HealthData.Diagnostics.HealthDataDiagnostics
+    System.Diagnostics.Activity StartOperation(Kkdev92.HealthData.Http.HealthDataOperationDescriptor descriptor, System.Uri baseAddress)
+    System.Diagnostics.ActivitySource Source { get; }
+    System.Void RecordException(System.Diagnostics.Activity activity, System.Exception exception)
+    System.Void RecordResponse(System.Diagnostics.Activity activity, System.Net.HttpStatusCode statusCode)
+    const System.String SourceName
+class Kkdev92.HealthData.Distance
+    .ctor()
+    Kkdev92.HealthData.ObservationTimeInterval Interval { get; set; }
+    Nullable<System.Int64> Millimeters { get; set; }
+class Kkdev92.HealthData.DistanceRollupValue
+    .ctor()
+    Nullable<System.Int64> MillimetersSum { get; set; }
+class Kkdev92.HealthData.Electrocardiogram
+    .ctor()
+    IReadOnlyList<System.Int32> WaveformSamples { get; set; }
+    Kkdev92.HealthData.MedicalDeviceInfo MedicalDeviceInfo { get; set; }
+    Kkdev92.HealthData.SessionTimeInterval Interval { get; set; }
+    Nullable<Kkdev92.HealthData.ElectrocardiogramResultClassification> ResultClassification { get; set; }
+    Nullable<System.Int32> LeadNumber { get; set; }
+    Nullable<System.Int32> MillivoltsScalingFactor { get; set; }
+    Nullable<System.Int32> SamplingFrequencyHertz { get; set; }
+    Nullable<System.Int64> BeatsPerMinuteAvg { get; set; }
+struct Kkdev92.HealthData.ElectrocardiogramResultClassification
+    .ctor(System.String Value)
+    Kkdev92.HealthData.ElectrocardiogramResultClassification AtrialFibrillation { get; }
+    Kkdev92.HealthData.ElectrocardiogramResultClassification FromValue(System.String value)
+    Kkdev92.HealthData.ElectrocardiogramResultClassification Inconclusive { get; }
+    Kkdev92.HealthData.ElectrocardiogramResultClassification InconclusiveHighHeartRate { get; }
+    Kkdev92.HealthData.ElectrocardiogramResultClassification InconclusiveLowHeartRate { get; }
+    Kkdev92.HealthData.ElectrocardiogramResultClassification NormalSinusRhythm { get; }
+    Kkdev92.HealthData.ElectrocardiogramResultClassification NotAnalyzed { get; }
+    Kkdev92.HealthData.ElectrocardiogramResultClassification ResultClassificationUnspecified { get; }
+    Kkdev92.HealthData.ElectrocardiogramResultClassification Unreadable { get; }
+    System.Boolean Equals(Kkdev92.HealthData.ElectrocardiogramResultClassification other)
+    System.Boolean Equals(System.Object obj)
+    System.Int32 GetHashCode()
+    System.String ToString()
+    System.String Value { get; set; }
+    System.Void Deconstruct(System.String& Value)
+class Kkdev92.HealthData.Empty
+    .ctor()
+class Kkdev92.HealthData.EndpointAuthorization
+    .ctor()
+    Nullable<System.Boolean> SecretSet { get; set; }
+    System.String Secret { get; set; }
+class Kkdev92.HealthData.EnergyQuantity
+    .ctor()
+    Nullable<Kkdev92.HealthData.EnergyQuantityUserProvidedUnit> UserProvidedUnit { get; set; }
+    Nullable<System.Double> Kcal { get; set; }
+class Kkdev92.HealthData.EnergyQuantityRollup
+    .ctor()
+    Nullable<Kkdev92.HealthData.EnergyQuantityRollupUserProvidedUnitLast> UserProvidedUnitLast { get; set; }
+    Nullable<System.Double> KcalSum { get; set; }
+struct Kkdev92.HealthData.EnergyQuantityRollupUserProvidedUnitLast
+    .ctor(System.String Value)
+    Kkdev92.HealthData.EnergyQuantityRollupUserProvidedUnitLast Calorie { get; }
+    Kkdev92.HealthData.EnergyQuantityRollupUserProvidedUnitLast EnergyUnitUnspecified { get; }
+    Kkdev92.HealthData.EnergyQuantityRollupUserProvidedUnitLast FromValue(System.String value)
+    Kkdev92.HealthData.EnergyQuantityRollupUserProvidedUnitLast Joule { get; }
+    Kkdev92.HealthData.EnergyQuantityRollupUserProvidedUnitLast Kilocalorie { get; }
+    Kkdev92.HealthData.EnergyQuantityRollupUserProvidedUnitLast Kilojoule { get; }
+    Kkdev92.HealthData.EnergyQuantityRollupUserProvidedUnitLast SmallCalorie { get; }
+    System.Boolean Equals(Kkdev92.HealthData.EnergyQuantityRollupUserProvidedUnitLast other)
+    System.Boolean Equals(System.Object obj)
+    System.Int32 GetHashCode()
+    System.String ToString()
+    System.String Value { get; set; }
+    System.Void Deconstruct(System.String& Value)
+struct Kkdev92.HealthData.EnergyQuantityUserProvidedUnit
+    .ctor(System.String Value)
+    Kkdev92.HealthData.EnergyQuantityUserProvidedUnit Calorie { get; }
+    Kkdev92.HealthData.EnergyQuantityUserProvidedUnit EnergyUnitUnspecified { get; }
+    Kkdev92.HealthData.EnergyQuantityUserProvidedUnit FromValue(System.String value)
+    Kkdev92.HealthData.EnergyQuantityUserProvidedUnit Joule { get; }
+    Kkdev92.HealthData.EnergyQuantityUserProvidedUnit Kilocalorie { get; }
+    Kkdev92.HealthData.EnergyQuantityUserProvidedUnit Kilojoule { get; }
+    Kkdev92.HealthData.EnergyQuantityUserProvidedUnit SmallCalorie { get; }
+    System.Boolean Equals(Kkdev92.HealthData.EnergyQuantityUserProvidedUnit other)
+    System.Boolean Equals(System.Object obj)
+    System.Int32 GetHashCode()
+    System.String ToString()
+    System.String Value { get; set; }
+    System.Void Deconstruct(System.String& Value)
+class Kkdev92.HealthData.Exercise
+    .ctor()
+    IReadOnlyList<Kkdev92.HealthData.ExerciseEvent> ExerciseEvents { get; set; }
+    IReadOnlyList<Kkdev92.HealthData.SplitSummary> SplitSummaries { get; set; }
+    IReadOnlyList<Kkdev92.HealthData.SplitSummary> Splits { get; set; }
+    Kkdev92.HealthData.ExerciseMetadata ExerciseMetadata { get; set; }
+    Kkdev92.HealthData.MetricsSummary MetricsSummary { get; set; }
+    Kkdev92.HealthData.SessionTimeInterval Interval { get; set; }
+    Nullable<Kkdev92.HealthData.ExerciseExerciseType> ExerciseType { get; set; }
+    Nullable<Kkdev92.HealthData.GoogleDuration> ActiveDuration { get; set; }
+    Nullable<Kkdev92.HealthData.GoogleTimestamp> CreateTime { get; set; }
+    Nullable<Kkdev92.HealthData.GoogleTimestamp> UpdateTime { get; set; }
+    System.String DisplayName { get; set; }
+    System.String Notes { get; set; }
+class Kkdev92.HealthData.ExerciseEvent
+    .ctor()
+    Nullable<Kkdev92.HealthData.ExerciseEventExerciseEventType> ExerciseEventType { get; set; }
+    Nullable<Kkdev92.HealthData.GoogleDuration> EventUtcOffset { get; set; }
+    Nullable<Kkdev92.HealthData.GoogleTimestamp> EventTime { get; set; }
+struct Kkdev92.HealthData.ExerciseEventExerciseEventType
+    .ctor(System.String Value)
+    Kkdev92.HealthData.ExerciseEventExerciseEventType AutoPause { get; }
+    Kkdev92.HealthData.ExerciseEventExerciseEventType AutoResume { get; }
+    Kkdev92.HealthData.ExerciseEventExerciseEventType ExerciseEventTypeUnspecified { get; }
+    Kkdev92.HealthData.ExerciseEventExerciseEventType FromValue(System.String value)
+    Kkdev92.HealthData.ExerciseEventExerciseEventType Pause { get; }
+    Kkdev92.HealthData.ExerciseEventExerciseEventType Resume { get; }
+    Kkdev92.HealthData.ExerciseEventExerciseEventType Start { get; }
+    Kkdev92.HealthData.ExerciseEventExerciseEventType Stop { get; }
+    System.Boolean Equals(Kkdev92.HealthData.ExerciseEventExerciseEventType other)
+    System.Boolean Equals(System.Object obj)
+    System.Int32 GetHashCode()
+    System.String ToString()
+    System.String Value { get; set; }
+    System.Void Deconstruct(System.String& Value)
+struct Kkdev92.HealthData.ExerciseExerciseType
+    .ctor(System.String Value)
+    Kkdev92.HealthData.ExerciseExerciseType AerobicWorkout { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Archery { get; }
+    Kkdev92.HealthData.ExerciseExerciseType AssaultBike { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Backpacking { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Badminton { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Ballet { get; }
+    Kkdev92.HealthData.ExerciseExerciseType BallroomDance { get; }
+    Kkdev92.HealthData.ExerciseExerciseType BarreClass { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Baseball { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Basketball { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Biking { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Billiards { get; }
+    Kkdev92.HealthData.ExerciseExerciseType BodyWeight { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Bootcamp { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Bowling { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Boxing { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Breakdancing { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Calisthenics { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Canoeing { get; }
+    Kkdev92.HealthData.ExerciseExerciseType CardioSculpt { get; }
+    Kkdev92.HealthData.ExerciseExerciseType CardioWorkout { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Carpentry { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Cheerleading { get; }
+    Kkdev92.HealthData.ExerciseExerciseType CircuitTraining { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Cleaning { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Climbing { get; }
+    Kkdev92.HealthData.ExerciseExerciseType CoreTraining { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Cricket { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Croquet { get; }
+    Kkdev92.HealthData.ExerciseExerciseType CrossCountrySki { get; }
+    Kkdev92.HealthData.ExerciseExerciseType CrossTraining { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Crossfit { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Curling { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Dancing { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Diving { get; }
+    Kkdev92.HealthData.ExerciseExerciseType ElectricBike { get; }
+    Kkdev92.HealthData.ExerciseExerciseType ElectricScooter { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Elliptical { get; }
+    Kkdev92.HealthData.ExerciseExerciseType EquestrianSports { get; }
+    Kkdev92.HealthData.ExerciseExerciseType ExerciseClass { get; }
+    Kkdev92.HealthData.ExerciseExerciseType ExerciseTypeUnspecified { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Fencing { get; }
+    Kkdev92.HealthData.ExerciseExerciseType FieldHockey { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Fishing { get; }
+    Kkdev92.HealthData.ExerciseExerciseType FitnessGaming { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Foiling { get; }
+    Kkdev92.HealthData.ExerciseExerciseType FootballAmerican { get; }
+    Kkdev92.HealthData.ExerciseExerciseType FootballAustralian { get; }
+    Kkdev92.HealthData.ExerciseExerciseType FreeWeights { get; }
+    Kkdev92.HealthData.ExerciseExerciseType FrisbeePlayingGeneral { get; }
+    Kkdev92.HealthData.ExerciseExerciseType FromValue(System.String value)
+    Kkdev92.HealthData.ExerciseExerciseType FunctionalStrengthTraining { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Gardening { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Golf { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Gymnastics { get; }
+    Kkdev92.HealthData.ExerciseExerciseType HandCycling { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Handball { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Hiit { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Hiking { get; }
+    Kkdev92.HealthData.ExerciseExerciseType HipHop { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Hockey { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Hoeing { get; }
+    Kkdev92.HealthData.ExerciseExerciseType HouseholdChores { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Hunting { get; }
+    Kkdev92.HealthData.ExerciseExerciseType IceSkating { get; }
+    Kkdev92.HealthData.ExerciseExerciseType InclineRun { get; }
+    Kkdev92.HealthData.ExerciseExerciseType InclineWalk { get; }
+    Kkdev92.HealthData.ExerciseExerciseType IndoorClimbing { get; }
+    Kkdev92.HealthData.ExerciseExerciseType IntervalWorkout { get; }
+    Kkdev92.HealthData.ExerciseExerciseType JazzDance { get; }
+    Kkdev92.HealthData.ExerciseExerciseType JiuJitsu { get; }
+    Kkdev92.HealthData.ExerciseExerciseType JumpingRope { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Karate { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Kayaking { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Kickboxing { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Kitesurfing { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Lacrosse { get; }
+    Kkdev92.HealthData.ExerciseExerciseType MartialArts { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Meditate { get; }
+    Kkdev92.HealthData.ExerciseExerciseType ModernDance { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Motocross { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Motorcycle { get; }
+    Kkdev92.HealthData.ExerciseExerciseType MountainBike { get; }
+    Kkdev92.HealthData.ExerciseExerciseType MowingLawn { get; }
+    Kkdev92.HealthData.ExerciseExerciseType MuayThai { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Multisport { get; }
+    Kkdev92.HealthData.ExerciseExerciseType MusicalPerformance { get; }
+    Kkdev92.HealthData.ExerciseExerciseType NordicWalking { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Orienteering { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Other { get; }
+    Kkdev92.HealthData.ExerciseExerciseType OutdoorBike { get; }
+    Kkdev92.HealthData.ExerciseExerciseType OutdoorWorkout { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Paddleboarding { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Padel { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Painting { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Paragliding { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Parkour { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Pickelball { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Pilates { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Polo { get; }
+    Kkdev92.HealthData.ExerciseExerciseType PowerWalking { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Powerlifting { get; }
+    Kkdev92.HealthData.ExerciseExerciseType RacketSports { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Racquetball { get; }
+    Kkdev92.HealthData.ExerciseExerciseType ResistanceBands { get; }
+    Kkdev92.HealthData.ExerciseExerciseType RockClimbing { get; }
+    Kkdev92.HealthData.ExerciseExerciseType RollerSkating { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Rollerblading { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Rowing { get; }
+    Kkdev92.HealthData.ExerciseExerciseType RowingMachine { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Rucking { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Rugby { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Running { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Sailing { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Scootering { get; }
+    Kkdev92.HealthData.ExerciseExerciseType ScubaDiving { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Shooting { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Shoveling { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Skateboarding { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Skating { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Skiing { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Skydiving { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Snorkeling { get; }
+    Kkdev92.HealthData.ExerciseExerciseType SnowSport { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Snowboarding { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Snowmobiling { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Snowshoeing { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Soccer { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Softball { get; }
+    Kkdev92.HealthData.ExerciseExerciseType SpeedSkating { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Spinning { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Sport { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Squash { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Stairclimber { get; }
+    Kkdev92.HealthData.ExerciseExerciseType StationaryBike { get; }
+    Kkdev92.HealthData.ExerciseExerciseType StepTraining { get; }
+    Kkdev92.HealthData.ExerciseExerciseType StrengthTraining { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Stretching { get; }
+    Kkdev92.HealthData.ExerciseExerciseType StrollerWalk { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Surfing { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Swimming { get; }
+    Kkdev92.HealthData.ExerciseExerciseType SwimmingOpenWater { get; }
+    Kkdev92.HealthData.ExerciseExerciseType SwimmingPool { get; }
+    Kkdev92.HealthData.ExerciseExerciseType SynchronizedSwimming { get; }
+    Kkdev92.HealthData.ExerciseExerciseType TabataWorkout { get; }
+    Kkdev92.HealthData.ExerciseExerciseType TableTennis { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Taekwondo { get; }
+    Kkdev92.HealthData.ExerciseExerciseType TaiChi { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Tango { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Tennis { get; }
+    Kkdev92.HealthData.ExerciseExerciseType TrackAndField { get; }
+    Kkdev92.HealthData.ExerciseExerciseType TrailRun { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Trampoline { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Treadmill { get; }
+    Kkdev92.HealthData.ExerciseExerciseType TreadmillWalk { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Trx { get; }
+    Kkdev92.HealthData.ExerciseExerciseType UltimateFrisbee { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Unicycling { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Volleyball { get; }
+    Kkdev92.HealthData.ExerciseExerciseType VolleyballBeach { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Wakeboarding { get; }
+    Kkdev92.HealthData.ExerciseExerciseType WalkWithWeights { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Walking { get; }
+    Kkdev92.HealthData.ExerciseExerciseType WaterAerobics { get; }
+    Kkdev92.HealthData.ExerciseExerciseType WaterJogging { get; }
+    Kkdev92.HealthData.ExerciseExerciseType WaterPolo { get; }
+    Kkdev92.HealthData.ExerciseExerciseType WaterSkiing { get; }
+    Kkdev92.HealthData.ExerciseExerciseType WaterSport { get; }
+    Kkdev92.HealthData.ExerciseExerciseType WaterVolleyball { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Weeding { get; }
+    Kkdev92.HealthData.ExerciseExerciseType WeightMachines { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Weightlifting { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Weights { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Wheelchair { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Windsurfing { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Workout { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Wrestling { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Yoga { get; }
+    Kkdev92.HealthData.ExerciseExerciseType YogaBikram { get; }
+    Kkdev92.HealthData.ExerciseExerciseType YogaHatha { get; }
+    Kkdev92.HealthData.ExerciseExerciseType YogaPower { get; }
+    Kkdev92.HealthData.ExerciseExerciseType YogaVinyasa { get; }
+    Kkdev92.HealthData.ExerciseExerciseType Zumba { get; }
+    System.Boolean Equals(Kkdev92.HealthData.ExerciseExerciseType other)
+    System.Boolean Equals(System.Object obj)
+    System.Int32 GetHashCode()
+    System.String ToString()
+    System.String Value { get; set; }
+    System.Void Deconstruct(System.String& Value)
+class Kkdev92.HealthData.ExerciseMetadata
+    .ctor()
+    Nullable<System.Boolean> HasGps { get; set; }
+    Nullable<System.Int64> PoolLengthMillimeters { get; set; }
+class Kkdev92.HealthData.ExportExerciseTcxRequest
+    .ctor()
+    Nullable<System.Boolean> PartialData { get; set; }
+    System.String Name { get; set; }
+class Kkdev92.HealthData.ExportExerciseTcxResponse
+    .ctor()
+    System.String TcxData { get; set; }
+class Kkdev92.HealthData.Floors
+    .ctor()
+    Kkdev92.HealthData.ObservationTimeInterval Interval { get; set; }
+    Nullable<System.Int64> Count { get; set; }
+class Kkdev92.HealthData.FloorsRollupValue
+    .ctor()
+    Nullable<System.Int64> CountSum { get; set; }
+class Kkdev92.HealthData.Food
+    .ctor()
+    IReadOnlyList<Kkdev92.HealthData.FoodServing> Servings { get; set; }
+    IReadOnlyList<Kkdev92.HealthData.NutrientQuantity> Nutrients { get; set; }
+    Kkdev92.HealthData.EnergyQuantity EnergyAvg { get; set; }
+    Kkdev92.HealthData.EnergyQuantity EnergyFromFat { get; set; }
+    Kkdev92.HealthData.EnergyQuantity EnergyMax { get; set; }
+    Kkdev92.HealthData.EnergyQuantity EnergyMin { get; set; }
+    Kkdev92.HealthData.FoodServing DefaultServing { get; set; }
+    Kkdev92.HealthData.WeightQuantity TotalCarbohydrate { get; set; }
+    Kkdev92.HealthData.WeightQuantity TotalFat { get; set; }
+    Nullable<Kkdev92.HealthData.FoodAccessLevel> AccessLevel { get; set; }
+    Nullable<Kkdev92.HealthData.FoodMealType> MealType { get; set; }
+    System.String Brand { get; set; }
+    System.String Description { get; set; }
+    System.String DisplayName { get; set; }
+    System.String LanguageCode { get; set; }
+struct Kkdev92.HealthData.FoodAccessLevel
+    .ctor(System.String Value)
+    Kkdev92.HealthData.FoodAccessLevel FoodAccessLevelPrivate { get; }
+    Kkdev92.HealthData.FoodAccessLevel FoodAccessLevelPublic { get; }
+    Kkdev92.HealthData.FoodAccessLevel FoodAccessLevelUnspecified { get; }
+    Kkdev92.HealthData.FoodAccessLevel FromValue(System.String value)
+    System.Boolean Equals(Kkdev92.HealthData.FoodAccessLevel other)
+    System.Boolean Equals(System.Object obj)
+    System.Int32 GetHashCode()
+    System.String ToString()
+    System.String Value { get; set; }
+    System.Void Deconstruct(System.String& Value)
+struct Kkdev92.HealthData.FoodMealType
+    .ctor(System.String Value)
+    Kkdev92.HealthData.FoodMealType AfterDinner { get; }
+    Kkdev92.HealthData.FoodMealType Anytime { get; }
+    Kkdev92.HealthData.FoodMealType BeforeBreakfast { get; }
+    Kkdev92.HealthData.FoodMealType BeforeDinner { get; }
+    Kkdev92.HealthData.FoodMealType BeforeLunch { get; }
+    Kkdev92.HealthData.FoodMealType Breakfast { get; }
+    Kkdev92.HealthData.FoodMealType Dinner { get; }
+    Kkdev92.HealthData.FoodMealType FromValue(System.String value)
+    Kkdev92.HealthData.FoodMealType Lunch { get; }
+    Kkdev92.HealthData.FoodMealType MealTypeUnspecified { get; }
+    Kkdev92.HealthData.FoodMealType Snack { get; }
+    System.Boolean Equals(Kkdev92.HealthData.FoodMealType other)
+    System.Boolean Equals(System.Object obj)
+    System.Int32 GetHashCode()
+    System.String ToString()
+    System.String Value { get; set; }
+    System.Void Deconstruct(System.String& Value)
+class Kkdev92.HealthData.FoodMeasurementUnit
+    .ctor()
+    System.String DisplayName { get; set; }
+    System.String PluralDisplayName { get; set; }
+class Kkdev92.HealthData.FoodServing
+    .ctor()
+    Nullable<System.Double> Amount { get; set; }
+    Nullable<System.Double> Multiplier { get; set; }
+    System.String FoodMeasurementUnit { get; set; }
+    System.String FoodMeasurementUnitDisplayName { get; set; }
+    System.String FoodMeasurementUnitDisplayNamePlural { get; set; }
+class Kkdev92.HealthData.GetDataPointsRequest
+    .ctor()
+    System.String Name { get; set; }
+class Kkdev92.HealthData.GetIdentityRequest
+    .ctor()
+    System.String Name { get; set; }
+class Kkdev92.HealthData.GetIrnProfileRequest
+    .ctor()
+    System.String Name { get; set; }
+class Kkdev92.HealthData.GetPairedDevicesRequest
+    .ctor()
+    System.String Name { get; set; }
+class Kkdev92.HealthData.GetProfileRequest
+    .ctor()
+    System.String Name { get; set; }
+class Kkdev92.HealthData.GetSettingsRequest
+    .ctor()
+    System.String Name { get; set; }
+struct Kkdev92.HealthData.GoogleDuration
+    .ctor(System.Int64 seconds, System.Int32 nanos)
+    Kkdev92.HealthData.GoogleDuration FromTimeSpan(System.TimeSpan value)
+    Kkdev92.HealthData.GoogleDuration Parse(System.String value)
+    Kkdev92.HealthData.GoogleDuration Zero { get; }
+    System.Boolean Equals(Kkdev92.HealthData.GoogleDuration other)
+    System.Boolean Equals(System.Object obj)
+    System.Boolean TryParse(System.String value, Kkdev92.HealthData.GoogleDuration& result)
+    System.Int32 GetHashCode()
+    System.Int32 Nanos { get; }
+    System.Int64 Seconds { get; }
+    System.String ToString()
+    System.TimeSpan ToTimeSpan()
+struct Kkdev92.HealthData.GoogleFieldMask
+    .ctor(IEnumerable<System.String> paths)
+    IReadOnlyList<System.String> Paths { get; }
+    Kkdev92.HealthData.GoogleFieldMask Parse(System.String value)
+    System.Boolean Equals(Kkdev92.HealthData.GoogleFieldMask other)
+    System.Boolean Equals(System.Object obj)
+    System.Boolean IsEmpty { get; }
+    System.Int32 GetHashCode()
+    System.String ToString()
+struct Kkdev92.HealthData.GoogleTimestamp
+    .ctor(System.DateTimeOffset value)
+    Kkdev92.HealthData.GoogleTimestamp FromDateTimeOffset(System.DateTimeOffset value)
+    Kkdev92.HealthData.GoogleTimestamp Parse(System.String value)
+    System.Boolean Equals(Kkdev92.HealthData.GoogleTimestamp other)
+    System.Boolean Equals(System.Object obj)
+    System.Boolean TryParse(System.String value, Kkdev92.HealthData.GoogleTimestamp& result)
+    System.DateTimeOffset ToDateTimeOffset()
+    System.DateTimeOffset Value { get; }
+    System.Int32 CompareTo(Kkdev92.HealthData.GoogleTimestamp other)
+    System.Int32 GetHashCode()
+    System.String ToString()
+class Kkdev92.HealthData.HealthDataApiException
+    .ctor(System.Net.HttpStatusCode statusCode, System.String operationId = default, Kkdev92.HealthData.HealthDataError error = default, Nullable<System.TimeSpan> retryAfter = default, System.Exception innerException = default)
+    Kkdev92.HealthData.HealthDataError Error { get; }
+    Nullable<System.TimeSpan> RetryAfter { get; }
+    System.Boolean IsRateLimited { get; }
+    System.String OperationId { get; }
+    System.String Reason { get; }
+static class Kkdev92.HealthData.HealthDataApiMetadata
+    System.Uri DefaultBaseAddress { get; }
+    const System.String ActivitySourceName
+class Kkdev92.HealthData.HealthDataClient
+    .ctor(System.Net.Http.HttpClient httpClient)
+    .ctor(System.Net.Http.HttpClient httpClient, Kkdev92.HealthData.HealthDataClientOptions options)
+    Kkdev92.HealthData.HealthDataClientOptions Options { get; }
+    Kkdev92.HealthData.ProjectsResource Projects { get; }
+    Kkdev92.HealthData.UsersResource Users { get; }
+class Kkdev92.HealthData.HealthDataClientOptions
+    .ctor()
+    System.Boolean PrettyPrintResponses { get; set; }
+    System.Int32 MaxErrorResponseBytes { get; set; }
+    System.Uri BaseAddress { get; set; }
+class Kkdev92.HealthData.HealthDataError
+    .ctor()
+    IReadOnlyList<Kkdev92.HealthData.HealthDataErrorDetail> Details { get; set; }
+    System.Int32 Code { get; set; }
+    System.String Domain { get; }
+    System.String Message { get; set; }
+    System.String Reason { get; }
+    System.String Status { get; set; }
+class Kkdev92.HealthData.HealthDataErrorDetail
+    .ctor()
+    Nullable<Kkdev92.HealthData.GoogleDuration> RetryDelay { get; set; }
+    System.Boolean IsErrorInfo { get; }
+    System.Boolean IsRetryInfo { get; }
+    System.String Domain { get; set; }
+    System.String Reason { get; set; }
+    System.String Type { get; set; }
+    System.Text.Json.JsonElement Raw { get; set; }
+    const System.String BadRequestType
+    const System.String ErrorInfoType
+    const System.String HelpType
+    const System.String LocalizedMessageType
+    const System.String RetryInfoType
+static class Kkdev92.HealthData.HealthDataErrorParser
+    Kkdev92.HealthData.HealthDataError Parse(ReadOnlySpan<System.Byte> utf8Json)
+    Task<Kkdev92.HealthData.HealthDataError> ParseAsync(System.IO.Stream stream, System.Int32 maxBytes, System.Threading.CancellationToken cancellationToken = default)
+static class Kkdev92.HealthData.HealthDataErrorReasons
+    System.Boolean IsDocumented(System.String reason)
+    const System.String AccountNotLinked
+    const System.String ApiPrivatePreviewAccessDenied
+    const System.String DataAccessDenied
+    const System.String DataPointNotOwnedByClient
+    const System.String DataTypeMismatch
+    const System.String DataTypesCannotBeEmpty
+    const System.String DisallowedOauthScopes
+    const System.String InternalError
+    const System.String InvalidCivilDateTime
+    const System.String InvalidDataPointDataSourceFamily
+    const System.String InvalidDataPointFilter
+    const System.String InvalidDataPointFilterCivilDateTimeFormat
+    const System.String InvalidDataPointFilterCollectionMismatch
+    const System.String InvalidDataPointFilterDataTypeMember
+    const System.String InvalidDataPointFilterDataTypeRestriction
+    const System.String InvalidDataPointFilterExpressionStructure
+    const System.String InvalidDataPointFilterMissingToken
+    const System.String InvalidDataPointFilterMixedDataTypeRestrictions
+    const System.String InvalidDataPointFilterMixedTimeRestrictions
+    const System.String InvalidDataPointFilterRestrictionArgument
+    const System.String InvalidDataPointFilterRestrictionComparable
+    const System.String InvalidDataPointFilterRestrictionComparator
+    const System.String InvalidDataPointFilterSyntax
+    const System.String InvalidDataPointFilterTimestampFormat
+    const System.String InvalidDataPointFilterUnexpectedEndOfInput
+    const System.String InvalidDataPointFilterUnexpectedToken
+    const System.String InvalidDataPointName
+    const System.String InvalidDataType
+    const System.String InvalidDataTypeFormat
+    const System.String InvalidFieldMaskData
+    const System.String InvalidFilterFormat
+    const System.String InvalidPageSize
+    const System.String InvalidPageToken
+    const System.String InvalidParentDataTypeCollection
+    const System.String InvalidParentDataTypeCollectionFormat
+    const System.String InvalidProfileData
+    const System.String InvalidRollupQueryDuration
+    const System.String InvalidRollupWindow
+    const System.String InvalidSubscriberName
+    const System.String InvalidSubscriptionName
+    const System.String InvalidTimeRange
+    const System.String InvalidTimeRangeIntervalFormat
+    const System.String InvalidUserResourceName
+    const System.String MissingDataPointFilter
+    const System.String MissingDataPointId
+    const System.String MissingDataPointNames
+    const System.String MissingDataPointValue
+    const System.String MissingDataTypes
+    const System.String MissingOauthScope
+    const System.String MissingSubscriber
+    const System.String MissingSubscription
+    const System.String MissingUser
+    const System.String MultipleDataTypesUnsupported
+    const System.String ResourceNotFound
+    const System.String ResourcePermissionDenied
+    const System.String SleepAlreadyExists
+    const System.String UnsupportedDataTypeAction
+    const System.String UpdateOnlyUpsertSupported
+static class Kkdev92.HealthData.HealthDataGeneratedApi
+    const System.Int32 OperationCount
+    const System.String ApiVersion
+    const System.String DiscoveryRevision
+    const System.String SpecSha256
+static class Kkdev92.HealthData.HealthDataGeneratedOperations
+    IReadOnlyList<Kkdev92.HealthData.Http.HealthDataOperationDescriptor> All
+    Kkdev92.HealthData.Http.HealthDataOperationDescriptor ProjectsSubscribersCreate
+    Kkdev92.HealthData.Http.HealthDataOperationDescriptor ProjectsSubscribersDelete
+    Kkdev92.HealthData.Http.HealthDataOperationDescriptor ProjectsSubscribersList
+    Kkdev92.HealthData.Http.HealthDataOperationDescriptor ProjectsSubscribersPatch
+    Kkdev92.HealthData.Http.HealthDataOperationDescriptor ProjectsSubscribersSubscriptionsCreate
+    Kkdev92.HealthData.Http.HealthDataOperationDescriptor ProjectsSubscribersSubscriptionsDelete
+    Kkdev92.HealthData.Http.HealthDataOperationDescriptor ProjectsSubscribersSubscriptionsList
+    Kkdev92.HealthData.Http.HealthDataOperationDescriptor ProjectsSubscribersSubscriptionsPatch
+    Kkdev92.HealthData.Http.HealthDataOperationDescriptor UsersDataTypesDataPointsBatchDelete
+    Kkdev92.HealthData.Http.HealthDataOperationDescriptor UsersDataTypesDataPointsCreate
+    Kkdev92.HealthData.Http.HealthDataOperationDescriptor UsersDataTypesDataPointsDailyRollUp
+    Kkdev92.HealthData.Http.HealthDataOperationDescriptor UsersDataTypesDataPointsExportExerciseTcx
+    Kkdev92.HealthData.Http.HealthDataOperationDescriptor UsersDataTypesDataPointsGet
+    Kkdev92.HealthData.Http.HealthDataOperationDescriptor UsersDataTypesDataPointsList
+    Kkdev92.HealthData.Http.HealthDataOperationDescriptor UsersDataTypesDataPointsPatch
+    Kkdev92.HealthData.Http.HealthDataOperationDescriptor UsersDataTypesDataPointsReconcile
+    Kkdev92.HealthData.Http.HealthDataOperationDescriptor UsersDataTypesDataPointsRollUp
+    Kkdev92.HealthData.Http.HealthDataOperationDescriptor UsersGetIdentity
+    Kkdev92.HealthData.Http.HealthDataOperationDescriptor UsersGetIrnProfile
+    Kkdev92.HealthData.Http.HealthDataOperationDescriptor UsersGetProfile
+    Kkdev92.HealthData.Http.HealthDataOperationDescriptor UsersGetSettings
+    Kkdev92.HealthData.Http.HealthDataOperationDescriptor UsersPairedDevicesGet
+    Kkdev92.HealthData.Http.HealthDataOperationDescriptor UsersPairedDevicesList
+    Kkdev92.HealthData.Http.HealthDataOperationDescriptor UsersUpdateProfile
+    Kkdev92.HealthData.Http.HealthDataOperationDescriptor UsersUpdateSettings
+static class Kkdev92.HealthData.HealthDataScopes
+    const System.String ActivityAndFitnessReadonly
+    const System.String ActivityAndFitnessWriteonly
+    const System.String CloudPlatform
+    const System.String EcgReadonly
+    const System.String HealthMetricsAndMeasurementsReadonly
+    const System.String HealthMetricsAndMeasurementsWriteonly
+    const System.String IrnReadonly
+    const System.String LocationReadonly
+    const System.String LocationWriteonly
+    const System.String LoggedSymptomsWriteonly
+    const System.String MindfulnessWriteonly
+    const System.String NutritionReadonly
+    const System.String NutritionWriteonly
+    const System.String ProfileReadonly
+    const System.String ProfileWriteonly
+    const System.String ReproductiveHealthWriteonly
+    const System.String SettingsReadonly
+    const System.String SettingsWriteonly
+    const System.String SleepReadonly
+    const System.String SleepWriteonly
+class Kkdev92.HealthData.HeartBeat
+    .ctor()
+    Kkdev92.HealthData.CivilDateTime CivilTime { get; set; }
+    Nullable<Kkdev92.HealthData.GoogleDuration> UtcOffset { get; set; }
+    Nullable<Kkdev92.HealthData.GoogleTimestamp> PhysicalTime { get; set; }
+    Nullable<System.Int32> BeatsPerMinute { get; set; }
+class Kkdev92.HealthData.HeartRate
+    .ctor()
+    Kkdev92.HealthData.HeartRateMetadata Metadata { get; set; }
+    Kkdev92.HealthData.ObservationSampleTime SampleTime { get; set; }
+    Nullable<System.Int64> BeatsPerMinute { get; set; }
+class Kkdev92.HealthData.HeartRateMetadata
+    .ctor()
+    Nullable<Kkdev92.HealthData.HeartRateMetadataMotionContext> MotionContext { get; set; }
+    Nullable<Kkdev92.HealthData.HeartRateMetadataSensorLocation> SensorLocation { get; set; }
+struct Kkdev92.HealthData.HeartRateMetadataMotionContext
+    .ctor(System.String Value)
+    Kkdev92.HealthData.HeartRateMetadataMotionContext Active { get; }
+    Kkdev92.HealthData.HeartRateMetadataMotionContext FromValue(System.String value)
+    Kkdev92.HealthData.HeartRateMetadataMotionContext MotionContextUnspecified { get; }
+    Kkdev92.HealthData.HeartRateMetadataMotionContext Sedentary { get; }
+    System.Boolean Equals(Kkdev92.HealthData.HeartRateMetadataMotionContext other)
+    System.Boolean Equals(System.Object obj)
+    System.Int32 GetHashCode()
+    System.String ToString()
+    System.String Value { get; set; }
+    System.Void Deconstruct(System.String& Value)
+struct Kkdev92.HealthData.HeartRateMetadataSensorLocation
+    .ctor(System.String Value)
+    Kkdev92.HealthData.HeartRateMetadataSensorLocation Chest { get; }
+    Kkdev92.HealthData.HeartRateMetadataSensorLocation EarLobe { get; }
+    Kkdev92.HealthData.HeartRateMetadataSensorLocation Finger { get; }
+    Kkdev92.HealthData.HeartRateMetadataSensorLocation Foot { get; }
+    Kkdev92.HealthData.HeartRateMetadataSensorLocation FromValue(System.String value)
+    Kkdev92.HealthData.HeartRateMetadataSensorLocation Hand { get; }
+    Kkdev92.HealthData.HeartRateMetadataSensorLocation SensorLocationUnspecified { get; }
+    Kkdev92.HealthData.HeartRateMetadataSensorLocation Wrist { get; }
+    System.Boolean Equals(Kkdev92.HealthData.HeartRateMetadataSensorLocation other)
+    System.Boolean Equals(System.Object obj)
+    System.Int32 GetHashCode()
+    System.String ToString()
+    System.String Value { get; set; }
+    System.Void Deconstruct(System.String& Value)
+class Kkdev92.HealthData.HeartRateRollupValue
+    .ctor()
+    Nullable<System.Double> BeatsPerMinuteAvg { get; set; }
+    Nullable<System.Double> BeatsPerMinuteMax { get; set; }
+    Nullable<System.Double> BeatsPerMinuteMin { get; set; }
+class Kkdev92.HealthData.HeartRateVariability
+    .ctor()
+    Kkdev92.HealthData.ObservationSampleTime SampleTime { get; set; }
+    Nullable<System.Double> RootMeanSquareOfSuccessiveDifferencesMilliseconds { get; set; }
+    Nullable<System.Double> StandardDeviationMilliseconds { get; set; }
+class Kkdev92.HealthData.HeartRateVariabilityPersonalRangeRollupValue
+    .ctor()
+    Nullable<System.Double> AverageHeartRateVariabilityMillisecondsMax { get; set; }
+    Nullable<System.Double> AverageHeartRateVariabilityMillisecondsMin { get; set; }
+class Kkdev92.HealthData.HeartRateZone
+    .ctor()
+    Nullable<Kkdev92.HealthData.HeartRateZoneHeartRateZoneType> HeartRateZoneType { get; set; }
+    Nullable<System.Int64> MaxBeatsPerMinute { get; set; }
+    Nullable<System.Int64> MinBeatsPerMinute { get; set; }
+struct Kkdev92.HealthData.HeartRateZoneHeartRateZoneType
+    .ctor(System.String Value)
+    Kkdev92.HealthData.HeartRateZoneHeartRateZoneType FromValue(System.String value)
+    Kkdev92.HealthData.HeartRateZoneHeartRateZoneType HeartRateZoneTypeUnspecified { get; }
+    Kkdev92.HealthData.HeartRateZoneHeartRateZoneType Light { get; }
+    Kkdev92.HealthData.HeartRateZoneHeartRateZoneType Moderate { get; }
+    Kkdev92.HealthData.HeartRateZoneHeartRateZoneType Peak { get; }
+    Kkdev92.HealthData.HeartRateZoneHeartRateZoneType Vigorous { get; }
+    System.Boolean Equals(Kkdev92.HealthData.HeartRateZoneHeartRateZoneType other)
+    System.Boolean Equals(System.Object obj)
+    System.Int32 GetHashCode()
+    System.String ToString()
+    System.String Value { get; set; }
+    System.Void Deconstruct(System.String& Value)
+class Kkdev92.HealthData.Height
+    .ctor()
+    Kkdev92.HealthData.ObservationSampleTime SampleTime { get; set; }
+    Nullable<System.Int64> HeightMillimeters { get; set; }
+class Kkdev92.HealthData.Http.HealthDataOperationDescriptor
+    .ctor()
+    IReadOnlyList<System.String> Scopes { get; set; }
+    Kkdev92.HealthData.Http.HealthDataScopeCombination ScopeCombination { get; set; }
+    Kkdev92.HealthData.Http.PaginationKind Pagination { get; set; }
+    Kkdev92.HealthData.Http.ResponseKind ResponseKind { get; set; }
+    Kkdev92.HealthData.Http.RetryClassification RetryClassification { get; set; }
+    System.Boolean RequiresProjectCredentials { get; set; }
+    System.Net.Http.HttpMethod Method { get; set; }
+    System.String ApiVersion { get; set; }
+    System.String Id { get; set; }
+    System.String PathTemplate { get; set; }
+class Kkdev92.HealthData.Http.HealthDataRequestBuilder
+    .ctor(System.String pathTemplate)
+    Kkdev92.HealthData.Http.HealthDataRequestBuilder AddQuery(System.String wireName, Nullable<Kkdev92.HealthData.GoogleFieldMask> value)
+    Kkdev92.HealthData.Http.HealthDataRequestBuilder AddQuery(System.String wireName, Nullable<System.Boolean> value)
+    Kkdev92.HealthData.Http.HealthDataRequestBuilder AddQuery(System.String wireName, Nullable<System.Int32> value)
+    Kkdev92.HealthData.Http.HealthDataRequestBuilder AddQuery(System.String wireName, System.String value)
+    Kkdev92.HealthData.Http.HealthDataRequestBuilder SetPath(System.String wireName, System.String value)
+    System.String Build()
+    System.String PathTemplate { get; }
+    System.String ToString()
+enum Kkdev92.HealthData.Http.HealthDataScopeCombination
+    System.Int32 value__
+    const Kkdev92.HealthData.Http.HealthDataScopeCombination AllOf
+    const Kkdev92.HealthData.Http.HealthDataScopeCombination AnyOf
+class Kkdev92.HealthData.Http.HealthDataTransport
+    .ctor(System.Net.Http.HttpClient httpClient, Kkdev92.HealthData.HealthDataClientOptions options)
+    JsonTypeInfo<T> ReadInfo()
+    JsonTypeInfo<T> WriteInfo()
+    System.Net.Http.HttpContent CreateJsonContent(TRequest value, JsonTypeInfo<TRequest> typeInfo)
+    System.Threading.Tasks.Task DownloadAsync(Kkdev92.HealthData.Http.HealthDataOperationDescriptor descriptor, System.String relativeUri, System.IO.Stream destination, System.Threading.CancellationToken cancellationToken)
+    System.Threading.Tasks.Task SendAsync(Kkdev92.HealthData.Http.HealthDataOperationDescriptor descriptor, System.String relativeUri, System.Net.Http.HttpContent content, System.Threading.CancellationToken cancellationToken)
+    Task<TResponse> SendAsync(Kkdev92.HealthData.Http.HealthDataOperationDescriptor descriptor, System.String relativeUri, System.Net.Http.HttpContent content, JsonTypeInfo<TResponse> responseTypeInfo, System.Threading.CancellationToken cancellationToken)
+static class Kkdev92.HealthData.Http.HttpRequestMessageExtensions
+    Kkdev92.HealthData.Http.HealthDataOperationDescriptor GetHealthDataOperation(System.Net.Http.HttpRequestMessage request)
+    System.Void SetHealthDataOperation(System.Net.Http.HttpRequestMessage request, Kkdev92.HealthData.Http.HealthDataOperationDescriptor descriptor)
+enum Kkdev92.HealthData.Http.PaginationKind
+    System.Int32 value__
+    const Kkdev92.HealthData.Http.PaginationKind Body
+    const Kkdev92.HealthData.Http.PaginationKind None
+    const Kkdev92.HealthData.Http.PaginationKind Query
+    const Kkdev92.HealthData.Http.PaginationKind RequestOnly
+enum Kkdev92.HealthData.Http.ResponseKind
+    System.Int32 value__
+    const Kkdev92.HealthData.Http.ResponseKind Empty
+    const Kkdev92.HealthData.Http.ResponseKind Json
+    const Kkdev92.HealthData.Http.ResponseKind MediaOrJson
+    const Kkdev92.HealthData.Http.ResponseKind Operation
+enum Kkdev92.HealthData.Http.RetryClassification
+    System.Int32 value__
+    const Kkdev92.HealthData.Http.RetryClassification Idempotent
+    const Kkdev92.HealthData.Http.RetryClassification Never
+    const Kkdev92.HealthData.Http.RetryClassification Safe
+    const Kkdev92.HealthData.Http.RetryClassification SemanticallySafe
+static class Kkdev92.HealthData.Http.UriTemplate
+    System.String EscapeMultiSegment(System.String value)
+    System.String EscapeSingleSegment(System.String value)
+    System.String Expand(System.String template, IReadOnlyDictionary<System.String, System.String> values)
+class Kkdev92.HealthData.HydrationLog
+    .ctor()
+    Kkdev92.HealthData.SessionTimeInterval Interval { get; set; }
+    Kkdev92.HealthData.VolumeQuantity AmountConsumed { get; set; }
+class Kkdev92.HealthData.HydrationLogRollupValue
+    .ctor()
+    Kkdev92.HealthData.VolumeQuantityRollup AmountConsumed { get; set; }
+interface Kkdev92.HealthData.IOpenStringValue`1
+    System.String Value { get; }
+    TSelf FromValue(System.String value)
+class Kkdev92.HealthData.Identity
+    .ctor()
+    System.String HealthUserId { get; set; }
+    System.String LegacyUserId { get; set; }
+    System.String Name { get; set; }
+class Kkdev92.HealthData.Interval
+    .ctor()
+    Nullable<Kkdev92.HealthData.GoogleTimestamp> EndTime { get; set; }
+    Nullable<Kkdev92.HealthData.GoogleTimestamp> StartTime { get; set; }
+class Kkdev92.HealthData.IrnProfile
+    .ctor()
+    Nullable<Kkdev92.HealthData.GoogleTimestamp> UpdateTime { get; set; }
+    Nullable<System.Boolean> EnrollmentStatus { get; set; }
+    Nullable<System.Boolean> OnboardingStatus { get; set; }
+    System.String Name { get; set; }
+class Kkdev92.HealthData.IrregularRhythmNotification
+    .ctor()
+    IReadOnlyList<Kkdev92.HealthData.AlertWindow> AlertWindows { get; set; }
+    Kkdev92.HealthData.MedicalDeviceInfo MedicalDeviceInfo { get; set; }
+    Kkdev92.HealthData.SessionTimeInterval Interval { get; set; }
+class Kkdev92.HealthData.ListDataPointsRequest
+    .ctor()
+    Nullable<System.Int32> PageSize { get; set; }
+    System.String Filter { get; set; }
+    System.String PageToken { get; set; }
+    System.String Parent { get; set; }
+class Kkdev92.HealthData.ListDataPointsResponse
+    .ctor()
+    IReadOnlyList<Kkdev92.HealthData.DataPoint> DataPoints { get; set; }
+    System.String NextPageToken { get; set; }
+class Kkdev92.HealthData.ListPairedDevicesRequest
+    .ctor()
+    Nullable<System.Int32> PageSize { get; set; }
+    System.String PageToken { get; set; }
+    System.String Parent { get; set; }
+class Kkdev92.HealthData.ListPairedDevicesResponse
+    .ctor()
+    IReadOnlyList<Kkdev92.HealthData.PairedDevice> PairedDevices { get; set; }
+    System.String NextPageToken { get; set; }
+class Kkdev92.HealthData.ListSubscribersRequest
+    .ctor()
+    Nullable<System.Int32> PageSize { get; set; }
+    System.String PageToken { get; set; }
+    System.String Parent { get; set; }
+class Kkdev92.HealthData.ListSubscribersResponse
+    .ctor()
+    IReadOnlyList<Kkdev92.HealthData.Subscriber> Subscribers { get; set; }
+    Nullable<System.Int32> TotalSize { get; set; }
+    System.String NextPageToken { get; set; }
+class Kkdev92.HealthData.ListSubscriptionsRequest
+    .ctor()
+    Nullable<System.Int32> PageSize { get; set; }
+    System.String Filter { get; set; }
+    System.String PageToken { get; set; }
+    System.String Parent { get; set; }
+class Kkdev92.HealthData.ListSubscriptionsResponse
+    .ctor()
+    IReadOnlyList<Kkdev92.HealthData.Subscription> Subscriptions { get; set; }
+    System.String NextPageToken { get; set; }
+class Kkdev92.HealthData.MedicalDeviceInfo
+    .ctor()
+    System.String AlgorithmVersion { get; set; }
+    System.String DeviceModel { get; set; }
+    System.String FeatureVersion { get; set; }
+    System.String FirmwareVersion { get; set; }
+    System.String ServiceVersion { get; set; }
+class Kkdev92.HealthData.MenstrualPeriod
+    .ctor()
+    Kkdev92.HealthData.ObservationTimeInterval Interval { get; set; }
+    System.String Notes { get; set; }
+class Kkdev92.HealthData.MetricsSummary
+    .ctor()
+    Kkdev92.HealthData.MobilityMetrics MobilityMetrics { get; set; }
+    Kkdev92.HealthData.TimeInHeartRateZones HeartRateZoneDurations { get; set; }
+    Nullable<System.Double> AveragePaceSecondsPerMeter { get; set; }
+    Nullable<System.Double> AverageSpeedMillimetersPerSecond { get; set; }
+    Nullable<System.Double> CaloriesKcal { get; set; }
+    Nullable<System.Double> DistanceMillimeters { get; set; }
+    Nullable<System.Double> ElevationGainMillimeters { get; set; }
+    Nullable<System.Double> RunVo2Max { get; set; }
+    Nullable<System.Double> TotalSwimLengths { get; set; }
+    Nullable<System.Int64> ActiveZoneMinutes { get; set; }
+    Nullable<System.Int64> AverageHeartRateBeatsPerMinute { get; set; }
+    Nullable<System.Int64> Steps { get; set; }
+class Kkdev92.HealthData.MobilityMetrics
+    .ctor()
+    Nullable<Kkdev92.HealthData.GoogleDuration> AvgGroundContactTimeDuration { get; set; }
+    Nullable<System.Double> AvgCadenceStepsPerMinute { get; set; }
+    Nullable<System.Double> AvgVerticalRatio { get; set; }
+    Nullable<System.Int64> AvgStrideLengthMillimeters { get; set; }
+    Nullable<System.Int64> AvgVerticalOscillationMillimeters { get; set; }
+class Kkdev92.HealthData.Moods
+    .ctor()
+    IReadOnlyList<Kkdev92.HealthData.MoodsMoods> MoodsValue { get; set; }
+    IReadOnlyList<Kkdev92.HealthData.MoodsValences> Valences { get; set; }
+    Kkdev92.HealthData.ObservationSampleTime SampleTime { get; set; }
+struct Kkdev92.HealthData.MoodsMoods
+    .ctor(System.String Value)
+    Kkdev92.HealthData.MoodsMoods Accomplished { get; }
+    Kkdev92.HealthData.MoodsMoods Afraid { get; }
+    Kkdev92.HealthData.MoodsMoods Amazed { get; }
+    Kkdev92.HealthData.MoodsMoods Amused { get; }
+    Kkdev92.HealthData.MoodsMoods Angry { get; }
+    Kkdev92.HealthData.MoodsMoods Annoyed { get; }
+    Kkdev92.HealthData.MoodsMoods Anxious { get; }
+    Kkdev92.HealthData.MoodsMoods Ashamed { get; }
+    Kkdev92.HealthData.MoodsMoods Awestruck { get; }
+    Kkdev92.HealthData.MoodsMoods Bitter { get; }
+    Kkdev92.HealthData.MoodsMoods Bored { get; }
+    Kkdev92.HealthData.MoodsMoods Brave { get; }
+    Kkdev92.HealthData.MoodsMoods Calm { get; }
+    Kkdev92.HealthData.MoodsMoods Compassionate { get; }
+    Kkdev92.HealthData.MoodsMoods Confident { get; }
+    Kkdev92.HealthData.MoodsMoods Confused { get; }
+    Kkdev92.HealthData.MoodsMoods Content { get; }
+    Kkdev92.HealthData.MoodsMoods Curious { get; }
+    Kkdev92.HealthData.MoodsMoods Disappointed { get; }
+    Kkdev92.HealthData.MoodsMoods Discouraged { get; }
+    Kkdev92.HealthData.MoodsMoods Disgusted { get; }
+    Kkdev92.HealthData.MoodsMoods Drained { get; }
+    Kkdev92.HealthData.MoodsMoods Embarrassed { get; }
+    Kkdev92.HealthData.MoodsMoods Energized { get; }
+    Kkdev92.HealthData.MoodsMoods Envious { get; }
+    Kkdev92.HealthData.MoodsMoods Excited { get; }
+    Kkdev92.HealthData.MoodsMoods Fatigued { get; }
+    Kkdev92.HealthData.MoodsMoods FromValue(System.String value)
+    Kkdev92.HealthData.MoodsMoods Frustrated { get; }
+    Kkdev92.HealthData.MoodsMoods Grateful { get; }
+    Kkdev92.HealthData.MoodsMoods Guilty { get; }
+    Kkdev92.HealthData.MoodsMoods Happy { get; }
+    Kkdev92.HealthData.MoodsMoods Hopeful { get; }
+    Kkdev92.HealthData.MoodsMoods Hopeless { get; }
+    Kkdev92.HealthData.MoodsMoods Hurting { get; }
+    Kkdev92.HealthData.MoodsMoods Indifferent { get; }
+    Kkdev92.HealthData.MoodsMoods Inspired { get; }
+    Kkdev92.HealthData.MoodsMoods Irritated { get; }
+    Kkdev92.HealthData.MoodsMoods Jealous { get; }
+    Kkdev92.HealthData.MoodsMoods Joyful { get; }
+    Kkdev92.HealthData.MoodsMoods Lonely { get; }
+    Kkdev92.HealthData.MoodsMoods Longing { get; }
+    Kkdev92.HealthData.MoodsMoods Loving { get; }
+    Kkdev92.HealthData.MoodsMoods MoodUnspecified { get; }
+    Kkdev92.HealthData.MoodsMoods Neutral { get; }
+    Kkdev92.HealthData.MoodsMoods Overwhelmed { get; }
+    Kkdev92.HealthData.MoodsMoods Passionate { get; }
+    Kkdev92.HealthData.MoodsMoods Peaceful { get; }
+    Kkdev92.HealthData.MoodsMoods Proud { get; }
+    Kkdev92.HealthData.MoodsMoods Relieved { get; }
+    Kkdev92.HealthData.MoodsMoods Sad { get; }
+    Kkdev92.HealthData.MoodsMoods Satisfied { get; }
+    Kkdev92.HealthData.MoodsMoods Scared { get; }
+    Kkdev92.HealthData.MoodsMoods Stressed { get; }
+    Kkdev92.HealthData.MoodsMoods Surprised { get; }
+    Kkdev92.HealthData.MoodsMoods VeryCalm { get; }
+    Kkdev92.HealthData.MoodsMoods VeryStressed { get; }
+    Kkdev92.HealthData.MoodsMoods Worried { get; }
+    System.Boolean Equals(Kkdev92.HealthData.MoodsMoods other)
+    System.Boolean Equals(System.Object obj)
+    System.Int32 GetHashCode()
+    System.String ToString()
+    System.String Value { get; set; }
+    System.Void Deconstruct(System.String& Value)
+struct Kkdev92.HealthData.MoodsValences
+    .ctor(System.String Value)
+    Kkdev92.HealthData.MoodsValences Baseline { get; }
+    Kkdev92.HealthData.MoodsValences FromValue(System.String value)
+    Kkdev92.HealthData.MoodsValences Pleasant { get; }
+    Kkdev92.HealthData.MoodsValences Unpleasant { get; }
+    Kkdev92.HealthData.MoodsValences ValenceUnspecified { get; }
+    System.Boolean Equals(Kkdev92.HealthData.MoodsValences other)
+    System.Boolean Equals(System.Object obj)
+    System.Int32 GetHashCode()
+    System.String ToString()
+    System.String Value { get; set; }
+    System.Void Deconstruct(System.String& Value)
+class Kkdev92.HealthData.NutrientQuantity
+    .ctor()
+    Kkdev92.HealthData.WeightQuantity Quantity { get; set; }
+    Nullable<Kkdev92.HealthData.NutrientQuantityNutrient> Nutrient { get; set; }
+struct Kkdev92.HealthData.NutrientQuantityNutrient
+    .ctor(System.String Value)
+    Kkdev92.HealthData.NutrientQuantityNutrient Biotin { get; }
+    Kkdev92.HealthData.NutrientQuantityNutrient Caffeine { get; }
+    Kkdev92.HealthData.NutrientQuantityNutrient Calcium { get; }
+    Kkdev92.HealthData.NutrientQuantityNutrient Carbohydrates { get; }
+    Kkdev92.HealthData.NutrientQuantityNutrient Chloride { get; }
+    Kkdev92.HealthData.NutrientQuantityNutrient Cholesterol { get; }
+    Kkdev92.HealthData.NutrientQuantityNutrient Chromium { get; }
+    Kkdev92.HealthData.NutrientQuantityNutrient Copper { get; }
+    Kkdev92.HealthData.NutrientQuantityNutrient DietaryFiber { get; }
+    Kkdev92.HealthData.NutrientQuantityNutrient Folate { get; }
+    Kkdev92.HealthData.NutrientQuantityNutrient FolicAcid { get; }
+    Kkdev92.HealthData.NutrientQuantityNutrient FromValue(System.String value)
+    Kkdev92.HealthData.NutrientQuantityNutrient Iodine { get; }
+    Kkdev92.HealthData.NutrientQuantityNutrient Iron { get; }
+    Kkdev92.HealthData.NutrientQuantityNutrient Magnesium { get; }
+    Kkdev92.HealthData.NutrientQuantityNutrient Manganese { get; }
+    Kkdev92.HealthData.NutrientQuantityNutrient Molybdenum { get; }
+    Kkdev92.HealthData.NutrientQuantityNutrient MonounsaturatedFat { get; }
+    Kkdev92.HealthData.NutrientQuantityNutrient Niacin { get; }
+    Kkdev92.HealthData.NutrientQuantityNutrient NutrientUnspecified { get; }
+    Kkdev92.HealthData.NutrientQuantityNutrient PantothenicAcid { get; }
+    Kkdev92.HealthData.NutrientQuantityNutrient Phosphorus { get; }
+    Kkdev92.HealthData.NutrientQuantityNutrient PolyunsaturatedFat { get; }
+    Kkdev92.HealthData.NutrientQuantityNutrient Potassium { get; }
+    Kkdev92.HealthData.NutrientQuantityNutrient Protein { get; }
+    Kkdev92.HealthData.NutrientQuantityNutrient Riboflavin { get; }
+    Kkdev92.HealthData.NutrientQuantityNutrient SaturatedFat { get; }
+    Kkdev92.HealthData.NutrientQuantityNutrient Selenium { get; }
+    Kkdev92.HealthData.NutrientQuantityNutrient Sodium { get; }
+    Kkdev92.HealthData.NutrientQuantityNutrient Sugar { get; }
+    Kkdev92.HealthData.NutrientQuantityNutrient Thiamin { get; }
+    Kkdev92.HealthData.NutrientQuantityNutrient TransFat { get; }
+    Kkdev92.HealthData.NutrientQuantityNutrient UnsaturatedFat { get; }
+    Kkdev92.HealthData.NutrientQuantityNutrient VitaminA { get; }
+    Kkdev92.HealthData.NutrientQuantityNutrient VitaminB12 { get; }
+    Kkdev92.HealthData.NutrientQuantityNutrient VitaminB6 { get; }
+    Kkdev92.HealthData.NutrientQuantityNutrient VitaminC { get; }
+    Kkdev92.HealthData.NutrientQuantityNutrient VitaminD { get; }
+    Kkdev92.HealthData.NutrientQuantityNutrient VitaminE { get; }
+    Kkdev92.HealthData.NutrientQuantityNutrient VitaminK { get; }
+    Kkdev92.HealthData.NutrientQuantityNutrient Zinc { get; }
+    System.Boolean Equals(Kkdev92.HealthData.NutrientQuantityNutrient other)
+    System.Boolean Equals(System.Object obj)
+    System.Int32 GetHashCode()
+    System.String ToString()
+    System.String Value { get; set; }
+    System.Void Deconstruct(System.String& Value)
+class Kkdev92.HealthData.NutrientQuantityRollup
+    .ctor()
+    Kkdev92.HealthData.WeightQuantityRollup Quantity { get; set; }
+    Nullable<Kkdev92.HealthData.NutrientQuantityRollupNutrient> Nutrient { get; set; }
+struct Kkdev92.HealthData.NutrientQuantityRollupNutrient
+    .ctor(System.String Value)
+    Kkdev92.HealthData.NutrientQuantityRollupNutrient Biotin { get; }
+    Kkdev92.HealthData.NutrientQuantityRollupNutrient Caffeine { get; }
+    Kkdev92.HealthData.NutrientQuantityRollupNutrient Calcium { get; }
+    Kkdev92.HealthData.NutrientQuantityRollupNutrient Carbohydrates { get; }
+    Kkdev92.HealthData.NutrientQuantityRollupNutrient Chloride { get; }
+    Kkdev92.HealthData.NutrientQuantityRollupNutrient Cholesterol { get; }
+    Kkdev92.HealthData.NutrientQuantityRollupNutrient Chromium { get; }
+    Kkdev92.HealthData.NutrientQuantityRollupNutrient Copper { get; }
+    Kkdev92.HealthData.NutrientQuantityRollupNutrient DietaryFiber { get; }
+    Kkdev92.HealthData.NutrientQuantityRollupNutrient Folate { get; }
+    Kkdev92.HealthData.NutrientQuantityRollupNutrient FolicAcid { get; }
+    Kkdev92.HealthData.NutrientQuantityRollupNutrient FromValue(System.String value)
+    Kkdev92.HealthData.NutrientQuantityRollupNutrient Iodine { get; }
+    Kkdev92.HealthData.NutrientQuantityRollupNutrient Iron { get; }
+    Kkdev92.HealthData.NutrientQuantityRollupNutrient Magnesium { get; }
+    Kkdev92.HealthData.NutrientQuantityRollupNutrient Manganese { get; }
+    Kkdev92.HealthData.NutrientQuantityRollupNutrient Molybdenum { get; }
+    Kkdev92.HealthData.NutrientQuantityRollupNutrient MonounsaturatedFat { get; }
+    Kkdev92.HealthData.NutrientQuantityRollupNutrient Niacin { get; }
+    Kkdev92.HealthData.NutrientQuantityRollupNutrient NutrientUnspecified { get; }
+    Kkdev92.HealthData.NutrientQuantityRollupNutrient PantothenicAcid { get; }
+    Kkdev92.HealthData.NutrientQuantityRollupNutrient Phosphorus { get; }
+    Kkdev92.HealthData.NutrientQuantityRollupNutrient PolyunsaturatedFat { get; }
+    Kkdev92.HealthData.NutrientQuantityRollupNutrient Potassium { get; }
+    Kkdev92.HealthData.NutrientQuantityRollupNutrient Protein { get; }
+    Kkdev92.HealthData.NutrientQuantityRollupNutrient Riboflavin { get; }
+    Kkdev92.HealthData.NutrientQuantityRollupNutrient SaturatedFat { get; }
+    Kkdev92.HealthData.NutrientQuantityRollupNutrient Selenium { get; }
+    Kkdev92.HealthData.NutrientQuantityRollupNutrient Sodium { get; }
+    Kkdev92.HealthData.NutrientQuantityRollupNutrient Sugar { get; }
+    Kkdev92.HealthData.NutrientQuantityRollupNutrient Thiamin { get; }
+    Kkdev92.HealthData.NutrientQuantityRollupNutrient TransFat { get; }
+    Kkdev92.HealthData.NutrientQuantityRollupNutrient UnsaturatedFat { get; }
+    Kkdev92.HealthData.NutrientQuantityRollupNutrient VitaminA { get; }
+    Kkdev92.HealthData.NutrientQuantityRollupNutrient VitaminB12 { get; }
+    Kkdev92.HealthData.NutrientQuantityRollupNutrient VitaminB6 { get; }
+    Kkdev92.HealthData.NutrientQuantityRollupNutrient VitaminC { get; }
+    Kkdev92.HealthData.NutrientQuantityRollupNutrient VitaminD { get; }
+    Kkdev92.HealthData.NutrientQuantityRollupNutrient VitaminE { get; }
+    Kkdev92.HealthData.NutrientQuantityRollupNutrient VitaminK { get; }
+    Kkdev92.HealthData.NutrientQuantityRollupNutrient Zinc { get; }
+    System.Boolean Equals(Kkdev92.HealthData.NutrientQuantityRollupNutrient other)
+    System.Boolean Equals(System.Object obj)
+    System.Int32 GetHashCode()
+    System.String ToString()
+    System.String Value { get; set; }
+    System.Void Deconstruct(System.String& Value)
+class Kkdev92.HealthData.NutritionLog
+    .ctor()
+    IReadOnlyList<Kkdev92.HealthData.NutrientQuantity> Nutrients { get; set; }
+    Kkdev92.HealthData.EnergyQuantity Energy { get; set; }
+    Kkdev92.HealthData.EnergyQuantity EnergyFromFat { get; set; }
+    Kkdev92.HealthData.Serving Serving { get; set; }
+    Kkdev92.HealthData.SessionTimeInterval Interval { get; set; }
+    Kkdev92.HealthData.WeightQuantity TotalCarbohydrate { get; set; }
+    Kkdev92.HealthData.WeightQuantity TotalFat { get; set; }
+    Nullable<Kkdev92.HealthData.NutritionLogMealType> MealType { get; set; }
+    System.String Food { get; set; }
+    System.String FoodDisplayName { get; set; }
+struct Kkdev92.HealthData.NutritionLogMealType
+    .ctor(System.String Value)
+    Kkdev92.HealthData.NutritionLogMealType AfterDinner { get; }
+    Kkdev92.HealthData.NutritionLogMealType Anytime { get; }
+    Kkdev92.HealthData.NutritionLogMealType BeforeBreakfast { get; }
+    Kkdev92.HealthData.NutritionLogMealType BeforeDinner { get; }
+    Kkdev92.HealthData.NutritionLogMealType BeforeLunch { get; }
+    Kkdev92.HealthData.NutritionLogMealType Breakfast { get; }
+    Kkdev92.HealthData.NutritionLogMealType Dinner { get; }
+    Kkdev92.HealthData.NutritionLogMealType FromValue(System.String value)
+    Kkdev92.HealthData.NutritionLogMealType Lunch { get; }
+    Kkdev92.HealthData.NutritionLogMealType MealTypeUnspecified { get; }
+    Kkdev92.HealthData.NutritionLogMealType Snack { get; }
+    System.Boolean Equals(Kkdev92.HealthData.NutritionLogMealType other)
+    System.Boolean Equals(System.Object obj)
+    System.Int32 GetHashCode()
+    System.String ToString()
+    System.String Value { get; set; }
+    System.Void Deconstruct(System.String& Value)
+class Kkdev92.HealthData.NutritionLogRollupValue
+    .ctor()
+    IReadOnlyList<Kkdev92.HealthData.NutrientQuantityRollup> Nutrients { get; set; }
+    Kkdev92.HealthData.EnergyQuantityRollup Energy { get; set; }
+    Kkdev92.HealthData.EnergyQuantityRollup EnergyFromFat { get; set; }
+    Kkdev92.HealthData.WeightQuantityRollup TotalCarbohydrate { get; set; }
+    Kkdev92.HealthData.WeightQuantityRollup TotalFat { get; set; }
+class Kkdev92.HealthData.ObservationSampleTime
+    .ctor()
+    Kkdev92.HealthData.CivilDateTime CivilTime { get; set; }
+    Nullable<Kkdev92.HealthData.GoogleDuration> UtcOffset { get; set; }
+    Nullable<Kkdev92.HealthData.GoogleTimestamp> PhysicalTime { get; set; }
+class Kkdev92.HealthData.ObservationTimeInterval
+    .ctor()
+    Kkdev92.HealthData.CivilDateTime CivilEndTime { get; set; }
+    Kkdev92.HealthData.CivilDateTime CivilStartTime { get; set; }
+    Nullable<Kkdev92.HealthData.GoogleDuration> EndUtcOffset { get; set; }
+    Nullable<Kkdev92.HealthData.GoogleDuration> StartUtcOffset { get; set; }
+    Nullable<Kkdev92.HealthData.GoogleTimestamp> EndTime { get; set; }
+    Nullable<Kkdev92.HealthData.GoogleTimestamp> StartTime { get; set; }
+class Kkdev92.HealthData.Operation
+    .ctor()
+    Kkdev92.HealthData.Status Error { get; set; }
+    Nullable<System.Boolean> Done { get; set; }
+    Nullable<System.Text.Json.JsonElement> Metadata { get; set; }
+    Nullable<System.Text.Json.JsonElement> Response { get; set; }
+    System.String Name { get; set; }
+static class Kkdev92.HealthData.OperationExtensions
+    System.Boolean IsFailed(Kkdev92.HealthData.Operation operation)
+    System.Boolean IsSucceeded(Kkdev92.HealthData.Operation operation)
+    T TryGetMetadata(Kkdev92.HealthData.Operation operation)
+    T TryGetResponse(Kkdev92.HealthData.Operation operation)
+    T TryGetResponse(Kkdev92.HealthData.Operation operation, JsonTypeInfo<T> typeInfo)
+class Kkdev92.HealthData.OutOfBedSegment
+    .ctor()
+    Nullable<Kkdev92.HealthData.GoogleDuration> EndUtcOffset { get; set; }
+    Nullable<Kkdev92.HealthData.GoogleDuration> StartUtcOffset { get; set; }
+    Nullable<Kkdev92.HealthData.GoogleTimestamp> EndTime { get; set; }
+    Nullable<Kkdev92.HealthData.GoogleTimestamp> StartTime { get; set; }
+class Kkdev92.HealthData.OvulationTest
+    .ctor()
+    Kkdev92.HealthData.ObservationSampleTime SampleTime { get; set; }
+    Nullable<Kkdev92.HealthData.OvulationTestResult> Result { get; set; }
+struct Kkdev92.HealthData.OvulationTestResult
+    .ctor(System.String Value)
+    Kkdev92.HealthData.OvulationTestResult EstrogenSurge { get; }
+    Kkdev92.HealthData.OvulationTestResult FromValue(System.String value)
+    Kkdev92.HealthData.OvulationTestResult Indeterminate { get; }
+    Kkdev92.HealthData.OvulationTestResult LuteinizingHormoneSurge { get; }
+    Kkdev92.HealthData.OvulationTestResult Negative { get; }
+    Kkdev92.HealthData.OvulationTestResult OvulationTestResultUnspecified { get; }
+    Kkdev92.HealthData.OvulationTestResult Positive { get; }
+    System.Boolean Equals(Kkdev92.HealthData.OvulationTestResult other)
+    System.Boolean Equals(System.Object obj)
+    System.Int32 GetHashCode()
+    System.String ToString()
+    System.String Value { get; set; }
+    System.Void Deconstruct(System.String& Value)
+class Kkdev92.HealthData.OxygenSaturation
+    .ctor()
+    Kkdev92.HealthData.ObservationSampleTime SampleTime { get; set; }
+    Nullable<System.Double> Percentage { get; set; }
+static class Kkdev92.HealthData.Pagination.AsyncPageEnumerable
+    IAsyncEnumerable<TItem> CreateAsync(Func<System.String, System.Threading.CancellationToken, Task<TResponse>> fetchPage, Func<TResponse, IReadOnlyList<TItem>> selectItems, Func<TResponse, System.String> selectNextPageToken, System.Threading.CancellationToken cancellationToken = default)
+class Kkdev92.HealthData.PairedDevice
+    .ctor()
+    IReadOnlyList<System.String> Features { get; set; }
+    Nullable<Kkdev92.HealthData.GoogleTimestamp> LastSyncTime { get; set; }
+    Nullable<Kkdev92.HealthData.PairedDeviceDeviceType> DeviceType { get; set; }
+    Nullable<System.Int32> BatteryLevel { get; set; }
+    System.String BatteryStatus { get; set; }
+    System.String DeviceVersion { get; set; }
+    System.String MacAddress { get; set; }
+    System.String Name { get; set; }
+struct Kkdev92.HealthData.PairedDeviceDeviceType
+    .ctor(System.String Value)
+    Kkdev92.HealthData.PairedDeviceDeviceType DeviceTypeUnspecified { get; }
+    Kkdev92.HealthData.PairedDeviceDeviceType FromValue(System.String value)
+    Kkdev92.HealthData.PairedDeviceDeviceType Scale { get; }
+    Kkdev92.HealthData.PairedDeviceDeviceType Tracker { get; }
+    System.Boolean Equals(Kkdev92.HealthData.PairedDeviceDeviceType other)
+    System.Boolean Equals(System.Object obj)
+    System.Int32 GetHashCode()
+    System.String ToString()
+    System.String Value { get; set; }
+    System.Void Deconstruct(System.String& Value)
+class Kkdev92.HealthData.PairedDevicesResource
+    IAsyncEnumerable<Kkdev92.HealthData.PairedDevice> EnumerateAsync(Kkdev92.HealthData.ListPairedDevicesRequest request, System.Threading.CancellationToken cancellationToken = default)
+    Task<Kkdev92.HealthData.ListPairedDevicesResponse> ListAsync(Kkdev92.HealthData.ListPairedDevicesRequest request, System.Threading.CancellationToken cancellationToken = default)
+    Task<Kkdev92.HealthData.PairedDevice> GetAsync(Kkdev92.HealthData.GetPairedDevicesRequest request, System.Threading.CancellationToken cancellationToken = default)
+class Kkdev92.HealthData.PatchDataPointsRequest
+    .ctor()
+    Kkdev92.HealthData.DataPoint Body { get; set; }
+    System.String Name { get; set; }
+class Kkdev92.HealthData.PatchSubscribersRequest
+    .ctor()
+    Kkdev92.HealthData.Subscriber Body { get; set; }
+    Nullable<Kkdev92.HealthData.GoogleFieldMask> UpdateMask { get; set; }
+    System.String Name { get; set; }
+class Kkdev92.HealthData.PatchSubscriptionsRequest
+    .ctor()
+    Kkdev92.HealthData.Subscription Body { get; set; }
+    Nullable<Kkdev92.HealthData.GoogleFieldMask> UpdateMask { get; set; }
+    System.String Name { get; set; }
+class Kkdev92.HealthData.Profile
+    .ctor()
+    Kkdev92.HealthData.Date MembershipStartDate { get; set; }
+    Nullable<System.Int32> Age { get; set; }
+    Nullable<System.Int32> AutoRunningStrideLengthMm { get; set; }
+    Nullable<System.Int32> AutoWalkingStrideLengthMm { get; set; }
+    Nullable<System.Int32> UserConfiguredRunningStrideLengthMm { get; set; }
+    Nullable<System.Int32> UserConfiguredWalkingStrideLengthMm { get; set; }
+    System.String Name { get; set; }
+class Kkdev92.HealthData.ProjectsResource
+    Kkdev92.HealthData.SubscribersResource Subscribers { get; }
+class Kkdev92.HealthData.ReconcileDataPointsResponse
+    .ctor()
+    IReadOnlyList<Kkdev92.HealthData.ReconciledDataPoint> DataPoints { get; set; }
+    System.String NextPageToken { get; set; }
+class Kkdev92.HealthData.ReconcileRequest
+    .ctor()
+    Nullable<System.Int32> PageSize { get; set; }
+    System.String DataSourceFamily { get; set; }
+    System.String Filter { get; set; }
+    System.String PageToken { get; set; }
+    System.String Parent { get; set; }
+class Kkdev92.HealthData.ReconciledDataPoint
+    .ctor()
+    Kkdev92.HealthData.ActiveEnergyBurned ActiveEnergyBurned { get; set; }
+    Kkdev92.HealthData.ActiveMinutes ActiveMinutes { get; set; }
+    Kkdev92.HealthData.ActiveZoneMinutes ActiveZoneMinutes { get; set; }
+    Kkdev92.HealthData.ActivityLevel ActivityLevel { get; set; }
+    Kkdev92.HealthData.Altitude Altitude { get; set; }
+    Kkdev92.HealthData.BasalEnergyBurned BasalEnergyBurned { get; set; }
+    Kkdev92.HealthData.BloodGlucose BloodGlucose { get; set; }
+    Kkdev92.HealthData.BodyFat BodyFat { get; set; }
+    Kkdev92.HealthData.CoreBodyTemperature CoreBodyTemperature { get; set; }
+    Kkdev92.HealthData.DailyHeartRateVariability DailyHeartRateVariability { get; set; }
+    Kkdev92.HealthData.DailyHeartRateZones DailyHeartRateZones { get; set; }
+    Kkdev92.HealthData.DailyOxygenSaturation DailyOxygenSaturation { get; set; }
+    Kkdev92.HealthData.DailyRespiratoryRate DailyRespiratoryRate { get; set; }
+    Kkdev92.HealthData.DailyRestingHeartRate DailyRestingHeartRate { get; set; }
+    Kkdev92.HealthData.DailySleepTemperatureDerivations DailySleepTemperatureDerivations { get; set; }
+    Kkdev92.HealthData.DailyVO2Max DailyVo2Max { get; set; }
+    Kkdev92.HealthData.Distance Distance { get; set; }
+    Kkdev92.HealthData.Exercise Exercise { get; set; }
+    Kkdev92.HealthData.Floors Floors { get; set; }
+    Kkdev92.HealthData.HeartRate HeartRate { get; set; }
+    Kkdev92.HealthData.HeartRateVariability HeartRateVariability { get; set; }
+    Kkdev92.HealthData.Height Height { get; set; }
+    Kkdev92.HealthData.HydrationLog HydrationLog { get; set; }
+    Kkdev92.HealthData.NutritionLog NutritionLog { get; set; }
+    Kkdev92.HealthData.OxygenSaturation OxygenSaturation { get; set; }
+    Kkdev92.HealthData.RespiratoryRateSleepSummary RespiratoryRateSleepSummary { get; set; }
+    Kkdev92.HealthData.RunVO2Max RunVo2Max { get; set; }
+    Kkdev92.HealthData.SedentaryPeriod SedentaryPeriod { get; set; }
+    Kkdev92.HealthData.Sleep Sleep { get; set; }
+    Kkdev92.HealthData.Steps Steps { get; set; }
+    Kkdev92.HealthData.SwimLengthsData SwimLengthsData { get; set; }
+    Kkdev92.HealthData.TimeInHeartRateZone TimeInHeartRateZone { get; set; }
+    Kkdev92.HealthData.VO2Max Vo2Max { get; set; }
+    Kkdev92.HealthData.Weight Weight { get; set; }
+    System.String DataPointName { get; set; }
+class Kkdev92.HealthData.Resilience.HealthDataRetryHandler
+    .ctor(Kkdev92.HealthData.Resilience.HealthDataRetryOptions options = default, System.TimeProvider timeProvider = default)
+class Kkdev92.HealthData.Resilience.HealthDataRetryOptions
+    .ctor()
+    System.Boolean RetryIdempotentOperations { get; set; }
+    System.Boolean UseJitter { get; set; }
+    System.Int32 MaxAttempts { get; set; }
+    System.TimeSpan BaseDelay { get; set; }
+    System.TimeSpan MaxDelay { get; set; }
+class Kkdev92.HealthData.RespiratoryRateSleepSummary
+    .ctor()
+    Kkdev92.HealthData.ObservationSampleTime SampleTime { get; set; }
+    Kkdev92.HealthData.RespiratoryRateSleepSummaryStatistics DeepSleepStats { get; set; }
+    Kkdev92.HealthData.RespiratoryRateSleepSummaryStatistics FullSleepStats { get; set; }
+    Kkdev92.HealthData.RespiratoryRateSleepSummaryStatistics LightSleepStats { get; set; }
+    Kkdev92.HealthData.RespiratoryRateSleepSummaryStatistics RemSleepStats { get; set; }
+class Kkdev92.HealthData.RespiratoryRateSleepSummaryStatistics
+    .ctor()
+    Nullable<System.Double> BreathsPerMinute { get; set; }
+    Nullable<System.Double> SignalToNoise { get; set; }
+    Nullable<System.Double> StandardDeviation { get; set; }
+class Kkdev92.HealthData.RestingHeartRatePersonalRangeRollupValue
+    .ctor()
+    Nullable<System.Double> BeatsPerMinuteMax { get; set; }
+    Nullable<System.Double> BeatsPerMinuteMin { get; set; }
+class Kkdev92.HealthData.RollUpDataPointsRequest
+    .ctor()
+    Kkdev92.HealthData.Interval Range { get; set; }
+    Nullable<Kkdev92.HealthData.GoogleDuration> WindowSize { get; set; }
+    Nullable<System.Int32> PageSize { get; set; }
+    System.String DataSourceFamily { get; set; }
+    System.String PageToken { get; set; }
+class Kkdev92.HealthData.RollUpDataPointsResponse
+    .ctor()
+    IReadOnlyList<Kkdev92.HealthData.RollupDataPoint> RollupDataPoints { get; set; }
+    System.String NextPageToken { get; set; }
+class Kkdev92.HealthData.RollUpRequest
+    .ctor()
+    Kkdev92.HealthData.RollUpDataPointsRequest Body { get; set; }
+    System.String Parent { get; set; }
+class Kkdev92.HealthData.RollupDataPoint
+    .ctor()
+    IDictionary<System.String, System.Text.Json.JsonElement> ExtensionData { get; set; }
+    Kkdev92.HealthData.ActiveEnergyBurnedRollupValue ActiveEnergyBurned { get; set; }
+    Kkdev92.HealthData.ActiveMinutesRollupValue ActiveMinutes { get; set; }
+    Kkdev92.HealthData.ActiveZoneMinutesRollupValue ActiveZoneMinutes { get; set; }
+    Kkdev92.HealthData.ActivityLevelRollupValue ActivityLevel { get; set; }
+    Kkdev92.HealthData.AltitudeRollupValue Altitude { get; set; }
+    Kkdev92.HealthData.BloodGlucoseRollupValue BloodGlucose { get; set; }
+    Kkdev92.HealthData.BodyFatRollupValue BodyFat { get; set; }
+    Kkdev92.HealthData.CaloriesInHeartRateZoneRollupValue CaloriesInHeartRateZone { get; set; }
+    Kkdev92.HealthData.CoreBodyTemperatureRollupValue CoreBodyTemperature { get; set; }
+    Kkdev92.HealthData.DistanceRollupValue Distance { get; set; }
+    Kkdev92.HealthData.FloorsRollupValue Floors { get; set; }
+    Kkdev92.HealthData.HeartRateRollupValue HeartRate { get; set; }
+    Kkdev92.HealthData.HydrationLogRollupValue HydrationLog { get; set; }
+    Kkdev92.HealthData.NutritionLogRollupValue NutritionLog { get; set; }
+    Kkdev92.HealthData.RunVO2MaxRollupValue RunVo2Max { get; set; }
+    Kkdev92.HealthData.SedentaryPeriodRollupValue SedentaryPeriod { get; set; }
+    Kkdev92.HealthData.StepsRollupValue Steps { get; set; }
+    Kkdev92.HealthData.SwimLengthsDataRollupValue SwimLengthsData { get; set; }
+    Kkdev92.HealthData.TimeInHeartRateZoneRollupValue TimeInHeartRateZone { get; set; }
+    Kkdev92.HealthData.TotalCaloriesRollupValue TotalCalories { get; set; }
+    Kkdev92.HealthData.WeightRollupValue Weight { get; set; }
+    Nullable<Kkdev92.HealthData.GoogleTimestamp> EndTime { get; set; }
+    Nullable<Kkdev92.HealthData.GoogleTimestamp> StartTime { get; set; }
+static class Kkdev92.HealthData.RollupDataPointExtensions
+    Kkdev92.HealthData.RollupDataPointKind GetKind(Kkdev92.HealthData.RollupDataPoint value)
+    System.Object GetValue(Kkdev92.HealthData.RollupDataPoint value)
+enum Kkdev92.HealthData.RollupDataPointKind
+    System.Int32 value__
+    const Kkdev92.HealthData.RollupDataPointKind ActiveEnergyBurned
+    const Kkdev92.HealthData.RollupDataPointKind ActiveMinutes
+    const Kkdev92.HealthData.RollupDataPointKind ActiveZoneMinutes
+    const Kkdev92.HealthData.RollupDataPointKind ActivityLevel
+    const Kkdev92.HealthData.RollupDataPointKind Altitude
+    const Kkdev92.HealthData.RollupDataPointKind BloodGlucose
+    const Kkdev92.HealthData.RollupDataPointKind BodyFat
+    const Kkdev92.HealthData.RollupDataPointKind CaloriesInHeartRateZone
+    const Kkdev92.HealthData.RollupDataPointKind CoreBodyTemperature
+    const Kkdev92.HealthData.RollupDataPointKind Distance
+    const Kkdev92.HealthData.RollupDataPointKind Floors
+    const Kkdev92.HealthData.RollupDataPointKind HeartRate
+    const Kkdev92.HealthData.RollupDataPointKind HydrationLog
+    const Kkdev92.HealthData.RollupDataPointKind None
+    const Kkdev92.HealthData.RollupDataPointKind NutritionLog
+    const Kkdev92.HealthData.RollupDataPointKind RunVo2Max
+    const Kkdev92.HealthData.RollupDataPointKind SedentaryPeriod
+    const Kkdev92.HealthData.RollupDataPointKind Steps
+    const Kkdev92.HealthData.RollupDataPointKind SwimLengthsData
+    const Kkdev92.HealthData.RollupDataPointKind TimeInHeartRateZone
+    const Kkdev92.HealthData.RollupDataPointKind TotalCalories
+    const Kkdev92.HealthData.RollupDataPointKind Unknown
+    const Kkdev92.HealthData.RollupDataPointKind Weight
+class Kkdev92.HealthData.RunVO2Max
+    .ctor()
+    Kkdev92.HealthData.ObservationSampleTime SampleTime { get; set; }
+    Nullable<System.Double> RunVo2Max { get; set; }
+class Kkdev92.HealthData.RunVO2MaxRollupValue
+    .ctor()
+    Nullable<System.Double> RateAvg { get; set; }
+    Nullable<System.Double> RateMax { get; set; }
+    Nullable<System.Double> RateMin { get; set; }
+class Kkdev92.HealthData.SedentaryPeriod
+    .ctor()
+    Kkdev92.HealthData.ObservationTimeInterval Interval { get; set; }
+class Kkdev92.HealthData.SedentaryPeriodRollupValue
+    .ctor()
+    Nullable<Kkdev92.HealthData.GoogleDuration> DurationSum { get; set; }
+class Kkdev92.HealthData.Serialization.GoogleDurationConverter
+    .ctor()
+    Kkdev92.HealthData.GoogleDuration Read(System.Text.Json.Utf8JsonReader& reader, System.Type typeToConvert, System.Text.Json.JsonSerializerOptions options)
+    System.Void Write(System.Text.Json.Utf8JsonWriter writer, Kkdev92.HealthData.GoogleDuration value, System.Text.Json.JsonSerializerOptions options)
+class Kkdev92.HealthData.Serialization.GoogleTimestampConverter
+    .ctor()
+    Kkdev92.HealthData.GoogleTimestamp Read(System.Text.Json.Utf8JsonReader& reader, System.Type typeToConvert, System.Text.Json.JsonSerializerOptions options)
+    System.Void Write(System.Text.Json.Utf8JsonWriter writer, Kkdev92.HealthData.GoogleTimestamp value, System.Text.Json.JsonSerializerOptions options)
+static class Kkdev92.HealthData.Serialization.HealthDataJson
+    JsonTypeInfo<T> ReadInfo()
+    JsonTypeInfo<T> WriteInfo()
+    System.Text.Json.JsonSerializerOptions ReadOptions { get; }
+    System.Text.Json.JsonSerializerOptions WriteOptions { get; }
+class Kkdev92.HealthData.Serialization.HealthDataJsonContext
+    .ctor()
+    .ctor(System.Text.Json.JsonSerializerOptions options)
+    JsonTypeInfo<IDictionary<System.String, System.Text.Json.JsonElement>> IDictionaryStringJsonElement { get; }
+    JsonTypeInfo<IReadOnlyList<Kkdev92.HealthData.ActiveMinutesByActivityLevel>> IReadOnlyListActiveMinutesByActivityLevel { get; }
+    JsonTypeInfo<IReadOnlyList<Kkdev92.HealthData.ActiveMinutesRollupByActivityLevel>> IReadOnlyListActiveMinutesRollupByActivityLevel { get; }
+    JsonTypeInfo<IReadOnlyList<Kkdev92.HealthData.ActivityLevelRollupByActivityLevelType>> IReadOnlyListActivityLevelRollupByActivityLevelType { get; }
+    JsonTypeInfo<IReadOnlyList<Kkdev92.HealthData.AlertWindow>> IReadOnlyListAlertWindow { get; }
+    JsonTypeInfo<IReadOnlyList<Kkdev92.HealthData.CaloriesInHeartRateZoneValue>> IReadOnlyListCaloriesInHeartRateZoneValue { get; }
+    JsonTypeInfo<IReadOnlyList<Kkdev92.HealthData.DailyRollupDataPoint>> IReadOnlyListDailyRollupDataPoint { get; }
+    JsonTypeInfo<IReadOnlyList<Kkdev92.HealthData.DataPoint>> IReadOnlyListDataPoint { get; }
+    JsonTypeInfo<IReadOnlyList<Kkdev92.HealthData.ExerciseEvent>> IReadOnlyListExerciseEvent { get; }
+    JsonTypeInfo<IReadOnlyList<Kkdev92.HealthData.FoodServing>> IReadOnlyListFoodServing { get; }
+    JsonTypeInfo<IReadOnlyList<Kkdev92.HealthData.HeartBeat>> IReadOnlyListHeartBeat { get; }
+    JsonTypeInfo<IReadOnlyList<Kkdev92.HealthData.HeartRateZone>> IReadOnlyListHeartRateZone { get; }
+    JsonTypeInfo<IReadOnlyList<Kkdev92.HealthData.MoodsMoods>> IReadOnlyListMoodsMoods { get; }
+    JsonTypeInfo<IReadOnlyList<Kkdev92.HealthData.MoodsValences>> IReadOnlyListMoodsValences { get; }
+    JsonTypeInfo<IReadOnlyList<Kkdev92.HealthData.NutrientQuantity>> IReadOnlyListNutrientQuantity { get; }
+    JsonTypeInfo<IReadOnlyList<Kkdev92.HealthData.NutrientQuantityRollup>> IReadOnlyListNutrientQuantityRollup { get; }
+    JsonTypeInfo<IReadOnlyList<Kkdev92.HealthData.OutOfBedSegment>> IReadOnlyListOutOfBedSegment { get; }
+    JsonTypeInfo<IReadOnlyList<Kkdev92.HealthData.PairedDevice>> IReadOnlyListPairedDevice { get; }
+    JsonTypeInfo<IReadOnlyList<Kkdev92.HealthData.ReconciledDataPoint>> IReadOnlyListReconciledDataPoint { get; }
+    JsonTypeInfo<IReadOnlyList<Kkdev92.HealthData.RollupDataPoint>> IReadOnlyListRollupDataPoint { get; }
+    JsonTypeInfo<IReadOnlyList<Kkdev92.HealthData.SleepStage>> IReadOnlyListSleepStage { get; }
+    JsonTypeInfo<IReadOnlyList<Kkdev92.HealthData.SplitSummary>> IReadOnlyListSplitSummary { get; }
+    JsonTypeInfo<IReadOnlyList<Kkdev92.HealthData.StageSummary>> IReadOnlyListStageSummary { get; }
+    JsonTypeInfo<IReadOnlyList<Kkdev92.HealthData.Subscriber>> IReadOnlyListSubscriber { get; }
+    JsonTypeInfo<IReadOnlyList<Kkdev92.HealthData.SubscriberConfig>> IReadOnlyListSubscriberConfig { get; }
+    JsonTypeInfo<IReadOnlyList<Kkdev92.HealthData.Subscription>> IReadOnlyListSubscription { get; }
+    JsonTypeInfo<IReadOnlyList<Kkdev92.HealthData.SymptomsSymptoms>> IReadOnlyListSymptomsSymptoms { get; }
+    JsonTypeInfo<IReadOnlyList<Kkdev92.HealthData.TimeInHeartRateZoneValue>> IReadOnlyListTimeInHeartRateZoneValue { get; }
+    JsonTypeInfo<IReadOnlyList<System.Int32>> IReadOnlyListInt32 { get; }
+    JsonTypeInfo<IReadOnlyList<System.String>> IReadOnlyListString { get; }
+    JsonTypeInfo<IReadOnlyList<System.Text.Json.JsonElement>> IReadOnlyListJsonElement { get; }
+    JsonTypeInfo<Kkdev92.HealthData.ActiveEnergyBurned> ActiveEnergyBurned { get; }
+    JsonTypeInfo<Kkdev92.HealthData.ActiveEnergyBurnedRollupValue> ActiveEnergyBurnedRollupValue { get; }
+    JsonTypeInfo<Kkdev92.HealthData.ActiveMinutes> ActiveMinutes { get; }
+    JsonTypeInfo<Kkdev92.HealthData.ActiveMinutesByActivityLevel> ActiveMinutesByActivityLevel { get; }
+    JsonTypeInfo<Kkdev92.HealthData.ActiveMinutesByActivityLevelActivityLevel> ActiveMinutesByActivityLevelActivityLevel { get; }
+    JsonTypeInfo<Kkdev92.HealthData.ActiveMinutesRollupByActivityLevel> ActiveMinutesRollupByActivityLevel { get; }
+    JsonTypeInfo<Kkdev92.HealthData.ActiveMinutesRollupByActivityLevelActivityLevel> ActiveMinutesRollupByActivityLevelActivityLevel { get; }
+    JsonTypeInfo<Kkdev92.HealthData.ActiveMinutesRollupValue> ActiveMinutesRollupValue { get; }
+    JsonTypeInfo<Kkdev92.HealthData.ActiveZoneMinutes> ActiveZoneMinutes { get; }
+    JsonTypeInfo<Kkdev92.HealthData.ActiveZoneMinutesHeartRateZone> ActiveZoneMinutesHeartRateZone { get; }
+    JsonTypeInfo<Kkdev92.HealthData.ActiveZoneMinutesRollupValue> ActiveZoneMinutesRollupValue { get; }
+    JsonTypeInfo<Kkdev92.HealthData.ActivityLevel> ActivityLevel { get; }
+    JsonTypeInfo<Kkdev92.HealthData.ActivityLevelActivityLevelType> ActivityLevelActivityLevelType { get; }
+    JsonTypeInfo<Kkdev92.HealthData.ActivityLevelRollupByActivityLevelType> ActivityLevelRollupByActivityLevelType { get; }
+    JsonTypeInfo<Kkdev92.HealthData.ActivityLevelRollupByActivityLevelTypeActivityLevelType> ActivityLevelRollupByActivityLevelTypeActivityLevelType { get; }
+    JsonTypeInfo<Kkdev92.HealthData.ActivityLevelRollupValue> ActivityLevelRollupValue { get; }
+    JsonTypeInfo<Kkdev92.HealthData.AlertWindow> AlertWindow { get; }
+    JsonTypeInfo<Kkdev92.HealthData.Altitude> Altitude { get; }
+    JsonTypeInfo<Kkdev92.HealthData.AltitudeRollupValue> AltitudeRollupValue { get; }
+    JsonTypeInfo<Kkdev92.HealthData.Application> Application { get; }
+    JsonTypeInfo<Kkdev92.HealthData.BasalEnergyBurned> BasalEnergyBurned { get; }
+    JsonTypeInfo<Kkdev92.HealthData.BatchDeleteDataPointsRequest> BatchDeleteDataPointsRequest { get; }
+    JsonTypeInfo<Kkdev92.HealthData.BloodGlucose> BloodGlucose { get; }
+    JsonTypeInfo<Kkdev92.HealthData.BloodGlucoseMealType> BloodGlucoseMealType { get; }
+    JsonTypeInfo<Kkdev92.HealthData.BloodGlucoseMeasurementSource> BloodGlucoseMeasurementSource { get; }
+    JsonTypeInfo<Kkdev92.HealthData.BloodGlucoseMeasurementTiming> BloodGlucoseMeasurementTiming { get; }
+    JsonTypeInfo<Kkdev92.HealthData.BloodGlucoseRollupValue> BloodGlucoseRollupValue { get; }
+    JsonTypeInfo<Kkdev92.HealthData.BloodGlucoseSpecimen> BloodGlucoseSpecimen { get; }
+    JsonTypeInfo<Kkdev92.HealthData.BodyFat> BodyFat { get; }
+    JsonTypeInfo<Kkdev92.HealthData.BodyFatRollupValue> BodyFatRollupValue { get; }
+    JsonTypeInfo<Kkdev92.HealthData.CaloriesInHeartRateZoneRollupValue> CaloriesInHeartRateZoneRollupValue { get; }
+    JsonTypeInfo<Kkdev92.HealthData.CaloriesInHeartRateZoneValue> CaloriesInHeartRateZoneValue { get; }
+    JsonTypeInfo<Kkdev92.HealthData.CaloriesInHeartRateZoneValueHeartRateZone> CaloriesInHeartRateZoneValueHeartRateZone { get; }
+    JsonTypeInfo<Kkdev92.HealthData.CivilDateTime> CivilDateTime { get; }
+    JsonTypeInfo<Kkdev92.HealthData.CivilTimeInterval> CivilTimeInterval { get; }
+    JsonTypeInfo<Kkdev92.HealthData.CoreBodyTemperature> CoreBodyTemperature { get; }
+    JsonTypeInfo<Kkdev92.HealthData.CoreBodyTemperatureMeasurementLocation> CoreBodyTemperatureMeasurementLocation { get; }
+    JsonTypeInfo<Kkdev92.HealthData.CoreBodyTemperatureRollupValue> CoreBodyTemperatureRollupValue { get; }
+    JsonTypeInfo<Kkdev92.HealthData.CreateSubscriberPayload> CreateSubscriberPayload { get; }
+    JsonTypeInfo<Kkdev92.HealthData.CreateSubscriptionPayload> CreateSubscriptionPayload { get; }
+    JsonTypeInfo<Kkdev92.HealthData.DailyHeartRateVariability> DailyHeartRateVariability { get; }
+    JsonTypeInfo<Kkdev92.HealthData.DailyHeartRateZones> DailyHeartRateZones { get; }
+    JsonTypeInfo<Kkdev92.HealthData.DailyOxygenSaturation> DailyOxygenSaturation { get; }
+    JsonTypeInfo<Kkdev92.HealthData.DailyRespiratoryRate> DailyRespiratoryRate { get; }
+    JsonTypeInfo<Kkdev92.HealthData.DailyRestingHeartRate> DailyRestingHeartRate { get; }
+    JsonTypeInfo<Kkdev92.HealthData.DailyRestingHeartRateMetadata> DailyRestingHeartRateMetadata { get; }
+    JsonTypeInfo<Kkdev92.HealthData.DailyRestingHeartRateMetadataCalculationMethod> DailyRestingHeartRateMetadataCalculationMethod { get; }
+    JsonTypeInfo<Kkdev92.HealthData.DailyRollUpDataPointsRequest> DailyRollUpDataPointsRequest { get; }
+    JsonTypeInfo<Kkdev92.HealthData.DailyRollUpDataPointsResponse> DailyRollUpDataPointsResponse { get; }
+    JsonTypeInfo<Kkdev92.HealthData.DailyRollupDataPoint> DailyRollupDataPoint { get; }
+    JsonTypeInfo<Kkdev92.HealthData.DailySleepTemperatureDerivations> DailySleepTemperatureDerivations { get; }
+    JsonTypeInfo<Kkdev92.HealthData.DailyVO2Max> DailyVO2Max { get; }
+    JsonTypeInfo<Kkdev92.HealthData.DailyVO2MaxCardioFitnessLevel> DailyVO2MaxCardioFitnessLevel { get; }
+    JsonTypeInfo<Kkdev92.HealthData.DataPoint> DataPoint { get; }
+    JsonTypeInfo<Kkdev92.HealthData.DataSource> DataSource { get; }
+    JsonTypeInfo<Kkdev92.HealthData.DataSourcePlatform> DataSourcePlatform { get; }
+    JsonTypeInfo<Kkdev92.HealthData.DataSourceRecordingMethod> DataSourceRecordingMethod { get; }
+    JsonTypeInfo<Kkdev92.HealthData.Date> Date { get; }
+    JsonTypeInfo<Kkdev92.HealthData.Device> Device { get; }
+    JsonTypeInfo<Kkdev92.HealthData.DeviceFormFactor> DeviceFormFactor { get; }
+    JsonTypeInfo<Kkdev92.HealthData.Distance> Distance { get; }
+    JsonTypeInfo<Kkdev92.HealthData.DistanceRollupValue> DistanceRollupValue { get; }
+    JsonTypeInfo<Kkdev92.HealthData.Electrocardiogram> Electrocardiogram { get; }
+    JsonTypeInfo<Kkdev92.HealthData.ElectrocardiogramResultClassification> ElectrocardiogramResultClassification { get; }
+    JsonTypeInfo<Kkdev92.HealthData.Empty> Empty { get; }
+    JsonTypeInfo<Kkdev92.HealthData.EndpointAuthorization> EndpointAuthorization { get; }
+    JsonTypeInfo<Kkdev92.HealthData.EnergyQuantity> EnergyQuantity { get; }
+    JsonTypeInfo<Kkdev92.HealthData.EnergyQuantityRollup> EnergyQuantityRollup { get; }
+    JsonTypeInfo<Kkdev92.HealthData.EnergyQuantityRollupUserProvidedUnitLast> EnergyQuantityRollupUserProvidedUnitLast { get; }
+    JsonTypeInfo<Kkdev92.HealthData.EnergyQuantityUserProvidedUnit> EnergyQuantityUserProvidedUnit { get; }
+    JsonTypeInfo<Kkdev92.HealthData.Exercise> Exercise { get; }
+    JsonTypeInfo<Kkdev92.HealthData.ExerciseEvent> ExerciseEvent { get; }
+    JsonTypeInfo<Kkdev92.HealthData.ExerciseEventExerciseEventType> ExerciseEventExerciseEventType { get; }
+    JsonTypeInfo<Kkdev92.HealthData.ExerciseExerciseType> ExerciseExerciseType { get; }
+    JsonTypeInfo<Kkdev92.HealthData.ExerciseMetadata> ExerciseMetadata { get; }
+    JsonTypeInfo<Kkdev92.HealthData.ExportExerciseTcxResponse> ExportExerciseTcxResponse { get; }
+    JsonTypeInfo<Kkdev92.HealthData.Floors> Floors { get; }
+    JsonTypeInfo<Kkdev92.HealthData.FloorsRollupValue> FloorsRollupValue { get; }
+    JsonTypeInfo<Kkdev92.HealthData.Food> Food { get; }
+    JsonTypeInfo<Kkdev92.HealthData.FoodAccessLevel> FoodAccessLevel { get; }
+    JsonTypeInfo<Kkdev92.HealthData.FoodMealType> FoodMealType { get; }
+    JsonTypeInfo<Kkdev92.HealthData.FoodMeasurementUnit> FoodMeasurementUnit { get; }
+    JsonTypeInfo<Kkdev92.HealthData.FoodServing> FoodServing { get; }
+    JsonTypeInfo<Kkdev92.HealthData.GoogleDuration> GoogleDuration { get; }
+    JsonTypeInfo<Kkdev92.HealthData.GoogleTimestamp> GoogleTimestamp { get; }
+    JsonTypeInfo<Kkdev92.HealthData.HeartBeat> HeartBeat { get; }
+    JsonTypeInfo<Kkdev92.HealthData.HeartRate> HeartRate { get; }
+    JsonTypeInfo<Kkdev92.HealthData.HeartRateMetadata> HeartRateMetadata { get; }
+    JsonTypeInfo<Kkdev92.HealthData.HeartRateMetadataMotionContext> HeartRateMetadataMotionContext { get; }
+    JsonTypeInfo<Kkdev92.HealthData.HeartRateMetadataSensorLocation> HeartRateMetadataSensorLocation { get; }
+    JsonTypeInfo<Kkdev92.HealthData.HeartRateRollupValue> HeartRateRollupValue { get; }
+    JsonTypeInfo<Kkdev92.HealthData.HeartRateVariability> HeartRateVariability { get; }
+    JsonTypeInfo<Kkdev92.HealthData.HeartRateVariabilityPersonalRangeRollupValue> HeartRateVariabilityPersonalRangeRollupValue { get; }
+    JsonTypeInfo<Kkdev92.HealthData.HeartRateZone> HeartRateZone { get; }
+    JsonTypeInfo<Kkdev92.HealthData.HeartRateZoneHeartRateZoneType> HeartRateZoneHeartRateZoneType { get; }
+    JsonTypeInfo<Kkdev92.HealthData.Height> Height { get; }
+    JsonTypeInfo<Kkdev92.HealthData.HydrationLog> HydrationLog { get; }
+    JsonTypeInfo<Kkdev92.HealthData.HydrationLogRollupValue> HydrationLogRollupValue { get; }
+    JsonTypeInfo<Kkdev92.HealthData.Identity> Identity { get; }
+    JsonTypeInfo<Kkdev92.HealthData.Interval> Interval { get; }
+    JsonTypeInfo<Kkdev92.HealthData.IrnProfile> IrnProfile { get; }
+    JsonTypeInfo<Kkdev92.HealthData.IrregularRhythmNotification> IrregularRhythmNotification { get; }
+    JsonTypeInfo<Kkdev92.HealthData.ListDataPointsResponse> ListDataPointsResponse { get; }
+    JsonTypeInfo<Kkdev92.HealthData.ListPairedDevicesResponse> ListPairedDevicesResponse { get; }
+    JsonTypeInfo<Kkdev92.HealthData.ListSubscribersResponse> ListSubscribersResponse { get; }
+    JsonTypeInfo<Kkdev92.HealthData.ListSubscriptionsResponse> ListSubscriptionsResponse { get; }
+    JsonTypeInfo<Kkdev92.HealthData.MedicalDeviceInfo> MedicalDeviceInfo { get; }
+    JsonTypeInfo<Kkdev92.HealthData.MenstrualPeriod> MenstrualPeriod { get; }
+    JsonTypeInfo<Kkdev92.HealthData.MetricsSummary> MetricsSummary { get; }
+    JsonTypeInfo<Kkdev92.HealthData.MobilityMetrics> MobilityMetrics { get; }
+    JsonTypeInfo<Kkdev92.HealthData.Moods> Moods { get; }
+    JsonTypeInfo<Kkdev92.HealthData.MoodsMoods> MoodsMoods { get; }
+    JsonTypeInfo<Kkdev92.HealthData.MoodsValences> MoodsValences { get; }
+    JsonTypeInfo<Kkdev92.HealthData.NutrientQuantity> NutrientQuantity { get; }
+    JsonTypeInfo<Kkdev92.HealthData.NutrientQuantityNutrient> NutrientQuantityNutrient { get; }
+    JsonTypeInfo<Kkdev92.HealthData.NutrientQuantityRollup> NutrientQuantityRollup { get; }
+    JsonTypeInfo<Kkdev92.HealthData.NutrientQuantityRollupNutrient> NutrientQuantityRollupNutrient { get; }
+    JsonTypeInfo<Kkdev92.HealthData.NutritionLog> NutritionLog { get; }
+    JsonTypeInfo<Kkdev92.HealthData.NutritionLogMealType> NutritionLogMealType { get; }
+    JsonTypeInfo<Kkdev92.HealthData.NutritionLogRollupValue> NutritionLogRollupValue { get; }
+    JsonTypeInfo<Kkdev92.HealthData.ObservationSampleTime> ObservationSampleTime { get; }
+    JsonTypeInfo<Kkdev92.HealthData.ObservationTimeInterval> ObservationTimeInterval { get; }
+    JsonTypeInfo<Kkdev92.HealthData.Operation> Operation { get; }
+    JsonTypeInfo<Kkdev92.HealthData.OutOfBedSegment> OutOfBedSegment { get; }
+    JsonTypeInfo<Kkdev92.HealthData.OvulationTest> OvulationTest { get; }
+    JsonTypeInfo<Kkdev92.HealthData.OvulationTestResult> OvulationTestResult { get; }
+    JsonTypeInfo<Kkdev92.HealthData.OxygenSaturation> OxygenSaturation { get; }
+    JsonTypeInfo<Kkdev92.HealthData.PairedDevice> PairedDevice { get; }
+    JsonTypeInfo<Kkdev92.HealthData.PairedDeviceDeviceType> PairedDeviceDeviceType { get; }
+    JsonTypeInfo<Kkdev92.HealthData.Profile> Profile { get; }
+    JsonTypeInfo<Kkdev92.HealthData.ReconcileDataPointsResponse> ReconcileDataPointsResponse { get; }
+    JsonTypeInfo<Kkdev92.HealthData.ReconciledDataPoint> ReconciledDataPoint { get; }
+    JsonTypeInfo<Kkdev92.HealthData.RespiratoryRateSleepSummary> RespiratoryRateSleepSummary { get; }
+    JsonTypeInfo<Kkdev92.HealthData.RespiratoryRateSleepSummaryStatistics> RespiratoryRateSleepSummaryStatistics { get; }
+    JsonTypeInfo<Kkdev92.HealthData.RestingHeartRatePersonalRangeRollupValue> RestingHeartRatePersonalRangeRollupValue { get; }
+    JsonTypeInfo<Kkdev92.HealthData.RollUpDataPointsRequest> RollUpDataPointsRequest { get; }
+    JsonTypeInfo<Kkdev92.HealthData.RollUpDataPointsResponse> RollUpDataPointsResponse { get; }
+    JsonTypeInfo<Kkdev92.HealthData.RollupDataPoint> RollupDataPoint { get; }
+    JsonTypeInfo<Kkdev92.HealthData.RunVO2Max> RunVO2Max { get; }
+    JsonTypeInfo<Kkdev92.HealthData.RunVO2MaxRollupValue> RunVO2MaxRollupValue { get; }
+    JsonTypeInfo<Kkdev92.HealthData.SedentaryPeriod> SedentaryPeriod { get; }
+    JsonTypeInfo<Kkdev92.HealthData.SedentaryPeriodRollupValue> SedentaryPeriodRollupValue { get; }
+    JsonTypeInfo<Kkdev92.HealthData.Serving> Serving { get; }
+    JsonTypeInfo<Kkdev92.HealthData.SessionTimeInterval> SessionTimeInterval { get; }
+    JsonTypeInfo<Kkdev92.HealthData.Settings> Settings { get; }
+    JsonTypeInfo<Kkdev92.HealthData.SettingsDistanceUnit> SettingsDistanceUnit { get; }
+    JsonTypeInfo<Kkdev92.HealthData.SettingsGlucoseUnit> SettingsGlucoseUnit { get; }
+    JsonTypeInfo<Kkdev92.HealthData.SettingsHeightUnit> SettingsHeightUnit { get; }
+    JsonTypeInfo<Kkdev92.HealthData.SettingsStrideLengthRunningType> SettingsStrideLengthRunningType { get; }
+    JsonTypeInfo<Kkdev92.HealthData.SettingsStrideLengthWalkingType> SettingsStrideLengthWalkingType { get; }
+    JsonTypeInfo<Kkdev92.HealthData.SettingsSwimUnit> SettingsSwimUnit { get; }
+    JsonTypeInfo<Kkdev92.HealthData.SettingsTemperatureUnit> SettingsTemperatureUnit { get; }
+    JsonTypeInfo<Kkdev92.HealthData.SettingsWaterUnit> SettingsWaterUnit { get; }
+    JsonTypeInfo<Kkdev92.HealthData.SettingsWeightUnit> SettingsWeightUnit { get; }
+    JsonTypeInfo<Kkdev92.HealthData.Sleep> Sleep { get; }
+    JsonTypeInfo<Kkdev92.HealthData.SleepMetadata> SleepMetadata { get; }
+    JsonTypeInfo<Kkdev92.HealthData.SleepMetadataStagesStatus> SleepMetadataStagesStatus { get; }
+    JsonTypeInfo<Kkdev92.HealthData.SleepStage> SleepStage { get; }
+    JsonTypeInfo<Kkdev92.HealthData.SleepStageType> SleepStageType { get; }
+    JsonTypeInfo<Kkdev92.HealthData.SleepSummary> SleepSummary { get; }
+    JsonTypeInfo<Kkdev92.HealthData.SleepType> SleepType { get; }
+    JsonTypeInfo<Kkdev92.HealthData.SplitSummary> SplitSummary { get; }
+    JsonTypeInfo<Kkdev92.HealthData.SplitSummarySplitType> SplitSummarySplitType { get; }
+    JsonTypeInfo<Kkdev92.HealthData.StageSummary> StageSummary { get; }
+    JsonTypeInfo<Kkdev92.HealthData.StageSummaryType> StageSummaryType { get; }
+    JsonTypeInfo<Kkdev92.HealthData.Status> Status { get; }
+    JsonTypeInfo<Kkdev92.HealthData.Steps> Steps { get; }
+    JsonTypeInfo<Kkdev92.HealthData.StepsRollupValue> StepsRollupValue { get; }
+    JsonTypeInfo<Kkdev92.HealthData.Subscriber> Subscriber { get; }
+    JsonTypeInfo<Kkdev92.HealthData.SubscriberConfig> SubscriberConfig { get; }
+    JsonTypeInfo<Kkdev92.HealthData.SubscriberConfigSubscriptionCreatePolicy> SubscriberConfigSubscriptionCreatePolicy { get; }
+    JsonTypeInfo<Kkdev92.HealthData.SubscriberState> SubscriberState { get; }
+    JsonTypeInfo<Kkdev92.HealthData.Subscription> Subscription { get; }
+    JsonTypeInfo<Kkdev92.HealthData.SwimLengthsData> SwimLengthsData { get; }
+    JsonTypeInfo<Kkdev92.HealthData.SwimLengthsDataRollupValue> SwimLengthsDataRollupValue { get; }
+    JsonTypeInfo<Kkdev92.HealthData.SwimLengthsDataSwimStrokeType> SwimLengthsDataSwimStrokeType { get; }
+    JsonTypeInfo<Kkdev92.HealthData.Symptoms> Symptoms { get; }
+    JsonTypeInfo<Kkdev92.HealthData.SymptomsSymptoms> SymptomsSymptoms { get; }
+    JsonTypeInfo<Kkdev92.HealthData.TimeInHeartRateZone> TimeInHeartRateZone { get; }
+    JsonTypeInfo<Kkdev92.HealthData.TimeInHeartRateZoneHeartRateZoneType> TimeInHeartRateZoneHeartRateZoneType { get; }
+    JsonTypeInfo<Kkdev92.HealthData.TimeInHeartRateZoneRollupValue> TimeInHeartRateZoneRollupValue { get; }
+    JsonTypeInfo<Kkdev92.HealthData.TimeInHeartRateZoneValue> TimeInHeartRateZoneValue { get; }
+    JsonTypeInfo<Kkdev92.HealthData.TimeInHeartRateZoneValueHeartRateZone> TimeInHeartRateZoneValueHeartRateZone { get; }
+    JsonTypeInfo<Kkdev92.HealthData.TimeInHeartRateZones> TimeInHeartRateZones { get; }
+    JsonTypeInfo<Kkdev92.HealthData.TimeOfDay> TimeOfDay { get; }
+    JsonTypeInfo<Kkdev92.HealthData.TotalCaloriesRollupValue> TotalCaloriesRollupValue { get; }
+    JsonTypeInfo<Kkdev92.HealthData.VO2Max> VO2Max { get; }
+    JsonTypeInfo<Kkdev92.HealthData.VO2MaxMeasurementMethod> VO2MaxMeasurementMethod { get; }
+    JsonTypeInfo<Kkdev92.HealthData.VolumeQuantity> VolumeQuantity { get; }
+    JsonTypeInfo<Kkdev92.HealthData.VolumeQuantityRollup> VolumeQuantityRollup { get; }
+    JsonTypeInfo<Kkdev92.HealthData.VolumeQuantityRollupUserProvidedUnitLast> VolumeQuantityRollupUserProvidedUnitLast { get; }
+    JsonTypeInfo<Kkdev92.HealthData.VolumeQuantityUserProvidedUnit> VolumeQuantityUserProvidedUnit { get; }
+    JsonTypeInfo<Kkdev92.HealthData.Weight> Weight { get; }
+    JsonTypeInfo<Kkdev92.HealthData.WeightQuantity> WeightQuantity { get; }
+    JsonTypeInfo<Kkdev92.HealthData.WeightQuantityRollup> WeightQuantityRollup { get; }
+    JsonTypeInfo<Kkdev92.HealthData.WeightQuantityRollupUserProvidedUnitLast> WeightQuantityRollupUserProvidedUnitLast { get; }
+    JsonTypeInfo<Kkdev92.HealthData.WeightQuantityUserProvidedUnit> WeightQuantityUserProvidedUnit { get; }
+    JsonTypeInfo<Kkdev92.HealthData.WeightRollupValue> WeightRollupValue { get; }
+    JsonTypeInfo<Nullable<Kkdev92.HealthData.ActiveMinutesByActivityLevelActivityLevel>> NullableActiveMinutesByActivityLevelActivityLevel { get; }
+    JsonTypeInfo<Nullable<Kkdev92.HealthData.ActiveMinutesRollupByActivityLevelActivityLevel>> NullableActiveMinutesRollupByActivityLevelActivityLevel { get; }
+    JsonTypeInfo<Nullable<Kkdev92.HealthData.ActiveZoneMinutesHeartRateZone>> NullableActiveZoneMinutesHeartRateZone { get; }
+    JsonTypeInfo<Nullable<Kkdev92.HealthData.ActivityLevelActivityLevelType>> NullableActivityLevelActivityLevelType { get; }
+    JsonTypeInfo<Nullable<Kkdev92.HealthData.ActivityLevelRollupByActivityLevelTypeActivityLevelType>> NullableActivityLevelRollupByActivityLevelTypeActivityLevelType { get; }
+    JsonTypeInfo<Nullable<Kkdev92.HealthData.BloodGlucoseMealType>> NullableBloodGlucoseMealType { get; }
+    JsonTypeInfo<Nullable<Kkdev92.HealthData.BloodGlucoseMeasurementSource>> NullableBloodGlucoseMeasurementSource { get; }
+    JsonTypeInfo<Nullable<Kkdev92.HealthData.BloodGlucoseMeasurementTiming>> NullableBloodGlucoseMeasurementTiming { get; }
+    JsonTypeInfo<Nullable<Kkdev92.HealthData.BloodGlucoseSpecimen>> NullableBloodGlucoseSpecimen { get; }
+    JsonTypeInfo<Nullable<Kkdev92.HealthData.CaloriesInHeartRateZoneValueHeartRateZone>> NullableCaloriesInHeartRateZoneValueHeartRateZone { get; }
+    JsonTypeInfo<Nullable<Kkdev92.HealthData.CoreBodyTemperatureMeasurementLocation>> NullableCoreBodyTemperatureMeasurementLocation { get; }
+    JsonTypeInfo<Nullable<Kkdev92.HealthData.DailyRestingHeartRateMetadataCalculationMethod>> NullableDailyRestingHeartRateMetadataCalculationMethod { get; }
+    JsonTypeInfo<Nullable<Kkdev92.HealthData.DailyVO2MaxCardioFitnessLevel>> NullableDailyVO2MaxCardioFitnessLevel { get; }
+    JsonTypeInfo<Nullable<Kkdev92.HealthData.DataSourcePlatform>> NullableDataSourcePlatform { get; }
+    JsonTypeInfo<Nullable<Kkdev92.HealthData.DataSourceRecordingMethod>> NullableDataSourceRecordingMethod { get; }
+    JsonTypeInfo<Nullable<Kkdev92.HealthData.DeviceFormFactor>> NullableDeviceFormFactor { get; }
+    JsonTypeInfo<Nullable<Kkdev92.HealthData.ElectrocardiogramResultClassification>> NullableElectrocardiogramResultClassification { get; }
+    JsonTypeInfo<Nullable<Kkdev92.HealthData.EnergyQuantityRollupUserProvidedUnitLast>> NullableEnergyQuantityRollupUserProvidedUnitLast { get; }
+    JsonTypeInfo<Nullable<Kkdev92.HealthData.EnergyQuantityUserProvidedUnit>> NullableEnergyQuantityUserProvidedUnit { get; }
+    JsonTypeInfo<Nullable<Kkdev92.HealthData.ExerciseEventExerciseEventType>> NullableExerciseEventExerciseEventType { get; }
+    JsonTypeInfo<Nullable<Kkdev92.HealthData.ExerciseExerciseType>> NullableExerciseExerciseType { get; }
+    JsonTypeInfo<Nullable<Kkdev92.HealthData.FoodAccessLevel>> NullableFoodAccessLevel { get; }
+    JsonTypeInfo<Nullable<Kkdev92.HealthData.FoodMealType>> NullableFoodMealType { get; }
+    JsonTypeInfo<Nullable<Kkdev92.HealthData.GoogleDuration>> NullableGoogleDuration { get; }
+    JsonTypeInfo<Nullable<Kkdev92.HealthData.GoogleTimestamp>> NullableGoogleTimestamp { get; }
+    JsonTypeInfo<Nullable<Kkdev92.HealthData.HeartRateMetadataMotionContext>> NullableHeartRateMetadataMotionContext { get; }
+    JsonTypeInfo<Nullable<Kkdev92.HealthData.HeartRateMetadataSensorLocation>> NullableHeartRateMetadataSensorLocation { get; }
+    JsonTypeInfo<Nullable<Kkdev92.HealthData.HeartRateZoneHeartRateZoneType>> NullableHeartRateZoneHeartRateZoneType { get; }
+    JsonTypeInfo<Nullable<Kkdev92.HealthData.NutrientQuantityNutrient>> NullableNutrientQuantityNutrient { get; }
+    JsonTypeInfo<Nullable<Kkdev92.HealthData.NutrientQuantityRollupNutrient>> NullableNutrientQuantityRollupNutrient { get; }
+    JsonTypeInfo<Nullable<Kkdev92.HealthData.NutritionLogMealType>> NullableNutritionLogMealType { get; }
+    JsonTypeInfo<Nullable<Kkdev92.HealthData.OvulationTestResult>> NullableOvulationTestResult { get; }
+    JsonTypeInfo<Nullable<Kkdev92.HealthData.PairedDeviceDeviceType>> NullablePairedDeviceDeviceType { get; }
+    JsonTypeInfo<Nullable<Kkdev92.HealthData.SettingsDistanceUnit>> NullableSettingsDistanceUnit { get; }
+    JsonTypeInfo<Nullable<Kkdev92.HealthData.SettingsGlucoseUnit>> NullableSettingsGlucoseUnit { get; }
+    JsonTypeInfo<Nullable<Kkdev92.HealthData.SettingsHeightUnit>> NullableSettingsHeightUnit { get; }
+    JsonTypeInfo<Nullable<Kkdev92.HealthData.SettingsStrideLengthRunningType>> NullableSettingsStrideLengthRunningType { get; }
+    JsonTypeInfo<Nullable<Kkdev92.HealthData.SettingsStrideLengthWalkingType>> NullableSettingsStrideLengthWalkingType { get; }
+    JsonTypeInfo<Nullable<Kkdev92.HealthData.SettingsSwimUnit>> NullableSettingsSwimUnit { get; }
+    JsonTypeInfo<Nullable<Kkdev92.HealthData.SettingsTemperatureUnit>> NullableSettingsTemperatureUnit { get; }
+    JsonTypeInfo<Nullable<Kkdev92.HealthData.SettingsWaterUnit>> NullableSettingsWaterUnit { get; }
+    JsonTypeInfo<Nullable<Kkdev92.HealthData.SettingsWeightUnit>> NullableSettingsWeightUnit { get; }
+    JsonTypeInfo<Nullable<Kkdev92.HealthData.SleepMetadataStagesStatus>> NullableSleepMetadataStagesStatus { get; }
+    JsonTypeInfo<Nullable<Kkdev92.HealthData.SleepStageType>> NullableSleepStageType { get; }
+    JsonTypeInfo<Nullable<Kkdev92.HealthData.SleepType>> NullableSleepType { get; }
+    JsonTypeInfo<Nullable<Kkdev92.HealthData.SplitSummarySplitType>> NullableSplitSummarySplitType { get; }
+    JsonTypeInfo<Nullable<Kkdev92.HealthData.StageSummaryType>> NullableStageSummaryType { get; }
+    JsonTypeInfo<Nullable<Kkdev92.HealthData.SubscriberConfigSubscriptionCreatePolicy>> NullableSubscriberConfigSubscriptionCreatePolicy { get; }
+    JsonTypeInfo<Nullable<Kkdev92.HealthData.SubscriberState>> NullableSubscriberState { get; }
+    JsonTypeInfo<Nullable<Kkdev92.HealthData.SwimLengthsDataSwimStrokeType>> NullableSwimLengthsDataSwimStrokeType { get; }
+    JsonTypeInfo<Nullable<Kkdev92.HealthData.TimeInHeartRateZoneHeartRateZoneType>> NullableTimeInHeartRateZoneHeartRateZoneType { get; }
+    JsonTypeInfo<Nullable<Kkdev92.HealthData.TimeInHeartRateZoneValueHeartRateZone>> NullableTimeInHeartRateZoneValueHeartRateZone { get; }
+    JsonTypeInfo<Nullable<Kkdev92.HealthData.VO2MaxMeasurementMethod>> NullableVO2MaxMeasurementMethod { get; }
+    JsonTypeInfo<Nullable<Kkdev92.HealthData.VolumeQuantityRollupUserProvidedUnitLast>> NullableVolumeQuantityRollupUserProvidedUnitLast { get; }
+    JsonTypeInfo<Nullable<Kkdev92.HealthData.VolumeQuantityUserProvidedUnit>> NullableVolumeQuantityUserProvidedUnit { get; }
+    JsonTypeInfo<Nullable<Kkdev92.HealthData.WeightQuantityRollupUserProvidedUnitLast>> NullableWeightQuantityRollupUserProvidedUnitLast { get; }
+    JsonTypeInfo<Nullable<Kkdev92.HealthData.WeightQuantityUserProvidedUnit>> NullableWeightQuantityUserProvidedUnit { get; }
+    JsonTypeInfo<Nullable<System.Boolean>> NullableBoolean { get; }
+    JsonTypeInfo<Nullable<System.Double>> NullableDouble { get; }
+    JsonTypeInfo<Nullable<System.Int32>> NullableInt32 { get; }
+    JsonTypeInfo<Nullable<System.Int64>> NullableInt64 { get; }
+    JsonTypeInfo<Nullable<System.Text.Json.JsonElement>> NullableJsonElement { get; }
+    JsonTypeInfo<System.Boolean> Boolean { get; }
+    JsonTypeInfo<System.DateTimeOffset> DateTimeOffset { get; }
+    JsonTypeInfo<System.Double> Double { get; }
+    JsonTypeInfo<System.Int32> Int32 { get; }
+    JsonTypeInfo<System.Int64> Int64 { get; }
+    JsonTypeInfo<System.String> String { get; }
+    JsonTypeInfo<System.Text.Json.JsonElement> JsonElement { get; }
+    Kkdev92.HealthData.Serialization.HealthDataJsonContext Default { get; }
+    System.Text.Json.Serialization.Metadata.JsonTypeInfo GetTypeInfo(System.Type type)
+static class Kkdev92.HealthData.Serialization.HealthDataOutputOnlyProperties
+    IReadOnlyDictionary<System.Type, System.String[]> ByType
+class Kkdev92.HealthData.Serialization.Int64StringConverter
+    .ctor()
+    System.Int64 Read(System.Text.Json.Utf8JsonReader& reader, System.Type typeToConvert, System.Text.Json.JsonSerializerOptions options)
+    System.Void Write(System.Text.Json.Utf8JsonWriter writer, System.Int64 value, System.Text.Json.JsonSerializerOptions options)
+class Kkdev92.HealthData.Serialization.OpenStringEnumConverter`1
+    .ctor()
+    System.Void Write(System.Text.Json.Utf8JsonWriter writer, T value, System.Text.Json.JsonSerializerOptions options)
+    T Read(System.Text.Json.Utf8JsonReader& reader, System.Type typeToConvert, System.Text.Json.JsonSerializerOptions options)
+class Kkdev92.HealthData.Serving
+    .ctor()
+    Nullable<System.Double> Amount { get; set; }
+    System.String FoodMeasurementUnit { get; set; }
+    System.String FoodMeasurementUnitDisplayName { get; set; }
+class Kkdev92.HealthData.SessionTimeInterval
+    .ctor()
+    Kkdev92.HealthData.CivilDateTime CivilEndTime { get; set; }
+    Kkdev92.HealthData.CivilDateTime CivilStartTime { get; set; }
+    Nullable<Kkdev92.HealthData.GoogleDuration> EndUtcOffset { get; set; }
+    Nullable<Kkdev92.HealthData.GoogleDuration> StartUtcOffset { get; set; }
+    Nullable<Kkdev92.HealthData.GoogleTimestamp> EndTime { get; set; }
+    Nullable<Kkdev92.HealthData.GoogleTimestamp> StartTime { get; set; }
+class Kkdev92.HealthData.Settings
+    .ctor()
+    Nullable<Kkdev92.HealthData.GoogleDuration> UtcOffset { get; set; }
+    Nullable<Kkdev92.HealthData.SettingsDistanceUnit> DistanceUnit { get; set; }
+    Nullable<Kkdev92.HealthData.SettingsGlucoseUnit> GlucoseUnit { get; set; }
+    Nullable<Kkdev92.HealthData.SettingsHeightUnit> HeightUnit { get; set; }
+    Nullable<Kkdev92.HealthData.SettingsStrideLengthRunningType> StrideLengthRunningType { get; set; }
+    Nullable<Kkdev92.HealthData.SettingsStrideLengthWalkingType> StrideLengthWalkingType { get; set; }
+    Nullable<Kkdev92.HealthData.SettingsSwimUnit> SwimUnit { get; set; }
+    Nullable<Kkdev92.HealthData.SettingsTemperatureUnit> TemperatureUnit { get; set; }
+    Nullable<Kkdev92.HealthData.SettingsWaterUnit> WaterUnit { get; set; }
+    Nullable<Kkdev92.HealthData.SettingsWeightUnit> WeightUnit { get; set; }
+    Nullable<System.Boolean> AutoStrideEnabled { get; set; }
+    System.String FoodLanguageCode { get; set; }
+    System.String LanguageLocale { get; set; }
+    System.String Name { get; set; }
+    System.String TimeZone { get; set; }
+struct Kkdev92.HealthData.SettingsDistanceUnit
+    .ctor(System.String Value)
+    Kkdev92.HealthData.SettingsDistanceUnit DistanceUnitKilometers { get; }
+    Kkdev92.HealthData.SettingsDistanceUnit DistanceUnitMiles { get; }
+    Kkdev92.HealthData.SettingsDistanceUnit DistanceUnitUnspecified { get; }
+    Kkdev92.HealthData.SettingsDistanceUnit FromValue(System.String value)
+    System.Boolean Equals(Kkdev92.HealthData.SettingsDistanceUnit other)
+    System.Boolean Equals(System.Object obj)
+    System.Int32 GetHashCode()
+    System.String ToString()
+    System.String Value { get; set; }
+    System.Void Deconstruct(System.String& Value)
+struct Kkdev92.HealthData.SettingsGlucoseUnit
+    .ctor(System.String Value)
+    Kkdev92.HealthData.SettingsGlucoseUnit FromValue(System.String value)
+    Kkdev92.HealthData.SettingsGlucoseUnit GlucoseUnitMgDl { get; }
+    Kkdev92.HealthData.SettingsGlucoseUnit GlucoseUnitMmolL { get; }
+    Kkdev92.HealthData.SettingsGlucoseUnit GlucoseUnitUnspecified { get; }
+    System.Boolean Equals(Kkdev92.HealthData.SettingsGlucoseUnit other)
+    System.Boolean Equals(System.Object obj)
+    System.Int32 GetHashCode()
+    System.String ToString()
+    System.String Value { get; set; }
+    System.Void Deconstruct(System.String& Value)
+struct Kkdev92.HealthData.SettingsHeightUnit
+    .ctor(System.String Value)
+    Kkdev92.HealthData.SettingsHeightUnit FromValue(System.String value)
+    Kkdev92.HealthData.SettingsHeightUnit HeightUnitCentimeters { get; }
+    Kkdev92.HealthData.SettingsHeightUnit HeightUnitInches { get; }
+    Kkdev92.HealthData.SettingsHeightUnit HeightUnitUnspecified { get; }
+    System.Boolean Equals(Kkdev92.HealthData.SettingsHeightUnit other)
+    System.Boolean Equals(System.Object obj)
+    System.Int32 GetHashCode()
+    System.String ToString()
+    System.String Value { get; set; }
+    System.Void Deconstruct(System.String& Value)
+struct Kkdev92.HealthData.SettingsStrideLengthRunningType
+    .ctor(System.String Value)
+    Kkdev92.HealthData.SettingsStrideLengthRunningType FromValue(System.String value)
+    Kkdev92.HealthData.SettingsStrideLengthRunningType StrideLengthTypeAuto { get; }
+    Kkdev92.HealthData.SettingsStrideLengthRunningType StrideLengthTypeDefault { get; }
+    Kkdev92.HealthData.SettingsStrideLengthRunningType StrideLengthTypeManual { get; }
+    Kkdev92.HealthData.SettingsStrideLengthRunningType StrideLengthTypeUnspecified { get; }
+    System.Boolean Equals(Kkdev92.HealthData.SettingsStrideLengthRunningType other)
+    System.Boolean Equals(System.Object obj)
+    System.Int32 GetHashCode()
+    System.String ToString()
+    System.String Value { get; set; }
+    System.Void Deconstruct(System.String& Value)
+struct Kkdev92.HealthData.SettingsStrideLengthWalkingType
+    .ctor(System.String Value)
+    Kkdev92.HealthData.SettingsStrideLengthWalkingType FromValue(System.String value)
+    Kkdev92.HealthData.SettingsStrideLengthWalkingType StrideLengthTypeAuto { get; }
+    Kkdev92.HealthData.SettingsStrideLengthWalkingType StrideLengthTypeDefault { get; }
+    Kkdev92.HealthData.SettingsStrideLengthWalkingType StrideLengthTypeManual { get; }
+    Kkdev92.HealthData.SettingsStrideLengthWalkingType StrideLengthTypeUnspecified { get; }
+    System.Boolean Equals(Kkdev92.HealthData.SettingsStrideLengthWalkingType other)
+    System.Boolean Equals(System.Object obj)
+    System.Int32 GetHashCode()
+    System.String ToString()
+    System.String Value { get; set; }
+    System.Void Deconstruct(System.String& Value)
+struct Kkdev92.HealthData.SettingsSwimUnit
+    .ctor(System.String Value)
+    Kkdev92.HealthData.SettingsSwimUnit FromValue(System.String value)
+    Kkdev92.HealthData.SettingsSwimUnit SwimUnitMeters { get; }
+    Kkdev92.HealthData.SettingsSwimUnit SwimUnitUnspecified { get; }
+    Kkdev92.HealthData.SettingsSwimUnit SwimUnitYards { get; }
+    System.Boolean Equals(Kkdev92.HealthData.SettingsSwimUnit other)
+    System.Boolean Equals(System.Object obj)
+    System.Int32 GetHashCode()
+    System.String ToString()
+    System.String Value { get; set; }
+    System.Void Deconstruct(System.String& Value)
+struct Kkdev92.HealthData.SettingsTemperatureUnit
+    .ctor(System.String Value)
+    Kkdev92.HealthData.SettingsTemperatureUnit FromValue(System.String value)
+    Kkdev92.HealthData.SettingsTemperatureUnit TemperatureUnitCelsius { get; }
+    Kkdev92.HealthData.SettingsTemperatureUnit TemperatureUnitFahrenheit { get; }
+    Kkdev92.HealthData.SettingsTemperatureUnit TemperatureUnitUnspecified { get; }
+    System.Boolean Equals(Kkdev92.HealthData.SettingsTemperatureUnit other)
+    System.Boolean Equals(System.Object obj)
+    System.Int32 GetHashCode()
+    System.String ToString()
+    System.String Value { get; set; }
+    System.Void Deconstruct(System.String& Value)
+struct Kkdev92.HealthData.SettingsWaterUnit
+    .ctor(System.String Value)
+    Kkdev92.HealthData.SettingsWaterUnit FromValue(System.String value)
+    Kkdev92.HealthData.SettingsWaterUnit WaterUnitCup { get; }
+    Kkdev92.HealthData.SettingsWaterUnit WaterUnitFlOz { get; }
+    Kkdev92.HealthData.SettingsWaterUnit WaterUnitMl { get; }
+    Kkdev92.HealthData.SettingsWaterUnit WaterUnitUnspecified { get; }
+    System.Boolean Equals(Kkdev92.HealthData.SettingsWaterUnit other)
+    System.Boolean Equals(System.Object obj)
+    System.Int32 GetHashCode()
+    System.String ToString()
+    System.String Value { get; set; }
+    System.Void Deconstruct(System.String& Value)
+struct Kkdev92.HealthData.SettingsWeightUnit
+    .ctor(System.String Value)
+    Kkdev92.HealthData.SettingsWeightUnit FromValue(System.String value)
+    Kkdev92.HealthData.SettingsWeightUnit WeightUnitKilograms { get; }
+    Kkdev92.HealthData.SettingsWeightUnit WeightUnitPounds { get; }
+    Kkdev92.HealthData.SettingsWeightUnit WeightUnitStone { get; }
+    Kkdev92.HealthData.SettingsWeightUnit WeightUnitUnspecified { get; }
+    System.Boolean Equals(Kkdev92.HealthData.SettingsWeightUnit other)
+    System.Boolean Equals(System.Object obj)
+    System.Int32 GetHashCode()
+    System.String ToString()
+    System.String Value { get; set; }
+    System.Void Deconstruct(System.String& Value)
+class Kkdev92.HealthData.Sleep
+    .ctor()
+    IReadOnlyList<Kkdev92.HealthData.OutOfBedSegment> OutOfBedSegments { get; set; }
+    IReadOnlyList<Kkdev92.HealthData.SleepStage> ShortAwakenings { get; set; }
+    IReadOnlyList<Kkdev92.HealthData.SleepStage> Stages { get; set; }
+    Kkdev92.HealthData.SessionTimeInterval Interval { get; set; }
+    Kkdev92.HealthData.SleepMetadata Metadata { get; set; }
+    Kkdev92.HealthData.SleepSummary Summary { get; set; }
+    Nullable<Kkdev92.HealthData.GoogleTimestamp> CreateTime { get; set; }
+    Nullable<Kkdev92.HealthData.GoogleTimestamp> UpdateTime { get; set; }
+    Nullable<Kkdev92.HealthData.SleepType> Type { get; set; }
+class Kkdev92.HealthData.SleepMetadata
+    .ctor()
+    Nullable<Kkdev92.HealthData.SleepMetadataStagesStatus> StagesStatus { get; set; }
+    Nullable<System.Boolean> MainSleep { get; set; }
+    Nullable<System.Boolean> ManuallyEdited { get; set; }
+    Nullable<System.Boolean> Nap { get; set; }
+    Nullable<System.Boolean> Processed { get; set; }
+    System.String ExternalId { get; set; }
+struct Kkdev92.HealthData.SleepMetadataStagesStatus
+    .ctor(System.String Value)
+    Kkdev92.HealthData.SleepMetadataStagesStatus FromValue(System.String value)
+    Kkdev92.HealthData.SleepMetadataStagesStatus ProcessingInternalError { get; }
+    Kkdev92.HealthData.SleepMetadataStagesStatus RejectedCoverage { get; }
+    Kkdev92.HealthData.SleepMetadataStagesStatus RejectedEndGap { get; }
+    Kkdev92.HealthData.SleepMetadataStagesStatus RejectedMaxGap { get; }
+    Kkdev92.HealthData.SleepMetadataStagesStatus RejectedNap { get; }
+    Kkdev92.HealthData.SleepMetadataStagesStatus RejectedServer { get; }
+    Kkdev92.HealthData.SleepMetadataStagesStatus RejectedStartGap { get; }
+    Kkdev92.HealthData.SleepMetadataStagesStatus StagesStateUnspecified { get; }
+    Kkdev92.HealthData.SleepMetadataStagesStatus Succeeded { get; }
+    Kkdev92.HealthData.SleepMetadataStagesStatus Timeout { get; }
+    System.Boolean Equals(Kkdev92.HealthData.SleepMetadataStagesStatus other)
+    System.Boolean Equals(System.Object obj)
+    System.Int32 GetHashCode()
+    System.String ToString()
+    System.String Value { get; set; }
+    System.Void Deconstruct(System.String& Value)
+class Kkdev92.HealthData.SleepStage
+    .ctor()
+    Nullable<Kkdev92.HealthData.GoogleDuration> EndUtcOffset { get; set; }
+    Nullable<Kkdev92.HealthData.GoogleDuration> StartUtcOffset { get; set; }
+    Nullable<Kkdev92.HealthData.GoogleTimestamp> CreateTime { get; set; }
+    Nullable<Kkdev92.HealthData.GoogleTimestamp> EndTime { get; set; }
+    Nullable<Kkdev92.HealthData.GoogleTimestamp> StartTime { get; set; }
+    Nullable<Kkdev92.HealthData.GoogleTimestamp> UpdateTime { get; set; }
+    Nullable<Kkdev92.HealthData.SleepStageType> Type { get; set; }
+struct Kkdev92.HealthData.SleepStageType
+    .ctor(System.String Value)
+    Kkdev92.HealthData.SleepStageType Asleep { get; }
+    Kkdev92.HealthData.SleepStageType Awake { get; }
+    Kkdev92.HealthData.SleepStageType Deep { get; }
+    Kkdev92.HealthData.SleepStageType FromValue(System.String value)
+    Kkdev92.HealthData.SleepStageType Light { get; }
+    Kkdev92.HealthData.SleepStageType Rem { get; }
+    Kkdev92.HealthData.SleepStageType Restless { get; }
+    Kkdev92.HealthData.SleepStageType SleepStageTypeUnspecified { get; }
+    System.Boolean Equals(Kkdev92.HealthData.SleepStageType other)
+    System.Boolean Equals(System.Object obj)
+    System.Int32 GetHashCode()
+    System.String ToString()
+    System.String Value { get; set; }
+    System.Void Deconstruct(System.String& Value)
+class Kkdev92.HealthData.SleepSummary
+    .ctor()
+    IReadOnlyList<Kkdev92.HealthData.StageSummary> StagesSummary { get; set; }
+    Nullable<System.Int64> MinutesAfterWakeUp { get; set; }
+    Nullable<System.Int64> MinutesAsleep { get; set; }
+    Nullable<System.Int64> MinutesAwake { get; set; }
+    Nullable<System.Int64> MinutesInSleepPeriod { get; set; }
+    Nullable<System.Int64> MinutesToFallAsleep { get; set; }
+struct Kkdev92.HealthData.SleepType
+    .ctor(System.String Value)
+    Kkdev92.HealthData.SleepType Classic { get; }
+    Kkdev92.HealthData.SleepType FromValue(System.String value)
+    Kkdev92.HealthData.SleepType SleepTypeUnspecified { get; }
+    Kkdev92.HealthData.SleepType Stages { get; }
+    System.Boolean Equals(Kkdev92.HealthData.SleepType other)
+    System.Boolean Equals(System.Object obj)
+    System.Int32 GetHashCode()
+    System.String ToString()
+    System.String Value { get; set; }
+    System.Void Deconstruct(System.String& Value)
+class Kkdev92.HealthData.SplitSummary
+    .ctor()
+    Kkdev92.HealthData.MetricsSummary MetricsSummary { get; set; }
+    Nullable<Kkdev92.HealthData.GoogleDuration> ActiveDuration { get; set; }
+    Nullable<Kkdev92.HealthData.GoogleDuration> EndUtcOffset { get; set; }
+    Nullable<Kkdev92.HealthData.GoogleDuration> StartUtcOffset { get; set; }
+    Nullable<Kkdev92.HealthData.GoogleTimestamp> EndTime { get; set; }
+    Nullable<Kkdev92.HealthData.GoogleTimestamp> StartTime { get; set; }
+    Nullable<Kkdev92.HealthData.SplitSummarySplitType> SplitType { get; set; }
+struct Kkdev92.HealthData.SplitSummarySplitType
+    .ctor(System.String Value)
+    Kkdev92.HealthData.SplitSummarySplitType Calories { get; }
+    Kkdev92.HealthData.SplitSummarySplitType Distance { get; }
+    Kkdev92.HealthData.SplitSummarySplitType Duration { get; }
+    Kkdev92.HealthData.SplitSummarySplitType FromValue(System.String value)
+    Kkdev92.HealthData.SplitSummarySplitType Manual { get; }
+    Kkdev92.HealthData.SplitSummarySplitType SplitTypeUnspecified { get; }
+    System.Boolean Equals(Kkdev92.HealthData.SplitSummarySplitType other)
+    System.Boolean Equals(System.Object obj)
+    System.Int32 GetHashCode()
+    System.String ToString()
+    System.String Value { get; set; }
+    System.Void Deconstruct(System.String& Value)
+class Kkdev92.HealthData.StageSummary
+    .ctor()
+    Nullable<Kkdev92.HealthData.StageSummaryType> Type { get; set; }
+    Nullable<System.Int64> Count { get; set; }
+    Nullable<System.Int64> Minutes { get; set; }
+struct Kkdev92.HealthData.StageSummaryType
+    .ctor(System.String Value)
+    Kkdev92.HealthData.StageSummaryType Asleep { get; }
+    Kkdev92.HealthData.StageSummaryType Awake { get; }
+    Kkdev92.HealthData.StageSummaryType Deep { get; }
+    Kkdev92.HealthData.StageSummaryType FromValue(System.String value)
+    Kkdev92.HealthData.StageSummaryType Light { get; }
+    Kkdev92.HealthData.StageSummaryType Rem { get; }
+    Kkdev92.HealthData.StageSummaryType Restless { get; }
+    Kkdev92.HealthData.StageSummaryType SleepStageTypeUnspecified { get; }
+    System.Boolean Equals(Kkdev92.HealthData.StageSummaryType other)
+    System.Boolean Equals(System.Object obj)
+    System.Int32 GetHashCode()
+    System.String ToString()
+    System.String Value { get; set; }
+    System.Void Deconstruct(System.String& Value)
+class Kkdev92.HealthData.Status
+    .ctor()
+    IReadOnlyList<System.Text.Json.JsonElement> Details { get; set; }
+    Nullable<System.Int32> Code { get; set; }
+    System.String Message { get; set; }
+class Kkdev92.HealthData.Steps
+    .ctor()
+    Kkdev92.HealthData.ObservationTimeInterval Interval { get; set; }
+    Nullable<System.Int64> Count { get; set; }
+class Kkdev92.HealthData.StepsRollupValue
+    .ctor()
+    Nullable<System.Int64> CountSum { get; set; }
+class Kkdev92.HealthData.Subscriber
+    .ctor()
+    IReadOnlyList<Kkdev92.HealthData.SubscriberConfig> SubscriberConfigs { get; set; }
+    Kkdev92.HealthData.EndpointAuthorization EndpointAuthorization { get; set; }
+    Nullable<Kkdev92.HealthData.GoogleTimestamp> CreateTime { get; set; }
+    Nullable<Kkdev92.HealthData.GoogleTimestamp> UpdateTime { get; set; }
+    Nullable<Kkdev92.HealthData.SubscriberState> State { get; set; }
+    System.String EndpointUri { get; set; }
+    System.String Name { get; set; }
+class Kkdev92.HealthData.SubscriberConfig
+    .ctor()
+    IReadOnlyList<System.String> DataTypes { get; set; }
+    Nullable<Kkdev92.HealthData.SubscriberConfigSubscriptionCreatePolicy> SubscriptionCreatePolicy { get; set; }
+struct Kkdev92.HealthData.SubscriberConfigSubscriptionCreatePolicy
+    .ctor(System.String Value)
+    Kkdev92.HealthData.SubscriberConfigSubscriptionCreatePolicy Automatic { get; }
+    Kkdev92.HealthData.SubscriberConfigSubscriptionCreatePolicy FromValue(System.String value)
+    Kkdev92.HealthData.SubscriberConfigSubscriptionCreatePolicy Manual { get; }
+    Kkdev92.HealthData.SubscriberConfigSubscriptionCreatePolicy SubscriptionCreatePolicyUnspecified { get; }
+    System.Boolean Equals(Kkdev92.HealthData.SubscriberConfigSubscriptionCreatePolicy other)
+    System.Boolean Equals(System.Object obj)
+    System.Int32 GetHashCode()
+    System.String ToString()
+    System.String Value { get; set; }
+    System.Void Deconstruct(System.String& Value)
+struct Kkdev92.HealthData.SubscriberState
+    .ctor(System.String Value)
+    Kkdev92.HealthData.SubscriberState Active { get; }
+    Kkdev92.HealthData.SubscriberState FromValue(System.String value)
+    Kkdev92.HealthData.SubscriberState Inactive { get; }
+    Kkdev92.HealthData.SubscriberState StateUnspecified { get; }
+    Kkdev92.HealthData.SubscriberState Unverified { get; }
+    System.Boolean Equals(Kkdev92.HealthData.SubscriberState other)
+    System.Boolean Equals(System.Object obj)
+    System.Int32 GetHashCode()
+    System.String ToString()
+    System.String Value { get; set; }
+    System.Void Deconstruct(System.String& Value)
+class Kkdev92.HealthData.SubscribersResource
+    IAsyncEnumerable<Kkdev92.HealthData.Subscriber> EnumerateAsync(Kkdev92.HealthData.ListSubscribersRequest request, System.Threading.CancellationToken cancellationToken = default)
+    Kkdev92.HealthData.SubscriptionsResource Subscriptions { get; }
+    Task<Kkdev92.HealthData.ListSubscribersResponse> ListAsync(Kkdev92.HealthData.ListSubscribersRequest request, System.Threading.CancellationToken cancellationToken = default)
+    Task<Kkdev92.HealthData.Operation> CreateAsync(Kkdev92.HealthData.CreateSubscribersRequest request, System.Threading.CancellationToken cancellationToken = default)
+    Task<Kkdev92.HealthData.Operation> DeleteAsync(Kkdev92.HealthData.DeleteSubscribersRequest request, System.Threading.CancellationToken cancellationToken = default)
+    Task<Kkdev92.HealthData.Operation> PatchAsync(Kkdev92.HealthData.PatchSubscribersRequest request, System.Threading.CancellationToken cancellationToken = default)
+class Kkdev92.HealthData.Subscription
+    .ctor()
+    IReadOnlyList<System.String> DataTypes { get; set; }
+    System.String Name { get; set; }
+    System.String User { get; set; }
+class Kkdev92.HealthData.SubscriptionsResource
+    IAsyncEnumerable<Kkdev92.HealthData.Subscription> EnumerateAsync(Kkdev92.HealthData.ListSubscriptionsRequest request, System.Threading.CancellationToken cancellationToken = default)
+    System.Threading.Tasks.Task DeleteAsync(Kkdev92.HealthData.DeleteSubscriptionsRequest request, System.Threading.CancellationToken cancellationToken = default)
+    Task<Kkdev92.HealthData.ListSubscriptionsResponse> ListAsync(Kkdev92.HealthData.ListSubscriptionsRequest request, System.Threading.CancellationToken cancellationToken = default)
+    Task<Kkdev92.HealthData.Subscription> CreateAsync(Kkdev92.HealthData.CreateSubscriptionsRequest request, System.Threading.CancellationToken cancellationToken = default)
+    Task<Kkdev92.HealthData.Subscription> PatchAsync(Kkdev92.HealthData.PatchSubscriptionsRequest request, System.Threading.CancellationToken cancellationToken = default)
+class Kkdev92.HealthData.SwimLengthsData
+    .ctor()
+    Kkdev92.HealthData.ObservationTimeInterval Interval { get; set; }
+    Nullable<Kkdev92.HealthData.SwimLengthsDataSwimStrokeType> SwimStrokeType { get; set; }
+    Nullable<System.Int64> StrokeCount { get; set; }
+class Kkdev92.HealthData.SwimLengthsDataRollupValue
+    .ctor()
+    Nullable<System.Int64> StrokeCountSum { get; set; }
+struct Kkdev92.HealthData.SwimLengthsDataSwimStrokeType
+    .ctor(System.String Value)
+    Kkdev92.HealthData.SwimLengthsDataSwimStrokeType Backstroke { get; }
+    Kkdev92.HealthData.SwimLengthsDataSwimStrokeType Breaststroke { get; }
+    Kkdev92.HealthData.SwimLengthsDataSwimStrokeType Butterfly { get; }
+    Kkdev92.HealthData.SwimLengthsDataSwimStrokeType Freestyle { get; }
+    Kkdev92.HealthData.SwimLengthsDataSwimStrokeType FromValue(System.String value)
+    Kkdev92.HealthData.SwimLengthsDataSwimStrokeType SwimStrokeTypeUnspecified { get; }
+    System.Boolean Equals(Kkdev92.HealthData.SwimLengthsDataSwimStrokeType other)
+    System.Boolean Equals(System.Object obj)
+    System.Int32 GetHashCode()
+    System.String ToString()
+    System.String Value { get; set; }
+    System.Void Deconstruct(System.String& Value)
+class Kkdev92.HealthData.Symptoms
+    .ctor()
+    IReadOnlyList<Kkdev92.HealthData.SymptomsSymptoms> SymptomsValue { get; set; }
+    Kkdev92.HealthData.ObservationSampleTime SampleTime { get; set; }
+struct Kkdev92.HealthData.SymptomsSymptoms
+    .ctor(System.String Value)
+    Kkdev92.HealthData.SymptomsSymptoms Acne { get; }
+    Kkdev92.HealthData.SymptomsSymptoms Anxiety { get; }
+    Kkdev92.HealthData.SymptomsSymptoms BackPain { get; }
+    Kkdev92.HealthData.SymptomsSymptoms Bloated { get; }
+    Kkdev92.HealthData.SymptomsSymptoms BlurredVision { get; }
+    Kkdev92.HealthData.SymptomsSymptoms ChestPain { get; }
+    Kkdev92.HealthData.SymptomsSymptoms Confusion { get; }
+    Kkdev92.HealthData.SymptomsSymptoms Cough { get; }
+    Kkdev92.HealthData.SymptomsSymptoms Cramps { get; }
+    Kkdev92.HealthData.SymptomsSymptoms DifficultyBreathing { get; }
+    Kkdev92.HealthData.SymptomsSymptoms Dizziness { get; }
+    Kkdev92.HealthData.SymptomsSymptoms Fainting { get; }
+    Kkdev92.HealthData.SymptomsSymptoms Fatigue { get; }
+    Kkdev92.HealthData.SymptomsSymptoms Fever { get; }
+    Kkdev92.HealthData.SymptomsSymptoms FrequentUrination { get; }
+    Kkdev92.HealthData.SymptomsSymptoms FromValue(System.String value)
+    Kkdev92.HealthData.SymptomsSymptoms Headache { get; }
+    Kkdev92.HealthData.SymptomsSymptoms HeartPalpitations { get; }
+    Kkdev92.HealthData.SymptomsSymptoms HotFlashes { get; }
+    Kkdev92.HealthData.SymptomsSymptoms Hunger { get; }
+    Kkdev92.HealthData.SymptomsSymptoms Other { get; }
+    Kkdev92.HealthData.SymptomsSymptoms Pms { get; }
+    Kkdev92.HealthData.SymptomsSymptoms SexDriveHigh { get; }
+    Kkdev92.HealthData.SymptomsSymptoms SexDriveLow { get; }
+    Kkdev92.HealthData.SymptomsSymptoms SexDriveMedium { get; }
+    Kkdev92.HealthData.SymptomsSymptoms Shakiness { get; }
+    Kkdev92.HealthData.SymptomsSymptoms Sick { get; }
+    Kkdev92.HealthData.SymptomsSymptoms Sweating { get; }
+    Kkdev92.HealthData.SymptomsSymptoms SymptomValueUnspecified { get; }
+    Kkdev92.HealthData.SymptomsSymptoms TenderBreasts { get; }
+    Kkdev92.HealthData.SymptomsSymptoms Thirst { get; }
+    System.Boolean Equals(Kkdev92.HealthData.SymptomsSymptoms other)
+    System.Boolean Equals(System.Object obj)
+    System.Int32 GetHashCode()
+    System.String ToString()
+    System.String Value { get; set; }
+    System.Void Deconstruct(System.String& Value)
+class Kkdev92.HealthData.TimeInHeartRateZone
+    .ctor()
+    Kkdev92.HealthData.ObservationTimeInterval Interval { get; set; }
+    Nullable<Kkdev92.HealthData.TimeInHeartRateZoneHeartRateZoneType> HeartRateZoneType { get; set; }
+struct Kkdev92.HealthData.TimeInHeartRateZoneHeartRateZoneType
+    .ctor(System.String Value)
+    Kkdev92.HealthData.TimeInHeartRateZoneHeartRateZoneType FromValue(System.String value)
+    Kkdev92.HealthData.TimeInHeartRateZoneHeartRateZoneType HeartRateZoneTypeUnspecified { get; }
+    Kkdev92.HealthData.TimeInHeartRateZoneHeartRateZoneType Light { get; }
+    Kkdev92.HealthData.TimeInHeartRateZoneHeartRateZoneType Moderate { get; }
+    Kkdev92.HealthData.TimeInHeartRateZoneHeartRateZoneType Peak { get; }
+    Kkdev92.HealthData.TimeInHeartRateZoneHeartRateZoneType Vigorous { get; }
+    System.Boolean Equals(Kkdev92.HealthData.TimeInHeartRateZoneHeartRateZoneType other)
+    System.Boolean Equals(System.Object obj)
+    System.Int32 GetHashCode()
+    System.String ToString()
+    System.String Value { get; set; }
+    System.Void Deconstruct(System.String& Value)
+class Kkdev92.HealthData.TimeInHeartRateZoneRollupValue
+    .ctor()
+    IReadOnlyList<Kkdev92.HealthData.TimeInHeartRateZoneValue> TimeInHeartRateZones { get; set; }
+class Kkdev92.HealthData.TimeInHeartRateZoneValue
+    .ctor()
+    Nullable<Kkdev92.HealthData.GoogleDuration> Duration { get; set; }
+    Nullable<Kkdev92.HealthData.TimeInHeartRateZoneValueHeartRateZone> HeartRateZone { get; set; }
+struct Kkdev92.HealthData.TimeInHeartRateZoneValueHeartRateZone
+    .ctor(System.String Value)
+    Kkdev92.HealthData.TimeInHeartRateZoneValueHeartRateZone FromValue(System.String value)
+    Kkdev92.HealthData.TimeInHeartRateZoneValueHeartRateZone HeartRateZoneTypeUnspecified { get; }
+    Kkdev92.HealthData.TimeInHeartRateZoneValueHeartRateZone Light { get; }
+    Kkdev92.HealthData.TimeInHeartRateZoneValueHeartRateZone Moderate { get; }
+    Kkdev92.HealthData.TimeInHeartRateZoneValueHeartRateZone Peak { get; }
+    Kkdev92.HealthData.TimeInHeartRateZoneValueHeartRateZone Vigorous { get; }
+    System.Boolean Equals(Kkdev92.HealthData.TimeInHeartRateZoneValueHeartRateZone other)
+    System.Boolean Equals(System.Object obj)
+    System.Int32 GetHashCode()
+    System.String ToString()
+    System.String Value { get; set; }
+    System.Void Deconstruct(System.String& Value)
+class Kkdev92.HealthData.TimeInHeartRateZones
+    .ctor()
+    Nullable<Kkdev92.HealthData.GoogleDuration> LightTime { get; set; }
+    Nullable<Kkdev92.HealthData.GoogleDuration> ModerateTime { get; set; }
+    Nullable<Kkdev92.HealthData.GoogleDuration> PeakTime { get; set; }
+    Nullable<Kkdev92.HealthData.GoogleDuration> VigorousTime { get; set; }
+class Kkdev92.HealthData.TimeOfDay
+    .ctor()
+    Nullable<System.Int32> Hours { get; set; }
+    Nullable<System.Int32> Minutes { get; set; }
+    Nullable<System.Int32> Nanos { get; set; }
+    Nullable<System.Int32> Seconds { get; set; }
+class Kkdev92.HealthData.TotalCaloriesRollupValue
+    .ctor()
+    Nullable<System.Double> KcalSum { get; set; }
+class Kkdev92.HealthData.UpdateProfileRequest
+    .ctor()
+    Kkdev92.HealthData.Profile Body { get; set; }
+    Nullable<Kkdev92.HealthData.GoogleFieldMask> UpdateMask { get; set; }
+    System.String Name { get; set; }
+class Kkdev92.HealthData.UpdateSettingsRequest
+    .ctor()
+    Kkdev92.HealthData.Settings Body { get; set; }
+    Nullable<Kkdev92.HealthData.GoogleFieldMask> UpdateMask { get; set; }
+    System.String Name { get; set; }
+class Kkdev92.HealthData.UsersResource
+    Kkdev92.HealthData.DataPointsResource DataPoints { get; }
+    Kkdev92.HealthData.PairedDevicesResource PairedDevices { get; }
+    Task<Kkdev92.HealthData.Identity> GetIdentityAsync(Kkdev92.HealthData.GetIdentityRequest request, System.Threading.CancellationToken cancellationToken = default)
+    Task<Kkdev92.HealthData.IrnProfile> GetIrnProfileAsync(Kkdev92.HealthData.GetIrnProfileRequest request, System.Threading.CancellationToken cancellationToken = default)
+    Task<Kkdev92.HealthData.Profile> GetProfileAsync(Kkdev92.HealthData.GetProfileRequest request, System.Threading.CancellationToken cancellationToken = default)
+    Task<Kkdev92.HealthData.Profile> UpdateProfileAsync(Kkdev92.HealthData.UpdateProfileRequest request, System.Threading.CancellationToken cancellationToken = default)
+    Task<Kkdev92.HealthData.Settings> GetSettingsAsync(Kkdev92.HealthData.GetSettingsRequest request, System.Threading.CancellationToken cancellationToken = default)
+    Task<Kkdev92.HealthData.Settings> UpdateSettingsAsync(Kkdev92.HealthData.UpdateSettingsRequest request, System.Threading.CancellationToken cancellationToken = default)
+class Kkdev92.HealthData.VO2Max
+    .ctor()
+    Kkdev92.HealthData.ObservationSampleTime SampleTime { get; set; }
+    Nullable<Kkdev92.HealthData.VO2MaxMeasurementMethod> MeasurementMethod { get; set; }
+    Nullable<System.Double> Vo2Max { get; set; }
+struct Kkdev92.HealthData.VO2MaxMeasurementMethod
+    .ctor(System.String Value)
+    Kkdev92.HealthData.VO2MaxMeasurementMethod CooperTest { get; }
+    Kkdev92.HealthData.VO2MaxMeasurementMethod FitbitRun { get; }
+    Kkdev92.HealthData.VO2MaxMeasurementMethod FromValue(System.String value)
+    Kkdev92.HealthData.VO2MaxMeasurementMethod GoogleDemographic { get; }
+    Kkdev92.HealthData.VO2MaxMeasurementMethod HeartRateRatio { get; }
+    Kkdev92.HealthData.VO2MaxMeasurementMethod MaxExercise { get; }
+    Kkdev92.HealthData.VO2MaxMeasurementMethod MeasurementMethodUnspecified { get; }
+    Kkdev92.HealthData.VO2MaxMeasurementMethod MetabolicCart { get; }
+    Kkdev92.HealthData.VO2MaxMeasurementMethod MultistageFitnessTest { get; }
+    Kkdev92.HealthData.VO2MaxMeasurementMethod Other { get; }
+    Kkdev92.HealthData.VO2MaxMeasurementMethod PredictionNonExercise { get; }
+    Kkdev92.HealthData.VO2MaxMeasurementMethod PredictionSubMaxExercise { get; }
+    Kkdev92.HealthData.VO2MaxMeasurementMethod RockportFitnessTest { get; }
+    System.Boolean Equals(Kkdev92.HealthData.VO2MaxMeasurementMethod other)
+    System.Boolean Equals(System.Object obj)
+    System.Int32 GetHashCode()
+    System.String ToString()
+    System.String Value { get; set; }
+    System.Void Deconstruct(System.String& Value)
+class Kkdev92.HealthData.VolumeQuantity
+    .ctor()
+    Nullable<Kkdev92.HealthData.VolumeQuantityUserProvidedUnit> UserProvidedUnit { get; set; }
+    Nullable<System.Double> Milliliters { get; set; }
+class Kkdev92.HealthData.VolumeQuantityRollup
+    .ctor()
+    Nullable<Kkdev92.HealthData.VolumeQuantityRollupUserProvidedUnitLast> UserProvidedUnitLast { get; set; }
+    Nullable<System.Double> MillilitersSum { get; set; }
+struct Kkdev92.HealthData.VolumeQuantityRollupUserProvidedUnitLast
+    .ctor(System.String Value)
+    Kkdev92.HealthData.VolumeQuantityRollupUserProvidedUnitLast CupImperial { get; }
+    Kkdev92.HealthData.VolumeQuantityRollupUserProvidedUnitLast CupUs { get; }
+    Kkdev92.HealthData.VolumeQuantityRollupUserProvidedUnitLast FluidOunceImperial { get; }
+    Kkdev92.HealthData.VolumeQuantityRollupUserProvidedUnitLast FluidOunceUs { get; }
+    Kkdev92.HealthData.VolumeQuantityRollupUserProvidedUnitLast FromValue(System.String value)
+    Kkdev92.HealthData.VolumeQuantityRollupUserProvidedUnitLast Liter { get; }
+    Kkdev92.HealthData.VolumeQuantityRollupUserProvidedUnitLast Milliliter { get; }
+    Kkdev92.HealthData.VolumeQuantityRollupUserProvidedUnitLast PintImperial { get; }
+    Kkdev92.HealthData.VolumeQuantityRollupUserProvidedUnitLast PintUs { get; }
+    Kkdev92.HealthData.VolumeQuantityRollupUserProvidedUnitLast VolumeUnitUnspecified { get; }
+    System.Boolean Equals(Kkdev92.HealthData.VolumeQuantityRollupUserProvidedUnitLast other)
+    System.Boolean Equals(System.Object obj)
+    System.Int32 GetHashCode()
+    System.String ToString()
+    System.String Value { get; set; }
+    System.Void Deconstruct(System.String& Value)
+struct Kkdev92.HealthData.VolumeQuantityUserProvidedUnit
+    .ctor(System.String Value)
+    Kkdev92.HealthData.VolumeQuantityUserProvidedUnit CupImperial { get; }
+    Kkdev92.HealthData.VolumeQuantityUserProvidedUnit CupUs { get; }
+    Kkdev92.HealthData.VolumeQuantityUserProvidedUnit FluidOunceImperial { get; }
+    Kkdev92.HealthData.VolumeQuantityUserProvidedUnit FluidOunceUs { get; }
+    Kkdev92.HealthData.VolumeQuantityUserProvidedUnit FromValue(System.String value)
+    Kkdev92.HealthData.VolumeQuantityUserProvidedUnit Liter { get; }
+    Kkdev92.HealthData.VolumeQuantityUserProvidedUnit Milliliter { get; }
+    Kkdev92.HealthData.VolumeQuantityUserProvidedUnit PintImperial { get; }
+    Kkdev92.HealthData.VolumeQuantityUserProvidedUnit PintUs { get; }
+    Kkdev92.HealthData.VolumeQuantityUserProvidedUnit VolumeUnitUnspecified { get; }
+    System.Boolean Equals(Kkdev92.HealthData.VolumeQuantityUserProvidedUnit other)
+    System.Boolean Equals(System.Object obj)
+    System.Int32 GetHashCode()
+    System.String ToString()
+    System.String Value { get; set; }
+    System.Void Deconstruct(System.String& Value)
+class Kkdev92.HealthData.Weight
+    .ctor()
+    Kkdev92.HealthData.ObservationSampleTime SampleTime { get; set; }
+    Nullable<System.Double> WeightGrams { get; set; }
+    System.String Notes { get; set; }
+class Kkdev92.HealthData.WeightQuantity
+    .ctor()
+    Nullable<Kkdev92.HealthData.WeightQuantityUserProvidedUnit> UserProvidedUnit { get; set; }
+    Nullable<System.Double> Grams { get; set; }
+class Kkdev92.HealthData.WeightQuantityRollup
+    .ctor()
+    Nullable<Kkdev92.HealthData.WeightQuantityRollupUserProvidedUnitLast> UserProvidedUnitLast { get; set; }
+    Nullable<System.Double> GramsSum { get; set; }
+struct Kkdev92.HealthData.WeightQuantityRollupUserProvidedUnitLast
+    .ctor(System.String Value)
+    Kkdev92.HealthData.WeightQuantityRollupUserProvidedUnitLast FromValue(System.String value)
+    Kkdev92.HealthData.WeightQuantityRollupUserProvidedUnitLast Gram { get; }
+    Kkdev92.HealthData.WeightQuantityRollupUserProvidedUnitLast Kilogram { get; }
+    Kkdev92.HealthData.WeightQuantityRollupUserProvidedUnitLast Microgram { get; }
+    Kkdev92.HealthData.WeightQuantityRollupUserProvidedUnitLast Milligram { get; }
+    Kkdev92.HealthData.WeightQuantityRollupUserProvidedUnitLast Nanogram { get; }
+    Kkdev92.HealthData.WeightQuantityRollupUserProvidedUnitLast Ounce { get; }
+    Kkdev92.HealthData.WeightQuantityRollupUserProvidedUnitLast Pound { get; }
+    Kkdev92.HealthData.WeightQuantityRollupUserProvidedUnitLast Stone { get; }
+    Kkdev92.HealthData.WeightQuantityRollupUserProvidedUnitLast WeightUnitUnspecified { get; }
+    System.Boolean Equals(Kkdev92.HealthData.WeightQuantityRollupUserProvidedUnitLast other)
+    System.Boolean Equals(System.Object obj)
+    System.Int32 GetHashCode()
+    System.String ToString()
+    System.String Value { get; set; }
+    System.Void Deconstruct(System.String& Value)
+struct Kkdev92.HealthData.WeightQuantityUserProvidedUnit
+    .ctor(System.String Value)
+    Kkdev92.HealthData.WeightQuantityUserProvidedUnit FromValue(System.String value)
+    Kkdev92.HealthData.WeightQuantityUserProvidedUnit Gram { get; }
+    Kkdev92.HealthData.WeightQuantityUserProvidedUnit Kilogram { get; }
+    Kkdev92.HealthData.WeightQuantityUserProvidedUnit Microgram { get; }
+    Kkdev92.HealthData.WeightQuantityUserProvidedUnit Milligram { get; }
+    Kkdev92.HealthData.WeightQuantityUserProvidedUnit Nanogram { get; }
+    Kkdev92.HealthData.WeightQuantityUserProvidedUnit Ounce { get; }
+    Kkdev92.HealthData.WeightQuantityUserProvidedUnit Pound { get; }
+    Kkdev92.HealthData.WeightQuantityUserProvidedUnit Stone { get; }
+    Kkdev92.HealthData.WeightQuantityUserProvidedUnit WeightUnitUnspecified { get; }
+    System.Boolean Equals(Kkdev92.HealthData.WeightQuantityUserProvidedUnit other)
+    System.Boolean Equals(System.Object obj)
+    System.Int32 GetHashCode()
+    System.String ToString()
+    System.String Value { get; set; }
+    System.Void Deconstruct(System.String& Value)
+class Kkdev92.HealthData.WeightRollupValue
+    .ctor()
+    Nullable<System.Double> WeightGramsAvg { get; set; }

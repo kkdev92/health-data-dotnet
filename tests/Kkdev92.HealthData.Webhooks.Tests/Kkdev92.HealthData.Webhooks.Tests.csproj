@@ -1,0 +1,7 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="../../src/Kkdev92.HealthData.Webhooks/Kkdev92.HealthData.Webhooks.csproj" />
+  </ItemGroup>
+
+</Project>

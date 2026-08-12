@@ -1,0 +1,100 @@
+# Build output
+[Bb]in/
+[Oo]bj/
+[Oo]ut/
+artifacts/
+publish/
+
+# Native AOT intermediates
+*.ilk
+*.pdb
+*.obj
+*.lib
+*.exp
+
+# Visual Studio / Rider / VS Code
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.DotSettings.user
+
+# Test / coverage results
+[Tt]est[Rr]esult*/
+coverage*.json
+coverage*.xml
+coverage*.info
+*.coverage
+*.trx
+BenchmarkDotNet.Artifacts/
+
+# NuGet
+*.nupkg
+*.snupkg
+.nuget/
+packages/
+!spec/**/packages/
+
+# MSBuild
+*.binlog
+msbuild.log
+project.lock.json
+project.fragment.lock.json
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Local-only working notes. Scratch design and planning documents that are not part of the
+# published repository, so nothing committed here may link to them.
+work/
+
+# Local-only tooling configuration: agent settings and MCP server definitions. The .NET tool
+# manifest in .config/ stays committed, because 'dotnet tool restore' has to work everywhere.
+.claude/
+.mcp.json
+
+# Local-only secrets. Integration tests read credentials from environment
+# variables; never commit a credential file even by accident.
+*.local.json
+secrets.json
+.env
+.env.*
+*.pem
+*.p12
+*.pfx
+
+# Credential files by the names the tools that produce them actually use. Extensions were not
+# enough: every one of these is JSON, and it is the name that identifies it.
+#
+#   client_secret_*.json          what the Cloud Console downloads for an OAuth client
+#   credentials.json              what Google's own guide tells you to save a service account key as
+#   token.json                    what the quickstarts write the resulting tokens to
+#   gha-creds-*.json              what google-github-actions/auth writes into the workspace
+#   application_default_credentials.json   what `gcloud auth application-default login` writes
+#
+# A leaked client secret is the accident this repository is most likely to have, because the file
+# arrives in the working directory already named and nobody types its name.
+client_secret*.json
+credentials.json
+token.json
+*service-account*.json
+*-credentials.json
+gha-creds-*.json
+application_default_credentials.json
+
+# The specification snapshots, named one by one. A blanket !spec/v4/*.json would re-include
+# anything later dropped in that directory — including a file the rules above were meant to keep
+# out, since a negation after them wins.
+!spec/v4/discovery.json
+!spec/v4/metadata.json
+!spec/v4/public-surface.json
+!spec/v4/semantics.json
+!spec/v4/errors.json
+!spec/v4/data-types.json
+
+# Screenshots pasted into the editor. Local, and they tend to contain whatever was on screen.
+.clipshot/

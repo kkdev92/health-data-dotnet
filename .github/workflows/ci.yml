@@ -1,0 +1,203 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+# Declared explicitly so the repository default can be tightened to read-only.
+# An explicit declaration overrides the default, so narrowing the default cannot break this.
+permissions:
+  contents: read
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+  CI: true
+
+jobs:
+  build-test:
+    name: build & test (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9 # v4
+        with:
+          global-json-file: global.json
+
+      - name: Restore
+        run: dotnet restore HealthData.slnx
+
+      - name: Build
+        run: dotnet build HealthData.slnx -c Release --no-restore
+
+      # Real-API tests never gate a pull request.
+      # They live in integration.yml, which is manual or scheduled.
+      - name: Test
+        run: dotnet test HealthData.slnx -c Release --no-build --filter "Category!=Integration&Category!=Package"
+
+      # Regenerating from the committed snapshot must reproduce the checked-in sources byte for
+      # byte. Running it on both operating systems is deliberate: it is the canary for
+      # line-ending and path-separator drift, which only ever shows up cross-platform.
+      - name: Verify generated sources
+        run: dotnet run --project tools/Kkdev92.HealthData.CodeGen -c Release --no-build -- verify --version v4
+
+      # Formatting is part of the contract, not a preference: generated sources are compared
+      # byte for byte, so a stray reformat would show up as a spurious diff.
+      - name: Verify formatting
+        if: matrix.os == 'ubuntu-latest'
+        run: dotnet format HealthData.slnx --verify-no-changes
+
+      # NuGetAudit already fails restore on a vulnerable package. This lane reports transitive
+      # advisories that do not meet the failure threshold, so they are visible before they bite.
+      - name: Report vulnerable packages
+        if: matrix.os == 'ubuntu-latest'
+        run: dotnet list HealthData.slnx package --vulnerable --include-transitive
+
+      - name: Pack
+        run: dotnet pack HealthData.slnx -c Release --no-build -o artifacts
+
+      # Runs against the packed output, so it has to follow Pack rather than join the main test
+      # step. .gitignore has no bearing on what gets packed; this is what actually enforces it.
+      # This lane also builds and runs a consumer that has only the packages, which is the one
+      # thing a ProjectReference can never tell us.
+      - name: Verify the packages
+        run: dotnet test tests/Kkdev92.HealthData.Tests -c Release --no-build --filter "Category=Package"
+
+      # The AOT smoke above references the projects, so it would keep passing if the packages
+      # stopped carrying what a consumer's own AOT publish needs. This one has only the nupkgs, and
+      # source mapping so those ids cannot quietly be satisfied from anywhere else.
+      - name: Native AOT from the packages alone
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          version=$(ls artifacts/Kkdev92.HealthData.[0-9]*.nupkg | head -1             | sed 's|.*/Kkdev92[.]HealthData[.]||; s|[.]nupkg$||')
+
+          echo "Building an AOT consumer against ${version}"
+
+          mkdir -p "${RUNNER_TEMP}/aot-consumer"
+          cd "${RUNNER_TEMP}/aot-consumer"
+
+          cat > nuget.config <<EOF
+          <?xml version="1.0" encoding="utf-8"?>
+          <configuration>
+            <packageSources>
+              <clear />
+              <add key="artifacts" value="${GITHUB_WORKSPACE}/artifacts" />
+              <add key="nuget.org" value="https://api.nuget.org/v3/index.json" />
+            </packageSources>
+            <packageSourceMapping>
+              <packageSource key="artifacts"><package pattern="Kkdev92.HealthData*" /></packageSource>
+              <packageSource key="nuget.org"><package pattern="*" /></packageSource>
+            </packageSourceMapping>
+          </configuration>
+          EOF
+
+          cat > Consumer.csproj <<EOF
+          <Project Sdk="Microsoft.NET.Sdk">
+            <PropertyGroup>
+              <OutputType>Exe</OutputType>
+              <TargetFramework>net10.0</TargetFramework>
+              <Nullable>enable</Nullable>
+              <ImplicitUsings>enable</ImplicitUsings>
+              <PublishAot>true</PublishAot>
+              <TrimmerSingleWarn>false</TrimmerSingleWarn>
+              <JsonSerializerIsReflectionEnabledByDefault>false</JsonSerializerIsReflectionEnabledByDefault>
+              <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+            </PropertyGroup>
+            <ItemGroup>
+              <PackageReference Include="Kkdev92.HealthData" Version="${version}" />
+              <PackageReference Include="Kkdev92.HealthData.Authentication" Version="${version}" />
+              <PackageReference Include="Kkdev92.HealthData.DependencyInjection" Version="${version}" />
+              <PackageReference Include="Kkdev92.HealthData.Webhooks" Version="${version}" />
+            </ItemGroup>
+          </Project>
+          EOF
+
+          cat > Program.cs <<'EOF'
+          using Kkdev92.HealthData;
+          using Kkdev92.HealthData.DependencyInjection;
+          using Kkdev92.HealthData.Webhooks;
+          using Microsoft.Extensions.DependencyInjection;
+
+          var services = new ServiceCollection();
+          services.AddHealthDataAccessToken("ya29.token");
+          services.AddHealthData();
+
+          using var provider = services.BuildServiceProvider();
+          using var scope = provider.CreateScope();
+
+          Console.WriteLine(scope.ServiceProvider.GetRequiredService<HealthDataClient>().Users is not null);
+          Console.WriteLine(HealthDataApiMetadata.DefaultBaseAddress);
+          Console.WriteLine(HealthDataWebhookKeyProvider.DefaultKeysetUri.Host);
+          Console.WriteLine(HealthDataScopes.ProfileReadonly);
+          Console.WriteLine("package-only AOT ok");
+          EOF
+
+          NUGET_PACKAGES="${RUNNER_TEMP}/aot-cache" dotnet publish -c Release -o out
+          ./out/Consumer | tee result.txt
+          grep -q "package-only AOT ok" result.txt
+
+      - name: Upload packages
+        if: matrix.os == 'ubuntu-latest'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: nupkg
+          path: artifacts/*.nupkg
+          if-no-files-found: error
+
+  aot-smoke:
+    name: native aot smoke (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9 # v4
+        with:
+          global-json-file: global.json
+
+      # A library that merely builds is not evidence of AOT compatibility; a consumer
+      # application has to publish. CI is the gate for this, because a local Windows checkout
+      # needs the MSVC linker on PATH.
+      - name: Publish AOT smoke app
+        run: >
+          dotnet publish tests/Kkdev92.HealthData.AotSmokeTests/Kkdev92.HealthData.AotSmokeTests.csproj
+          -c Release -p:PublishAot=true -o artifacts/aot
+
+      - name: Run AOT smoke app
+        shell: bash
+        run: |
+          if [ -f artifacts/aot/Kkdev92.HealthData.AotSmokeTests.exe ]; then
+            ./artifacts/aot/Kkdev92.HealthData.AotSmokeTests.exe
+          else
+            ./artifacts/aot/Kkdev92.HealthData.AotSmokeTests
+          fi
+
+  # Detects a Google-side contract change without touching the committed snapshot.
+  # Reports only: fetch and regeneration stay a reviewed, human-initiated action.
+  spec-drift:
+    name: spec drift (report only)
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9 # v4
+        with:
+          global-json-file: global.json
+
+      - name: Diff committed snapshot against the live Discovery document
+        run: dotnet run --project tools/Kkdev92.HealthData.CodeGen -c Release -- diff --version v4

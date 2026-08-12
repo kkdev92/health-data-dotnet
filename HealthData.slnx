@@ -1,0 +1,26 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Kkdev92.HealthData/Kkdev92.HealthData.csproj" />
+    <Project Path="src/Kkdev92.HealthData.Authentication/Kkdev92.HealthData.Authentication.csproj" />
+    <Project Path="src/Kkdev92.HealthData.DependencyInjection/Kkdev92.HealthData.DependencyInjection.csproj" />
+    <Project Path="src/Kkdev92.HealthData.Webhooks/Kkdev92.HealthData.Webhooks.csproj" />
+  </Folder>
+  <Folder Name="/tools/">
+    <Project Path="tools/Kkdev92.HealthData.CodeGen/Kkdev92.HealthData.CodeGen.csproj" />
+  </Folder>
+  <Folder Name="/benchmarks/">
+    <Project Path="benchmarks/Kkdev92.HealthData.Benchmarks/Kkdev92.HealthData.Benchmarks.csproj" />
+  </Folder>
+  <Folder Name="/samples/">
+    <Project Path="samples/ReadSteps.Console/ReadSteps.Console.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Kkdev92.HealthData.Tests/Kkdev92.HealthData.Tests.csproj" />
+    <Project Path="tests/Kkdev92.HealthData.ContractTests/Kkdev92.HealthData.ContractTests.csproj" />
+    <Project Path="tests/Kkdev92.HealthData.CodeGen.Tests/Kkdev92.HealthData.CodeGen.Tests.csproj" />
+    <Project Path="tests/Kkdev92.HealthData.Authentication.Tests/Kkdev92.HealthData.Authentication.Tests.csproj" />
+    <Project Path="tests/Kkdev92.HealthData.Webhooks.Tests/Kkdev92.HealthData.Webhooks.Tests.csproj" />
+    <Project Path="tests/Kkdev92.HealthData.IntegrationTests/Kkdev92.HealthData.IntegrationTests.csproj" />
+    <Project Path="tests/Kkdev92.HealthData.AotSmokeTests/Kkdev92.HealthData.AotSmokeTests.csproj" />
+  </Folder>
+</Solution>

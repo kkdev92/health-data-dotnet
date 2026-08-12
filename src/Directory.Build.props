@@ -1,0 +1,75 @@
+<Project>
+
+  <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" />
+
+  <!-- Shipping libraries. -->
+  <PropertyGroup>
+    <IsPackable>true</IsPackable>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+
+    <!-- Reflection-based serialization is never a fallback. -->
+    <JsonSerializerIsReflectionEnabledByDefault>false</JsonSerializerIsReflectionEnabledByDefault>
+
+    <!-- VerifyReferenceAotCompatibility is set per project,
+         because it only makes sense where the dependency set is under our control. -->
+    <IsAotCompatible>true</IsAotCompatible>
+  </PropertyGroup>
+
+  <!-- Package identity:
+       the NuGet version axis is independent of the Google Health API version. -->
+  <PropertyGroup>
+    <VersionPrefix>0.1.0</VersionPrefix>
+    <VersionSuffix Condition="'$(VersionSuffix)' == ''">alpha</VersionSuffix>
+    <Authors>kkdev92</Authors>
+    <Company>kkdev92</Company>
+    <Product>Kkdev92.HealthData</Product>
+    <Copyright>Copyright (c) kkdev92</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/kkdev92/health-data-dotnet</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/kkdev92/health-data-dotnet</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>google-health;health;fitness;sdk;rest;aot</PackageTags>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+  </PropertyGroup>
+
+  <!-- Deterministic build / Source Link. -->
+  <PropertyGroup>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+  </PropertyGroup>
+
+  <!--
+    Package validation. The baseline validator compares against a previously published version;
+    there is none yet, so PackageValidationBaselineVersion is deliberately not set and that
+    validator does not run. The compatible-framework and runtime validators do.
+
+    Set PackageValidationBaselineVersion to the last published version once there is one, or this
+    stays a validator that never fires.
+
+    Before 1.0 the real guard against an accidental API change is the approved public API
+    snapshot in tests/PublicApi, which is enforced by PublicApiTests.
+  -->
+  <PropertyGroup>
+    <EnablePackageValidation>true</EnablePackageValidation>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!--
+      A separate readme for the package, not the repository one. nuget.org resolves relative links
+      against itself, so every docs/ link in the repository readme would 404 there; this copy uses
+      absolute URLs and drops the contributor-facing sections.
+    -->
+    <None Include="$(MSBuildThisFileDirectory)../eng/PACKAGE-README.md" Pack="true" PackagePath="\README.md" Visible="false" />
+    <!-- Required by CC BY 4.0: the generated doc comments reproduce Google's wording. -->
+    <None Include="$(MSBuildThisFileDirectory)../NOTICE" Pack="true" PackagePath="\" Visible="false" />
+    <!--
+      The license text itself, not only the MIT expression in the metadata. NOTICE ends with
+      "See LICENSE", and without this that reference points at nothing inside the package.
+    -->
+    <None Include="$(MSBuildThisFileDirectory)../LICENSE" Pack="true" PackagePath="\" Visible="false" />
+  </ItemGroup>
+
+</Project>

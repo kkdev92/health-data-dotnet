@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <!-- Proves the serialization contract under the same rule the shipping library uses:
+         no reflection fallback, ever. -->
+    <JsonSerializerIsReflectionEnabledByDefault>false</JsonSerializerIsReflectionEnabledByDefault>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../../src/Kkdev92.HealthData/Kkdev92.HealthData.csproj" />
+    <ProjectReference Include="../../src/Kkdev92.HealthData.Authentication/Kkdev92.HealthData.Authentication.csproj" />
+    <ProjectReference Include="../../src/Kkdev92.HealthData.Webhooks/Kkdev92.HealthData.Webhooks.csproj" />
+    <!-- Referenced so the public API snapshot covers all four shipping assemblies. -->
+    <ProjectReference Include="../../src/Kkdev92.HealthData.DependencyInjection/Kkdev92.HealthData.DependencyInjection.csproj" />
+  </ItemGroup>
+
+</Project>

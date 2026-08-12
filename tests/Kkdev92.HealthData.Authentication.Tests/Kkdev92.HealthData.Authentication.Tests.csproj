@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="../../src/Kkdev92.HealthData.Authentication/Kkdev92.HealthData.Authentication.csproj" />
+    <ProjectReference Include="../../src/Kkdev92.HealthData.DependencyInjection/Kkdev92.HealthData.DependencyInjection.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,10 @@
+class Kkdev92.HealthData.DependencyInjection.HealthDataBuilderOptions
+    .ctor()
+    IReadOnlyCollection<System.Uri> AdditionalTrustedOrigins { get; set; }
+    Kkdev92.HealthData.HealthDataClientOptions Client { get; set; }
+    Kkdev92.HealthData.Resilience.HealthDataRetryOptions Retry { get; set; }
+static class Kkdev92.HealthData.DependencyInjection.HealthDataServiceCollectionExtensions
+    Microsoft.Extensions.DependencyInjection.IHttpClientBuilder AddHealthData(Microsoft.Extensions.DependencyInjection.IServiceCollection services, Action<Kkdev92.HealthData.DependencyInjection.HealthDataBuilderOptions> configure = default)
+    Microsoft.Extensions.DependencyInjection.IServiceCollection AddHealthDataAccessToken(Microsoft.Extensions.DependencyInjection.IServiceCollection services, Func<System.IServiceProvider, Kkdev92.HealthData.Authentication.HealthDataTokenRequest, System.Threading.CancellationToken, ValueTask<Kkdev92.HealthData.Authentication.HealthDataAccessToken>> resolve)
+    Microsoft.Extensions.DependencyInjection.IServiceCollection AddHealthDataAccessToken(Microsoft.Extensions.DependencyInjection.IServiceCollection services, System.String accessToken)
+    const System.String HttpClientName

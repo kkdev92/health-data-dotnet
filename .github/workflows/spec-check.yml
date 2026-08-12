@@ -1,0 +1,211 @@
+name: spec-check
+
+# Detects a Google-side contract change and opens an issue. It never commits: refreshing the
+# snapshot and regenerating C# stays a reviewed, human-initiated action, and a bot does not
+# push to main.
+#
+# Two jobs, because Google publishes the contract in two forms and only one of them is
+# machine-readable. `diff` watches the Discovery document. `facts` watches the per-method
+# reference pages, which outrank Discovery under docs/architecture.md and are where the semantic
+# overrides get their evidence — an unwatched source that had already drifted twice before anyone
+# re-read it.
+
+on:
+  schedule:
+    # Weekly. Discovery revisions do not move daily, and a noisy check gets muted.
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+
+jobs:
+  diff:
+    name: compare against the live Discovery document
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9 # v4
+        with:
+          global-json-file: global.json
+
+      - name: Diff
+        id: diff
+        run: |
+          set -o pipefail
+          dotnet run --project tools/Kkdev92.HealthData.CodeGen -c Release -- \
+            diff --version v4 | tee diff.txt
+
+          # The diff command reports; it does not fail. Decide here whether anything changed.
+          if grep -qE "^(Additive / safe|Potentially breaking) \(" diff.txt; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Open an issue when the contract moved
+        if: steps.diff.outputs.changed == 'true'
+        uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7
+        with:
+          script: |
+            const fs = require('fs');
+            const diff = fs.readFileSync('diff.txt', 'utf8');
+            const title = 'Google Health API contract change detected';
+
+            // The label is how this workflow finds its own issue next week, so it cannot be
+            // assumed to exist on a repository that has never run it. Creating one that is
+            // already there answers 422, which is the success case here.
+            try {
+              await github.rest.issues.createLabel({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                name: 'spec-change',
+                color: 'c2e0c6',
+                description: 'The live Discovery document differs from the committed snapshot',
+              });
+            } catch (error) {
+              // 422 covers every validation failure, not only "already exists" — an invalid colour
+              // or a name too long land there too, and swallowing those would leave the workflow
+              // creating an issue nothing can find next week.
+              const existing = error.status === 422
+                && (error.response?.data?.errors ?? []).some(e => e.code === 'already_exists');
+
+              if (!existing) { throw error; }
+            }
+
+            const existing = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              labels: 'spec-change',
+            });
+
+            const body = [
+              'The live Discovery document differs from the committed snapshot.',
+              '',
+              '```text',
+              diff.slice(0, 60000),
+              '```',
+              '',
+              'To act on this:',
+              '',
+              '```bash',
+              'dotnet run --project tools/Kkdev92.HealthData.CodeGen -- fetch    --version v4',
+              'dotnet run --project tools/Kkdev92.HealthData.CodeGen -- generate --version v4',
+              'dotnet test',
+              '```',
+              '',
+              'Review the generated diff before merging. A new operation stays invisible until it is',
+              'added to `spec/v4/public-surface.json`, which is deliberate.',
+            ].join('\n');
+
+            if (existing.data.length > 0) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: existing.data[0].number,
+                body,
+              });
+            } else {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title,
+                labels: ['spec-change'],
+                body,
+              });
+            }
+
+  facts:
+    name: compare against the per-method reference pages
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - name: Check the recorded facts
+        id: facts
+        run: |
+          set -o pipefail
+
+          # Reports and exits non-zero on drift; the step must not fail the job, because the
+          # reporting is the point.
+          # python3, not python: the unversioned name is not on PATH on the hosted Ubuntu images
+          # without actions/setup-python, and integration.yml already settled on python3.
+          if python3 eng/check-verified-facts.py --version v4 | tee facts.txt; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Open an issue when the documentation moved
+        if: steps.facts.outputs.changed == 'true'
+        uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7
+        with:
+          script: |
+            const fs = require('fs');
+            const report = fs.readFileSync('facts.txt', 'utf8');
+            const title = 'Google Health API documentation no longer states a recorded fact';
+
+            // Same label as the Discovery check, so both land on one thread rather than
+            // accumulating a pair of issues every week.
+            try {
+              await github.rest.issues.createLabel({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                name: 'spec-change',
+                color: 'c2e0c6',
+                description: 'The live Discovery document differs from the committed snapshot',
+              });
+            } catch (error) {
+              const existing = error.status === 422
+                && (error.response?.data?.errors ?? []).some(e => e.code === 'already_exists');
+
+              if (!existing) { throw error; }
+            }
+
+            const existing = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              labels: 'spec-change',
+            });
+
+            const body = [
+              '`spec/v4/verified-facts.json` records what Google\'s per-method pages said when the',
+              'semantic overrides were written. One of them no longer says it.',
+              '',
+              '```text',
+              report.slice(0, 60000),
+              '```',
+              '',
+              'This is a question, not a defect. A scope appearing on a page may mean the operation',
+              'should accept it; a scope disappearing usually does not mean it should be dropped,',
+              'because these pages have been observed omitting scopes the service still accepts —',
+              '`dataPoints.reconcile` is the recorded example.',
+              '',
+              'Update `spec/v4/semantics.json`, `spec/v4/verified-facts.json`, or both, and bump',
+              '`verifiedOn`.',
+            ].join('\n');
+
+            if (existing.data.length > 0) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: existing.data[0].number,
+                body,
+              });
+            } else {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title,
+                labels: ['spec-change'],
+                body,
+              });
+            }

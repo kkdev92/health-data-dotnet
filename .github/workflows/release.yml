@@ -1,0 +1,381 @@
+name: release
+
+# Publishes to NuGet from a tag. Everything that gates a pull request runs again here against a
+# clean checkout, because a release is the one build nobody gets to re-run after the fact.
+#
+# Four jobs, split by what each one is trusted with:
+#
+#   verify         contents: read,  no secrets   build, test, pack, verify the packages
+#   publish-github contents: write, no NuGet key create the draft release, attach the artefacts
+#   publish-nuget  no repo write,   NuGet key    push to nuget.org
+#   finalize       contents: write, no secrets   take the release out of draft
+#
+# It used to be one job holding `contents: write` and the NuGet key while every build target,
+# analyser and restored tool ran. None of that code needs either. Splitting costs an artefact
+# upload and means a compromised dependency in the build cannot publish anything.
+
+on:
+  push:
+    tags:
+      - "v*"
+  # A manual run is always a dry run: it builds, verifies and packs, and every publishing job is
+  # gated on the event being a tag push. There is deliberately no input to override that — an
+  # option that cannot change the outcome is worse than no option because somebody will rely on
+  # it, and one that could publish from an arbitrary branch is worse still.
+  workflow_dispatch:
+
+# Deny by default; each job adds only what it needs.
+permissions: {}
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+  CI: true
+
+jobs:
+  verify:
+    name: build, test and pack
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      # persist-credentials is left at its default because the tag-ancestry check below runs
+      # `git fetch`, which needs the remote to be readable — and would stop working the day this
+      # repository is made private. The mitigation that matters is above: this job's token can
+      # only read, so build code that takes it cannot push, tag or release.
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          # Source Link is in the SDK from .NET 8 on and needs real commit history to point at.
+          fetch-depth: 0
+
+      - uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9 # v4
+        with:
+          global-json-file: global.json
+
+      - name: Restore
+        run: dotnet restore HealthData.slnx
+
+      - name: Build
+        run: dotnet build HealthData.slnx -c Release --no-restore
+
+      # The generated sources must match the committed specification. Shipping a package built
+      # from stale generated code would be undetectable afterwards.
+      - name: Verify generated sources
+        run: dotnet run --project tools/Kkdev92.HealthData.CodeGen -c Release --no-build -- verify --version v4
+
+      - name: Test
+        run: dotnet test HealthData.slnx -c Release --no-build --filter "Category!=Integration&Category!=Package"
+
+      - name: Native AOT smoke
+        run: |
+          dotnet publish tests/Kkdev92.HealthData.AotSmokeTests \
+            -c Release -p:PublishAot=true -o artifacts/aot
+          ./artifacts/aot/Kkdev92.HealthData.AotSmokeTests
+
+      # A tag says one version and Directory.Build.props says another, and only one of them ends
+      # up on nuget.org — permanently, because a published version cannot be replaced. So they are
+      # required to agree before packing or publishing.
+      #
+      # Only on a tag push. A manual dry run happens from a branch, where GITHUB_REF_NAME is the
+      # branch name and comparing it to a version rejects every package for having the wrong one.
+      - name: Check the tag against the package version
+        if: github.event_name == 'push'
+        run: |
+          tag="${GITHUB_REF_NAME#v}"
+
+          # The regular expression from semver.org, not an approximation of it. The previous one
+          # rejected 1.2.3.4 and 1foo.2bar.3baz but accepted 1.2.3-01, 1.2.3-alpha..1 and 1.2.3-.,
+          # because it treated the pre-release part as one run of permitted characters rather than
+          # as dot-separated identifiers that may not be empty or carry a leading zero.
+          semver='^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)'
+          semver="${semver}"'(-((0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*)(\.(0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*))*))?'
+          semver="${semver}"'$'
+
+          if ! printf '%s' "$tag" | grep -Eq "$semver"; then
+            echo "::error::Tag '${GITHUB_REF_NAME}' is not a semantic version. Expected vMAJOR.MINOR.PATCH[-prerelease]." >&2
+            exit 1
+          fi
+
+          # No +build.metadata, even though SemVer allows it. NuGet strips it when normalising, so
+          # a tag of v1.2.3+build.5 produces Kkdev92.HealthData.1.2.3.nupkg — and the artefact check
+          # below, which expects the tag in the filename, would fail after the packages were built.
+          # Accepting a version the rest of the pipeline cannot carry is worse than refusing it here.
+          case "$tag" in
+            *+*)
+              echo "::error::Tag '${GITHUB_REF_NAME}' carries build metadata. NuGet discards it" \
+                   "when normalising a version, so it cannot appear in a package identity." >&2
+              exit 1
+              ;;
+          esac
+
+          for project in src/*/[A-Z]*.csproj; do
+            version=$(dotnet msbuild "$project" -getProperty:PackageVersion -v:quiet | tr -d '[:space:]')
+
+            if [ "$version" != "$tag" ]; then
+              echo "::error::${project} would publish ${version}, but the tag says ${tag}." >&2
+              exit 1
+            fi
+          done
+
+          echo "All packages publish ${tag}."
+
+      # A tag on a branch that was never merged still builds, still packs, and still publishes —
+      # and the readme inside those packages links to blob/main, so every documentation link on
+      # nuget.org would 404 for a version that cannot be replaced. The tag has to be on something
+      # the default branch can reach.
+      - name: Check the tag is on the default branch
+        if: github.event_name == 'push'
+        run: |
+          # No --depth. `git fetch --depth=0` is not "unlimited", it is an error —
+          # `fatal: depth 0 is not a positive number`, exit 128 — so this step used to fail every
+          # tag push before it could check anything. The checkout above already asked for the whole
+          # history through actions/checkout's own `fetch-depth: 0`, which is a different setting
+          # that happens to share a number.
+          git fetch --no-tags origin "+refs/heads/${DEFAULT_BRANCH}:refs/remotes/origin/${DEFAULT_BRANCH}"
+
+          if ! git merge-base --is-ancestor "${GITHUB_SHA}" "origin/${DEFAULT_BRANCH}"; then
+            echo "::error::${GITHUB_SHA} is not reachable from origin/${DEFAULT_BRANCH}. Merge it before tagging:" \
+                 "the packaged readme links to blob/${DEFAULT_BRANCH}, and a published version cannot be replaced." >&2
+            exit 1
+          fi
+
+          echo "The tagged commit is on ${DEFAULT_BRANCH}."
+        env:
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+
+      # The same agreement, for a run that has no tag: every project must at least agree with the
+      # others, or a dry run would say nothing useful about what a real release would produce.
+      - name: Check the package versions agree
+        if: github.event_name != 'push'
+        run: |
+          expected=""
+
+          for project in src/*/[A-Z]*.csproj; do
+            version=$(dotnet msbuild "$project" -getProperty:PackageVersion -v:quiet | tr -d '[:space:]')
+            expected="${expected:-$version}"
+
+            if [ "$version" != "$expected" ]; then
+              echo "::error::${project} is ${version}, but the others are ${expected}." >&2
+              exit 1
+            fi
+          done
+
+          echo "All packages are ${expected}."
+          echo "PACKAGE_VERSION=${expected}" >> "$GITHUB_ENV"
+
+      # Package validation runs as part of pack.
+      - name: Pack
+        run: dotnet pack HealthData.slnx -c Release --no-build -o artifacts
+
+      # Exactly four packages and four symbol packages, named for the tag. A missing or extra one
+      # means something changed about what ships, which is not a thing to notice afterwards.
+      - name: Check the artefact set
+        run: |
+          # On a tag the version comes from the tag; on a manual run it came from MSBuild above.
+          if [ "${GITHUB_EVENT_NAME}" = "push" ]; then
+            expected="${GITHUB_REF_NAME#v}"
+          else
+            expected="${PACKAGE_VERSION}"
+          fi
+          nupkgs=$(ls artifacts/*.nupkg 2>/dev/null | wc -l)
+          snupkgs=$(ls artifacts/*.snupkg 2>/dev/null | wc -l)
+
+          if [ "$nupkgs" -ne 4 ] || [ "$snupkgs" -ne 4 ]; then
+            echo "::error::Expected 4 nupkg and 4 snupkg, found ${nupkgs} and ${snupkgs}." >&2
+            ls -l artifacts/ >&2
+            exit 1
+          fi
+
+          for package in artifacts/*.nupkg; do
+            case "$package" in
+              *".${expected}.nupkg") ;;
+              *) echo "::error::${package} is not version ${expected}." >&2; exit 1 ;;
+            esac
+          done
+
+      # The last chance to catch something that should not ship. A published version cannot be
+      # replaced, only unlisted. Contents, legal files, and a consumer built from nothing but
+      # these four packages.
+      - name: Verify the packages
+        run: dotnet test tests/Kkdev92.HealthData.Tests -c Release --no-build --filter "Category=Package"
+
+      # CI has a lane that publishes an AOT consumer from the packages alone. Release used to run
+      # only the ProjectReference one, so a regression that exists solely in what gets packed —
+      # missing trimming metadata, a nuspec that resolves differently — could be published by a run
+      # that never looked for it. A release is the one build that cannot be redone afterwards.
+      - name: Native AOT from the packages alone
+        run: |
+          version=$(ls artifacts/Kkdev92.HealthData.[0-9]*.nupkg | head -1             | sed 's|.*/Kkdev92[.]HealthData[.]||; s|[.]nupkg$||')
+
+          mkdir -p "${RUNNER_TEMP}/aot-consumer"
+          cd "${RUNNER_TEMP}/aot-consumer"
+
+          cat > nuget.config <<EOF
+          <?xml version="1.0" encoding="utf-8"?>
+          <configuration>
+            <packageSources>
+              <clear />
+              <add key="artifacts" value="${GITHUB_WORKSPACE}/artifacts" />
+              <add key="nuget.org" value="https://api.nuget.org/v3/index.json" />
+            </packageSources>
+            <packageSourceMapping>
+              <packageSource key="artifacts"><package pattern="Kkdev92.HealthData*" /></packageSource>
+              <packageSource key="nuget.org"><package pattern="*" /></packageSource>
+            </packageSourceMapping>
+          </configuration>
+          EOF
+
+          cat > Consumer.csproj <<EOF
+          <Project Sdk="Microsoft.NET.Sdk">
+            <PropertyGroup>
+              <OutputType>Exe</OutputType>
+              <TargetFramework>net10.0</TargetFramework>
+              <Nullable>enable</Nullable>
+              <ImplicitUsings>enable</ImplicitUsings>
+              <PublishAot>true</PublishAot>
+              <TrimmerSingleWarn>false</TrimmerSingleWarn>
+              <JsonSerializerIsReflectionEnabledByDefault>false</JsonSerializerIsReflectionEnabledByDefault>
+              <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+            </PropertyGroup>
+            <ItemGroup>
+              <PackageReference Include="Kkdev92.HealthData" Version="${version}" />
+              <PackageReference Include="Kkdev92.HealthData.Authentication" Version="${version}" />
+              <PackageReference Include="Kkdev92.HealthData.DependencyInjection" Version="${version}" />
+              <PackageReference Include="Kkdev92.HealthData.Webhooks" Version="${version}" />
+            </ItemGroup>
+          </Project>
+          EOF
+
+          cat > Program.cs <<'EOF'
+          using Kkdev92.HealthData;
+          using Kkdev92.HealthData.DependencyInjection;
+          using Kkdev92.HealthData.Webhooks;
+          using Microsoft.Extensions.DependencyInjection;
+
+          var services = new ServiceCollection();
+          services.AddHealthDataAccessToken("ya29.token");
+          services.AddHealthData();
+
+          using var provider = services.BuildServiceProvider();
+          using var scope = provider.CreateScope();
+
+          Console.WriteLine(scope.ServiceProvider.GetRequiredService<HealthDataClient>().Users is not null);
+          Console.WriteLine(HealthDataApiMetadata.DefaultBaseAddress);
+          Console.WriteLine(HealthDataWebhookKeyProvider.DefaultKeysetUri.Host);
+          Console.WriteLine("package-only AOT ok");
+          EOF
+
+          NUGET_PACKAGES="${RUNNER_TEMP}/aot-cache" dotnet publish -c Release -o out
+          ./out/Consumer | tee result.txt
+          grep -q "package-only AOT ok" result.txt
+
+      # Everything downstream consumes this rather than rebuilding. The packages that were tested
+      # are the packages that get published; a second build could differ from the one verified.
+      - name: Upload packages
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: nupkg
+          path: |
+            artifacts/*.nupkg
+            artifacts/*.snupkg
+          if-no-files-found: error
+
+  # Before NuGet, because this is the half that can be undone. `gh release upload` does not create
+  # a release, so publishing to nuget.org first — which is permanent — could be followed by a
+  # failure to attach anything to a release that was never there.
+  publish-github:
+    name: attach to a draft GitHub release
+    needs: verify
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      # No checkout. This job needs the packages, not the source, and code it does not check out
+      # is code that cannot run while `contents: write` is live.
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: nupkg
+          path: artifacts
+
+      - name: Prepare the GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          # gh infers the repository from the checkout, and this job deliberately has none.
+          GH_REPO: ${{ github.repository }}
+        run: |
+          if gh release view "${GITHUB_REF_NAME}" >/dev/null 2>&1; then
+            if [ "$(gh release view "${GITHUB_REF_NAME}" --json isDraft -q .isDraft)" != "true" ]; then
+              echo "::error::Release ${GITHUB_REF_NAME} is already published. Refusing to overwrite it." >&2
+              exit 1
+            fi
+          else
+            gh release create "${GITHUB_REF_NAME}" --draft --title "${GITHUB_REF_NAME}" --generate-notes
+          fi
+
+          # No --clobber: an upload that collides means this tag has been released before, and
+          # replacing the assets of an earlier attempt would destroy the only copy of them.
+          gh release upload "${GITHUB_REF_NAME}" artifacts/*.nupkg artifacts/*.snupkg
+
+  publish-nuget:
+    name: push to nuget.org
+    needs: publish-github
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    environment: release
+    # No contents: write. This job publishes permanently to a third party and has no business
+    # writing to the repository; the release it belongs to already exists as a draft.
+    #
+    # id-token: write would go here for NuGet trusted publishing. Not enabled: this job
+    # authenticates with a long-lived NUGET_API_KEY on the 'release' environment, and claiming
+    # otherwise in a permission block is how a reviewer stops reading.
+    #
+    # It is the thing to move to. nuget.org exchanges a GitHub OIDC token for an API key that
+    # lasts an hour, so there is no secret left to leak or rotate (checked against the nuget.org
+    # documentation on 2026-08-11; it is being rolled out gradually, so the option may not be on
+    # the account yet). The switch is: register a policy under Trusted Publishing naming this
+    # owner, this repository, `release.yml` and the `release` environment; add `id-token: write`
+    # here; obtain the key with `NuGet/login@v1` immediately before the push, because requesting
+    # it early enough to expire is the way this goes wrong.
+    steps:
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: nupkg
+          path: artifacts
+
+      - uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9 # v4
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Publish to NuGet
+        env:
+          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+        run: |
+          if [ -z "$NUGET_API_KEY" ]; then
+            echo "NUGET_API_KEY is not set. Configure it on the 'release' environment." >&2
+            exit 1
+          fi
+
+          # No --skip-duplicate. A version that is already on nuget.org means this tag has been
+          # published before, and continuing would attach today's build to yesterday's version
+          # while reporting success. Failing is the only honest outcome.
+          dotnet nuget push "artifacts/*.nupkg" \
+            --api-key "$NUGET_API_KEY" \
+            --source https://api.nuget.org/v3/index.json
+
+  finalize:
+    name: publish the GitHub release
+    needs: publish-nuget
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      # Last, so the release stops being a draft only once the packages are actually on
+      # nuget.org. A published release whose packages failed to push would advertise a version
+      # nobody can install.
+      - name: Take the release out of draft
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: gh release edit "${GITHUB_REF_NAME}" --draft=false

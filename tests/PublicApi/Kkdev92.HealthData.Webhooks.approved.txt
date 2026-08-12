@@ -1,0 +1,84 @@
+class Kkdev92.HealthData.Webhooks.HealthDataCivilDate
+    .ctor()
+    Nullable<System.Int32> Day { get; set; }
+    Nullable<System.Int32> Month { get; set; }
+    Nullable<System.Int32> Year { get; set; }
+class Kkdev92.HealthData.Webhooks.HealthDataCivilDateTime
+    .ctor()
+    Kkdev92.HealthData.Webhooks.HealthDataCivilDate Date { get; set; }
+    Kkdev92.HealthData.Webhooks.HealthDataCivilTime Time { get; set; }
+class Kkdev92.HealthData.Webhooks.HealthDataCivilDateTimeInterval
+    .ctor()
+    Kkdev92.HealthData.Webhooks.HealthDataCivilDateTime EndDateTime { get; set; }
+    Kkdev92.HealthData.Webhooks.HealthDataCivilDateTime StartDateTime { get; set; }
+class Kkdev92.HealthData.Webhooks.HealthDataCivilIso8601TimeInterval
+    .ctor()
+    System.String EndTime { get; set; }
+    System.String StartTime { get; set; }
+class Kkdev92.HealthData.Webhooks.HealthDataCivilTime
+    .ctor()
+    Nullable<System.Int32> Hours { get; set; }
+    Nullable<System.Int32> Minutes { get; set; }
+    Nullable<System.Int32> Seconds { get; set; }
+class Kkdev92.HealthData.Webhooks.HealthDataNotification
+    .ctor()
+    Kkdev92.HealthData.Webhooks.HealthDataNotificationData Data { get; set; }
+class Kkdev92.HealthData.Webhooks.HealthDataNotificationData
+    .ctor()
+    IReadOnlyList<Kkdev92.HealthData.Webhooks.HealthDataNotificationInterval> Intervals { get; set; }
+    System.Boolean IsDelete { get; }
+    System.Boolean IsUpsert { get; }
+    System.String ClientProvidedSubscriptionName { get; set; }
+    System.String DataType { get; set; }
+    System.String HealthUserId { get; set; }
+    System.String Operation { get; set; }
+    System.String Version { get; set; }
+class Kkdev92.HealthData.Webhooks.HealthDataNotificationInterval
+    .ctor()
+    Kkdev92.HealthData.Webhooks.HealthDataCivilDateTimeInterval CivilDateTimeInterval { get; set; }
+    Kkdev92.HealthData.Webhooks.HealthDataCivilIso8601TimeInterval CivilIso8601TimeInterval { get; set; }
+    Kkdev92.HealthData.Webhooks.HealthDataPhysicalTimeInterval PhysicalTimeInterval { get; set; }
+static class Kkdev92.HealthData.Webhooks.HealthDataNotificationOperations
+    const System.String Delete
+    const System.String Upsert
+class Kkdev92.HealthData.Webhooks.HealthDataPhysicalTimeInterval
+    .ctor()
+    Nullable<Kkdev92.HealthData.GoogleTimestamp> EndTime { get; set; }
+    Nullable<Kkdev92.HealthData.GoogleTimestamp> StartTime { get; set; }
+class Kkdev92.HealthData.Webhooks.HealthDataWebhookKeyProvider
+    .ctor(System.Net.Http.HttpClient httpClient, System.Uri keysetUri = default, Nullable<System.TimeSpan> cacheDuration = default, Nullable<System.TimeSpan> minimumRefreshInterval = default, System.TimeProvider timeProvider = default, Nullable<System.TimeSpan> maximumStaleAge = default)
+    System.Uri DefaultKeysetUri { get; }
+    System.Void Dispose()
+class Kkdev92.HealthData.Webhooks.HealthDataWebhookReceiver
+    .ctor(Kkdev92.HealthData.Webhooks.HealthDataWebhookSignatureVerifier verifier, IEnumerable<System.String> endpointSecrets)
+    .ctor(Kkdev92.HealthData.Webhooks.HealthDataWebhookSignatureVerifier verifier, System.String endpointSecret = default)
+    System.Boolean IsVerificationChallenge(ReadOnlySpan<System.Byte> rawBody)
+    Task<Kkdev92.HealthData.Webhooks.WebhookRequestResult> HandleAsync(ReadOnlyMemory<System.Byte> rawBody, System.String signatureHeader, System.String authorizationHeader = default, System.Threading.CancellationToken cancellationToken = default)
+    const System.String VerificationUserAgent
+class Kkdev92.HealthData.Webhooks.HealthDataWebhookSignatureVerifier
+    .ctor(Kkdev92.HealthData.Webhooks.HealthDataWebhookKeyProvider keyProvider)
+    Task<Kkdev92.HealthData.Webhooks.WebhookSignatureResult> VerifyAsync(ReadOnlyMemory<System.Byte> rawBody, System.String signatureHeader, System.Threading.CancellationToken cancellationToken = default)
+    const System.String SignatureHeaderName
+enum Kkdev92.HealthData.Webhooks.WebhookRequestKind
+    System.Int32 value__
+    const Kkdev92.HealthData.Webhooks.WebhookRequestKind AuthorizedChallenge
+    const Kkdev92.HealthData.Webhooks.WebhookRequestKind Notification
+    const Kkdev92.HealthData.Webhooks.WebhookRequestKind Rejected
+    const Kkdev92.HealthData.Webhooks.WebhookRequestKind UnauthorizedChallenge
+    const Kkdev92.HealthData.Webhooks.WebhookRequestKind UnauthorizedNotification
+class Kkdev92.HealthData.Webhooks.WebhookRequestResult
+    Kkdev92.HealthData.Webhooks.HealthDataNotification Notification { get; }
+    Kkdev92.HealthData.Webhooks.WebhookRequestKind Kind { get; }
+    Kkdev92.HealthData.Webhooks.WebhookSignatureResult Signature { get; }
+    System.Net.HttpStatusCode StatusCode { get; }
+enum Kkdev92.HealthData.Webhooks.WebhookSignatureFailure
+    System.Int32 value__
+    const Kkdev92.HealthData.Webhooks.WebhookSignatureFailure Invalid
+    const Kkdev92.HealthData.Webhooks.WebhookSignatureFailure Malformed
+    const Kkdev92.HealthData.Webhooks.WebhookSignatureFailure Missing
+    const Kkdev92.HealthData.Webhooks.WebhookSignatureFailure None
+    const Kkdev92.HealthData.Webhooks.WebhookSignatureFailure UnknownKey
+class Kkdev92.HealthData.Webhooks.WebhookSignatureResult
+    Kkdev92.HealthData.Webhooks.WebhookSignatureFailure Failure { get; }
+    Nullable<System.UInt32> KeyId { get; }
+    System.Boolean IsValid { get; }

@@ -1,0 +1,476 @@
+{
+  "$comment": [
+    "Normalised snapshot of https://developers.google.com/health/data-types.",
+    "This information is NOT derivable from discovery.json: the REST path is the generic",
+    "dataTypes/{dataTypesId}, so per-data-type capabilities exist only in prose documentation.",
+    "Maintained by hand under review. The normal build never scrapes HTML.",
+    "Endpoint ids are kebab-case; filter names are snake_case. Both are preserved verbatim",
+    "and must never be derived from one another by a naming rule.",
+    "Capabilities are published as METADATA only. They must not become client-side hard",
+    "validation; the server remains the authority."
+  ],
+  "source": {
+    "url": "https://developers.google.com/health/data-types",
+    "verifiedOn": "2026-08-09"
+  },
+  "pending": [
+    "recordKind (interval / instantaneous / daily) is not yet verified per data type, so it is omitted rather than guessed.",
+    "webhook support is left null: the Data Types page has no webhook column and the Webhooks guide enumerates only a partial list. Still unresolved; it needs a source that states it per data type."
+  ],
+  "dataTypes": [
+    {
+      "id": "active-energy-burned",
+      "filterName": "active_energy_burned",
+      "operations": [
+        "list",
+        "reconcile",
+        "rollUp",
+        "dailyRollUp"
+      ],
+      "webhook": null
+    },
+    {
+      "id": "active-minutes",
+      "filterName": "active_minutes",
+      "operations": [
+        "list",
+        "reconcile",
+        "rollUp",
+        "dailyRollUp"
+      ],
+      "webhook": null
+    },
+    {
+      "id": "active-zone-minutes",
+      "filterName": "active_zone_minutes",
+      "operations": [
+        "list",
+        "reconcile",
+        "rollUp",
+        "dailyRollUp"
+      ],
+      "webhook": null
+    },
+    {
+      "id": "activity-level",
+      "filterName": "activity_level",
+      "operations": [
+        "list",
+        "reconcile"
+      ],
+      "webhook": null
+    },
+    {
+      "id": "altitude",
+      "filterName": "altitude",
+      "operations": [
+        "list",
+        "reconcile",
+        "rollUp",
+        "dailyRollUp"
+      ],
+      "webhook": null
+    },
+    {
+      "id": "blood-glucose",
+      "filterName": "blood_glucose",
+      "operations": [
+        "list",
+        "get",
+        "reconcile",
+        "rollUp",
+        "dailyRollUp"
+      ],
+      "webhook": null
+    },
+    {
+      "id": "body-fat",
+      "filterName": "body_fat",
+      "operations": [
+        "list",
+        "get",
+        "reconcile",
+        "rollUp",
+        "dailyRollUp",
+        "create",
+        "patch",
+        "batchDelete"
+      ],
+      "webhook": null
+    },
+    {
+      "id": "calories-in-heart-rate-zone",
+      "filterName": "calories_in_heart_rate_zone",
+      "operations": [
+        "rollUp",
+        "dailyRollUp"
+      ],
+      "webhook": null
+    },
+    {
+      "id": "core-body-temperature",
+      "filterName": "core_body_temperature",
+      "operations": [
+        "list",
+        "get",
+        "reconcile",
+        "rollUp",
+        "dailyRollUp"
+      ],
+      "webhook": null
+    },
+    {
+      "id": "daily-heart-rate-variability",
+      "filterName": "daily_heart_rate_variability",
+      "operations": [
+        "list",
+        "reconcile"
+      ],
+      "webhook": null
+    },
+    {
+      "id": "daily-heart-rate-zones",
+      "filterName": "daily_heart_rate_zones",
+      "operations": [
+        "list",
+        "reconcile"
+      ],
+      "webhook": null
+    },
+    {
+      "id": "daily-oxygen-saturation",
+      "filterName": "daily_oxygen_saturation",
+      "operations": [
+        "list",
+        "reconcile"
+      ],
+      "webhook": null
+    },
+    {
+      "id": "daily-respiratory-rate",
+      "filterName": "daily_respiratory_rate",
+      "operations": [
+        "list",
+        "reconcile"
+      ],
+      "webhook": null
+    },
+    {
+      "id": "daily-resting-heart-rate",
+      "filterName": "daily_resting_heart_rate",
+      "operations": [
+        "list",
+        "reconcile"
+      ],
+      "webhook": null
+    },
+    {
+      "id": "daily-sleep-temperature-derivations",
+      "filterName": "daily_sleep_temperature_derivations",
+      "operations": [
+        "list",
+        "reconcile"
+      ],
+      "webhook": null
+    },
+    {
+      "id": "daily-vo2-max",
+      "filterName": "daily_vo2_max",
+      "operations": [
+        "list",
+        "reconcile"
+      ],
+      "webhook": null
+    },
+    {
+      "id": "distance",
+      "filterName": "distance",
+      "operations": [
+        "list",
+        "reconcile",
+        "rollUp",
+        "dailyRollUp"
+      ],
+      "webhook": null
+    },
+    {
+      "id": "electrocardiogram",
+      "filterName": "electrocardiogram",
+      "operations": [
+        "list"
+      ],
+      "webhook": null
+    },
+    {
+      "id": "exercise",
+      "filterName": "exercise",
+      "operations": [
+        "list",
+        "get",
+        "reconcile",
+        "create",
+        "patch",
+        "batchDelete"
+      ],
+      "webhook": null
+    },
+    {
+      "id": "floors",
+      "filterName": "floors",
+      "operations": [
+        "reconcile",
+        "rollUp",
+        "dailyRollUp"
+      ],
+      "webhook": null
+    },
+    {
+      "id": "food",
+      "filterName": "food",
+      "operations": [
+        "list",
+        "get"
+      ],
+      "webhook": null
+    },
+    {
+      "id": "food-measurement-unit",
+      "filterName": "food_measurement_unit",
+      "operations": [
+        "list",
+        "get"
+      ],
+      "webhook": null
+    },
+    {
+      "id": "heart-rate",
+      "filterName": "heart_rate",
+      "operations": [
+        "list",
+        "reconcile",
+        "rollUp",
+        "dailyRollUp"
+      ],
+      "webhook": null
+    },
+    {
+      "id": "heart-rate-variability",
+      "filterName": "heart_rate_variability",
+      "operations": [
+        "list",
+        "reconcile"
+      ],
+      "webhook": null
+    },
+    {
+      "id": "height",
+      "filterName": "height",
+      "operations": [
+        "list",
+        "get",
+        "reconcile",
+        "create",
+        "patch",
+        "batchDelete"
+      ],
+      "webhook": null
+    },
+    {
+      "id": "hydration-log",
+      "filterName": "hydration_log",
+      "operations": [
+        "list",
+        "get",
+        "reconcile",
+        "rollUp",
+        "dailyRollUp",
+        "create",
+        "patch",
+        "batchDelete"
+      ],
+      "webhook": null
+    },
+    {
+      "id": "irregular-rhythm-notification",
+      "filterName": "irregular_rhythm_notification",
+      "operations": [
+        "list"
+      ],
+      "webhook": null
+    },
+    {
+      "id": "menstrual-period",
+      "filterName": "menstrual_period",
+      "operations": [
+        "create",
+        "patch",
+        "batchDelete"
+      ],
+      "webhook": null
+    },
+    {
+      "id": "moods",
+      "filterName": "moods",
+      "operations": [
+        "create",
+        "patch",
+        "batchDelete"
+      ],
+      "webhook": null
+    },
+    {
+      "id": "nutrition-log",
+      "filterName": "nutrition_log",
+      "operations": [
+        "list",
+        "get",
+        "reconcile",
+        "rollUp",
+        "dailyRollUp",
+        "create",
+        "patch",
+        "batchDelete"
+      ],
+      "webhook": null
+    },
+    {
+      "id": "ovulation-test",
+      "filterName": "ovulation_test",
+      "operations": [
+        "create",
+        "patch",
+        "batchDelete"
+      ],
+      "webhook": null
+    },
+    {
+      "id": "oxygen-saturation",
+      "filterName": "oxygen_saturation",
+      "operations": [
+        "list",
+        "reconcile"
+      ],
+      "webhook": null
+    },
+    {
+      "id": "respiratory-rate-sleep-summary",
+      "filterName": "respiratory_rate_sleep_summary",
+      "operations": [
+        "list",
+        "reconcile"
+      ],
+      "webhook": null
+    },
+    {
+      "id": "run-vo2-max",
+      "filterName": "run_vo2_max",
+      "operations": [
+        "list",
+        "reconcile",
+        "rollUp",
+        "dailyRollUp"
+      ],
+      "webhook": null
+    },
+    {
+      "id": "sedentary-period",
+      "filterName": "sedentary_period",
+      "operations": [
+        "list",
+        "reconcile",
+        "rollUp",
+        "dailyRollUp"
+      ],
+      "webhook": null
+    },
+    {
+      "id": "sleep",
+      "filterName": "sleep",
+      "operations": [
+        "list",
+        "get",
+        "reconcile",
+        "create",
+        "patch",
+        "batchDelete"
+      ],
+      "webhook": null
+    },
+    {
+      "id": "steps",
+      "filterName": "steps",
+      "operations": [
+        "list",
+        "reconcile",
+        "rollUp",
+        "dailyRollUp"
+      ],
+      "webhook": null
+    },
+    {
+      "id": "swim-lengths-data",
+      "filterName": "swim_lengths_data",
+      "operations": [
+        "list",
+        "reconcile",
+        "rollUp",
+        "dailyRollUp"
+      ],
+      "webhook": null
+    },
+    {
+      "id": "symptoms",
+      "filterName": "symptoms",
+      "operations": [
+        "create",
+        "patch",
+        "batchDelete"
+      ],
+      "webhook": null
+    },
+    {
+      "id": "time-in-heart-rate-zone",
+      "filterName": "time_in_heart_rate_zone",
+      "operations": [
+        "list",
+        "reconcile",
+        "rollUp",
+        "dailyRollUp"
+      ],
+      "webhook": null
+    },
+    {
+      "id": "total-calories",
+      "filterName": "total_calories",
+      "operations": [
+        "rollUp",
+        "dailyRollUp"
+      ],
+      "webhook": null
+    },
+    {
+      "id": "vo2-max",
+      "filterName": "vo2_max",
+      "operations": [
+        "list",
+        "reconcile"
+      ],
+      "webhook": null
+    },
+    {
+      "id": "weight",
+      "filterName": "weight",
+      "operations": [
+        "list",
+        "get",
+        "reconcile",
+        "rollUp",
+        "dailyRollUp",
+        "create",
+        "patch",
+        "batchDelete"
+      ],
+      "webhook": null
+    }
+  ]
+}

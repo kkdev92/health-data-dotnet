@@ -1,0 +1,21 @@
+version: 2
+
+updates:
+  - package-ecosystem: nuget
+    directory: "/"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      test-dependencies:
+        patterns:
+          - "xunit*"
+          - "Microsoft.NET.Test.Sdk"
+    # Core must keep zero third-party runtime dependencies.
+    # Any bot PR that adds a package reference to src/Kkdev92.HealthData is wrong by
+    # construction and must be closed rather than merged.
+
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly

@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Not a unit test project: this is a real consumer application that CI publishes with
+    Native AOT. Library build warnings alone are not
+    sufficient evidence of AOT compatibility.
+  -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <IsTestProject>false</IsTestProject>
+    <RootNamespace>Kkdev92.HealthData.AotSmokeTests</RootNamespace>
+    <JsonSerializerIsReflectionEnabledByDefault>false</JsonSerializerIsReflectionEnabledByDefault>
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <!-- PublishAot is supplied on the command line by CI so a plain `dotnet build` stays fast. -->
+  </PropertyGroup>
+
+  <!--
+    All four shipping packages, not just Core. The package README tells every consumer that
+    Native AOT is supported, and a smoke test over one of the four made that a claim about a
+    quarter of what ships. Dependency injection and webhooks are the two that could plausibly
+    have dragged reflection in.
+  -->
+  <ItemGroup>
+    <ProjectReference Include="../../src/Kkdev92.HealthData/Kkdev92.HealthData.csproj" />
+    <ProjectReference Include="../../src/Kkdev92.HealthData.Authentication/Kkdev92.HealthData.Authentication.csproj" />
+    <ProjectReference Include="../../src/Kkdev92.HealthData.DependencyInjection/Kkdev92.HealthData.DependencyInjection.csproj" />
+    <ProjectReference Include="../../src/Kkdev92.HealthData.Webhooks/Kkdev92.HealthData.Webhooks.csproj" />
+  </ItemGroup>
+
+</Project>

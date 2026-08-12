@@ -1,0 +1,247 @@
+{
+  "$comment": [
+    "Known error reasons. These are NOT present in discovery.json, so this is a separate",
+    "specification input maintained by hand.",
+    "Generated output is a public const string constant class, never a closed enum:",
+    "unknown reasons must pass through untouched."
+  ],
+  "source": {
+    "url": "https://developers.google.com/health/reference/rest/v4/errors",
+    "verifiedOn": "2026-08-09"
+  },
+  "count": 58,
+  "reasons": [
+    {
+      "reason": "ACCOUNT_NOT_LINKED",
+      "httpStatus": 400
+    },
+    {
+      "reason": "INVALID_PARENT_DATA_TYPE_COLLECTION_FORMAT",
+      "httpStatus": 400
+    },
+    {
+      "reason": "INVALID_PARENT_DATA_TYPE_COLLECTION",
+      "httpStatus": 400
+    },
+    {
+      "reason": "INVALID_FILTER_FORMAT",
+      "httpStatus": 400
+    },
+    {
+      "reason": "INVALID_DATA_POINT_DATA_SOURCE_FAMILY",
+      "httpStatus": 400
+    },
+    {
+      "reason": "INVALID_DATA_POINT_FILTER",
+      "httpStatus": 400
+    },
+    {
+      "reason": "INVALID_DATA_POINT_FILTER_SYNTAX",
+      "httpStatus": 400
+    },
+    {
+      "reason": "INVALID_DATA_POINT_FILTER_MISSING_TOKEN",
+      "httpStatus": 400
+    },
+    {
+      "reason": "INVALID_DATA_POINT_FILTER_UNEXPECTED_TOKEN",
+      "httpStatus": 400
+    },
+    {
+      "reason": "INVALID_DATA_POINT_FILTER_UNEXPECTED_END_OF_INPUT",
+      "httpStatus": 400
+    },
+    {
+      "reason": "INVALID_DATA_POINT_FILTER_EXPRESSION_STRUCTURE",
+      "httpStatus": 400
+    },
+    {
+      "reason": "INVALID_DATA_POINT_FILTER_RESTRICTION_COMPARABLE",
+      "httpStatus": 400
+    },
+    {
+      "reason": "INVALID_DATA_POINT_FILTER_DATA_TYPE_RESTRICTION",
+      "httpStatus": 400
+    },
+    {
+      "reason": "INVALID_TIME_RANGE_INTERVAL_FORMAT",
+      "httpStatus": 400
+    },
+    {
+      "reason": "INVALID_TIME_RANGE",
+      "httpStatus": 400
+    },
+    {
+      "reason": "INVALID_ROLLUP_QUERY_DURATION",
+      "httpStatus": 400
+    },
+    {
+      "reason": "INVALID_ROLLUP_WINDOW",
+      "httpStatus": 400
+    },
+    {
+      "reason": "INVALID_DATA_POINT_FILTER_MIXED_DATA_TYPE_RESTRICTIONS",
+      "httpStatus": 400
+    },
+    {
+      "reason": "INVALID_DATA_POINT_FILTER_MIXED_TIME_RESTRICTIONS",
+      "httpStatus": 400
+    },
+    {
+      "reason": "INVALID_DATA_POINT_FILTER_DATA_TYPE_MEMBER",
+      "httpStatus": 400
+    },
+    {
+      "reason": "INVALID_DATA_POINT_FILTER_RESTRICTION_COMPARATOR",
+      "httpStatus": 400
+    },
+    {
+      "reason": "INVALID_DATA_POINT_FILTER_TIMESTAMP_FORMAT",
+      "httpStatus": 400
+    },
+    {
+      "reason": "INVALID_DATA_POINT_FILTER_CIVIL_DATE_TIME_FORMAT",
+      "httpStatus": 400
+    },
+    {
+      "reason": "INVALID_CIVIL_DATE_TIME",
+      "httpStatus": 400
+    },
+    {
+      "reason": "INVALID_DATA_POINT_FILTER_RESTRICTION_ARGUMENT",
+      "httpStatus": 400
+    },
+    {
+      "reason": "INVALID_DATA_POINT_FILTER_COLLECTION_MISMATCH",
+      "httpStatus": 400
+    },
+    {
+      "reason": "INVALID_DATA_POINT_NAME",
+      "httpStatus": 400
+    },
+    {
+      "reason": "DATA_POINT_NOT_OWNED_BY_CLIENT",
+      "httpStatus": 400
+    },
+    {
+      "reason": "MISSING_DATA_POINT_NAMES",
+      "httpStatus": 400
+    },
+    {
+      "reason": "MISSING_DATA_POINT_FILTER",
+      "httpStatus": 400
+    },
+    {
+      "reason": "DATA_TYPE_MISMATCH",
+      "httpStatus": 400
+    },
+    {
+      "reason": "UPDATE_ONLY_UPSERT_SUPPORTED",
+      "httpStatus": 400
+    },
+    {
+      "reason": "MISSING_DATA_POINT_ID",
+      "httpStatus": 400
+    },
+    {
+      "reason": "MISSING_DATA_POINT_VALUE",
+      "httpStatus": 400
+    },
+    {
+      "reason": "INVALID_PROFILE_DATA",
+      "httpStatus": 400
+    },
+    {
+      "reason": "INVALID_FIELD_MASK_DATA",
+      "httpStatus": 400
+    },
+    {
+      "reason": "INVALID_PAGE_SIZE",
+      "httpStatus": 400
+    },
+    {
+      "reason": "INVALID_PAGE_TOKEN",
+      "httpStatus": 400
+    },
+    {
+      "reason": "MULTIPLE_DATA_TYPES_UNSUPPORTED",
+      "httpStatus": 400
+    },
+    {
+      "reason": "UNSUPPORTED_DATA_TYPE_ACTION",
+      "httpStatus": 400
+    },
+    {
+      "reason": "INVALID_DATA_TYPE",
+      "httpStatus": 400
+    },
+    {
+      "reason": "MISSING_SUBSCRIBER",
+      "httpStatus": 400
+    },
+    {
+      "reason": "INVALID_SUBSCRIBER_NAME",
+      "httpStatus": 400
+    },
+    {
+      "reason": "MISSING_SUBSCRIPTION",
+      "httpStatus": 400
+    },
+    {
+      "reason": "INVALID_SUBSCRIPTION_NAME",
+      "httpStatus": 400
+    },
+    {
+      "reason": "MISSING_DATA_TYPES",
+      "httpStatus": 400
+    },
+    {
+      "reason": "DATA_TYPES_CANNOT_BE_EMPTY",
+      "httpStatus": 400
+    },
+    {
+      "reason": "MISSING_USER",
+      "httpStatus": 400
+    },
+    {
+      "reason": "INVALID_USER_RESOURCE_NAME",
+      "httpStatus": 400
+    },
+    {
+      "reason": "INVALID_DATA_TYPE_FORMAT",
+      "httpStatus": 400
+    },
+    {
+      "reason": "MISSING_OAUTH_SCOPE",
+      "httpStatus": 403
+    },
+    {
+      "reason": "DISALLOWED_OAUTH_SCOPES",
+      "httpStatus": 403
+    },
+    {
+      "reason": "API_PRIVATE_PREVIEW_ACCESS_DENIED",
+      "httpStatus": 403
+    },
+    {
+      "reason": "DATA_ACCESS_DENIED",
+      "httpStatus": 403
+    },
+    {
+      "reason": "RESOURCE_PERMISSION_DENIED",
+      "httpStatus": 403
+    },
+    {
+      "reason": "RESOURCE_NOT_FOUND",
+      "httpStatus": 404
+    },
+    {
+      "reason": "SLEEP_ALREADY_EXISTS",
+      "httpStatus": 409
+    },
+    {
+      "reason": "INTERNAL_ERROR",
+      "httpStatus": 500
+    }
+  ]
+}

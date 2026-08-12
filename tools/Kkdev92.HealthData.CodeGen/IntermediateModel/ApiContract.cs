@@ -1,0 +1,223 @@
+namespace Kkdev92.HealthData.CodeGen.IntermediateModel;
+
+/// <summary>
+/// The normalized intermediate representation of a Google Health API contract.
+/// </summary>
+/// <remarks>
+/// The emitter never reads the Discovery document directly. Everything
+/// it needs is resolved into this shape first, so that Discovery's format and C# generation stay
+/// decoupled and so that semantic overrides have a single place to apply.
+/// </remarks>
+internal sealed record ApiContract
+{
+    public required string Name { get; init; }
+    public required string Title { get; init; }
+    public required string ApiVersion { get; init; }
+    public required string Revision { get; init; }
+    public required Uri RootUrl { get; init; }
+    public required string SpecSha256 { get; init; }
+    public required IReadOnlyList<ScopeContract> Scopes { get; init; }
+    public required IReadOnlyList<OperationContract> Operations { get; init; }
+    public required IReadOnlyList<SchemaContract> Schemas { get; init; }
+    public required IReadOnlyList<ErrorReasonContract> ErrorReasons { get; init; }
+    public required IReadOnlyList<OpenEnumContract> OpenEnums { get; init; }
+}
+
+/// <summary>
+/// A generated open enum type.
+/// </summary>
+/// <remarks>
+/// Discovery declares enums inline on a property rather than as a named schema, so the C# type
+/// name is synthesized from the declaring schema and property. The values are those known at
+/// generation time and are never treated as exhaustive (ADR-0005).
+/// </remarks>
+internal sealed record OpenEnumContract
+{
+    public required string CSharpName { get; init; }
+    public required string DeclaringSchema { get; init; }
+    public required string DeclaringProperty { get; init; }
+    public required IReadOnlyList<OpenEnumValueContract> Values { get; init; }
+}
+
+internal sealed record OpenEnumValueContract(string WireValue, string CSharpName, string? Description);
+
+internal sealed record ScopeContract(string Url, string CSharpName, string? Description);
+
+internal sealed record ErrorReasonContract(string Reason, int HttpStatus);
+
+internal sealed record OperationContract
+{
+    /// <summary>The Discovery operation id, for example <c>health.users.getProfile</c>.</summary>
+    public required string Id { get; init; }
+
+    /// <summary>The dotted resource path, for example <c>users.dataTypes.dataPoints</c>.</summary>
+    public required string ResourcePath { get; init; }
+
+    public required string CSharpName { get; init; }
+    public required string HttpMethod { get; init; }
+
+    /// <summary>The URI template relative to the root URL, for example <c>v4/{+name}</c>.</summary>
+    public required string PathTemplate { get; init; }
+
+    public required IReadOnlyList<ParameterContract> Parameters { get; init; }
+    public string? RequestSchema { get; init; }
+    public string? ResponseSchema { get; init; }
+    public required IReadOnlyList<string> Scopes { get; init; }
+
+    /// <summary>
+    /// How <see cref="Scopes"/> combine. Discovery cannot say, so only semantics.json can.
+    /// </summary>
+    public ScopeCombination ScopeCombination { get; init; } = ScopeCombination.AnyOf;
+
+    public required ResponseKind ResponseKind { get; init; }
+    public required RetryClassification RetryClassification { get; init; }
+    public PaginationContract? Pagination { get; init; }
+    public bool SupportsMediaDownload { get; init; }
+    public string? Description { get; init; }
+}
+
+internal sealed record ParameterContract
+{
+    /// <summary>The name exactly as it appears on the wire. Never reshaped.</summary>
+    public required string WireName { get; init; }
+
+    /// <summary>The C# member name. A separate concept from <see cref="WireName"/>.</summary>
+    public required string CSharpName { get; init; }
+
+    public required ParameterLocation Location { get; init; }
+    public required bool IsRequired { get; init; }
+    public required TypeContract Type { get; init; }
+    public string? Pattern { get; init; }
+    public string? Description { get; init; }
+}
+
+internal sealed record SchemaContract
+{
+    public required string WireName { get; init; }
+    public required string CSharpName { get; init; }
+    public required IReadOnlyList<PropertyContract> Properties { get; init; }
+    public string? Description { get; init; }
+}
+
+internal sealed record PropertyContract
+{
+    public required string WireName { get; init; }
+    public required string CSharpName { get; init; }
+    public required TypeContract Type { get; init; }
+
+    /// <summary>
+    /// True when Discovery marks the property <c>readOnly</c>.
+    /// </summary>
+    /// <remarks>
+    /// Read-only properties are readable but are removed from the write contract rather than
+    /// duplicated into a separate input type. See ADR-0006.
+    /// </remarks>
+    public required bool IsReadOnly { get; init; }
+
+    public string? Description { get; init; }
+}
+
+internal sealed record TypeContract
+{
+    public required TypeKind Kind { get; init; }
+
+    /// <summary>The rendered C# type, for example <c>string?</c> or <c>IReadOnlyList&lt;DataPoint&gt;</c>.</summary>
+    public required string CSharpType { get; init; }
+
+    /// <summary>The Discovery <c>type</c>, preserved for diagnostics and diffing.</summary>
+    public required string WireType { get; init; }
+
+    /// <summary>The Discovery <c>format</c>, for example <c>int64</c> or <c>google-datetime</c>.</summary>
+    public string? WireFormat { get; init; }
+
+    /// <summary>The referenced schema name, when <see cref="Kind"/> is <see cref="TypeKind.Reference"/>.</summary>
+    public string? SchemaRef { get; init; }
+
+    public TypeContract? ElementType { get; init; }
+
+    /// <summary>Wire enum values known at generation time. Never treated as exhaustive (ADR-0005).</summary>
+    public IReadOnlyList<string> EnumValues { get; init; } = [];
+
+    /// <summary>The generated open enum type name, when <see cref="Kind"/> is <see cref="TypeKind.Enum"/>.</summary>
+    public string? EnumTypeName { get; init; }
+
+    /// <summary>
+    /// The <c>JsonConverter</c> the property needs, or <see langword="null"/> when the default
+    /// contract is correct.
+    /// </summary>
+    /// <remarks>
+    /// Open enums carry their converter on the type itself, so those report no property-level
+    /// converter here.
+    /// </remarks>
+    public string? ConverterTypeName { get; init; }
+}
+
+internal sealed record PaginationContract
+{
+    public required PaginationKind Kind { get; init; }
+    public string? PageSize { get; init; }
+    public string? PageToken { get; init; }
+    public string? NextPageToken { get; init; }
+    public string? Items { get; init; }
+}
+
+internal enum TypeKind
+{
+    Primitive,
+    Reference,
+    Array,
+    Map,
+    Enum,
+    Any,
+}
+
+internal enum ParameterLocation
+{
+    Path,
+    Query,
+    Body,
+}
+
+internal enum ResponseKind
+{
+    Json,
+    Empty,
+    Operation,
+
+    /// <summary>Both a typed JSON response and an <c>alt=media</c> stream are available.</summary>
+    MediaOrJson,
+}
+
+internal enum RetryClassification
+{
+    Never,
+    Safe,
+    Idempotent,
+    SemanticallySafe,
+}
+
+internal enum ScopeCombination
+{
+    /// <summary>Any one of the listed scopes is accepted, which is what Discovery implies.</summary>
+    AnyOf,
+
+    /// <summary>All of them are needed together. Only a per-method page can establish this.</summary>
+    AllOf,
+}
+
+internal enum PaginationKind
+{
+    None,
+
+    /// <summary>Page size and token travel as query parameters.</summary>
+    Query,
+
+    /// <summary>Page size and token travel inside the request body.</summary>
+    Body,
+
+    /// <summary>
+    /// The request is paginated but the response carries no continuation token, so no
+    /// enumeration helper may be generated. Currently only <c>dataPoints.dailyRollUp</c>.
+    /// </summary>
+    RequestOnly,
+}
