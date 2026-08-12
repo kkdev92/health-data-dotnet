@@ -310,7 +310,17 @@ jobs:
               exit 1
             fi
           else
-            gh release create "${GITHUB_REF_NAME}" --draft --title "${GITHUB_REF_NAME}" --generate-notes
+            # A tag carrying a SemVer pre-release suffix is a pre-release on GitHub too. NuGet
+            # infers this from the version itself, so without the flag the same build shows as a
+            # pre-release on nuget.org and as "Latest" here — and "Latest" is what a reader
+            # installs. v0.1.0-alpha shipped that way and had to be corrected by hand.
+            case "${GITHUB_REF_NAME#v}" in
+              *-*) prerelease=--prerelease ;;
+              *)   prerelease= ;;
+            esac
+
+            gh release create "${GITHUB_REF_NAME}" --draft ${prerelease} \
+              --title "${GITHUB_REF_NAME}" --generate-notes
           fi
 
           # No --clobber: an upload that collides means this tag has been released before, and
