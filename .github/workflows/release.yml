@@ -27,6 +27,13 @@ on:
 # Deny by default; each job adds only what it needs.
 permissions: {}
 
+# Queued, never cancelled. A release writes to two systems that cannot be rolled back,
+# and cancelling one between the GitHub release and the NuGet push would leave a tag
+# published as a release with no packages behind it.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
 env:
   DOTNET_NOLOGO: true
   DOTNET_CLI_TELEMETRY_OPTOUT: true
