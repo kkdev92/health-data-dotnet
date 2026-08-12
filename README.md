@@ -2,6 +2,7 @@
 
 [![NuGet](https://img.shields.io/nuget/v/Kkdev92.HealthData)](https://www.nuget.org/packages/Kkdev92.HealthData)
 [![CI](https://github.com/kkdev92/health-data-dotnet/actions/workflows/ci.yml/badge.svg)](https://github.com/kkdev92/health-data-dotnet/actions)
+[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/14038/badge)](https://www.bestpractices.dev/projects/14038)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![.NET](https://img.shields.io/badge/.NET-10.0-blue.svg)](https://dotnet.microsoft.com/)
 
