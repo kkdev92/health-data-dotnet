@@ -43,12 +43,12 @@ jobs:
       # `git fetch`, which needs the remote to be readable — and would stop working the day this
       # repository is made private. The mitigation that matters is above: this job's token can
       # only read, so build code that takes it cannot push, tag or release.
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           # Source Link is in the SDK from .NET 8 on and needs real commit history to point at.
           fetch-depth: 0
 
-      - uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9 # v4
+      - uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
         with:
           global-json-file: global.json
 
@@ -272,13 +272,53 @@ jobs:
       # Everything downstream consumes this rather than rebuilding. The packages that were tested
       # are the packages that get published; a second build could differ from the one verified.
       - name: Upload packages
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: nupkg
           path: |
             artifacts/*.nupkg
             artifacts/*.snupkg
           if-no-files-found: error
+
+  # The download half of the pipeline, exercised where nothing is published.
+  #
+  # download-artifact appears only in the two publishing jobs, and both are gated on a tag push.
+  # So neither a pull request nor a manual dry run ever ran it: a broken version, or an input that
+  # changed meaning, would first be discovered part-way through a release that cannot be redone.
+  # This runs the same action with the same inputs and checks what comes back, on exactly the
+  # events that publish nothing.
+  dry-run-download:
+    name: check the artefacts survive a download
+    needs: verify
+    if: github.event_name != 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: nupkg
+          path: artifacts
+
+      - name: Check what came back
+        run: |
+          nupkgs=$(ls artifacts/*.nupkg 2>/dev/null | wc -l)
+          snupkgs=$(ls artifacts/*.snupkg 2>/dev/null | wc -l)
+
+          if [ "$nupkgs" -ne 4 ] || [ "$snupkgs" -ne 4 ]; then
+            echo "::error::Downloaded ${nupkgs} nupkg and ${snupkgs} snupkg, expected 4 and 4." >&2
+            ls -l artifacts/ >&2
+            exit 1
+          fi
+
+          # Present is not the same as intact. A download that silently mangles a file — a
+          # decompression change, a truncated transfer — leaves the right number of names behind.
+          for package in artifacts/*.nupkg artifacts/*.snupkg; do
+            if ! unzip -tqq "$package"; then
+              echo "::error::${package} did not survive the round trip as a readable archive." >&2
+              exit 1
+            fi
+          done
+
+          echo "8 artefacts downloaded and readable."
 
   # Before NuGet, because this is the half that can be undone. `gh release upload` does not create
   # a release, so publishing to nuget.org first — which is permanent — could be followed by a
@@ -293,7 +333,7 @@ jobs:
     steps:
       # No checkout. This job needs the packages, not the source, and code it does not check out
       # is code that cannot run while `contents: write` is live.
-      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: nupkg
           path: artifacts
@@ -348,12 +388,12 @@ jobs:
     # The policy has to exist on the nuget.org account before this can work, and its four fields
     # must match exactly: owner, repository, `release.yml` (file name only, no path), `release`.
     steps:
-      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: nupkg
           path: artifacts
 
-      - uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9 # v4
+      - uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
         with:
           dotnet-version: "10.0.x"
 
