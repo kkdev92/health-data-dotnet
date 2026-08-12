@@ -62,11 +62,25 @@ signatures are unchanged, and nothing stronger. It is a cheap first signal, not 
 proof.
 
 Package validation is the signal that checks binary compatibility directly, and it needs a
-published version to compare against. There is none yet. **After the first version is on
-nuget.org**, set `PackageValidationBaselineVersion` to it in `Directory.Build.props` and raise it
-with each release; from then on `dotnet pack` fails on a binary breaking change rather than a
-reviewer having to spot one. Until that is done only its compatible-framework and
-compatible-runtime validators run.
+published version to compare against. `PackageValidationBaselineVersion` in
+`src/Directory.Build.props` names it — currently `0.1.0-alpha` — so `dotnet pack` downloads that
+package from nuget.org and compares assemblies against it. Removing a public member fails the
+pack:
+
+```text
+error CP0002: 'double? Kkdev92.HealthData.ActiveEnergyBurned.Kcal.get' exists on the
+              [baseline] lib/net10.0/Kkdev92.HealthData.dll but not on
+              lib/net10.0/Kkdev92.HealthData.dll
+```
+
+**Raise the baseline to the version just published, on every release.** Left behind, it compares
+against an increasingly old package, and a break introduced after the baseline stops being
+visible. The release workflow does not enforce this, because the value has to change in the same
+commit that raises the version, and only a person knows which release is which.
+
+A deliberate break is recorded rather than argued with: rebuild with
+`/p:ApiCompatGenerateSuppressionFile=true` to write a suppression file, and the suppression is
+then a reviewable file in the diff.
 
 None of the five is a proof on its own, and package validation is not either — it compares
 assemblies, not behaviour. They are five different ways of noticing, and the reason there are five

@@ -42,18 +42,21 @@
   </PropertyGroup>
 
   <!--
-    Package validation. The baseline validator compares against a previously published version;
-    there is none yet, so PackageValidationBaselineVersion is deliberately not set and that
-    validator does not run. The compatible-framework and runtime validators do.
+    Package validation. The baseline validator compares the assemblies being packed against the
+    last version actually published to nuget.org, so a binary breaking change fails the pack
+    rather than waiting for a reviewer to spot it in a diff.
 
-    Set PackageValidationBaselineVersion to the last published version once there is one, or this
-    stays a validator that never fires.
+    Raise the baseline to the version just published on every release. Leaving it behind means
+    comparing against something older each time, which drifts into comparing against nothing.
 
-    Before 1.0 the real guard against an accidental API change is the approved public API
-    snapshot in tests/PublicApi, which is enforced by PublicApiTests.
+    This complements rather than replaces the approved public API snapshot in tests/PublicApi:
+    that catches a source-level change at test time, this catches a binary-level one at pack
+    time, and the two do not see the same things. A type moving between assemblies is invisible
+    to one; a change of parameter name is invisible to the other.
   -->
   <PropertyGroup>
     <EnablePackageValidation>true</EnablePackageValidation>
+    <PackageValidationBaselineVersion>0.1.0-alpha</PackageValidationBaselineVersion>
   </PropertyGroup>
 
   <ItemGroup>
