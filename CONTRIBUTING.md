@@ -116,3 +116,27 @@ ordinary test run because it needs the packed output to exist.
 | `Kkdev92.HealthData.AotSmokeTests` | A console app that CI publishes with Native AOT |
 
 Integration tests must **skip**, not fail, when credentials are absent.
+
+### What a change has to bring with it
+
+**A change in behaviour comes with a test, and a fix comes with a test that fails without it.**
+
+The second half is the part worth insisting on. A test written after a fix, and never seen to
+fail, proves only that the code compiles — and this project has shipped exactly that mistake more
+than once: a webhook secret checked on one request kind out of two, a package-contents test that
+inspected an empty directory and reported success, a scheduled job that skipped when its
+credentials were missing and stayed green for months. Each passed continuously while guarding
+nothing.
+
+So, before opening the pull request:
+
+1. Write the test.
+2. Undo the fix and watch the test fail. If it passes, it is not testing the fix.
+3. Redo the fix and watch it pass.
+
+Say in the pull request that you did it. If a change genuinely cannot be tested — an
+infrastructure or documentation change — say that instead, and why.
+
+Behaviour that depends on Google's contract belongs in `spec/v4/semantics.json` with its source
+and the date it was read, not in a comment. Behaviour that depends on untrusted input deserves a
+test over generated input rather than a handful of examples: see `GeneratedInputTests`.

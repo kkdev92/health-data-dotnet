@@ -98,3 +98,7 @@ application_default_credentials.json
 
 # Screenshots pasted into the editor. Local, and they tend to contain whatever was on screen.
 .clipshot/
+# Browser automation scratch output. Snapshots of whatever page was open, which is
+# nobody else's business and never part of a change.
+.playwright-cli/
+
