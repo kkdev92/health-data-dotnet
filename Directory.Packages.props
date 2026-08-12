@@ -27,7 +27,7 @@
 
   <!-- Code generator (repository-internal tool, not shipped) -->
   <ItemGroup>
-    <PackageVersion Include="System.CommandLine" Version="2.0.10" />
+    <PackageVersion Include="System.CommandLine" Version="2.0.11" />
   </ItemGroup>
 
   <!--
