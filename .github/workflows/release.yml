@@ -323,20 +323,20 @@ jobs:
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
     environment: release
-    # No contents: write. This job publishes permanently to a third party and has no business
-    # writing to the repository; the release it belongs to already exists as a draft.
+    permissions:
+      # For the OIDC token, and nothing else. No contents: write — this job publishes permanently
+      # to a third party and has no business writing to the repository; the release it belongs to
+      # already exists as a draft.
+      id-token: write
     #
-    # id-token: write would go here for NuGet trusted publishing. Not enabled: this job
-    # authenticates with a long-lived NUGET_API_KEY on the 'release' environment, and claiming
-    # otherwise in a permission block is how a reviewer stops reading.
+    # Trusted Publishing rather than a stored API key. nuget.org validates a GitHub-signed OIDC
+    # token against a policy naming this owner, this repository, this workflow file and the
+    # `release` environment, then issues an API key that lasts an hour. There is no long-lived
+    # secret to leak, rotate, or accidentally print. Verified against the nuget.org documentation
+    # on 2026-08-12.
     #
-    # It is the thing to move to. nuget.org exchanges a GitHub OIDC token for an API key that
-    # lasts an hour, so there is no secret left to leak or rotate (checked against the nuget.org
-    # documentation on 2026-08-11; it is being rolled out gradually, so the option may not be on
-    # the account yet). The switch is: register a policy under Trusted Publishing naming this
-    # owner, this repository, `release.yml` and the `release` environment; add `id-token: write`
-    # here; obtain the key with `NuGet/login@v1` immediately before the push, because requesting
-    # it early enough to expire is the way this goes wrong.
+    # The policy has to exist on the nuget.org account before this can work, and its four fields
+    # must match exactly: owner, repository, `release.yml` (file name only, no path), `release`.
     steps:
       - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
@@ -347,12 +347,26 @@ jobs:
         with:
           dotnet-version: "10.0.x"
 
+      # Immediately before the push. The key expires in an hour and each OIDC token buys exactly
+      # one key, so anything slow between here and the push is spending that hour.
+      - name: Exchange the OIDC token for a short-lived NuGet key
+        id: nuget-login
+        uses: NuGet/login@8d196754b4036150537f80ac539e15c2f1028841 # v1.2.0
+        with:
+          # The nuget.org profile name, in the clear on purpose. nuget.org prints it on every
+          # package page as the owner, so hiding it in a secret buys nothing and adds a way for
+          # the release to fail: an unset secret becomes an empty user and a confusing error.
+          # It is a profile name and never an email address.
+          user: kkdev92
+
       - name: Publish to NuGet
         env:
-          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+          NUGET_API_KEY: ${{ steps.nuget-login.outputs.NUGET_API_KEY }}
         run: |
           if [ -z "$NUGET_API_KEY" ]; then
-            echo "NUGET_API_KEY is not set. Configure it on the 'release' environment." >&2
+            echo "::error::No API key came back from nuget.org. Check that a Trusted Publishing" \
+                 "policy exists for this owner, repository, release.yml and the release" \
+                 "environment, and that NUGET_USER is the nuget.org profile name." >&2
             exit 1
           fi
 
