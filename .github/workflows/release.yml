@@ -293,7 +293,7 @@ jobs:
     steps:
       # No checkout. This job needs the packages, not the source, and code it does not check out
       # is code that cannot run while `contents: write` is live.
-      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: nupkg
           path: artifacts
@@ -348,7 +348,7 @@ jobs:
     # The policy has to exist on the nuget.org account before this can work, and its four fields
     # must match exactly: owner, repository, `release.yml` (file name only, no path), `release`.
     steps:
-      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: nupkg
           path: artifacts
