@@ -38,6 +38,10 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      # For build provenance. Signed here rather than in a publishing job because the claim being
+      # made is about where these bytes were built, and this is the job that built them.
+      id-token: write
+      attestations: write
     steps:
       # persist-credentials is left at its default because the tag-ancestry check below runs
       # `git fetch`, which needs the remote to be readable — and would stop working the day this
@@ -268,6 +272,18 @@ jobs:
           NUGET_PACKAGES="${RUNNER_TEMP}/aot-cache" dotnet publish -c Release -o out
           ./out/Consumer | tee result.txt
           grep -q "package-only AOT ok" result.txt
+
+      # A signed statement that these exact bytes came out of this workflow, at this commit, in
+      # this repository — verifiable by anyone with `gh attestation verify` and no trust in me.
+      # Only on a tag: an attestation for a dry run would claim provenance for something that was
+      # never released. Free on public repositories.
+      - name: Attest the packages
+        if: github.event_name == 'push'
+        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
+        with:
+          subject-path: |
+            artifacts/*.nupkg
+            artifacts/*.snupkg
 
       # Everything downstream consumes this rather than rebuilding. The packages that were tested
       # are the packages that get published; a second build could differ from the one verified.
