@@ -1,4 +1,6 @@
 using System.IO.Compression;
+using System.Reflection.Metadata;
+using System.Reflection.PortableExecutable;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -17,7 +19,7 @@ namespace Kkdev92.HealthData.Tests;
 /// </para>
 /// <para>
 /// So the guarantee is asserted here rather than assumed. The allowlist is the real protection:
-/// anything not on it fails, whatever it happens to be. Scanning the contents for a build
+/// anything not on it fails, whatever it happens to be. Reading each entry back for a build
 /// machine's absolute path is defence in depth, for the case where a permitted file grows a
 /// reference it should not have — a pdb path recorded in a debug directory, most often.
 /// </para>
@@ -135,6 +137,46 @@ public sealed partial class PackageContentTests
     public void OrdinaryTextIsNotAMachinePath(string text)
         => Assert.False(MachinePath().IsMatch(text), $"'{text}' should not have been recognised.");
 
+    /// <summary>
+    /// The six bytes that failed a build, kept as the reason compiled output is read structurally.
+    /// </summary>
+    /// <remarks>
+    /// The detector is right to match this, which is the point: the pattern cannot tell six bytes
+    /// of compiled noise from six characters of text, and no tightening of it would. Somebody
+    /// reading this file later will be tempted to fix the flake by narrowing the pattern, so the
+    /// thing that does not work is written down as an assertion rather than as advice.
+    /// </remarks>
+    [Fact]
+    public void CompiledNoiseFitsTheShapeOfAPath()
+        => Assert.Matches(MachinePath(), "o:/Q\u0001\\");
+
+    /// <summary>
+    /// A compiled entry goes to the structured readers rather than to the pattern.
+    /// </summary>
+    /// <remarks>
+    /// Proved by handing them bytes that are not an image but do spell out a path. Refusing to
+    /// parse is the evidence: were the dispatch ever to fall through, the call would succeed and
+    /// report <c>C:\leaked\</c> instead. <see cref="EverythingElseIsStillReadWhole"/> holds the
+    /// other half, that an entry which is genuinely text is still read whole.
+    /// </remarks>
+    [Theory]
+    [InlineData("lib/net10.0/Kkdev92.HealthData.dll")]
+    [InlineData("lib/net10.0/Kkdev92.HealthData.pdb")]
+    public void CompiledOutputIsNeverDecodedAsText(string entryName)
+        => Assert.Throws<BadImageFormatException>(
+            () => RecordedPaths(entryName, Encoding.UTF8.GetBytes(@"C:\leaked\path\x.pdb")));
+
+    [Theory]
+    [InlineData("README.md")]
+    [InlineData("Kkdev92.HealthData.nuspec")]
+    [InlineData("lib/net10.0/Kkdev92.HealthData.xml")]
+    public void EverythingElseIsStillReadWhole(string entryName)
+    {
+        var recorded = RecordedPaths(entryName, Encoding.UTF8.GetBytes(@"built in C:\src\repo\bin\"));
+
+        Assert.Contains(recorded, r => MachinePath().IsMatch(r.Text));
+    }
+
     [Theory]
     [InlineData("package/services/metadata/core-properties/nuget.psmdcp")]                  // 10.0.4xx
     [InlineData("package/services/metadata/core-properties/fdec5d6143fe4aec8ecb67fd73335f44.psmdcp")]
@@ -244,39 +286,163 @@ public sealed partial class PackageContentTests
                         + $"path '{inName.Value}': '{entry.FullName}'.");
                 }
 
-                // Binaries are scanned too: a leaked path most often arrives compiled in, through
-                // a source path or an embedded resource, rather than as a visible file.
-                using var stream = entry.Open();
-                using var buffer = new MemoryStream();
-                stream.CopyTo(buffer);
-                var text = Encoding.UTF8.GetString(buffer.ToArray());
-
-                if (MachinePath().Match(text) is { Success: true } leaked)
+                foreach (var (where, text) in RecordedPaths(entry.FullName, Contents(entry)))
                 {
-                    Assert.Fail(
-                        $"{Path.GetFileName(package)} entry '{entry.FullName}' carries the build "
-                        + $"machine's path '{leaked.Value}'. {Hint(entry.FullName)}");
+                    if (MachinePath().Match(text) is { Success: true } leaked)
+                    {
+                        Assert.Fail(
+                            $"{Path.GetFileName(package)} entry '{entry.FullName}' carries the build "
+                            + $"machine's path '{leaked.Value}' in its {where}. {Hint(entry.FullName)}");
+                    }
                 }
             }
         }
     }
 
     /// <summary>
+    /// The structured readers find the fields they are aimed at, in the packages actually built.
+    /// </summary>
+    /// <remarks>
+    /// Reading the right field is worth nothing if the field is not there. A format change, a
+    /// handle read from the wrong table, or symbols switched off in the build would each leave the
+    /// readers returning nothing — and the check above passing every time, on every package, while
+    /// inspecting nothing at all. That is the failure this repository keeps finding, so it is
+    /// asserted rather than assumed.
+    /// </remarks>
+    [Fact]
+    public void EveryCompiledEntryRecordsAPathToCheck()
+    {
+        var packages = Packages();
+        Assert.SkipWhen(packages.Length == 0, "No package found; run 'dotnet pack -c Release -o artifacts' first.");
+
+        var inspected = new List<string>();
+
+        foreach (var package in packages)
+        {
+            using var archive = ZipFile.OpenRead(package);
+
+            foreach (var entry in archive.Entries)
+            {
+                if (!entry.FullName.EndsWith(".dll", StringComparison.OrdinalIgnoreCase)
+                    && !entry.FullName.EndsWith(".pdb", StringComparison.OrdinalIgnoreCase))
+                {
+                    continue;
+                }
+
+                var recorded = RecordedPaths(entry.FullName, Contents(entry));
+
+                Assert.True(
+                    recorded.Count > 0 && recorded.TrueForAll(r => !string.IsNullOrWhiteSpace(r.Text)),
+                    $"{Path.GetFileName(package)} entry '{entry.FullName}' recorded no path to check, "
+                    + "so nothing about it was verified.");
+
+                inspected.Add(entry.FullName);
+            }
+        }
+
+        // Both kinds, not just whichever happened to be present. The symbol packages go through a
+        // different reader from the assemblies, and finding only one of them would leave the other
+        // untested while this still passed.
+        Assert.Contains(inspected, name => name.EndsWith(".dll", StringComparison.OrdinalIgnoreCase));
+        Assert.Contains(inspected, name => name.EndsWith(".pdb", StringComparison.OrdinalIgnoreCase));
+    }
+
+    private static byte[] Contents(ZipArchiveEntry entry)
+    {
+        using var stream = entry.Open();
+        using var buffer = new MemoryStream();
+        stream.CopyTo(buffer);
+        return buffer.ToArray();
+    }
+
+    /// <summary>
+    /// The paths a packed entry records, read out of the places that hold paths.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// This used to decode every entry as UTF-8 and run the pattern over the whole thing, compiled
+    /// output included. That found a path in a pdb on a Wednesday and not on a Tuesday, because
+    /// what it had found was six bytes of compiled noise — <c>o:/Q</c>, an unprintable byte, a
+    /// backslash — that happened to fit the shape of a drive-lettered path. A pattern loose enough
+    /// to catch <c>D:\src\…</c> is loose enough to catch that, and there is no tightening that
+    /// fixes it: over half a megabyte of binary, the shape turns up by chance.
+    /// </para>
+    /// <para>
+    /// What made it worse than an ordinary flake is that it was re-rolled on every commit. A pdb
+    /// carries the commit hash, through SourceLink and through the content hash the deterministic
+    /// build derives its identifiers from, so each commit rewrites the bytes and rolls again. The
+    /// build it finally failed on had changed a comment in a workflow file.
+    /// </para>
+    /// <para>
+    /// So a compiled entry is now read as what it is. An assembly records the path of its symbol
+    /// file in the CodeView entry of the debug directory, and a Portable PDB records the source
+    /// files in its document table — those are the two places a build machine's path reaches a
+    /// package, and they are read through <c>System.Reflection.Metadata</c> rather than guessed at.
+    /// Everything else in a package is genuinely text, and is still scanned whole.
+    /// </para>
+    /// </remarks>
+    private static List<(string Where, string Text)> RecordedPaths(string entryName, byte[] content)
+    {
+        var found = new List<(string Where, string Text)>();
+
+        if (entryName.EndsWith(".dll", StringComparison.OrdinalIgnoreCase))
+        {
+            using var assembly = new PEReader(new MemoryStream(content));
+
+            foreach (var directoryEntry in assembly.ReadDebugDirectory())
+            {
+                if (directoryEntry.Type == DebugDirectoryEntryType.CodeView)
+                {
+                    found.Add(("debug directory", assembly.ReadCodeViewDebugDirectoryData(directoryEntry).Path));
+                }
+
+                // Not how this repository builds — the symbols ship in a .snupkg — but flipping
+                // DebugType to embedded would otherwise move every source path inside the assembly
+                // and out of the reach of this test without anything saying so.
+                if (directoryEntry.Type == DebugDirectoryEntryType.EmbeddedPortablePdb)
+                {
+                    using var embedded = assembly.ReadEmbeddedPortablePdbDebugDirectoryData(directoryEntry);
+                    found.AddRange(SourceFiles(embedded.GetMetadataReader()).Select(f => ("embedded pdb", f)));
+                }
+            }
+
+            return found;
+        }
+
+        if (entryName.EndsWith(".pdb", StringComparison.OrdinalIgnoreCase))
+        {
+            using var symbols = MetadataReaderProvider.FromPortablePdbStream(new MemoryStream(content));
+            found.AddRange(SourceFiles(symbols.GetMetadataReader()).Select(f => ("document table", f)));
+
+            return found;
+        }
+
+        found.Add(("contents", Encoding.UTF8.GetString(content)));
+
+        return found;
+    }
+
+    /// <summary>The source files a Portable PDB says it describes.</summary>
+    private static List<string> SourceFiles(MetadataReader reader)
+        => [.. reader.Documents.Select(handle => reader.GetString(reader.GetDocument(handle).Name))];
+
+    /// <summary>
     /// Explains the failure most likely to be seen, so it is actionable rather than alarming.
     /// </summary>
     /// <remarks>
-    /// A build without <c>ContinuousIntegrationBuild</c> records the absolute path of the pdb in
-    /// the assembly's debug directory, which on a maintainer's machine spells out the local
-    /// directory layout. It is normalised to <c>/_/</c> only when the property is set, and this
-    /// repository sets it from the <c>CI</c> environment variable, so a local
-    /// <c>dotnet pack</c> produces a package that must not be published.
+    /// A build without <c>ContinuousIntegrationBuild</c> records the machine's own paths in both
+    /// places this test reads: the pdb path in the assembly's debug directory, and the source file
+    /// names in the symbol file. Either spells out a maintainer's directory layout. They are
+    /// normalised to <c>/_/</c> only when the property is set, and this repository sets it from the
+    /// <c>CI</c> environment variable, so a local <c>dotnet pack</c> produces a package that must
+    /// not be published. The caller has already named which of the two it found.
     /// </remarks>
     private static string Hint(string entryName)
         => entryName.EndsWith(".dll", StringComparison.OrdinalIgnoreCase)
             || entryName.EndsWith(".pdb", StringComparison.OrdinalIgnoreCase)
-            ? "This is usually the pdb path in the debug directory of a build made without "
-              + "ContinuousIntegrationBuild. Rebuild and repack with CI=true, which is what the "
-              + "release workflow does, rather than publishing this artefact."
+            ? "This is what a build made without ContinuousIntegrationBuild records. Rebuild and "
+              + "repack with CI=true, which is what the release workflow does, rather than "
+              + "publishing this artefact."
             : string.Empty;
 
     /// <summary>
