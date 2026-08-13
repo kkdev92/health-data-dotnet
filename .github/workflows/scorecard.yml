@@ -22,9 +22,13 @@ on:
 
 permissions: read-all
 
+# Queued, not cancelled. This job exists to leave a result behind, and cancelling a run part-way
+# through leaves none — a push followed by a manual run twenty seconds later killed the first and
+# put a Cancelled check on the commit for no gain. It finishes in under a minute, so waiting costs
+# nothing worth saving.
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   analysis:
