@@ -151,12 +151,13 @@ public sealed partial class PackageContentTests
         => Assert.Matches(MachinePath(), "o:/Q\u0001\\");
 
     /// <summary>
-    /// Compiled entries go to the structured readers, and everything else is still read whole.
+    /// A compiled entry goes to the structured readers rather than to the pattern.
     /// </summary>
     /// <remarks>
-    /// Proved by handing the readers something that is not an image: text reaches the pattern and
-    /// is reported, while the same bytes under a compiled name fail to parse. If the dispatch ever
-    /// falls through, the second case starts reporting <c>C:\leaked\</c> and this fails.
+    /// Proved by handing them bytes that are not an image but do spell out a path. Refusing to
+    /// parse is the evidence: were the dispatch ever to fall through, the call would succeed and
+    /// report <c>C:\leaked\</c> instead. <see cref="EverythingElseIsStillReadWhole"/> holds the
+    /// other half, that an entry which is genuinely text is still read whole.
     /// </remarks>
     [Theory]
     [InlineData("lib/net10.0/Kkdev92.HealthData.dll")]
