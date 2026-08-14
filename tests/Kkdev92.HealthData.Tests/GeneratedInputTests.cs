@@ -147,7 +147,7 @@ public sealed class GeneratedInputTests
         // (ADR-0005).
         foreach (var value in Strings(seed: 4))
         {
-            var parsed = new SleepStageType(value);
+            var parsed = new SleepStage.Types.Type(value);
 
             Assert.Equal(value, parsed.Value, StringComparer.Ordinal);
             Assert.Equal(value, parsed.ToString(), StringComparer.Ordinal);

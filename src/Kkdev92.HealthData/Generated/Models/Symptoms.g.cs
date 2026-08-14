@@ -24,5 +24,5 @@ public sealed partial class Symptoms
 
     /// <summary>Required. List of symptoms experienced.</summary>
     [JsonPropertyName("symptoms")]
-    public IReadOnlyList<SymptomsSymptoms>? SymptomsValue { get; init; }
+    public IReadOnlyList<Symptoms.Types.Symptoms>? SymptomsValue { get; init; }
 }

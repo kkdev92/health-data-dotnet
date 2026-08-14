@@ -23,7 +23,7 @@ public sealed partial class DailyVO2Max
 {
     /// <summary>Optional. Represents the user's cardio fitness level based on their VO2 max.</summary>
     [JsonPropertyName("cardioFitnessLevel")]
-    public DailyVO2MaxCardioFitnessLevel? CardioFitnessLevel { get; init; }
+    public DailyVO2Max.Types.CardioFitnessLevel? CardioFitnessLevel { get; init; }
 
     /// <summary>Required. The date for which the Daily VO2 max was measured.</summary>
     [JsonPropertyName("date")]

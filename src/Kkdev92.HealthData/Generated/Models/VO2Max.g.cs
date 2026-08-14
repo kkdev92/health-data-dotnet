@@ -20,7 +20,7 @@ public sealed partial class VO2Max
 {
     /// <summary>Optional. The method used to measure the VO2 max value.</summary>
     [JsonPropertyName("measurementMethod")]
-    public VO2MaxMeasurementMethod? MeasurementMethod { get; init; }
+    public VO2Max.Types.MeasurementMethod? MeasurementMethod { get; init; }
 
     /// <summary>Required. The time at which VO2 max was measured.</summary>
     [JsonPropertyName("sampleTime")]

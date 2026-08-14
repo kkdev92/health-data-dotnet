@@ -30,5 +30,5 @@ public sealed partial class SwimLengthsData
 
     /// <summary>Required. Swim stroke type.</summary>
     [JsonPropertyName("swimStrokeType")]
-    public SwimLengthsDataSwimStrokeType? SwimStrokeType { get; init; }
+    public SwimLengthsData.Types.SwimStrokeType? SwimStrokeType { get; init; }
 }

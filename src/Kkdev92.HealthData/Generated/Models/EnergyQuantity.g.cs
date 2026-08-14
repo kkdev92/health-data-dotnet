@@ -24,5 +24,5 @@ public sealed partial class EnergyQuantity
 
     /// <summary>Optional. Value representing the user provided unit.</summary>
     [JsonPropertyName("userProvidedUnit")]
-    public EnergyQuantityUserProvidedUnit? UserProvidedUnit { get; init; }
+    public EnergyQuantity.Types.UserProvidedUnit? UserProvidedUnit { get; init; }
 }

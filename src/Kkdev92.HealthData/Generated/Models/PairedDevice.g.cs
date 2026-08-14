@@ -35,7 +35,7 @@ public sealed partial class PairedDevice
     /// <summary>Output only. The device type. Supported: TRACKER | SCALE</summary>
     /// <remarks>Output only. This value is never sent to the service; it is removed from the write contract.</remarks>
     [JsonPropertyName("deviceType")]
-    public PairedDeviceDeviceType? DeviceType { get; init; }
+    public PairedDevice.Types.DeviceType? DeviceType { get; init; }
 
     /// <summary>Output only. The product name of the device</summary>
     /// <remarks>Output only. This value is never sent to the service; it is removed from the write contract.</remarks>

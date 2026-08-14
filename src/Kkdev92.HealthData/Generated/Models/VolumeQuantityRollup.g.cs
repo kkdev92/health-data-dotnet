@@ -24,5 +24,5 @@ public sealed partial class VolumeQuantityRollup
 
     /// <summary>Optional. The user provided unit on the last element.</summary>
     [JsonPropertyName("userProvidedUnitLast")]
-    public VolumeQuantityRollupUserProvidedUnitLast? UserProvidedUnitLast { get; init; }
+    public VolumeQuantityRollup.Types.UserProvidedUnitLast? UserProvidedUnitLast { get; init; }
 }

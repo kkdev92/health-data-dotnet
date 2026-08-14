@@ -45,13 +45,13 @@ public class RequestBenchmarks
             .Build();
 
     [Benchmark(Description = "Open enum: known value")]
-    public string OpenEnumKnown() => SleepStageType.Deep.Value;
+    public string OpenEnumKnown() => SleepStage.Types.Type.Deep.Value;
 
     [Benchmark(Description = "Open enum: construct from wire value")]
-    public SleepStageType OpenEnumFromValue() => SleepStageType.FromValue("REM");
+    public SleepStage.Types.Type OpenEnumFromValue() => SleepStage.Types.Type.FromValue("REM");
 
     [Benchmark(Description = "Open enum: compare")]
-    public bool OpenEnumEquals() => SleepStageType.FromValue("DEEP") == SleepStageType.Deep;
+    public bool OpenEnumEquals() => SleepStage.Types.Type.FromValue("DEEP") == SleepStage.Types.Type.Deep;
 
     [Benchmark(Description = "GoogleTimestamp parse")]
     public GoogleTimestamp ParseTimestamp() => GoogleTimestamp.Parse("2026-08-10T12:34:56.789Z");

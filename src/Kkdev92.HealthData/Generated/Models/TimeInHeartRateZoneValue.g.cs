@@ -26,5 +26,5 @@ public sealed partial class TimeInHeartRateZoneValue
 
     /// <summary>The heart rate zone.</summary>
     [JsonPropertyName("heartRateZone")]
-    public TimeInHeartRateZoneValueHeartRateZone? HeartRateZone { get; init; }
+    public TimeInHeartRateZoneValue.Types.HeartRateZone? HeartRateZone { get; init; }
 }

@@ -26,5 +26,5 @@ public sealed partial class ActiveMinutesByActivityLevel
 
     /// <summary>Required. The level of activity.</summary>
     [JsonPropertyName("activityLevel")]
-    public ActiveMinutesByActivityLevelActivityLevel? ActivityLevel { get; init; }
+    public ActiveMinutesByActivityLevel.Types.ActivityLevel? ActivityLevel { get; init; }
 }

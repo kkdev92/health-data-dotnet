@@ -21,7 +21,7 @@ public sealed partial class HeartRateZone
 {
     /// <summary>Required. The heart rate zone type.</summary>
     [JsonPropertyName("heartRateZoneType")]
-    public HeartRateZoneHeartRateZoneType? HeartRateZoneType { get; init; }
+    public HeartRateZone.Types.HeartRateZoneType? HeartRateZoneType { get; init; }
 
     /// <summary>Required. Maximum heart rate for this zone in beats per minute.</summary>
     [JsonPropertyName("maxBeatsPerMinute")]

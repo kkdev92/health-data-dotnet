@@ -59,7 +59,7 @@ public sealed partial class Electrocardiogram
 
     /// <summary>Optional. The result classification of the ECG reading.</summary>
     [JsonPropertyName("resultClassification")]
-    public ElectrocardiogramResultClassification? ResultClassification { get; init; }
+    public Electrocardiogram.Types.ResultClassification? ResultClassification { get; init; }
 
     /// <summary>Optional. The sampling frequency of waveform samples in hertz.</summary>
     [JsonPropertyName("samplingFrequencyHertz")]

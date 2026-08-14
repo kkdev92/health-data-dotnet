@@ -20,7 +20,7 @@ public sealed partial class CaloriesInHeartRateZoneValue
 {
     /// <summary>The heart rate zone.</summary>
     [JsonPropertyName("heartRateZone")]
-    public CaloriesInHeartRateZoneValueHeartRateZone? HeartRateZone { get; init; }
+    public CaloriesInHeartRateZoneValue.Types.HeartRateZone? HeartRateZone { get; init; }
 
     /// <summary>The amount of kilocalories burned in the specified heart rate zone.</summary>
     [JsonPropertyName("kcal")]

@@ -37,9 +37,9 @@ public sealed partial class DataSource
     /// <summary>Output only. Captures the platform that uploaded the data.</summary>
     /// <remarks>Output only. This value is never sent to the service; it is removed from the write contract.</remarks>
     [JsonPropertyName("platform")]
-    public DataSourcePlatform? Platform { get; init; }
+    public DataSource.Types.Platform? Platform { get; init; }
 
     /// <summary>Optional. Captures how the data was recorded.</summary>
     [JsonPropertyName("recordingMethod")]
-    public DataSourceRecordingMethod? RecordingMethod { get; init; }
+    public DataSource.Types.RecordingMethod? RecordingMethod { get; init; }
 }

@@ -31,5 +31,5 @@ public sealed partial class ExerciseEvent
 
     /// <summary>Required. The type of the event, such as start, stop, pause, resume.</summary>
     [JsonPropertyName("exerciseEventType")]
-    public ExerciseEventExerciseEventType? ExerciseEventType { get; init; }
+    public ExerciseEvent.Types.ExerciseEventType? ExerciseEventType { get; init; }
 }

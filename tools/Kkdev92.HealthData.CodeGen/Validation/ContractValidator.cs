@@ -1,6 +1,7 @@
 using System.Text.Json;
 using Kkdev92.HealthData.CodeGen.Discovery;
 using Kkdev92.HealthData.CodeGen.IntermediateModel;
+using Kkdev92.HealthData.CodeGen.Normalization;
 using Kkdev92.HealthData.CodeGen.Specifications;
 
 namespace Kkdev92.HealthData.CodeGen.Validation;
@@ -25,6 +26,7 @@ internal static class ContractValidator
         ValidateSemanticsTargets(spec, errors);
         ValidatePagination(spec, contract, errors, warnings);
         ValidateIdentifiers(contract, errors);
+        ValidateOpenEnums(contract, errors);
         ValidateSerializableShapes(contract, errors);
 
         return new ValidationResult(errors, warnings);
@@ -214,6 +216,54 @@ internal static class ContractValidator
     }
 
     /// <summary>Catches generated names that would not compile or would silently collide.</summary>
+    /// <summary>
+    /// Enforces what the nested-enum emission cannot express: names that would collide inside the
+    /// generated container.
+    /// </summary>
+    /// <remarks>
+    /// The enum struct is named after its declaring property and nested under
+    /// <c>{Owner}.Types</c>, so three collisions become possible that the flat naming never had:
+    /// a wire value whose normalized name equals the struct's own name (CS0542), a property whose
+    /// name is one the struct already spends on its machinery (<c>Value</c>, <c>FromValue</c>,
+    /// <c>ToString</c>), and a property literally called <c>types</c>, which would collide with
+    /// the container itself. Discovery revision 20260805 has none of these; a later revision that
+    /// introduces one must stop generation with the culprit named, not emit code that cannot
+    /// compile.
+    /// </remarks>
+    internal static void ValidateOpenEnums(ApiContract contract, List<string> errors)
+    {
+        var emittedSchemas = contract.Schemas.Select(s => s.WireName).ToHashSet(StringComparer.Ordinal);
+
+        foreach (var openEnum in contract.OpenEnums)
+        {
+            var leaf = NamingNormalizer.ToPascalCase(openEnum.DeclaringProperty);
+
+            if (!emittedSchemas.Contains(openEnum.DeclaringSchema))
+            {
+                errors.Add(
+                    $"Open enum '{openEnum.CSharpName}' is declared by '{openEnum.DeclaringSchema}', " +
+                    "which is not among the emitted schemas, so its container has no owner.");
+            }
+
+            if (leaf is "Types" or "Value" or "FromValue" or "ToString")
+            {
+                errors.Add(
+                    $"'{openEnum.DeclaringSchema}.{openEnum.DeclaringProperty}' normalizes to '{leaf}', " +
+                    "which the nested enum container already uses for its own machinery.");
+            }
+
+            foreach (var value in openEnum.Values)
+            {
+                if (string.Equals(value.CSharpName, leaf, StringComparison.Ordinal))
+                {
+                    errors.Add(
+                        $"'{openEnum.DeclaringSchema}.{openEnum.DeclaringProperty}' value '{value.WireValue}' " +
+                        $"normalizes to '{value.CSharpName}', which collides with its own enum type name (CS0542).");
+                }
+            }
+        }
+    }
+
     private static void ValidateIdentifiers(ApiContract contract, List<string> errors)
     {
         var typeNames = new Dictionary<string, string>(StringComparer.Ordinal);

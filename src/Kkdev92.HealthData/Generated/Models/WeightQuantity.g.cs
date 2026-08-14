@@ -24,5 +24,5 @@ public sealed partial class WeightQuantity
 
     /// <summary>Optional. Value representing the user provided unit.</summary>
     [JsonPropertyName("userProvidedUnit")]
-    public WeightQuantityUserProvidedUnit? UserProvidedUnit { get; init; }
+    public WeightQuantity.Types.UserProvidedUnit? UserProvidedUnit { get; init; }
 }

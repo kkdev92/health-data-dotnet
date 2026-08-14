@@ -67,7 +67,7 @@ const string sleepPayload = """
 
 var stage = JsonSerializer.Deserialize(sleepPayload, HealthDataJson.ReadInfo<SleepStage>())!;
 
-Check("open enum parses", stage.Type == SleepStageType.Deep);
+Check("open enum parses", stage.Type == SleepStage.Types.Type.Deep);
 Check("timestamp parses", stage.StartTime!.Value.Value.Hour == 22);
 Check("duration parses", stage.StartUtcOffset == new GoogleDuration(-14400, 0));
 Check("output-only value is readable", stage.CreateTime is not null);

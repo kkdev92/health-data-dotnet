@@ -59,7 +59,7 @@ public sealed partial class Sleep
 
     /// <summary>Optional. SleepType: classic or stages.</summary>
     [JsonPropertyName("type")]
-    public SleepType? Type { get; init; }
+    public Sleep.Types.Type? Type { get; init; }
 
     /// <summary>Output only. Last update time of this sleep observation.</summary>
     /// <remarks>Output only. This value is never sent to the service; it is removed from the write contract.</remarks>

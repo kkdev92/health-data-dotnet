@@ -20,7 +20,7 @@ public sealed partial class NutrientQuantity
 {
     /// <summary>Required. The nutrient type.</summary>
     [JsonPropertyName("nutrient")]
-    public NutrientQuantityNutrient? Nutrient { get; init; }
+    public NutrientQuantity.Types.Nutrient? Nutrient { get; init; }
 
     /// <summary>Required. The quantity of the nutrient, measured in grams.</summary>
     [JsonPropertyName("quantity")]

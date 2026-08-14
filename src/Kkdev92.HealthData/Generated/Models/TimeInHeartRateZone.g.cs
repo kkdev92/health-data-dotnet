@@ -20,7 +20,7 @@ public sealed partial class TimeInHeartRateZone
 {
     /// <summary>Required. Heart rate zone type.</summary>
     [JsonPropertyName("heartRateZoneType")]
-    public TimeInHeartRateZoneHeartRateZoneType? HeartRateZoneType { get; init; }
+    public TimeInHeartRateZone.Types.HeartRateZoneType? HeartRateZoneType { get; init; }
 
     /// <summary>Required. Observed interval.</summary>
     [JsonPropertyName("interval")]

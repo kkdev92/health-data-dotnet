@@ -3,6 +3,7 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using Kkdev92.HealthData.CodeGen.CSharp;
 using Kkdev92.HealthData.CodeGen.Discovery;
+using Kkdev92.HealthData.CodeGen.IntermediateModel;
 using Kkdev92.HealthData.CodeGen.Specifications;
 using Kkdev92.HealthData.CodeGen.Validation;
 
@@ -354,16 +355,24 @@ public sealed class GeneratorTests
             .Where(f => f.RelativePath.StartsWith("Generated/Models/", StringComparison.Ordinal))
             .ToArray();
 
-        // The union accessor helpers sit next to the models but are not schemas, so they are
-        // counted separately rather than inflating the schema count.
+        // The union accessor helpers and the nested-enum containers sit next to the models but
+        // are not schemas, so they are counted separately rather than inflating the schema count.
         var helpers = models.Count(f => f.RelativePath.EndsWith("Extensions.g.cs", StringComparison.Ordinal));
+        var containers = models.Count(f => f.RelativePath.EndsWith(".Types.g.cs", StringComparison.Ordinal));
 
         // DataPoint, RollupDataPoint and DailyRollupDataPoint. The last is the same union shape
         // as the second but a different schema, which is why it needs its own helpers rather than
         // sharing them.
         Assert.Equal(3, helpers);
-        Assert.Equal(138, models.Length - helpers);
-        Assert.Equal(58, files.Count(f => f.RelativePath.StartsWith("Generated/Enums/", StringComparison.Ordinal)));
+
+        // One container per schema that declares at least one inline enum: 58 enums over 43
+        // owners in Discovery revision 20260805.
+        Assert.Equal(43, containers);
+        Assert.Equal(138, models.Length - helpers - containers);
+
+        // The flat top-level home the enums used to have. Nothing may come back here: a file in
+        // this directory means the emitter has forgotten where enums live.
+        Assert.DoesNotContain(files, f => f.RelativePath.StartsWith("Generated/Enums/", StringComparison.Ordinal));
     }
 
     [Fact]
@@ -374,14 +383,114 @@ public sealed class GeneratorTests
 
         Assert.Equal(58, contract.OpenEnums.Count);
 
-        var sleepStageType = contract.OpenEnums.Single(e => e.CSharpName == "SleepStageType");
+        var sleepStageType = contract.OpenEnums.Single(e => e.CSharpName == "SleepStage.Types.Type");
         Assert.Equal("SleepStage", sleepStageType.DeclaringSchema);
         Assert.Contains(sleepStageType.Values, v => v.WireValue == "AWAKE" && v.CSharpName == "Awake");
 
         // The largest enum in the contract. A closed C# enum here would be unmaintainable and
         // would break on the next value Google adds.
-        var exerciseType = contract.OpenEnums.Single(e => e.CSharpName == "ExerciseExerciseType");
+        var exerciseType = contract.OpenEnums.Single(e => e.CSharpName == "Exercise.Types.ExerciseType");
         Assert.True(exerciseType.Values.Count > 150);
+    }
+
+    [Fact]
+    public void OpenEnumsAreNestedUnderTheirOwnersProtobufStyle()
+    {
+        // The friction report asked for PairedDevice.DeviceType, which C# refuses: a nested type
+        // may not share a name with a property of the enclosing class (CS0102). Google's own
+        // protobuf codegen answers the same collision with a Types container - Person.Types.
+        // PhoneType - so the enum is reachable by guesswork from the property a reader is looking
+        // at, uniformly, for all 58 rather than for whichever names happened not to collide.
+        var (_, files, _) = Generate();
+
+        var container = files.Single(f => f.RelativePath == "Generated/Models/PairedDevice.Types.g.cs");
+
+        Assert.Contains("public sealed partial class PairedDevice", container.Content, StringComparison.Ordinal);
+        Assert.Contains("public static class Types", container.Content, StringComparison.Ordinal);
+        Assert.Contains(
+            "public readonly partial record struct DeviceType(string Value)",
+            container.Content,
+            StringComparison.Ordinal);
+
+        // The owner's property refers to the nested type by its full dotted name, which works in
+        // every scope and reads the same in the file and in IntelliSense.
+        var owner = files.Single(f => f.RelativePath == "Generated/Models/PairedDevice.g.cs");
+        Assert.Contains("public PairedDevice.Types.DeviceType? DeviceType", owner.Content, StringComparison.Ordinal);
+
+        // The hardest case in the contract: Moods.moods, where the schema, the property and the
+        // enum all want the same word. The property is already renamed MoodsValue by the CS0542
+        // rule; the enum keeps the wire-derived name, nested where CS0542 does not reach.
+        var moods = files.Single(f => f.RelativePath == "Generated/Models/Moods.Types.g.cs");
+        Assert.Contains(
+            "public readonly partial record struct Moods(string Value)",
+            moods.Content,
+            StringComparison.Ordinal);
+
+        // Settings declares nine enums - every unit preference plus the two stride-length
+        // sources; they share one container rather than nine partials of the same class.
+        var settings = files.Single(f => f.RelativePath == "Generated/Models/Settings.Types.g.cs");
+        Assert.Equal(9, CountOccurrences(settings.Content, "readonly partial record struct"));
+    }
+
+    [Fact]
+    public void AnEnumValueThatWouldCollideWithItsNestedTypeNameIsRejected()
+    {
+        // Inside the container the struct is named after the property, so a wire value whose
+        // normalized name equals it would be CS0542 in the emitted code. Discovery revision
+        // 20260805 has no such value; if a later one introduces it, generation must stop with a
+        // message that names the culprit rather than emitting code that does not compile.
+        var contract = new ApiContract
+        {
+            Name = "health",
+            Title = "Test",
+            ApiVersion = "v4",
+            Revision = "test",
+            RootUrl = new Uri("https://health.googleapis.com/"),
+            SpecSha256 = "test",
+            Scopes = [],
+            Operations = [],
+            Schemas =
+            [
+                new SchemaContract
+                {
+                    WireName = "Sample",
+                    CSharpName = "Sample",
+                    Properties = [],
+                    Description = null,
+                },
+            ],
+            ErrorReasons = [],
+            OpenEnums =
+            [
+                new OpenEnumContract
+                {
+                    CSharpName = "Sample.Types.Kind",
+                    DeclaringSchema = "Sample",
+                    DeclaringProperty = "kind",
+                    Values = [new OpenEnumValueContract("KIND", "Kind", null)],
+                },
+            ],
+        };
+
+        var errors = new List<string>();
+        ContractValidator.ValidateOpenEnums(contract, errors);
+
+        Assert.Contains(errors, e => e.Contains("Sample.kind", StringComparison.Ordinal)
+            && e.Contains("KIND", StringComparison.Ordinal));
+    }
+
+    private static int CountOccurrences(string text, string needle)
+    {
+        var count = 0;
+
+        for (var index = text.IndexOf(needle, StringComparison.Ordinal);
+             index >= 0;
+             index = text.IndexOf(needle, index + needle.Length, StringComparison.Ordinal))
+        {
+            count++;
+        }
+
+        return count;
     }
 
     [Fact]

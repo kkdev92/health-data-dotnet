@@ -20,7 +20,7 @@ public sealed partial class ActivityLevel
 {
     /// <summary>Required. Activity level type in the given time interval.</summary>
     [JsonPropertyName("activityLevelType")]
-    public ActivityLevelActivityLevelType? ActivityLevelType { get; init; }
+    public ActivityLevel.Types.ActivityLevelType? ActivityLevelType { get; init; }
 
     /// <summary>Required. Observed interval.</summary>
     [JsonPropertyName("interval")]

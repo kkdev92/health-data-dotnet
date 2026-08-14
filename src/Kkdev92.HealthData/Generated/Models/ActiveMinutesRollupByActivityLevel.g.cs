@@ -26,5 +26,5 @@ public sealed partial class ActiveMinutesRollupByActivityLevel
 
     /// <summary>The level of activity.</summary>
     [JsonPropertyName("activityLevel")]
-    public ActiveMinutesRollupByActivityLevelActivityLevel? ActivityLevel { get; init; }
+    public ActiveMinutesRollupByActivityLevel.Types.ActivityLevel? ActivityLevel { get; init; }
 }

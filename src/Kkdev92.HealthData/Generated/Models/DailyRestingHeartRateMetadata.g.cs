@@ -20,5 +20,5 @@ public sealed partial class DailyRestingHeartRateMetadata
 {
     /// <summary>Required. The method used to calculate the resting heart rate.</summary>
     [JsonPropertyName("calculationMethod")]
-    public DailyRestingHeartRateMetadataCalculationMethod? CalculationMethod { get; init; }
+    public DailyRestingHeartRateMetadata.Types.CalculationMethod? CalculationMethod { get; init; }
 }

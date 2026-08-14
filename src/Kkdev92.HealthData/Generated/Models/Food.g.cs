@@ -20,7 +20,7 @@ public sealed partial class Food
 {
     /// <summary>Required. The access level of the food.</summary>
     [JsonPropertyName("accessLevel")]
-    public FoodAccessLevel? AccessLevel { get; init; }
+    public Food.Types.AccessLevel? AccessLevel { get; init; }
 
     /// <summary>Optional. The brand of the food.</summary>
     [JsonPropertyName("brand")]
@@ -63,7 +63,7 @@ public sealed partial class Food
 
     /// <summary>Optional. The meal type associated with this food.</summary>
     [JsonPropertyName("mealType")]
-    public FoodMealType? MealType { get; init; }
+    public Food.Types.MealType? MealType { get; init; }
 
     /// <summary>Optional. Value representing the nutrients of the food for the default serving.</summary>
     [JsonPropertyName("nutrients")]

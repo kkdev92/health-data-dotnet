@@ -27,5 +27,5 @@ public sealed partial class VolumeQuantity
     /// purposes. In the API format, all volume quantities are converted to milliliters.
     /// </summary>
     [JsonPropertyName("userProvidedUnit")]
-    public VolumeQuantityUserProvidedUnit? UserProvidedUnit { get; init; }
+    public VolumeQuantity.Types.UserProvidedUnit? UserProvidedUnit { get; init; }
 }

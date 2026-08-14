@@ -71,7 +71,7 @@ public sealed class GeneratedModelTests
 
         var stage = JsonSerializer.Deserialize(payload, HealthDataJson.ReadInfo<SleepStage>())!;
 
-        Assert.Equal(SleepStageType.Deep, stage.Type);
+        Assert.Equal(SleepStage.Types.Type.Deep, stage.Type);
         Assert.Equal(new DateTimeOffset(2026, 8, 9, 22, 15, 0, TimeSpan.Zero), stage.StartTime!.Value.Value);
         Assert.Equal(new GoogleDuration(-14400, 0), stage.StartUtcOffset);
 
@@ -92,7 +92,7 @@ public sealed class GeneratedModelTests
             """{"type":"MICRO_AROUSAL"}""", HealthDataJson.ReadInfo<SleepStage>())!;
 
         Assert.Equal("MICRO_AROUSAL", stage.Type!.Value.Value);
-        Assert.NotEqual(SleepStageType.Deep, stage.Type!.Value);
+        Assert.NotEqual(SleepStage.Types.Type.Deep, stage.Type!.Value);
     }
 
     [Fact]

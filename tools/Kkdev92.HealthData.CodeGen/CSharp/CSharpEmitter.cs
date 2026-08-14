@@ -54,7 +54,13 @@ internal sealed class CSharpEmitter(
         };
 
         files.AddRange(contract.Schemas.Select(EmitModel));
-        files.AddRange(contract.OpenEnums.Select(EmitOpenEnum));
+
+        // One container per owner rather than one file per enum: Settings declares eight, and
+        // eight partials of the same class saying the same thing would be noise.
+        files.AddRange(contract.OpenEnums
+            .GroupBy(e => e.DeclaringSchema, StringComparer.Ordinal)
+            .OrderBy(g => g.Key, StringComparer.Ordinal)
+            .Select(EmitOpenEnumContainer));
 
         foreach (var (unionSchema, declared) in _unions.OrderBy(u => u.Key, StringComparer.Ordinal))
         {
@@ -400,40 +406,83 @@ internal sealed class CSharpEmitter(
         return new GeneratedFile($"Generated/Models/{schema.CSharpName}.g.cs", writer.ToString());
     }
 
-    /// <summary>Emits an open enum: a string wrapper that tolerates unknown values (ADR-0005).</summary>
-    private GeneratedFile EmitOpenEnum(OpenEnumContract openEnum)
+    /// <summary>
+    /// Emits every open enum a schema declares, nested inside that schema (ADR-0005).
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// Nested protobuf style: the enum for <c>Settings.distanceUnit</c> is
+    /// <c>Settings.Types.DistanceUnit</c>, so the type is one guess away from the property a
+    /// reader is looking at. It cannot be a direct member of the owner — a nested type may not
+    /// share a name with the owner's property (CS0102) — which is exactly why protobuf's own C#
+    /// codegen introduces the <c>Types</c> container, and following that convention means anyone
+    /// who has consumed a Google API from C# has seen this shape before.
+    /// </para>
+    /// <para>
+    /// The container is a partial of the model class, so the model file itself stays a plain list
+    /// of properties.
+    /// </para>
+    /// </remarks>
+    private GeneratedFile EmitOpenEnumContainer(IGrouping<string, OpenEnumContract> owner)
     {
+        var ownerName = Normalization.NamingNormalizer.ToPascalCase(owner.Key);
         var writer = Header(RootNamespace, "System.Text.Json.Serialization", "Kkdev92.HealthData.Serialization");
 
-        writer.XmlDoc("summary", $"Wire values for {openEnum.DeclaringSchema}.{openEnum.DeclaringProperty}.");
-        writer.XmlDoc(
-            "remarks",
-            "This is an open enum: values Google adds later are preserved verbatim rather than " +
-            "rejected. The members below are only those known when this contract was generated.");
-        writer.Line($"[JsonConverter(typeof(OpenStringEnumConverter<{openEnum.CSharpName}>))]");
-
-        using (writer.Block(
-            $"public readonly partial record struct {openEnum.CSharpName}(string Value) : IOpenStringValue<{openEnum.CSharpName}>"))
+        writer.XmlDoc("summary", $"The open enums declared inline on {owner.Key}.");
+        using (writer.Block($"public sealed partial class {ownerName}"))
         {
-            writer.XmlDoc("summary", "Creates a value from its wire representation, known or not.");
-            writer.Line($"public static {openEnum.CSharpName} FromValue(string value) => new(value);");
-
-            foreach (var value in openEnum.Values)
+            writer.XmlDoc(
+                "summary",
+                $"Container for {ownerName}'s nested types, following the protobuf C# convention.");
+            using (writer.Block("public static class Types"))
             {
-                writer.Line();
-                // No inline markup here: XmlDoc escapes its input, so angle brackets would end up
-                // rendered literally as &lt;c&gt;.
-                writer.XmlDoc("summary", $"Wire value {value.WireValue}.");
-                writer.Line(
-                    $"public static {openEnum.CSharpName} {value.CSharpName} => new({CodeWriter.Literal(value.WireValue)});");
-            }
+                var first = true;
 
-            writer.Line();
-            writer.XmlDoc("summary", "Returns the wire value.");
-            writer.Line("public override string ToString() => Value;");
+                foreach (var openEnum in owner.OrderBy(e => e.CSharpName, StringComparer.Ordinal))
+                {
+                    if (!first)
+                    {
+                        writer.Line();
+                    }
+
+                    first = false;
+
+                    // Everything inside the container refers to the enum by its leaf name; the
+                    // scope resolves it, and the emitted file stays readable.
+                    var leaf = Normalization.NamingNormalizer.ToPascalCase(openEnum.DeclaringProperty);
+
+                    writer.XmlDoc("summary", $"Wire values for {openEnum.DeclaringSchema}.{openEnum.DeclaringProperty}.");
+                    writer.XmlDoc(
+                        "remarks",
+                        "This is an open enum: values Google adds later are preserved verbatim rather than " +
+                        "rejected. The members below are only those known when this contract was generated.");
+                    writer.Line($"[JsonConverter(typeof(OpenStringEnumConverter<{leaf}>))]");
+
+                    using (writer.Block(
+                        $"public readonly partial record struct {leaf}(string Value) : IOpenStringValue<{leaf}>"))
+                    {
+                        writer.XmlDoc("summary", "Creates a value from its wire representation, known or not.");
+                        writer.Line($"public static {leaf} FromValue(string value) => new(value);");
+
+                        foreach (var value in openEnum.Values)
+                        {
+                            writer.Line();
+                            // No inline markup here: XmlDoc escapes its input, so angle brackets
+                            // would end up rendered literally as &lt;c&gt;.
+                            writer.XmlDoc("summary", $"Wire value {value.WireValue}.");
+                            writer.Line(
+                                $"public static {leaf} {value.CSharpName} => new({CodeWriter.Literal(value.WireValue)});");
+                        }
+
+                        writer.Line();
+                        writer.XmlDoc("summary", "Returns the wire value.");
+                        writer.Line("public override string ToString() => Value;");
+                    }
+                }
+            }
         }
 
-        return new GeneratedFile($"Generated/Enums/{openEnum.CSharpName}.g.cs", writer.ToString());
+        return new GeneratedFile($"Generated/Models/{ownerName}.Types.g.cs", writer.ToString());
     }
 
     /// <summary>
@@ -457,6 +506,23 @@ internal sealed class CSharpEmitter(
         foreach (var schema in contract.Schemas)
         {
             writer.Line($"[JsonSerializable(typeof({schema.CSharpName}))]");
+        }
+
+        // The open enums are reachable through the schemas, so the serializer would register them
+        // on its own - under a metadata property named after the type's simple name. Nesting made
+        // the simple names collide: three owners declare a property called type, several declare
+        // mealType, and the generator answers with SYSLIB1031. Each enum is therefore registered
+        // explicitly, with the pre-nesting flat name as the metadata property name - unique by
+        // construction, because it used to be the type name.
+        foreach (var openEnum in contract.OpenEnums)
+        {
+            var flatName = Normalization.NamingNormalizer.ToPascalCase(openEnum.DeclaringSchema)
+                + Normalization.NamingNormalizer.ToPascalCase(openEnum.DeclaringProperty);
+
+            writer.Line(
+                $"[JsonSerializable(typeof({openEnum.CSharpName}), TypeInfoPropertyName = {CodeWriter.Literal(flatName)})]");
+            writer.Line(
+                $"[JsonSerializable(typeof({openEnum.CSharpName}?), TypeInfoPropertyName = {CodeWriter.Literal("Nullable" + flatName)})]");
         }
 
         writer.Line("public sealed partial class HealthDataJsonContext : JsonSerializerContext;");

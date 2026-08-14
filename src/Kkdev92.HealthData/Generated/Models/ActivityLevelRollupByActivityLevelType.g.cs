@@ -21,7 +21,7 @@ public sealed partial class ActivityLevelRollupByActivityLevelType
 {
     /// <summary>Activity level type.</summary>
     [JsonPropertyName("activityLevelType")]
-    public ActivityLevelRollupByActivityLevelTypeActivityLevelType? ActivityLevelType { get; init; }
+    public ActivityLevelRollupByActivityLevelType.Types.ActivityLevelType? ActivityLevelType { get; init; }
 
     /// <summary>Total duration in the activity level type.</summary>
     [JsonPropertyName("totalDuration")]

@@ -47,7 +47,7 @@ public sealed partial class SplitSummary
     /// if the tracking is automatic.
     /// </summary>
     [JsonPropertyName("splitType")]
-    public SplitSummarySplitType? SplitType { get; init; }
+    public SplitSummary.Types.SplitType? SplitType { get; init; }
 
     /// <summary>Required. Lap start time</summary>
     [JsonPropertyName("startTime")]

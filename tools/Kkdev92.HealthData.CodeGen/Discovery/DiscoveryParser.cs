@@ -58,6 +58,10 @@ internal static class DiscoveryParser
     /// Discovery has no named enum types, so the C# name is derived from the declaring schema and
     /// the <em>wire</em> property name. The wire name is used deliberately: deriving from the
     /// collision-adjusted member name would make the type name depend on an unrelated rule.
+    /// The name is dotted — <c>Settings.Types.DistanceUnit</c> — because the enum is emitted
+    /// nested inside its owner, protobuf style, where it can be found from the property that uses
+    /// it. A flat sibling named after the property would collide with the property itself
+    /// (CS0102), which is the same reason protobuf's own C# codegen nests under <c>Types</c>.
     /// </remarks>
     private static IReadOnlyList<OpenEnumContract> CollectOpenEnums(IReadOnlyList<SchemaContract> schemas)
     {
@@ -403,10 +407,13 @@ internal static class DiscoveryParser
                     CSharpName = NamingNormalizer.ToMemberName(property.Name, typeName),
                     // Every response field is optional in practice: Google omits absent fields
                     // rather than sending null, and additive changes must not break consumers.
+                    // Nested protobuf style: the enum for Settings.distanceUnit is
+                    // Settings.Types.DistanceUnit. The dotted name is what property types render
+                    // as, so it resolves identically inside the owner and everywhere else.
                     Type = TypeMapper.Map(
                         property.Value,
                         nullable: true,
-                        enumTypeName: typeName + NamingNormalizer.ToPascalCase(property.Name)),
+                        enumTypeName: $"{typeName}.Types.{NamingNormalizer.ToPascalCase(property.Name)}"),
                     IsReadOnly = property.Value.TryGetProperty("readOnly", out var ro) && ro.GetBoolean(),
                     Description = property.Value.TryGetProperty("description", out var d) ? d.GetString() : null,
                 });

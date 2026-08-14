@@ -27,7 +27,7 @@ public sealed partial class CoreBodyTemperature
 
     /// <summary>Optional. The location of the core body temperature measurement.</summary>
     [JsonPropertyName("measurementLocation")]
-    public CoreBodyTemperatureMeasurementLocation? MeasurementLocation { get; init; }
+    public CoreBodyTemperature.Types.MeasurementLocation? MeasurementLocation { get; init; }
 
     /// <summary>Required. The time at which core body temperature was measured.</summary>
     [JsonPropertyName("sampleTime")]

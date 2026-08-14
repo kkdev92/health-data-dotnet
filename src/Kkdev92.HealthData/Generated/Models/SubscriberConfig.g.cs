@@ -30,5 +30,5 @@ public sealed partial class SubscriberConfig
 
     /// <summary>Required. Policy for subscription creation.</summary>
     [JsonPropertyName("subscriptionCreatePolicy")]
-    public SubscriberConfigSubscriptionCreatePolicy? SubscriptionCreatePolicy { get; init; }
+    public SubscriberConfig.Types.SubscriptionCreatePolicy? SubscriptionCreatePolicy { get; init; }
 }
