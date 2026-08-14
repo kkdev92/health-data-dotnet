@@ -46,17 +46,23 @@
     last version actually published to nuget.org, so a binary breaking change fails the pack
     rather than waiting for a reviewer to spot it in a diff.
 
-    Raise the baseline to the version just published on every release. Leaving it behind means
-    comparing against something older each time, which drifts into comparing against nothing.
+    The baseline is deliberately absent right now. The 0.1.0-alpha surface is being reshaped on
+    the feedback from the first real consumer - namespaces, enum placement, resource names - and
+    every one of those is a binary break the validator would refuse. Suppressing hundreds of
+    intentional CP0002s would teach everyone to paste suppressions, which is worse than not
+    comparing for one release. Restore the property, pointed at the next published version, in
+    the same pull request that publishes it:
+
+      <PackageValidationBaselineVersion>0.2.0-alpha</PackageValidationBaselineVersion>
 
     This complements rather than replaces the approved public API snapshot in tests/PublicApi:
     that catches a source-level change at test time, this catches a binary-level one at pack
     time, and the two do not see the same things. A type moving between assemblies is invisible
-    to one; a change of parameter name is invisible to the other.
+    to one; a change of parameter name is invisible to the other. While the baseline is absent,
+    the snapshot is the only one of the two that is looking.
   -->
   <PropertyGroup>
     <EnablePackageValidation>true</EnablePackageValidation>
-    <PackageValidationBaselineVersion>0.1.0-alpha</PackageValidationBaselineVersion>
   </PropertyGroup>
 
   <ItemGroup>
