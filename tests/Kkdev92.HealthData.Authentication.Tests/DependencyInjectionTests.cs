@@ -201,4 +201,90 @@ public sealed class DependencyInjectionTests
     {
         public string Id { get; set; } = string.Empty;
     }
+
+    /// <summary>
+    /// The webhook side registers with the lifetimes its pieces need.
+    /// </summary>
+    /// <remarks>
+    /// The key provider holds the cache, so it is a singleton; resolved per scope, every
+    /// notification would refetch a keyset Google rotates every thirty days. It is also
+    /// IDisposable and needs an HttpClient that outlives a request. None of that is visible from
+    /// the constructor, and the one application built on this SDK worked it out in four blocks of
+    /// its own wiring.
+    /// </remarks>
+    [Fact]
+    public void ResolvesTheWebhookPiecesAsSingletons()
+    {
+        var services = new ServiceCollection();
+        services.AddHealthDataWebhooks();
+
+        using var provider = services.BuildServiceProvider();
+
+        var keys = provider.GetRequiredService<Webhooks.HealthDataWebhookKeyProvider>();
+        var verifier = provider.GetRequiredService<Webhooks.HealthDataWebhookSignatureVerifier>();
+
+        Assert.Same(keys, provider.GetRequiredService<Webhooks.HealthDataWebhookKeyProvider>());
+        Assert.Same(verifier, provider.GetRequiredService<Webhooks.HealthDataWebhookSignatureVerifier>());
+
+        using var scope = provider.CreateScope();
+
+        // A scope must not get its own cache.
+        Assert.Same(keys, scope.ServiceProvider.GetRequiredService<Webhooks.HealthDataWebhookKeyProvider>());
+    }
+
+    [Fact]
+    public void ARegisteredSecretProducesAReceiver()
+    {
+        var services = new ServiceCollection();
+        services.AddHealthDataWebhooks(options => options.EndpointSecrets.Add("Bearer secret"));
+
+        using var provider = services.BuildServiceProvider();
+
+        Assert.NotNull(provider.GetRequiredService<Webhooks.HealthDataWebhookReceiver>());
+    }
+
+    [Fact]
+    public void NoSecretMeansNoReceiverRatherThanOneThatRefusesEverything()
+    {
+        // A receiver with no secret answers 401 to every notification and to Google's verification
+        // challenge, which leaves a subscriber stuck at UNVERIFIED for a reason that looks like a
+        // signature problem. Failing to resolve says what is actually missing.
+        var services = new ServiceCollection();
+        services.AddHealthDataWebhooks();
+
+        using var provider = services.BuildServiceProvider();
+
+        Assert.Null(provider.GetService<Webhooks.HealthDataWebhookReceiver>());
+    }
+
+    [Fact]
+    public void TheKeysetClientIsNamedSoItCanBeConfigured()
+    {
+        var services = new ServiceCollection();
+
+        services.AddHealthDataWebhooks()
+            .ConfigureHttpClient(client => client.Timeout = TimeSpan.FromSeconds(7));
+
+        using var provider = services.BuildServiceProvider();
+
+        var client = provider.GetRequiredService<IHttpClientFactory>()
+            .CreateClient(HealthDataWebhookServiceCollectionExtensions.KeysetHttpClientName);
+
+        Assert.Equal(TimeSpan.FromSeconds(7), client.Timeout);
+    }
+
+    [Fact]
+    public void TheVerificationChallengeBodyIsAConstantRatherThanProse()
+    {
+        // A test that posts a challenge at its own endpoint needs the exact body. It was
+        // documented in a remark and nowhere reachable, so every such test wrote the literal again
+        // and would go on passing while testing the wrong thing if Google changed it.
+        Assert.Contains("verification", Webhooks.HealthDataWebhookReceiver.VerificationChallengeBody,
+            StringComparison.Ordinal);
+
+        using var document = System.Text.Json.JsonDocument.Parse(
+            Webhooks.HealthDataWebhookReceiver.VerificationChallengeBody);
+
+        Assert.Equal("verification", document.RootElement.GetProperty("type").GetString());
+    }
 }

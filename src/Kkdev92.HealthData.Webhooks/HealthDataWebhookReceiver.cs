@@ -155,6 +155,24 @@ public sealed class HealthDataWebhookReceiver
     public const string VerificationUserAgent = "Google-Health-API-Webhooks";
 
     /// <summary>
+    /// The body Google sends to verify an endpoint.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// For a test that posts a challenge at its own endpoint, which is the only way to find out
+    /// whether the receiver is wired up before asking Google to try. The value was documented in
+    /// prose here and nowhere a caller could reach, so every such test wrote the literal out again
+    /// and would keep working while quietly testing the wrong thing if Google changed it.
+    /// </para>
+    /// <para>
+    /// A challenge is recognized structurally rather than by comparing against this string: a
+    /// notification whose payload happens to contain the same text is not a challenge, and
+    /// whitespace is not part of the meaning. This is what to send, not what is matched.
+    /// </para>
+    /// </remarks>
+    public const string VerificationChallengeBody = """{"type": "verification"}""";
+
+    /// <summary>
     /// Handles an incoming request.
     /// </summary>
     /// <param name="rawBody">

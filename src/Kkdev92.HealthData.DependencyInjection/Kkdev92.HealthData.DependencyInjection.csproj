@@ -11,6 +11,14 @@
   <ItemGroup>
     <ProjectReference Include="../Kkdev92.HealthData/Kkdev92.HealthData.csproj" />
     <ProjectReference Include="../Kkdev92.HealthData.Authentication/Kkdev92.HealthData.Authentication.csproj" />
+    <!--
+      For AddHealthDataWebhooks. The webhook package has no third-party dependencies of its own,
+      so this adds an assembly rather than a dependency tree - but it does mean an application
+      that only reads carries it. The alternative was putting the wiring in the webhook package
+      and giving that one a dependency on Microsoft.Extensions, which would cost every consumer of
+      it, including the ones with no container at all.
+    -->
+    <ProjectReference Include="../Kkdev92.HealthData.Webhooks/Kkdev92.HealthData.Webhooks.csproj" />
   </ItemGroup>
 
 </Project>

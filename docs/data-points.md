@@ -239,10 +239,29 @@ Two mismatches are worth knowing, both real rather than bookkeeping errors:
 - `calories-in-heart-rate-zone` and `total-calories` are data types that appear only in roll-ups,
   never as a `DataPoint` member.
 
+The table ships. `HealthDataGeneratedDataTypes` is generated from that file, so an application does
+not have to copy it — which is what the first one built on this SDK did, with a comment saying
+there was nowhere else to get it:
+
+```csharp
+var steps = HealthDataGeneratedDataTypes.Find("steps");
+
+steps.Supports("dailyRollUp");   // true
+steps.Supports("get");           // false - this is the 400 UNSUPPORTED_DATA_TYPE_ACTION
+steps.FilterName;                // "steps"
+```
+
 Capabilities are published as **metadata, not validation**. The SDK does not reject a call because
-this file says a type has no `create`; the server remains the authority. Two fields are
-deliberately absent rather than guessed: per-type record kind, and per-type webhook support, which
-Google's Data Types page does not state.
+this file says a type has no `create`; the server remains the authority, and `Find` returning null
+for a type Google added after this capture means "not in the table", not "not supported". Two
+fields are deliberately absent rather than guessed: per-type record kind, and per-type webhook
+support, which Google's Data Types page does not state.
+
+`FilterName` is the prefix a filter is written against and **not a filter**. `heart-rate` filters on
+`heart_rate.sample_time.physical_time` while `steps` filters on `steps.interval.start_time`, and
+`sleep`, `exercise` and `hydration-log` reject the interval member the others accept — measured
+against the live service, not inferred. Composing an expression from the prefix produces a 400 that
+looks like the SDK's own answer.
 
 ## Exporting a workout
 

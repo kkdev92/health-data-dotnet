@@ -56,12 +56,29 @@ internal static class Program
             parseResult.GetValue(againstOption),
             cancellationToken));
 
+        // Not contract generation, but the same job: something the build produces that has to be
+        // trimmed before it ships. It lives here rather than in a task assembly of its own because
+        // this project is already the repository's build-time tool.
+        var filterDocs = new Command(
+            "filter-docs",
+            "Remove documentation for members outside the public surface. Offline.");
+
+        var documentationOption = new Option<string>("--documentation") { Required = true };
+        var assemblyOption = new Option<string>("--assembly") { Required = true };
+
+        filterDocs.Options.Add(documentationOption);
+        filterDocs.Options.Add(assemblyOption);
+        filterDocs.SetAction(parseResult => FilterDocsCommand.Run(
+            parseResult.GetValue(documentationOption)!,
+            parseResult.GetValue(assemblyOption)!));
+
         var root = new RootCommand("Deterministic contract generator for Kkdev92.HealthData.")
         {
             fetch,
             generate,
             verify,
             diff,
+            filterDocs,
         };
 
         return await root.Parse(args).InvokeAsync();

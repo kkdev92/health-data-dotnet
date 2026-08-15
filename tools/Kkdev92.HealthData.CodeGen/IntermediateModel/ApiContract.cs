@@ -24,6 +24,45 @@ internal sealed record ApiContract
 
     /// <summary>The resource names the service accepts, one per distinct pattern.</summary>
     public required IReadOnlyList<ResourceNameContract> ResourceNames { get; init; }
+
+    /// <summary>The data types, and which operations Google documents for each.</summary>
+    public required IReadOnlyList<DataTypeContract> DataTypes { get; init; }
+}
+
+/// <summary>
+/// One data type, as the Data Types page describes it.
+/// </summary>
+/// <remarks>
+/// <para>
+/// None of this is in Discovery. The REST path is the generic <c>dataTypes/{dataTypesId}</c>, so
+/// per-type capability appears nowhere in the machine-readable contract — which is why an
+/// application asking <c>steps</c> for a <c>get</c> receives
+/// <c>400 UNSUPPORTED_DATA_TYPE_ACTION</c>, an answer about the type rather than about the id it
+/// sent.
+/// </para>
+/// <para>
+/// <strong>Metadata, never validation.</strong> The snapshot says so itself: capabilities are
+/// published as metadata and must not become client-side hard validation, because the server
+/// remains the authority. The generated table is emitted for a caller to read and is never
+/// consulted before a request.
+/// </para>
+/// </remarks>
+internal sealed record DataTypeContract
+{
+    /// <summary>The kebab-case id that goes in a resource name, for example <c>heart-rate</c>.</summary>
+    public required string Id { get; init; }
+
+    /// <summary>
+    /// The snake_case name filters are written against, for example <c>heart_rate</c>.
+    /// </summary>
+    /// <remarks>
+    /// A different string from <see cref="Id"/> and not derivable from it. Both are preserved
+    /// verbatim; the spec forbids deriving one from the other by a naming rule.
+    /// </remarks>
+    public required string FilterName { get; init; }
+
+    /// <summary>The operation short names Google documents, for example <c>list</c>.</summary>
+    public required IReadOnlyList<string> Operations { get; init; }
 }
 
 /// <summary>

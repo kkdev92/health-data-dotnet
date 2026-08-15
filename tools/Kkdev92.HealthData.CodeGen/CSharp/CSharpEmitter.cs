@@ -68,6 +68,7 @@ internal sealed class CSharpEmitter(
             EmitJsonContext(),
             EmitOutputOnlyProperties(),
             EmitUnionMembers(),
+            EmitDataTypes(),
         };
 
         files.AddRange(contract.Schemas.Select(EmitModel));
@@ -744,6 +745,110 @@ internal sealed class CSharpEmitter(
         }
 
         return new GeneratedFile("Generated/Serialization/HealthDataOutputOnlyProperties.g.cs", writer.ToString());
+    }
+
+    /// <summary>
+    /// Emits the data type table, which Discovery does not carry.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// The generator has always read <c>data-types.json</c> and used none of it, so a consumer
+    /// needing "does steps support get" had to copy the table into their own application — which
+    /// one did, from this repository, with a comment saying it had nowhere else to get it.
+    /// </para>
+    /// <para>
+    /// <strong>Metadata, not validation.</strong> The snapshot says capabilities "must not become
+    /// client-side hard validation; the server remains the authority", so nothing in the SDK reads
+    /// this before sending. It answers a question; it does not stop a request.
+    /// </para>
+    /// <para>
+    /// <c>FilterName</c> is published and filter expressions are not built from it. The table has
+    /// the member's prefix and no more: <c>heart-rate</c> filters on
+    /// <c>heart_rate.sample_time.physical_time</c> while <c>steps</c> filters on
+    /// <c>steps.interval.start_time</c>, and three types reject the interval member the others
+    /// accept. Composing an expression from the prefix would produce a 400 that looks like the
+    /// SDK's own answer.
+    /// </para>
+    /// </remarks>
+    private GeneratedFile EmitDataTypes()
+    {
+        var writer = Header(RootNamespace);
+
+        writer.XmlDoc("summary", "A data type, and the operations Google documents for it.");
+        writer.XmlDoc(
+            "remarks",
+            "Metadata only. The service is the authority on what a type supports; this is what its "
+            + "own documentation says, captured when the contract was generated.");
+
+        using (writer.Block("public sealed record HealthDataDataTypeDescriptor"))
+        {
+            writer.XmlDoc("summary", "The kebab-case id used in a resource name, for example `heart-rate`.");
+            writer.Line("public required string Id { get; init; }");
+            writer.Line();
+
+            writer.XmlDoc("summary", "The snake_case name a filter is written against, for example `heart_rate`.");
+            writer.XmlDoc(
+                "remarks",
+                "A different string from the id and not derivable from it - both are preserved "
+                + "verbatim. It is the prefix of a filter member, not a filter: the rest of the path "
+                + "differs per type, and some types accept no filter at all. Build an expression "
+                + "from what the service documents for the type, not from this.");
+            writer.Line("public required string FilterName { get; init; }");
+            writer.Line();
+
+            writer.XmlDoc("summary", "The operation short names documented for this type, for example `list`.");
+            writer.Line("public required IReadOnlyList<string> Operations { get; init; }");
+            writer.Line();
+
+            writer.XmlDoc("summary", "Whether the documentation lists an operation for this type.");
+            writer.XmlDoc(
+                "remarks",
+                "Worth asking before offering a button, and not worth refusing a request over: a "
+                + "type that gained an operation after this contract was generated answers false "
+                + "here and succeeds at the service.");
+            writer.Line("public bool Supports(string operation)");
+            writer.Line("    => Operations.Contains(operation, StringComparer.Ordinal);");
+        }
+
+        writer.Line();
+        writer.XmlDoc("summary", "The data types the Google Health API documents.");
+        writer.XmlDoc(
+            "remarks",
+            "Captured from https://developers.google.com/health/data-types, which is the only place "
+            + "this appears: the REST path is the generic dataTypes/{dataTypesId}, so Discovery says "
+            + "nothing about what any individual type supports.");
+
+        using (writer.Block("public static class HealthDataGeneratedDataTypes"))
+        {
+            writer.XmlDoc("summary", "Every documented data type, ordered by id.");
+            writer.Line("public static IReadOnlyList<HealthDataDataTypeDescriptor> All { get; } =");
+            writer.Line("[");
+
+            foreach (var dataType in contract.DataTypes)
+            {
+                var operations = string.Join(", ", dataType.Operations.Select(CodeWriter.Literal));
+
+                writer.Line("    new()");
+                writer.Line("    {");
+                writer.Line($"        Id = {CodeWriter.Literal(dataType.Id)},");
+                writer.Line($"        FilterName = {CodeWriter.Literal(dataType.FilterName)},");
+                writer.Line($"        Operations = [{operations}],");
+                writer.Line("    },");
+            }
+
+            writer.Line("];");
+            writer.Line();
+
+            writer.XmlDoc("summary", "The descriptor for an id, or null when the id is not documented here.");
+            writer.XmlDoc(
+                "remarks",
+                "Null is not the same as unsupported. A type Google adds after this contract was "
+                + "generated is absent from the table and works perfectly well at the service.");
+            writer.Line("public static HealthDataDataTypeDescriptor? Find(string id)");
+            writer.Line("    => All.FirstOrDefault(dataType => string.Equals(dataType.Id, id, StringComparison.Ordinal));");
+        }
+
+        return new GeneratedFile("Generated/Api/HealthDataGeneratedDataTypes.g.cs", writer.ToString());
     }
 
     /// <summary>

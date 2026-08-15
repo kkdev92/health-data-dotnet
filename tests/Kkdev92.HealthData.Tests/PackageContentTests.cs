@@ -518,4 +518,66 @@ public sealed partial class PackageContentTests
             Assert.Empty(relative);
         }
     }
+
+    /// <summary>
+    /// The packaged documentation covers the public surface and nothing else.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// The compiler documents whatever carries a <c>///</c> comment, and this repository comments
+    /// private members on purpose — the reasoning belongs next to the code it explains. Microsoft's
+    /// own guidance says documenting private members "exposes the inner (potentially confidential)
+    /// workings of your library", and there is no compiler switch for it, so the file is filtered
+    /// before it is packed.
+    /// </para>
+    /// <para>
+    /// Read from the package rather than from the build output, because the package is the thing
+    /// that ships and the filtering happens between the two.
+    /// </para>
+    /// </remarks>
+    [Fact]
+    public void ThePackagedDocumentationDescribesOnlyWhatAConsumerCanSee()
+    {
+        var packages = Packages()
+            .Where(p => p.EndsWith(".nupkg", StringComparison.OrdinalIgnoreCase))
+            .ToArray();
+
+        Assert.SkipWhen(packages.Length == 0, "No package found; run 'dotnet pack -c Release -o artifacts' first.");
+
+        foreach (var package in packages)
+        {
+            using var archive = ZipFile.OpenRead(package);
+
+            var entry = archive.Entries.SingleOrDefault(e =>
+                e.FullName.StartsWith("lib/", StringComparison.Ordinal)
+                && e.FullName.EndsWith(".xml", StringComparison.Ordinal));
+
+            Assert.NotNull(entry);
+
+            using var stream = entry.Open();
+            var documented = System.Xml.Linq.XDocument.Load(stream)
+                .Descendants("member")
+                .Select(member => (string?)member.Attribute("name") ?? string.Empty)
+                .ToArray();
+
+            Assert.NotEmpty(documented);
+
+            // A private field is the clearest case, and the one the audit found: _snapshot and
+            // _lastAttemptAt described a cache's internal state to anybody reading IntelliSense.
+            var privateFields = documented
+                .Where(id => id.StartsWith("F:", StringComparison.Ordinal))
+                .Where(id => id.Split('.')[^1].StartsWith('_'))
+                .ToArray();
+
+            Assert.Empty(privateFields);
+
+            // The regex source generator emits an internal type per pattern, each with its own
+            // documented static fields. None of it is reachable and all of it names internals.
+            var generatedInternals = documented
+                .Where(id => id.Contains("System.Text.RegularExpressions.Generated", StringComparison.Ordinal))
+                .ToArray();
+
+            Assert.Empty(generatedInternals);
+        }
+    }
 }
