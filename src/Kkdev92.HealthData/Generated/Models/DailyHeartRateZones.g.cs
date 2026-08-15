@@ -13,7 +13,7 @@
 
 using System.Text.Json.Serialization;
 
-namespace Kkdev92.HealthData;
+namespace Kkdev92.HealthData.Models;
 
 /// <summary>User's heart rate zone thresholds based on the Karvonen algorithm for a specific day.</summary>
 public sealed partial class DailyHeartRateZones

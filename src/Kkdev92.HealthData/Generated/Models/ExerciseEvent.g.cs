@@ -14,7 +14,7 @@
 using System.Text.Json.Serialization;
 using Kkdev92.HealthData.Serialization;
 
-namespace Kkdev92.HealthData;
+namespace Kkdev92.HealthData.Models;
 
 /// <summary>Represents instantaneous events that happen during an exercise, such as start, stop, pause, split.</summary>
 public sealed partial class ExerciseEvent

@@ -13,7 +13,7 @@
 
 using System.Text.Json.Serialization;
 
-namespace Kkdev92.HealthData;
+namespace Kkdev92.HealthData.Models;
 
 /// <summary>Represents a Response for exporting exercise data in TCX format.</summary>
 public sealed partial class ExportExerciseTcxResponse

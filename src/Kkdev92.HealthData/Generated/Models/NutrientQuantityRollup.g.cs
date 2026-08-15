@@ -13,7 +13,7 @@
 
 using System.Text.Json.Serialization;
 
-namespace Kkdev92.HealthData;
+namespace Kkdev92.HealthData.Models;
 
 /// <summary>Nutrient quantity rollup.</summary>
 public sealed partial class NutrientQuantityRollup

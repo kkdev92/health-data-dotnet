@@ -13,7 +13,7 @@
 
 using System.Text.Json.Serialization;
 
-namespace Kkdev92.HealthData;
+namespace Kkdev92.HealthData.Models;
 
 /// <summary>Internal type to capture activity level during a certain time interval.</summary>
 public sealed partial class ActivityLevel

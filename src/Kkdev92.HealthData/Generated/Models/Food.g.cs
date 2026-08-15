@@ -13,7 +13,7 @@
 
 using System.Text.Json.Serialization;
 
-namespace Kkdev92.HealthData;
+namespace Kkdev92.HealthData.Models;
 
 /// <summary>Represents a food item.</summary>
 public sealed partial class Food

@@ -14,7 +14,7 @@
 using System.Text.Json.Serialization;
 using Kkdev92.HealthData.Serialization;
 
-namespace Kkdev92.HealthData;
+namespace Kkdev92.HealthData.Models;
 
 /// <summary>
 /// An analysis window evaluated for AFib. Note: The current version of the algorithm will only produce

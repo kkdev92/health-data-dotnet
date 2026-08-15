@@ -14,7 +14,7 @@
 using System.Text.Json.Serialization;
 using Kkdev92.HealthData.Serialization;
 
-namespace Kkdev92.HealthData;
+namespace Kkdev92.HealthData.Models;
 
 /// <summary>
 /// Value of a rollup for a single physical time interval (aggregation window) of reconciled data points

@@ -13,7 +13,7 @@
 
 using System.Text.Json.Serialization;
 
-namespace Kkdev92.HealthData;
+namespace Kkdev92.HealthData.Models;
 
 /// <summary>Represents the result of the rollup of active energy burned.</summary>
 public sealed partial class ActiveEnergyBurnedRollupValue

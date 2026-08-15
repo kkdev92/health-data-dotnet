@@ -14,7 +14,7 @@
 using System.Text.Json.Serialization;
 using Kkdev92.HealthData.Serialization;
 
-namespace Kkdev92.HealthData;
+namespace Kkdev92.HealthData.Models;
 
 /// <summary>Sleep summary: metrics and stages summary.</summary>
 public sealed partial class SleepSummary

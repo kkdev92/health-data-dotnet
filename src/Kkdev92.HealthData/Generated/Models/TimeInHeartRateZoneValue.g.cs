@@ -14,7 +14,7 @@
 using System.Text.Json.Serialization;
 using Kkdev92.HealthData.Serialization;
 
-namespace Kkdev92.HealthData;
+namespace Kkdev92.HealthData.Models;
 
 /// <summary>Represents the total time spent in a specific heart rate zone.</summary>
 public sealed partial class TimeInHeartRateZoneValue

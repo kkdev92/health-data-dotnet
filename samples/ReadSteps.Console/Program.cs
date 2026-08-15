@@ -1,5 +1,7 @@
 using Kkdev92.HealthData;
 using Kkdev92.HealthData.Authentication;
+using Kkdev92.HealthData.Models;
+using Kkdev92.HealthData.Requests;
 
 // Reads a user's step data.
 //

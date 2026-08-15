@@ -88,6 +88,7 @@ Take only what you need. The core package has no dependency on the other three.
 ```csharp
 using Kkdev92.HealthData;
 using Kkdev92.HealthData.Authentication;
+using Kkdev92.HealthData.Requests;
 
 // The client holds no credentials. A delegating handler resolves a token per request from the
 // operation descriptor, which is what makes one client safe to share across users.

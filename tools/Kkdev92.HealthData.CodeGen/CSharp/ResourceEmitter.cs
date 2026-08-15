@@ -118,12 +118,19 @@ internal sealed class ResourceEmitter(ApiContract contract, IReadOnlySet<string>
             => NamingNormalizer.ToPascalCase(resourcePath[(resourcePath.LastIndexOf('.') + 1)..]);
     }
 
-    public IEnumerable<GeneratedFile> EmitRequests(Func<string, CodeWriter> header)
+    public IEnumerable<GeneratedFile> EmitRequests(Func<string, string[], CodeWriter> header)
     {
         foreach (var operation in contract.Operations)
         {
             var typeName = RequestTypeNames[operation.Id];
-            var writer = header(RootNamespace);
+
+            // Only a request that carries a body names a model type. The using is conditional
+            // because an unused one is an IDE0005 build error in this repository, not a nicety.
+            var usings = operation.RequestSchema is null
+                ? System.Array.Empty<string>()
+                : [CSharpEmitter.ModelsNamespace];
+
+            var writer = header(CSharpEmitter.RequestsNamespace, usings);
 
             writer.XmlDoc("summary", $"Request for {operation.Id}.");
 
@@ -222,7 +229,23 @@ internal sealed class ResourceEmitter(ApiContract contract, IReadOnlySet<string>
 
     private GeneratedFile EmitResource(ResourceNode node, Func<string, string[], CodeWriter> header)
     {
-        var writer = header(RootNamespace, ["System.Text.Json", "Kkdev92.HealthData.Http", "Kkdev92.HealthData.Pagination"]);
+        // Computed from what the operations actually mention, because an unused using is an
+        // IDE0005 build error. The projects node, for example, exists only to hold its child
+        // resource and names neither a request nor a model.
+        var usings = new List<string> { "System.Text.Json", "Kkdev92.HealthData.Http", "Kkdev92.HealthData.Pagination" };
+
+        if (node.Operations.Count > 0)
+        {
+            usings.Add(CSharpEmitter.RequestsNamespace);
+        }
+
+        if (node.Operations.Any(op => op.RequestSchema is not null
+            || (op.ResponseSchema is not null && op.ResponseKind != ResponseKind.Empty)))
+        {
+            usings.Add(CSharpEmitter.ModelsNamespace);
+        }
+
+        var writer = header(RootNamespace, [.. usings]);
 
         writer.XmlDoc("summary", $"Operations on the {node.Path} resource.");
 

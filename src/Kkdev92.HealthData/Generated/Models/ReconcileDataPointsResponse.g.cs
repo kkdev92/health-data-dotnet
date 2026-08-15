@@ -13,7 +13,7 @@
 
 using System.Text.Json.Serialization;
 
-namespace Kkdev92.HealthData;
+namespace Kkdev92.HealthData.Models;
 
 /// <summary>Response containing the list of reconciled DataPoints.</summary>
 public sealed partial class ReconcileDataPointsResponse

@@ -1,3 +1,5 @@
+using Kkdev92.HealthData.Models;
+
 namespace Kkdev92.HealthData.Tests;
 
 /// <summary>

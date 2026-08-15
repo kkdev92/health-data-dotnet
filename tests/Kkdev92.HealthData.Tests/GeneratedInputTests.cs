@@ -1,6 +1,8 @@
 using System.Net;
 using System.Text;
 using Kkdev92.HealthData.Http;
+using Kkdev92.HealthData.Models;
+using Kkdev92.HealthData.Requests;
 
 namespace Kkdev92.HealthData.Tests;
 

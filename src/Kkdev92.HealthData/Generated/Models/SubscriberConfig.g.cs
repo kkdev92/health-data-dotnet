@@ -13,7 +13,7 @@
 
 using System.Text.Json.Serialization;
 
-namespace Kkdev92.HealthData;
+namespace Kkdev92.HealthData.Models;
 
 /// <summary>
 /// Configuration for a subscriber. A notification is sent to a subscription ONLY if the subscriber has

@@ -11,6 +11,8 @@
 
 #nullable enable
 
+using Kkdev92.HealthData.Models;
+
 namespace Kkdev92.HealthData.Serialization;
 
 /// <summary>Properties Discovery marks readOnly, which must never be transmitted.</summary>

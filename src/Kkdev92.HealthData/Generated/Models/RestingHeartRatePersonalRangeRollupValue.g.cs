@@ -13,7 +13,7 @@
 
 using System.Text.Json.Serialization;
 
-namespace Kkdev92.HealthData;
+namespace Kkdev92.HealthData.Models;
 
 /// <summary>Represents the rollup value for the daily resting heart rate data type.</summary>
 public sealed partial class RestingHeartRatePersonalRangeRollupValue

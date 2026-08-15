@@ -13,7 +13,7 @@
 
 using System.Text.Json.Serialization;
 
-namespace Kkdev92.HealthData;
+namespace Kkdev92.HealthData.Models;
 
 /// <summary>A subscription to a data collection for a specific user, to be delivered to a subscriber.</summary>
 public sealed partial class Subscription

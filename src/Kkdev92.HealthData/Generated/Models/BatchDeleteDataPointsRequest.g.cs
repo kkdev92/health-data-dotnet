@@ -13,7 +13,7 @@
 
 using System.Text.Json.Serialization;
 
-namespace Kkdev92.HealthData;
+namespace Kkdev92.HealthData.Models;
 
 /// <summary>Request to delete a batch of identifiable data points.</summary>
 public sealed partial class BatchDeleteDataPointsRequest

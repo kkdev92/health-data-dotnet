@@ -19,6 +19,22 @@ internal sealed class CSharpEmitter(
 {
     private const string RootNamespace = "Kkdev92.HealthData";
 
+    /// <summary>
+    /// Where a generated type lives, decided by what it is.
+    /// </summary>
+    /// <remarks>
+    /// A Discovery schema - something that crosses the wire - goes to <c>.Models</c>, and the
+    /// request envelopes this SDK synthesizes go to <c>.Requests</c>. The client, its resources,
+    /// the operation table and the scope and error constants stay at the root, so the first thing
+    /// a consumer sees when they type the package name is the client rather than 249 alphabetized
+    /// wire types. Nested namespaces see the root without a using, so models refer to the wire
+    /// primitives freely; the reverse direction is spelled out per file.
+    /// </remarks>
+    internal const string ModelsNamespace = RootNamespace + ".Models";
+
+    /// <inheritdoc cref="ModelsNamespace"/>
+    internal const string RequestsNamespace = RootNamespace + ".Requests";
+
     private readonly IReadOnlySet<string> _flattenedResourcePaths =
         flattenedResourcePaths ?? new HashSet<string>(StringComparer.Ordinal);
 
@@ -74,7 +90,7 @@ internal sealed class CSharpEmitter(
         resources.ResolveRequestTypeNames();
         RequestTypeNames = resources.RequestTypeNames;
 
-        files.AddRange(resources.EmitRequests(ns => Header(ns)));
+        files.AddRange(resources.EmitRequests(Header));
         files.AddRange(resources.EmitResources(resources.BuildTree(), Header));
 
         return files.OrderBy(f => f.RelativePath, StringComparer.Ordinal).ToArray();
@@ -335,7 +351,7 @@ internal sealed class CSharpEmitter(
             usings.Add("Kkdev92.HealthData.Serialization");
         }
 
-        var writer = Header(RootNamespace, [.. usings]);
+        var writer = Header(ModelsNamespace, [.. usings]);
 
         writer.XmlDoc("summary", schema.Description ?? schema.WireName);
 
@@ -426,7 +442,7 @@ internal sealed class CSharpEmitter(
     private GeneratedFile EmitOpenEnumContainer(IGrouping<string, OpenEnumContract> owner)
     {
         var ownerName = Normalization.NamingNormalizer.ToPascalCase(owner.Key);
-        var writer = Header(RootNamespace, "System.Text.Json.Serialization", "Kkdev92.HealthData.Serialization");
+        var writer = Header(ModelsNamespace, "System.Text.Json.Serialization", "Kkdev92.HealthData.Serialization");
 
         writer.XmlDoc("summary", $"The open enums declared inline on {owner.Key}.");
         using (writer.Block($"public sealed partial class {ownerName}"))
@@ -494,7 +510,7 @@ internal sealed class CSharpEmitter(
     /// </remarks>
     private GeneratedFile EmitJsonContext()
     {
-        var writer = Header(RootNamespace + ".Serialization", "System.Text.Json.Serialization");
+        var writer = Header(RootNamespace + ".Serialization", "System.Text.Json.Serialization", ModelsNamespace);
 
         writer.XmlDoc("summary", "Source-generated serialization metadata for the Google Health API contract.");
         writer.XmlDoc(
@@ -539,7 +555,7 @@ internal sealed class CSharpEmitter(
     /// </remarks>
     private GeneratedFile EmitOutputOnlyProperties()
     {
-        var writer = Header(RootNamespace + ".Serialization");
+        var writer = Header(RootNamespace + ".Serialization", ModelsNamespace);
 
         var withReadOnly = contract.Schemas
             .Where(s => s.Properties.Any(p => p.IsReadOnly))
@@ -599,7 +615,7 @@ internal sealed class CSharpEmitter(
             .ToArray();
 
         var kindEnum = $"{schema.CSharpName}Kind";
-        var writer = Header(RootNamespace);
+        var writer = Header(ModelsNamespace);
 
         writer.XmlDoc("summary", $"Which member of a {schema.CSharpName} carries a value.");
         writer.XmlDoc(

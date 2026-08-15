@@ -13,7 +13,7 @@
 
 using System.Text.Json.Serialization;
 
-namespace Kkdev92.HealthData;
+namespace Kkdev92.HealthData.Models;
 
 /// <summary>Number of calories burned due to basal metabolic rate (BMR) over a period of time.</summary>
 public sealed partial class BasalEnergyBurned

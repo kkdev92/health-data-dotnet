@@ -13,7 +13,7 @@
 
 using System.Text.Json.Serialization;
 
-namespace Kkdev92.HealthData;
+namespace Kkdev92.HealthData.Models;
 
 /// <summary>Time in heart rate zone record. It's an interval spent in specific heart rate zone.</summary>
 public sealed partial class TimeInHeartRateZone

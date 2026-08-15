@@ -13,7 +13,7 @@
 
 using System.Text.Json.Serialization;
 
-namespace Kkdev92.HealthData;
+namespace Kkdev92.HealthData.Models;
 
 /// <summary>Represents a blood glucose level measurement. LINT: LEGACY_NAMES</summary>
 public sealed partial class BloodGlucose

@@ -14,7 +14,7 @@
 using System.Text.Json.Serialization;
 using Kkdev92.HealthData.Serialization;
 
-namespace Kkdev92.HealthData;
+namespace Kkdev92.HealthData.Models;
 
 /// <summary>-- Resource Messages -- A subscriber receives notifications from Google Health API.</summary>
 public sealed partial class Subscriber

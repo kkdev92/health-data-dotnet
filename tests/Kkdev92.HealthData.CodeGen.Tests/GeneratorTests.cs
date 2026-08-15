@@ -433,6 +433,64 @@ public sealed class GeneratorTests
     }
 
     [Fact]
+    public void GeneratedTypesLiveInTheNamespaceOfTheirKind()
+    {
+        // 249 public types in one namespace was the report's tenth finding: typing
+        // Kkdev92.HealthData. offered every measurement, request, response and enum at once. The
+        // partition follows what a type is. A Discovery schema - something that crosses the wire -
+        // lives in .Models. A request envelope - something this SDK invented to carry parameters -
+        // lives in .Requests. The client, its resources and the operation table stay at the root,
+        // which is what a consumer sees first.
+        var (_, files, _) = Generate();
+
+        foreach (var file in files)
+        {
+            var expected = file.RelativePath switch
+            {
+                var p when p.StartsWith("Generated/Models/", StringComparison.Ordinal)
+                    => "namespace Kkdev92.HealthData.Models;",
+                var p when p.StartsWith("Generated/Requests/", StringComparison.Ordinal)
+                    => "namespace Kkdev92.HealthData.Requests;",
+                var p when p.StartsWith("Generated/Serialization/", StringComparison.Ordinal)
+                    => "namespace Kkdev92.HealthData.Serialization;",
+                _ => "namespace Kkdev92.HealthData;",
+            };
+
+            Assert.Contains(expected, file.Content, StringComparison.Ordinal);
+        }
+    }
+
+    [Fact]
+    public void CrossNamespaceReferencesCarryTheirUsings()
+    {
+        var (_, files, _) = Generate();
+
+        // A request with a body names a model type, so it needs the using; one without a body
+        // names nothing outside its own namespace, and an unused using is an IDE0005 build error
+        // in this repository.
+        var withBody = files.Single(f => f.RelativePath == "Generated/Requests/UpdateProfileRequest.g.cs");
+        var withoutBody = files.Single(f => f.RelativePath == "Generated/Requests/GetProfileRequest.g.cs");
+
+        Assert.Contains("using Kkdev92.HealthData.Models;", withBody.Content, StringComparison.Ordinal);
+        Assert.DoesNotContain("using Kkdev92.HealthData.Models;", withoutBody.Content, StringComparison.Ordinal);
+
+        // Resources call with request types and deserialize into model types, and the serializer
+        // context registers every model by name.
+        var resource = files.Single(f => f.RelativePath == "Generated/Resources/UsersResource.g.cs");
+        Assert.Contains("using Kkdev92.HealthData.Models;", resource.Content, StringComparison.Ordinal);
+        Assert.Contains("using Kkdev92.HealthData.Requests;", resource.Content, StringComparison.Ordinal);
+
+        var context = files.Single(f => f.RelativePath == "Generated/Serialization/HealthDataJsonContext.g.cs");
+        Assert.Contains("using Kkdev92.HealthData.Models;", context.Content, StringComparison.Ordinal);
+
+        // The projects node exists only to hold its child resource: no operations, so no request
+        // or model ever appears in it, and it must not import what it does not use.
+        var projects = files.Single(f => f.RelativePath == "Generated/Resources/ProjectsResource.g.cs");
+        Assert.DoesNotContain("using Kkdev92.HealthData.Models;", projects.Content, StringComparison.Ordinal);
+        Assert.DoesNotContain("using Kkdev92.HealthData.Requests;", projects.Content, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void AnEnumValueThatWouldCollideWithItsNestedTypeNameIsRejected()
     {
         // Inside the container the struct is named after the property, so a wire value whose

@@ -1,4 +1,6 @@
 using Kkdev92.HealthData.DependencyInjection;
+using Kkdev92.HealthData.Models;
+using Kkdev92.HealthData.Requests;
 using Microsoft.Extensions.DependencyInjection;
 namespace Kkdev92.HealthData.IntegrationTests;
 

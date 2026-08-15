@@ -1,5 +1,7 @@
 using System.Net;
 using System.Reflection;
+using Kkdev92.HealthData.Models;
+using Kkdev92.HealthData.Requests;
 using Kkdev92.HealthData.Serialization;
 
 namespace Kkdev92.HealthData.Tests;
@@ -21,7 +23,7 @@ public sealed class PrivacyGuardTests
         // means they inherit object.ToString().
         var models = typeof(HealthDataApiMetadata).Assembly
             .GetExportedTypes()
-            .Where(t => t is { IsClass: true, IsAbstract: false } && t.Namespace == "Kkdev92.HealthData")
+            .Where(t => t is { IsClass: true, IsAbstract: false } && t.Namespace == "Kkdev92.HealthData.Models")
             .Where(t => t.GetProperties().Any(p =>
                 p.GetCustomAttributes(typeof(System.Text.Json.Serialization.JsonPropertyNameAttribute), false).Length > 0))
             .ToArray();

@@ -12,6 +12,7 @@
 #nullable enable
 
 using System.Text.Json.Serialization;
+using Kkdev92.HealthData.Models;
 
 namespace Kkdev92.HealthData.Serialization;
 

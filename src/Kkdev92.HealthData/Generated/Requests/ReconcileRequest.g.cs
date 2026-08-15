@@ -11,7 +11,7 @@
 
 #nullable enable
 
-namespace Kkdev92.HealthData;
+namespace Kkdev92.HealthData.Requests;
 
 /// <summary>Request for health.users.dataTypes.dataPoints.reconcile.</summary>
 public sealed class ReconcileRequest

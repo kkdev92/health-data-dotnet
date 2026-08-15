@@ -13,7 +13,7 @@
 
 using System.Text.Json.Serialization;
 
-namespace Kkdev92.HealthData;
+namespace Kkdev92.HealthData.Models;
 
 /// <summary>Rollup for the energy quantity.</summary>
 public sealed partial class EnergyQuantityRollup

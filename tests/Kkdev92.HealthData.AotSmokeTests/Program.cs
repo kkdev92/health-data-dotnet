@@ -4,6 +4,8 @@ using Kkdev92.HealthData.Authentication;
 using Kkdev92.HealthData.Authentication.OAuth;
 using Kkdev92.HealthData.DependencyInjection;
 using Kkdev92.HealthData.Http;
+using Kkdev92.HealthData.Models;
+using Kkdev92.HealthData.Requests;
 using Kkdev92.HealthData.Resilience;
 using Kkdev92.HealthData.Serialization;
 using Kkdev92.HealthData.Webhooks;

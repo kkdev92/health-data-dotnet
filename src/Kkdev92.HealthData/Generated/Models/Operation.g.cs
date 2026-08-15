@@ -14,7 +14,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace Kkdev92.HealthData;
+namespace Kkdev92.HealthData.Models;
 
 /// <summary>This resource represents a long-running operation that is the result of a network API call.</summary>
 public sealed partial class Operation

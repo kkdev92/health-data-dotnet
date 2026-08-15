@@ -11,7 +11,9 @@
 
 #nullable enable
 
-namespace Kkdev92.HealthData;
+using Kkdev92.HealthData.Models;
+
+namespace Kkdev92.HealthData.Requests;
 
 /// <summary>Request for health.users.dataTypes.dataPoints.rollUp.</summary>
 public sealed class RollUpRequest
