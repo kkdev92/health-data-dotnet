@@ -13,7 +13,7 @@
 
 using System.Text.Json.Serialization;
 
-namespace Kkdev92.HealthData;
+namespace Kkdev92.HealthData.Models;
 
 /// <summary>
 /// Configuration for a subscriber. A notification is sent to a subscription ONLY if the subscriber has
@@ -30,5 +30,5 @@ public sealed partial class SubscriberConfig
 
     /// <summary>Required. Policy for subscription creation.</summary>
     [JsonPropertyName("subscriptionCreatePolicy")]
-    public SubscriberConfigSubscriptionCreatePolicy? SubscriptionCreatePolicy { get; init; }
+    public SubscriberConfig.Types.SubscriptionCreatePolicy? SubscriptionCreatePolicy { get; init; }
 }

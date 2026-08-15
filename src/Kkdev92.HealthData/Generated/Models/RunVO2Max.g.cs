@@ -13,7 +13,7 @@
 
 using System.Text.Json.Serialization;
 
-namespace Kkdev92.HealthData;
+namespace Kkdev92.HealthData.Models;
 
 /// <summary>VO2 max value calculated based on the user's running activity. Value stored in ml/kg/min.</summary>
 public sealed partial class RunVO2Max

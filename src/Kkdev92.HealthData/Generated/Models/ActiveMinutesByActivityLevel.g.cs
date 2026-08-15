@@ -14,7 +14,7 @@
 using System.Text.Json.Serialization;
 using Kkdev92.HealthData.Serialization;
 
-namespace Kkdev92.HealthData;
+namespace Kkdev92.HealthData.Models;
 
 /// <summary>Active minutes at a given activity level.</summary>
 public sealed partial class ActiveMinutesByActivityLevel
@@ -26,5 +26,5 @@ public sealed partial class ActiveMinutesByActivityLevel
 
     /// <summary>Required. The level of activity.</summary>
     [JsonPropertyName("activityLevel")]
-    public ActiveMinutesByActivityLevelActivityLevel? ActivityLevel { get; init; }
+    public ActiveMinutesByActivityLevel.Types.ActivityLevel? ActivityLevel { get; init; }
 }

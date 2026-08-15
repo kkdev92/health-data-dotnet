@@ -13,7 +13,7 @@
 
 using System.Text.Json.Serialization;
 
-namespace Kkdev92.HealthData;
+namespace Kkdev92.HealthData.Models;
 
 /// <summary>Additional information about how the sleep was processed.</summary>
 public sealed partial class SleepMetadata
@@ -53,5 +53,5 @@ public sealed partial class SleepMetadata
     /// <summary>Output only. Sleep stages algorithm processing status.</summary>
     /// <remarks>Output only. This value is never sent to the service; it is removed from the write contract.</remarks>
     [JsonPropertyName("stagesStatus")]
-    public SleepMetadataStagesStatus? StagesStatus { get; init; }
+    public SleepMetadata.Types.StagesStatus? StagesStatus { get; init; }
 }

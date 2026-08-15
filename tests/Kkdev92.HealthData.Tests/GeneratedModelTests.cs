@@ -1,4 +1,6 @@
 using System.Text.Json;
+using Kkdev92.HealthData.Models;
+using Kkdev92.HealthData.Requests;
 using Kkdev92.HealthData.Serialization;
 
 namespace Kkdev92.HealthData.Tests;
@@ -71,7 +73,7 @@ public sealed class GeneratedModelTests
 
         var stage = JsonSerializer.Deserialize(payload, HealthDataJson.ReadInfo<SleepStage>())!;
 
-        Assert.Equal(SleepStageType.Deep, stage.Type);
+        Assert.Equal(SleepStage.Types.Type.Deep, stage.Type);
         Assert.Equal(new DateTimeOffset(2026, 8, 9, 22, 15, 0, TimeSpan.Zero), stage.StartTime!.Value.Value);
         Assert.Equal(new GoogleDuration(-14400, 0), stage.StartUtcOffset);
 
@@ -92,7 +94,7 @@ public sealed class GeneratedModelTests
             """{"type":"MICRO_AROUSAL"}""", HealthDataJson.ReadInfo<SleepStage>())!;
 
         Assert.Equal("MICRO_AROUSAL", stage.Type!.Value.Value);
-        Assert.NotEqual(SleepStageType.Deep, stage.Type!.Value);
+        Assert.NotEqual(SleepStage.Types.Type.Deep, stage.Type!.Value);
     }
 
     [Fact]
@@ -139,13 +141,13 @@ public sealed class GeneratedModelTests
     {
         // Reflection is disabled, so a model missing from the generated context would only fail
         // at run time, on the one call that happens to use it.
-        // The root namespace also holds request types, resource clients and the client itself,
-        // none of which cross the wire. The invariant that matters is that every type carrying
-        // wire-mapped properties has a contract in both directions.
+        // Models now have a namespace of their own, so the filter is the namespace rather than
+        // "in the root and shaped like a model". The invariant that matters is unchanged: every
+        // type carrying wire-mapped properties has a contract in both directions.
         var candidates = typeof(HealthDataApiMetadata).Assembly
             .GetTypes()
             .Where(t => t is { IsClass: true, IsPublic: true, IsAbstract: false }
-                        && t.Namespace == "Kkdev92.HealthData")
+                        && t.Namespace == "Kkdev92.HealthData.Models")
                             .ToArray();
 
         var registered = candidates.Where(IsRegistered).ToArray();

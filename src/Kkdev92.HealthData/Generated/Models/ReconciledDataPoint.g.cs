@@ -13,7 +13,7 @@
 
 using System.Text.Json.Serialization;
 
-namespace Kkdev92.HealthData;
+namespace Kkdev92.HealthData.Models;
 
 /// <summary>A reconciled computed or recorded metric.</summary>
 public sealed partial class ReconciledDataPoint

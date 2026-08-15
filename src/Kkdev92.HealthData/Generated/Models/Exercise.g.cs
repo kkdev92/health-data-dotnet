@@ -14,7 +14,7 @@
 using System.Text.Json.Serialization;
 using Kkdev92.HealthData.Serialization;
 
-namespace Kkdev92.HealthData;
+namespace Kkdev92.HealthData.Models;
 
 /// <summary>An exercise that stores information about a physical activity.</summary>
 public sealed partial class Exercise
@@ -49,7 +49,7 @@ public sealed partial class Exercise
 
     /// <summary>Required. The type of activity performed during an exercise.</summary>
     [JsonPropertyName("exerciseType")]
-    public ExerciseExerciseType? ExerciseType { get; init; }
+    public Exercise.Types.ExerciseType? ExerciseType { get; init; }
 
     /// <summary>Required. Observed exercise interval</summary>
     [JsonPropertyName("interval")]

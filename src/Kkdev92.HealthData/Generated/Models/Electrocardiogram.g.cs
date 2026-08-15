@@ -14,7 +14,7 @@
 using System.Text.Json.Serialization;
 using Kkdev92.HealthData.Serialization;
 
-namespace Kkdev92.HealthData;
+namespace Kkdev92.HealthData.Models;
 
 /// <summary>
 /// Represents an Electrocardiogram (ECG) measurement session. This data type is based on SaMD feature
@@ -59,7 +59,7 @@ public sealed partial class Electrocardiogram
 
     /// <summary>Optional. The result classification of the ECG reading.</summary>
     [JsonPropertyName("resultClassification")]
-    public ElectrocardiogramResultClassification? ResultClassification { get; init; }
+    public Electrocardiogram.Types.ResultClassification? ResultClassification { get; init; }
 
     /// <summary>Optional. The sampling frequency of waveform samples in hertz.</summary>
     [JsonPropertyName("samplingFrequencyHertz")]

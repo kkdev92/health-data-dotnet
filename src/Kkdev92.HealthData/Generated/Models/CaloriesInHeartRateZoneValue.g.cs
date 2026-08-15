@@ -13,14 +13,14 @@
 
 using System.Text.Json.Serialization;
 
-namespace Kkdev92.HealthData;
+namespace Kkdev92.HealthData.Models;
 
 /// <summary>Represents the amount of kilocalories burned in a specific heart rate zone.</summary>
 public sealed partial class CaloriesInHeartRateZoneValue
 {
     /// <summary>The heart rate zone.</summary>
     [JsonPropertyName("heartRateZone")]
-    public CaloriesInHeartRateZoneValueHeartRateZone? HeartRateZone { get; init; }
+    public CaloriesInHeartRateZoneValue.Types.HeartRateZone? HeartRateZone { get; init; }
 
     /// <summary>The amount of kilocalories burned in the specified heart rate zone.</summary>
     [JsonPropertyName("kcal")]

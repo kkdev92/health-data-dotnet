@@ -14,7 +14,7 @@
 using System.Text.Json.Serialization;
 using Kkdev92.HealthData.Serialization;
 
-namespace Kkdev92.HealthData;
+namespace Kkdev92.HealthData.Models;
 
 /// <summary>
 /// Represents splits or laps recorded within an exercise. Lap events partition a workout into segments
@@ -47,7 +47,7 @@ public sealed partial class SplitSummary
     /// if the tracking is automatic.
     /// </summary>
     [JsonPropertyName("splitType")]
-    public SplitSummarySplitType? SplitType { get; init; }
+    public SplitSummary.Types.SplitType? SplitType { get; init; }
 
     /// <summary>Required. Lap start time</summary>
     [JsonPropertyName("startTime")]

@@ -49,6 +49,7 @@ operation descriptor, which is what makes one client safe to share across users 
 ```csharp
 using Kkdev92.HealthData;
 using Kkdev92.HealthData.Authentication;
+using Kkdev92.HealthData.Requests;
 
 var authorization = new HealthDataAuthorizationHandler(new StaticAccessTokenProvider(accessToken))
 {

@@ -13,7 +13,7 @@
 
 using System.Text.Json.Serialization;
 
-namespace Kkdev92.HealthData;
+namespace Kkdev92.HealthData.Models;
 
 /// <summary>Represents the energy quantity.</summary>
 public sealed partial class EnergyQuantity
@@ -24,5 +24,5 @@ public sealed partial class EnergyQuantity
 
     /// <summary>Optional. Value representing the user provided unit.</summary>
     [JsonPropertyName("userProvidedUnit")]
-    public EnergyQuantityUserProvidedUnit? UserProvidedUnit { get; init; }
+    public EnergyQuantity.Types.UserProvidedUnit? UserProvidedUnit { get; init; }
 }

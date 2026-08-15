@@ -13,7 +13,7 @@
 
 using System.Text.Json.Serialization;
 
-namespace Kkdev92.HealthData;
+namespace Kkdev92.HealthData.Models;
 
 /// <summary>Represents a blood glucose level measurement. LINT: LEGACY_NAMES</summary>
 public sealed partial class BloodGlucose
@@ -24,15 +24,15 @@ public sealed partial class BloodGlucose
 
     /// <summary>Optional. Meal type of the measurement.</summary>
     [JsonPropertyName("mealType")]
-    public BloodGlucoseMealType? MealType { get; init; }
+    public BloodGlucose.Types.MealType? MealType { get; init; }
 
     /// <summary>Optional. Source of the measurement.</summary>
     [JsonPropertyName("measurementSource")]
-    public BloodGlucoseMeasurementSource? MeasurementSource { get; init; }
+    public BloodGlucose.Types.MeasurementSource? MeasurementSource { get; init; }
 
     /// <summary>Optional. Timing of the measurement.</summary>
     [JsonPropertyName("measurementTiming")]
-    public BloodGlucoseMeasurementTiming? MeasurementTiming { get; init; }
+    public BloodGlucose.Types.MeasurementTiming? MeasurementTiming { get; init; }
 
     /// <summary>Optional. Standard free-form notes captured at manual logging.</summary>
     [JsonPropertyName("notes")]
@@ -44,5 +44,5 @@ public sealed partial class BloodGlucose
 
     /// <summary>Optional. Type of body fluid used to measure the blood glucose.</summary>
     [JsonPropertyName("specimen")]
-    public BloodGlucoseSpecimen? Specimen { get; init; }
+    public BloodGlucose.Types.Specimen? Specimen { get; init; }
 }

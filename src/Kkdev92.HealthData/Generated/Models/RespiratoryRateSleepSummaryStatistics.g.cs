@@ -13,7 +13,7 @@
 
 using System.Text.Json.Serialization;
 
-namespace Kkdev92.HealthData;
+namespace Kkdev92.HealthData.Models;
 
 /// <summary>Respiratory rate statistics for a given sleep stage.</summary>
 public sealed partial class RespiratoryRateSleepSummaryStatistics

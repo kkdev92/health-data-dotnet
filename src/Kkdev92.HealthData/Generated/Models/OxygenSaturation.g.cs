@@ -13,7 +13,7 @@
 
 using System.Text.Json.Serialization;
 
-namespace Kkdev92.HealthData;
+namespace Kkdev92.HealthData.Models;
 
 /// <summary>Captures the user's instantaneous oxygen saturation percentage (SpO2).</summary>
 public sealed partial class OxygenSaturation

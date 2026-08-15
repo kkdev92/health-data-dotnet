@@ -13,7 +13,7 @@
 
 using System.Text.Json.Serialization;
 
-namespace Kkdev92.HealthData;
+namespace Kkdev92.HealthData.Models;
 
 /// <summary>Payload for creating a subscriber.</summary>
 public sealed partial class CreateSubscriberPayload

@@ -13,7 +13,7 @@
 
 using System.Text.Json.Serialization;
 
-namespace Kkdev92.HealthData;
+namespace Kkdev92.HealthData.Models;
 
 /// <summary>Rollup for the weight.</summary>
 public sealed partial class WeightQuantityRollup
@@ -24,5 +24,5 @@ public sealed partial class WeightQuantityRollup
 
     /// <summary>Optional. The user provided unit on the last element.</summary>
     [JsonPropertyName("userProvidedUnitLast")]
-    public WeightQuantityRollupUserProvidedUnitLast? UserProvidedUnitLast { get; init; }
+    public WeightQuantityRollup.Types.UserProvidedUnitLast? UserProvidedUnitLast { get; init; }
 }

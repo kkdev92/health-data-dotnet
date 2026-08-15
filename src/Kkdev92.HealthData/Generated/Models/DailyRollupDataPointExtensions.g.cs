@@ -11,7 +11,7 @@
 
 #nullable enable
 
-namespace Kkdev92.HealthData;
+namespace Kkdev92.HealthData.Models;
 
 /// <summary>Which member of a DailyRollupDataPoint carries a value.</summary>
 /// <remarks>

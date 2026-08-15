@@ -13,7 +13,7 @@
 
 using System.Text.Json.Serialization;
 
-namespace Kkdev92.HealthData;
+namespace Kkdev92.HealthData.Models;
 
 /// <summary>Represents the volume quantity.</summary>
 public sealed partial class VolumeQuantity
@@ -27,5 +27,5 @@ public sealed partial class VolumeQuantity
     /// purposes. In the API format, all volume quantities are converted to milliliters.
     /// </summary>
     [JsonPropertyName("userProvidedUnit")]
-    public VolumeQuantityUserProvidedUnit? UserProvidedUnit { get; init; }
+    public VolumeQuantity.Types.UserProvidedUnit? UserProvidedUnit { get; init; }
 }

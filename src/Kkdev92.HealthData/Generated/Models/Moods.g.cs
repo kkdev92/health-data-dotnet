@@ -13,14 +13,14 @@
 
 using System.Text.Json.Serialization;
 
-namespace Kkdev92.HealthData;
+namespace Kkdev92.HealthData.Models;
 
 /// <summary>Moods record.</summary>
 public sealed partial class Moods
 {
     /// <summary>Required. The moods logged.</summary>
     [JsonPropertyName("moods")]
-    public IReadOnlyList<MoodsMoods>? MoodsValue { get; init; }
+    public IReadOnlyList<Moods.Types.Moods>? MoodsValue { get; init; }
 
     /// <summary>Required. The time at which moods were measured.</summary>
     [JsonPropertyName("sampleTime")]
@@ -28,5 +28,5 @@ public sealed partial class Moods
 
     /// <summary>Optional. The valences.</summary>
     [JsonPropertyName("valences")]
-    public IReadOnlyList<MoodsValences>? Valences { get; init; }
+    public IReadOnlyList<Moods.Types.Valences>? Valences { get; init; }
 }

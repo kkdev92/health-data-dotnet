@@ -13,7 +13,7 @@
 
 using System.Text.Json.Serialization;
 
-namespace Kkdev92.HealthData;
+namespace Kkdev92.HealthData.Models;
 
 /// <summary>Captures metadata about the device that recorded the measurement.</summary>
 public sealed partial class Device
@@ -24,7 +24,7 @@ public sealed partial class Device
 
     /// <summary>Optional. Captures the form factor of the device.</summary>
     [JsonPropertyName("formFactor")]
-    public DeviceFormFactor? FormFactor { get; init; }
+    public Device.Types.FormFactor? FormFactor { get; init; }
 
     /// <summary>Optional. An optional manufacturer of the device.</summary>
     [JsonPropertyName("manufacturer")]

@@ -13,7 +13,7 @@
 
 using System.Text.Json.Serialization;
 
-namespace Kkdev92.HealthData;
+namespace Kkdev92.HealthData.Models;
 
 /// <summary>Energy burned as part of an activity, excluding the basal energy burn.</summary>
 public sealed partial class ActiveEnergyBurned

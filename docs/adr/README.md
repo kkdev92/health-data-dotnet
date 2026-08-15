@@ -17,3 +17,4 @@ contract, or a new dependency. Anything reversible belongs in a code comment or 
 | [0006](0006-write-contract-excludes-read-only-fields.md) | Read-only fields excluded from the write contract | Accepted |
 | [0007](0007-authentication-via-request-pipeline.md) | Authentication via the request pipeline | Accepted |
 | [0008](0008-explicit-google-wire-primitives.md) | Explicit Google wire primitives | Accepted |
+| [0009](0009-surface-partition.md) | Namespaces by kind, enums nested under their owners | Accepted |

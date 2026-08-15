@@ -13,7 +13,7 @@
 
 using System.Text.Json.Serialization;
 
-namespace Kkdev92.HealthData;
+namespace Kkdev92.HealthData.Models;
 
 /// <summary>Request to roll up data points by civil time intervals.</summary>
 public sealed partial class DailyRollUpDataPointsRequest

@@ -14,7 +14,7 @@
 using System.Text.Json.Serialization;
 using Kkdev92.HealthData.Serialization;
 
-namespace Kkdev92.HealthData;
+namespace Kkdev92.HealthData.Models;
 
 /// <summary>Swim lengths data over the time interval.</summary>
 public sealed partial class SwimLengthsData
@@ -30,5 +30,5 @@ public sealed partial class SwimLengthsData
 
     /// <summary>Required. Swim stroke type.</summary>
     [JsonPropertyName("swimStrokeType")]
-    public SwimLengthsDataSwimStrokeType? SwimStrokeType { get; init; }
+    public SwimLengthsData.Types.SwimStrokeType? SwimStrokeType { get; init; }
 }

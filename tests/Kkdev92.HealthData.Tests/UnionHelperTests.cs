@@ -1,3 +1,5 @@
+using Kkdev92.HealthData.Models;
+
 namespace Kkdev92.HealthData.Tests;
 
 /// <summary>
@@ -22,10 +24,10 @@ public sealed class UnionHelperTests
     [Fact]
     public void GetValueReturnsThePopulatedMember()
     {
-        var point = new DataPoint { Sleep = new Sleep { Type = SleepType.Stages } };
+        var point = new DataPoint { Sleep = new Sleep { Type = Sleep.Types.Type.Stages } };
 
         var value = Assert.IsType<Sleep>(point.GetValue());
-        Assert.Equal(SleepType.Stages, value.Type);
+        Assert.Equal(Sleep.Types.Type.Stages, value.Type);
     }
 
     [Fact]
@@ -62,7 +64,7 @@ public sealed class UnionHelperTests
     {
         var point = new DataPoint
         {
-            DataSource = new DataSource { Platform = DataSourcePlatform.FromValue("ANDROID") },
+            DataSource = new DataSource { Platform = DataSource.Types.Platform.FromValue("ANDROID") },
             Steps = new Steps { Count = 4200 },
         };
 

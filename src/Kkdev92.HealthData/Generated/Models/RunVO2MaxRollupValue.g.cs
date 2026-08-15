@@ -13,7 +13,7 @@
 
 using System.Text.Json.Serialization;
 
-namespace Kkdev92.HealthData;
+namespace Kkdev92.HealthData.Models;
 
 /// <summary>Represents the result of the rollup of the user's daily heart rate variability personal range.</summary>
 public sealed partial class RunVO2MaxRollupValue

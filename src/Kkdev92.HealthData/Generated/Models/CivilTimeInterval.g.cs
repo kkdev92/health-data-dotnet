@@ -13,7 +13,7 @@
 
 using System.Text.Json.Serialization;
 
-namespace Kkdev92.HealthData;
+namespace Kkdev92.HealthData.Models;
 
 /// <summary>Counterpart of google.type.Interval, but using CivilDateTime.</summary>
 public sealed partial class CivilTimeInterval

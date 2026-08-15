@@ -14,7 +14,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace Kkdev92.HealthData;
+namespace Kkdev92.HealthData.Models;
 
 /// <summary>
 /// The <c>Status</c> type defines a logical error model that is suitable for different programming

@@ -13,7 +13,7 @@
 
 using System.Text.Json.Serialization;
 
-namespace Kkdev92.HealthData;
+namespace Kkdev92.HealthData.Models;
 
 /// <summary>Represents the weight quantity.</summary>
 public sealed partial class WeightQuantity
@@ -24,5 +24,5 @@ public sealed partial class WeightQuantity
 
     /// <summary>Optional. Value representing the user provided unit.</summary>
     [JsonPropertyName("userProvidedUnit")]
-    public WeightQuantityUserProvidedUnit? UserProvidedUnit { get; init; }
+    public WeightQuantity.Types.UserProvidedUnit? UserProvidedUnit { get; init; }
 }

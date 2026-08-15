@@ -13,16 +13,16 @@
 
 using System.Text.Json.Serialization;
 
-namespace Kkdev92.HealthData;
+namespace Kkdev92.HealthData.Models;
 
 /// <summary>Heart rate metadata.</summary>
 public sealed partial class HeartRateMetadata
 {
     /// <summary>Optional. Indicates the user’s level of activity when the heart rate sample was measured</summary>
     [JsonPropertyName("motionContext")]
-    public HeartRateMetadataMotionContext? MotionContext { get; init; }
+    public HeartRateMetadata.Types.MotionContext? MotionContext { get; init; }
 
     /// <summary>Optional. Indicates the location of the sensor that measured the heart rate.</summary>
     [JsonPropertyName("sensorLocation")]
-    public HeartRateMetadataSensorLocation? SensorLocation { get; init; }
+    public HeartRateMetadata.Types.SensorLocation? SensorLocation { get; init; }
 }

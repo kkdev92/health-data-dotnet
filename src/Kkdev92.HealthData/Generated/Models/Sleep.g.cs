@@ -14,7 +14,7 @@
 using System.Text.Json.Serialization;
 using Kkdev92.HealthData.Serialization;
 
-namespace Kkdev92.HealthData;
+namespace Kkdev92.HealthData.Models;
 
 /// <summary>A sleep session possibly including stages.</summary>
 public sealed partial class Sleep
@@ -59,7 +59,7 @@ public sealed partial class Sleep
 
     /// <summary>Optional. SleepType: classic or stages.</summary>
     [JsonPropertyName("type")]
-    public SleepType? Type { get; init; }
+    public Sleep.Types.Type? Type { get; init; }
 
     /// <summary>Output only. Last update time of this sleep observation.</summary>
     /// <remarks>Output only. This value is never sent to the service; it is removed from the write contract.</remarks>

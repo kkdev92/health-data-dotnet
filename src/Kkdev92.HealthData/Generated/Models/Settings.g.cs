@@ -14,7 +14,7 @@
 using System.Text.Json.Serialization;
 using Kkdev92.HealthData.Serialization;
 
-namespace Kkdev92.HealthData;
+namespace Kkdev92.HealthData.Models;
 
 /// <summary>Settings details.</summary>
 public sealed partial class Settings
@@ -28,7 +28,7 @@ public sealed partial class Settings
 
     /// <summary>Optional. The measurement unit defined in the user's account settings.</summary>
     [JsonPropertyName("distanceUnit")]
-    public SettingsDistanceUnit? DistanceUnit { get; init; }
+    public Settings.Types.DistanceUnit? DistanceUnit { get; init; }
 
     /// <summary>
     /// Output only. The food language code derived from the user's food database. Possible values:
@@ -43,11 +43,11 @@ public sealed partial class Settings
 
     /// <summary>Optional. The measurement unit defined in the user's account settings.</summary>
     [JsonPropertyName("glucoseUnit")]
-    public SettingsGlucoseUnit? GlucoseUnit { get; init; }
+    public Settings.Types.GlucoseUnit? GlucoseUnit { get; init; }
 
     /// <summary>Optional. The measurement unit defined in the user's account settings.</summary>
     [JsonPropertyName("heightUnit")]
-    public SettingsHeightUnit? HeightUnit { get; init; }
+    public Settings.Types.HeightUnit? HeightUnit { get; init; }
 
     /// <summary>
     /// Optional. The locale defined in the user's account settings. Updates to this field are currently not
@@ -71,22 +71,22 @@ public sealed partial class Settings
     /// field are currently not supported.
     /// </summary>
     [JsonPropertyName("strideLengthRunningType")]
-    public SettingsStrideLengthRunningType? StrideLengthRunningType { get; init; }
+    public Settings.Types.StrideLengthRunningType? StrideLengthRunningType { get; init; }
 
     /// <summary>
     /// Optional. The stride length type defined in the user's account settings for walking. Updates to this
     /// field are currently not supported.
     /// </summary>
     [JsonPropertyName("strideLengthWalkingType")]
-    public SettingsStrideLengthWalkingType? StrideLengthWalkingType { get; init; }
+    public Settings.Types.StrideLengthWalkingType? StrideLengthWalkingType { get; init; }
 
     /// <summary>Optional. The measurement unit defined in the user's account settings.</summary>
     [JsonPropertyName("swimUnit")]
-    public SettingsSwimUnit? SwimUnit { get; init; }
+    public Settings.Types.SwimUnit? SwimUnit { get; init; }
 
     /// <summary>Optional. The measurement unit defined in the user's account settings.</summary>
     [JsonPropertyName("temperatureUnit")]
-    public SettingsTemperatureUnit? TemperatureUnit { get; init; }
+    public Settings.Types.TemperatureUnit? TemperatureUnit { get; init; }
 
     /// <summary>
     /// Optional. The timezone defined in the user's account settings. This follows the IANA <see href="https://www.iana.org/time-zones">Time
@@ -105,9 +105,9 @@ public sealed partial class Settings
 
     /// <summary>Optional. The measurement unit defined in the user's account settings.</summary>
     [JsonPropertyName("waterUnit")]
-    public SettingsWaterUnit? WaterUnit { get; init; }
+    public Settings.Types.WaterUnit? WaterUnit { get; init; }
 
     /// <summary>Optional. The measurement unit defined in the user's account settings.</summary>
     [JsonPropertyName("weightUnit")]
-    public SettingsWeightUnit? WeightUnit { get; init; }
+    public Settings.Types.WeightUnit? WeightUnit { get; init; }
 }

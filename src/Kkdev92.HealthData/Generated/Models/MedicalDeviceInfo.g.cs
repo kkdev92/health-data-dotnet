@@ -13,7 +13,7 @@
 
 using System.Text.Json.Serialization;
 
-namespace Kkdev92.HealthData;
+namespace Kkdev92.HealthData.Models;
 
 /// <summary>Software as Medical Device (SaMD) metadata. Used to construct the Unique Device Identifier (UDI).</summary>
 public sealed partial class MedicalDeviceInfo

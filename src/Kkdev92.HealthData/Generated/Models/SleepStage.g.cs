@@ -14,7 +14,7 @@
 using System.Text.Json.Serialization;
 using Kkdev92.HealthData.Serialization;
 
-namespace Kkdev92.HealthData;
+namespace Kkdev92.HealthData.Models;
 
 /// <summary>Sleep stage segment.</summary>
 public sealed partial class SleepStage
@@ -53,7 +53,7 @@ public sealed partial class SleepStage
 
     /// <summary>Required. Sleep stage type: AWAKE, DEEP, REM, LIGHT etc.</summary>
     [JsonPropertyName("type")]
-    public SleepStageType? Type { get; init; }
+    public SleepStage.Types.Type? Type { get; init; }
 
     /// <summary>Output only. Last update time of this sleep stages segment.</summary>
     /// <remarks>Output only. This value is never sent to the service; it is removed from the write contract.</remarks>

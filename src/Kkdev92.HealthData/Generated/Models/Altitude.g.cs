@@ -14,7 +14,7 @@
 using System.Text.Json.Serialization;
 using Kkdev92.HealthData.Serialization;
 
-namespace Kkdev92.HealthData;
+namespace Kkdev92.HealthData.Models;
 
 /// <summary>Captures the altitude gain (i.e. deltas), and not level above sea, for a user in millimeters.</summary>
 public sealed partial class Altitude

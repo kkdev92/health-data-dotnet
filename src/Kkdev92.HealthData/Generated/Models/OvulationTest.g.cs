@@ -13,14 +13,14 @@
 
 using System.Text.Json.Serialization;
 
-namespace Kkdev92.HealthData;
+namespace Kkdev92.HealthData.Models;
 
 /// <summary>Ovulation test record.</summary>
 public sealed partial class OvulationTest
 {
     /// <summary>Required. The result of the ovulation test.</summary>
     [JsonPropertyName("result")]
-    public OvulationTestResult? Result { get; init; }
+    public OvulationTest.Types.Result? Result { get; init; }
 
     /// <summary>Required. The time at which ovulation test was measured.</summary>
     [JsonPropertyName("sampleTime")]

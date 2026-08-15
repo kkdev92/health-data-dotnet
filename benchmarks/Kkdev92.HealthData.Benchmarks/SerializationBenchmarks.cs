@@ -1,6 +1,8 @@
 using System.Text;
 using System.Text.Json;
 using BenchmarkDotNet.Attributes;
+using Kkdev92.HealthData.Models;
+using Kkdev92.HealthData.Requests;
 using Kkdev92.HealthData.Serialization;
 
 namespace Kkdev92.HealthData.Benchmarks;

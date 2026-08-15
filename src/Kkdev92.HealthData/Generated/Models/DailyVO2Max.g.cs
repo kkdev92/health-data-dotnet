@@ -13,7 +13,7 @@
 
 using System.Text.Json.Serialization;
 
-namespace Kkdev92.HealthData;
+namespace Kkdev92.HealthData.Models;
 
 /// <summary>
 /// Contains a daily summary of the user's VO2 max (cardio fitness score), which is the maximum rate of
@@ -23,7 +23,7 @@ public sealed partial class DailyVO2Max
 {
     /// <summary>Optional. Represents the user's cardio fitness level based on their VO2 max.</summary>
     [JsonPropertyName("cardioFitnessLevel")]
-    public DailyVO2MaxCardioFitnessLevel? CardioFitnessLevel { get; init; }
+    public DailyVO2Max.Types.CardioFitnessLevel? CardioFitnessLevel { get; init; }
 
     /// <summary>Required. The date for which the Daily VO2 max was measured.</summary>
     [JsonPropertyName("date")]

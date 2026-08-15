@@ -14,7 +14,7 @@
 using System.Text.Json.Serialization;
 using Kkdev92.HealthData.Serialization;
 
-namespace Kkdev92.HealthData;
+namespace Kkdev92.HealthData.Models;
 
 /// <summary>Total duration and segment count for a stage.</summary>
 public sealed partial class StageSummary
@@ -34,5 +34,5 @@ public sealed partial class StageSummary
     /// <summary>Output only. Sleep stage type: AWAKE, DEEP, REM, LIGHT etc.</summary>
     /// <remarks>Output only. This value is never sent to the service; it is removed from the write contract.</remarks>
     [JsonPropertyName("type")]
-    public StageSummaryType? Type { get; init; }
+    public StageSummary.Types.Type? Type { get; init; }
 }

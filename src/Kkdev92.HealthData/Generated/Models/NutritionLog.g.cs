@@ -13,7 +13,7 @@
 
 using System.Text.Json.Serialization;
 
-namespace Kkdev92.HealthData;
+namespace Kkdev92.HealthData.Models;
 
 /// <summary>
 /// Holds information about food logged by a user. There are two ways of creating a nutrition log based
@@ -55,7 +55,7 @@ public sealed partial class NutritionLog
 
     /// <summary>Optional. The meal category. One of <c>BREAKFAST</c>, <c>LUNCH</c>, <c>DINNER</c>, or <c>SNACK</c>.</summary>
     [JsonPropertyName("mealType")]
-    public NutritionLogMealType? MealType { get; init; }
+    public NutritionLog.Types.MealType? MealType { get; init; }
 
     /// <summary>Optional. An array of individual nutrient values for the nutrition log.</summary>
     [JsonPropertyName("nutrients")]

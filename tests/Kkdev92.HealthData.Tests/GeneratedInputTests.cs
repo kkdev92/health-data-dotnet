@@ -1,6 +1,8 @@
 using System.Net;
 using System.Text;
 using Kkdev92.HealthData.Http;
+using Kkdev92.HealthData.Models;
+using Kkdev92.HealthData.Requests;
 
 namespace Kkdev92.HealthData.Tests;
 
@@ -147,7 +149,7 @@ public sealed class GeneratedInputTests
         // (ADR-0005).
         foreach (var value in Strings(seed: 4))
         {
-            var parsed = new SleepStageType(value);
+            var parsed = new SleepStage.Types.Type(value);
 
             Assert.Equal(value, parsed.Value, StringComparer.Ordinal);
             Assert.Equal(value, parsed.ToString(), StringComparer.Ordinal);

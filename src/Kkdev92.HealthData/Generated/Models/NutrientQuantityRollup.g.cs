@@ -13,14 +13,14 @@
 
 using System.Text.Json.Serialization;
 
-namespace Kkdev92.HealthData;
+namespace Kkdev92.HealthData.Models;
 
 /// <summary>Nutrient quantity rollup.</summary>
 public sealed partial class NutrientQuantityRollup
 {
     /// <summary>Required. Aggregated nutrient.</summary>
     [JsonPropertyName("nutrient")]
-    public NutrientQuantityRollupNutrient? Nutrient { get; init; }
+    public NutrientQuantityRollup.Types.Nutrient? Nutrient { get; init; }
 
     /// <summary>Required. Aggregated nutrient weight.</summary>
     [JsonPropertyName("quantity")]

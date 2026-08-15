@@ -14,7 +14,7 @@
 using System.Text.Json.Serialization;
 using Kkdev92.HealthData.Serialization;
 
-namespace Kkdev92.HealthData;
+namespace Kkdev92.HealthData.Models;
 
 /// <summary>-- Resource Messages -- A subscriber receives notifications from Google Health API.</summary>
 public sealed partial class Subscriber
@@ -54,7 +54,7 @@ public sealed partial class Subscriber
     /// <summary>Output only. The state of the subscriber.</summary>
     /// <remarks>Output only. This value is never sent to the service; it is removed from the write contract.</remarks>
     [JsonPropertyName("state")]
-    public SubscriberState? State { get; init; }
+    public Subscriber.Types.State? State { get; init; }
 
     /// <summary>Optional. Configuration for the subscriber.</summary>
     [JsonPropertyName("subscriberConfigs")]

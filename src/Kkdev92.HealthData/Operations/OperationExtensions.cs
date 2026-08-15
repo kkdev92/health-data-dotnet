@@ -1,5 +1,6 @@
 using System.Text.Json;
 using System.Text.Json.Serialization.Metadata;
+using Kkdev92.HealthData.Models;
 using Kkdev92.HealthData.Serialization;
 
 namespace Kkdev92.HealthData;

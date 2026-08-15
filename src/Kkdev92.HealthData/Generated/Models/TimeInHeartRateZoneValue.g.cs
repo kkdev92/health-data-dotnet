@@ -14,7 +14,7 @@
 using System.Text.Json.Serialization;
 using Kkdev92.HealthData.Serialization;
 
-namespace Kkdev92.HealthData;
+namespace Kkdev92.HealthData.Models;
 
 /// <summary>Represents the total time spent in a specific heart rate zone.</summary>
 public sealed partial class TimeInHeartRateZoneValue
@@ -26,5 +26,5 @@ public sealed partial class TimeInHeartRateZoneValue
 
     /// <summary>The heart rate zone.</summary>
     [JsonPropertyName("heartRateZone")]
-    public TimeInHeartRateZoneValueHeartRateZone? HeartRateZone { get; init; }
+    public TimeInHeartRateZoneValue.Types.HeartRateZone? HeartRateZone { get; init; }
 }

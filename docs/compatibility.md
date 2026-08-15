@@ -63,9 +63,8 @@ proof.
 
 Package validation is the signal that checks binary compatibility directly, and it needs a
 published version to compare against. `PackageValidationBaselineVersion` in
-`src/Directory.Build.props` names it — currently `0.1.0-alpha` — so `dotnet pack` downloads that
-package from nuget.org and compares assemblies against it. Removing a public member fails the
-pack:
+`src/Directory.Build.props` names it, `dotnet pack` downloads that package from nuget.org, and
+the assemblies are compared against it. Removing a public member fails the pack:
 
 ```text
 error CP0002: 'double? Kkdev92.HealthData.ActiveEnergyBurned.Kcal.get' exists on the
@@ -77,6 +76,13 @@ error CP0002: 'double? Kkdev92.HealthData.ActiveEnergyBurned.Kcal.get' exists on
 against an increasingly old package, and a break introduced after the baseline stops being
 visible. The release workflow does not enforce this, because the value has to change in the same
 commit that raises the version, and only a person knows which release is which.
+
+**The baseline is deliberately absent while the alpha surface is being reshaped.** The first real
+consumer's feedback moved namespaces, enum placement and resource-name types, and each of those is
+an intentional binary break the validator would refuse. Suppressing hundreds of expected CP0002s
+would normalise pasting suppressions, which costs more than one release without the check. The
+property comes back, pointed at the next published version, in the pull request that publishes it
+— and until then the API snapshot above is the only signal watching the surface.
 
 A deliberate break is recorded rather than argued with: rebuild with
 `/p:ApiCompatGenerateSuppressionFile=true` to write a suppression file, and the suppression is
