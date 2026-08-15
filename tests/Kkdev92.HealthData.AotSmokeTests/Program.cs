@@ -5,12 +5,12 @@ using Kkdev92.HealthData.Authentication.OAuth;
 using Kkdev92.HealthData.DependencyInjection;
 using Kkdev92.HealthData.Http;
 using Kkdev92.HealthData.Models;
+using Kkdev92.HealthData.Names;
 using Kkdev92.HealthData.Requests;
 using Kkdev92.HealthData.Resilience;
 using Kkdev92.HealthData.Serialization;
 using Kkdev92.HealthData.Webhooks;
 using Microsoft.Extensions.DependencyInjection;
-using Kkdev92.HealthData.Names;
 
 // Native AOT smoke application.
 // A library that merely compiles is not evidence of AOT compatibility. This is a real consumer

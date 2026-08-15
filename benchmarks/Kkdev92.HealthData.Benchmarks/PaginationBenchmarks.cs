@@ -1,8 +1,8 @@
 using System.Net;
 using BenchmarkDotNet.Attributes;
 using Kkdev92.HealthData.Models;
-using Kkdev92.HealthData.Requests;
 using Kkdev92.HealthData.Names;
+using Kkdev92.HealthData.Requests;
 
 namespace Kkdev92.HealthData.Benchmarks;
 

@@ -1,10 +1,10 @@
 using System.Net;
 using Kkdev92.HealthData.Http;
 using Kkdev92.HealthData.Models;
+using Kkdev92.HealthData.Names;
 using Kkdev92.HealthData.Requests;
 using Kkdev92.HealthData.Resilience;
 using Microsoft.Extensions.Time.Testing;
-using Kkdev92.HealthData.Names;
 
 namespace Kkdev92.HealthData.ContractTests;
 

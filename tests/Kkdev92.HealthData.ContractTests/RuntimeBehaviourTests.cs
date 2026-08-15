@@ -3,8 +3,8 @@ using System.Net;
 using Kkdev92.HealthData.Diagnostics;
 using Kkdev92.HealthData.Http;
 using Kkdev92.HealthData.Models;
-using Kkdev92.HealthData.Requests;
 using Kkdev92.HealthData.Names;
+using Kkdev92.HealthData.Requests;
 
 namespace Kkdev92.HealthData.ContractTests;
 

@@ -1,8 +1,8 @@
 using Kkdev92.HealthData.DependencyInjection;
 using Kkdev92.HealthData.Models;
+using Kkdev92.HealthData.Names;
 using Kkdev92.HealthData.Requests;
 using Microsoft.Extensions.DependencyInjection;
-using Kkdev92.HealthData.Names;
 namespace Kkdev92.HealthData.IntegrationTests;
 
 /// <summary>
