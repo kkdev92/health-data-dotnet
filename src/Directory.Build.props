@@ -18,7 +18,7 @@
   <!-- Package identity:
        the NuGet version axis is independent of the Google Health API version. -->
   <PropertyGroup>
-    <VersionPrefix>0.1.0</VersionPrefix>
+    <VersionPrefix>0.2.0</VersionPrefix>
     <VersionSuffix Condition="'$(VersionSuffix)' == ''">alpha</VersionSuffix>
     <Authors>kkdev92</Authors>
     <Company>kkdev92</Company>
@@ -46,12 +46,17 @@
     last version actually published to nuget.org, so a binary breaking change fails the pack
     rather than waiting for a reviewer to spot it in a diff.
 
-    The baseline is deliberately absent right now. The 0.1.0-alpha surface is being reshaped on
-    the feedback from the first real consumer - namespaces, enum placement, resource names - and
-    every one of those is a binary break the validator would refuse. Suppressing hundreds of
-    intentional CP0002s would teach everyone to paste suppressions, which is worse than not
-    comparing for one release. Restore the property, pointed at the next published version, in
-    the same pull request that publishes it:
+    The baseline is deliberately absent for 0.2.0-alpha, and for that version only. The
+    0.1.0-alpha surface was reshaped wholesale on the feedback from the first real consumer -
+    namespaces, enum placement, resource names, requests as records - and every one of those is a
+    binary break the validator would refuse. Comparing against 0.1.0-alpha would produce hundreds
+    of CP0002s that are all intentional, and suppressing them teaches everyone to paste
+    suppressions, which is worse than not comparing for one release.
+
+    That is a decision about one version, not a habit, so the version after it does not get to
+    inherit it. LastVersionWithoutBaseline below is what makes that true: bump VersionPrefix past
+    it without setting a baseline and the build stops with instructions. Set the property to the
+    last version actually on nuget.org and it goes back to comparing:
 
       <PackageValidationBaselineVersion>0.2.0-alpha</PackageValidationBaselineVersion>
 
@@ -63,7 +68,16 @@
   -->
   <PropertyGroup>
     <EnablePackageValidation>true</EnablePackageValidation>
+    <LastVersionWithoutBaseline>0.2.0</LastVersionWithoutBaseline>
   </PropertyGroup>
+
+  <Target Name="RequireAPackageValidationBaseline"
+          BeforeTargets="Build"
+          Condition="'$(IsPackable)' == 'true'
+                     AND '$(PackageValidationBaselineVersion)' == ''
+                     AND $([MSBuild]::VersionGreaterThan('$(VersionPrefix)', '$(LastVersionWithoutBaseline)'))">
+    <Error Text="This project is version $(VersionPrefix) and no PackageValidationBaselineVersion is set. The baseline was left out for $(LastVersionWithoutBaseline)-alpha because that release reshaped the whole surface on purpose; past it, nothing would be comparing binary compatibility at all. Set PackageValidationBaselineVersion in src/Directory.Build.props to the last version published to nuget.org - see the comment above it - or, if this release is another deliberate reshape, move LastVersionWithoutBaseline forward and say why in the same commit." />
+  </Target>
 
   <ItemGroup>
     <!--
