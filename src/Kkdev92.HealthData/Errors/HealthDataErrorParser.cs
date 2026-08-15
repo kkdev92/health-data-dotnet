@@ -93,6 +93,7 @@ public static class HealthDataErrorParser
                 Reason = ReadString(detail, "reason"),
                 Domain = ReadString(detail, "domain"),
                 RetryDelay = GoogleDuration.TryParse(ReadString(detail, "retryDelay"), out var delay) ? delay : null,
+                Metadata = ReadMetadata(detail),
 
                 // Cloned so the value outlives the JsonDocument it came from.
                 Raw = detail.Clone(),
@@ -100,6 +101,35 @@ public static class HealthDataErrorParser
         }
 
         return result;
+    }
+
+    /// <summary>
+    /// Reads <c>ErrorInfo.metadata</c>, which is a flat map of strings.
+    /// </summary>
+    /// <remarks>
+    /// Non-string values are skipped rather than stringified. google.rpc.ErrorInfo declares
+    /// <c>map&lt;string, string&gt;</c>, so anything else is a service sending something this
+    /// shape cannot hold, and inventing a rendering for it would put a guess in a dictionary a
+    /// caller is about to branch on.
+    /// </remarks>
+    private static IReadOnlyDictionary<string, string>? ReadMetadata(JsonElement detail)
+    {
+        if (!detail.TryGetProperty("metadata", out var metadata) || metadata.ValueKind != JsonValueKind.Object)
+        {
+            return null;
+        }
+
+        Dictionary<string, string>? entries = null;
+
+        foreach (var entry in metadata.EnumerateObject())
+        {
+            if (entry.Value.ValueKind == JsonValueKind.String)
+            {
+                (entries ??= new Dictionary<string, string>(StringComparer.Ordinal))[entry.Name] = entry.Value.GetString()!;
+            }
+        }
+
+        return entries;
     }
 
     private static string? ReadString(JsonElement element, string name)

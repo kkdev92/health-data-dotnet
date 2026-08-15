@@ -153,4 +153,84 @@ public sealed class ErrorParsingTests
         // It is still reachable for callers that have somewhere safe to put it.
         Assert.Equal("User 1234 has not granted heart rate access.", exception.Error!.Message);
     }
+
+    /// <summary>
+    /// <c>ErrorInfo.metadata</c> is read into a dictionary rather than left in the raw JSON.
+    /// </summary>
+    /// <remarks>
+    /// This is where the answer to "which scope" lives. The reason says MISSING_OAUTH_SCOPE, which
+    /// a caller holding the obvious scope already knew; the metadata names the one that is
+    /// actually missing. Reaching it used to mean walking Raw, a JsonElement, for a value the
+    /// parser had in its hand.
+    /// </remarks>
+    [Fact]
+    public void ErrorInfoMetadataIsTyped()
+    {
+        var error = Parse("""
+            {"error":{"code":403,"status":"PERMISSION_DENIED","message":"Forbidden",
+            "details":[{"@type":"type.googleapis.com/google.rpc.ErrorInfo",
+            "reason":"MISSING_OAUTH_SCOPE","domain":"health.googleapis.com",
+            "metadata":{"scope":"https://www.googleapis.com/auth/googlehealth.sleep.readonly",
+            "method":"google.health.v4.Users.GetProfile"}}]}}
+            """);
+
+        var detail = Assert.Single(error!.Details, d => d.IsErrorInfo);
+
+        Assert.NotNull(detail.Metadata);
+        Assert.Equal(
+            "https://www.googleapis.com/auth/googlehealth.sleep.readonly",
+            detail.Metadata["scope"]);
+        Assert.Equal("google.health.v4.Users.GetProfile", detail.Metadata["method"]);
+    }
+
+    [Fact]
+    public void ADetailWithNoMetadataHasNone()
+    {
+        // Null rather than an empty dictionary: "the service sent none" and "the service sent an
+        // empty one" are different answers, and only one of them is worth a branch.
+        var error = Parse("""
+            {"error":{"code":403,"status":"PERMISSION_DENIED","message":"Forbidden",
+            "details":[{"@type":"type.googleapis.com/google.rpc.ErrorInfo","reason":"X"}]}}
+            """);
+
+        Assert.Null(Assert.Single(error!.Details).Metadata);
+    }
+
+    [Fact]
+    public void ANonStringMetadataValueIsSkippedRatherThanRendered()
+    {
+        // google.rpc.ErrorInfo declares map<string, string>. Anything else is the service sending
+        // a shape this cannot hold, and stringifying it would put a guess where a caller branches.
+        var error = Parse("""
+            {"error":{"code":429,"status":"RESOURCE_EXHAUSTED","message":"Slow down",
+            "details":[{"@type":"type.googleapis.com/google.rpc.ErrorInfo","reason":"RATE_LIMIT",
+            "metadata":{"quota":"per-minute","limit":300,"nested":{"a":"b"}}}]}}
+            """);
+
+        var metadata = Assert.Single(error!.Details).Metadata;
+
+        Assert.Equal("per-minute", Assert.Single(metadata!).Value);
+    }
+
+    [Fact]
+    public void MetadataStaysOutOfTheExceptionMessage()
+    {
+        // The values can name a method, a resource, or whatever the service decides to add. The
+        // message is the part this SDK says is safe to log, so none of it goes there.
+        var error = Parse("""
+            {"error":{"code":403,"status":"PERMISSION_DENIED","message":"Forbidden",
+            "details":[{"@type":"type.googleapis.com/google.rpc.ErrorInfo",
+            "reason":"MISSING_OAUTH_SCOPE",
+            "metadata":{"method":"google.health.v4.Users.GetProfile","user":"1234567890"}}]}}
+            """);
+
+        var exception = new HealthDataApiException(
+            System.Net.HttpStatusCode.Forbidden, "health.users.getProfile", error);
+
+        Assert.DoesNotContain("GetProfile", exception.Message, StringComparison.Ordinal);
+        Assert.DoesNotContain("1234567890", exception.Message, StringComparison.Ordinal);
+
+        // Still reachable for a caller with somewhere safe to put it.
+        Assert.Equal("1234567890", Assert.Single(error!.Details, d => d.IsErrorInfo).Metadata!["user"]);
+    }
 }

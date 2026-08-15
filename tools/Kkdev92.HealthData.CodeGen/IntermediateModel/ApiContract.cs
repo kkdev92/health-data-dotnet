@@ -101,7 +101,38 @@ internal sealed record OpenEnumContract
 
 internal sealed record OpenEnumValueContract(string WireValue, string CSharpName, string? Description);
 
-internal sealed record ScopeContract(string Url, string CSharpName, string? Description);
+internal sealed record ScopeContract(
+    string Url,
+    string CSharpName,
+    string? Description,
+    ScopeKind Kind);
+
+/// <summary>
+/// What a scope grants.
+/// </summary>
+/// <remarks>
+/// <para>
+/// Declared in <c>semantics.json</c>, not derived. Discovery says it in prose — "See your Google
+/// Health sleep data" against "Add sleep data to Google Health, and edit or delete the data it
+/// adds" — and a rule over that text would be a rule over Google's copywriting.
+/// </para>
+/// <para>
+/// Deriving it from the operations does not work either: five <c>.readonly</c> scopes are declared
+/// by POST operations, because <c>rollUp</c>, <c>dailyRollUp</c> and <c>reconcile</c> are POSTs
+/// that read. Measured 2026-08-15 - the HTTP method disagrees with the scope in 5 of 19 cases.
+/// </para>
+/// </remarks>
+internal enum ScopeKind
+{
+    /// <summary>Reads a person's data.</summary>
+    Read,
+
+    /// <summary>Writes, edits or deletes a person's data.</summary>
+    Write,
+
+    /// <summary>Authorizes as the project rather than as a person.</summary>
+    Project,
+}
 
 internal sealed record ErrorReasonContract(string Reason, int HttpStatus);
 

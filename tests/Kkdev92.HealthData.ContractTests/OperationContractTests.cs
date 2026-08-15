@@ -90,6 +90,57 @@ public sealed class OperationContractTests
         Assert.Equal("""{"age":41}""", handler.SingleRequest.Body);
     }
 
+    /// <summary>
+    /// A mask that names nothing is refused rather than sent as no mask at all.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// The two used to be the same request. <c>default(GoogleFieldMask)</c> is writable whatever
+    /// <c>Parse</c> does — it is a struct — and the builder dropped it, so a patch meant to name one
+    /// field went out with none. Under AIP-134 that is "replace fields which are present", which is
+    /// a real instruction and not the one anybody wrote.
+    /// </para>
+    /// <para>
+    /// Nothing is sent: the exception comes from building the request, so this is not a call the
+    /// service has to answer.
+    /// </para>
+    /// </remarks>
+    [Fact]
+    public async Task AnEmptyUpdateMaskIsRefusedBeforeAnythingIsSent()
+    {
+        var (client, handler) = CreateClient();
+
+        var thrown = await Assert.ThrowsAsync<ArgumentException>(
+            async () => await client.Users.UpdateProfileAsync(
+                new UpdateProfileRequest
+                {
+                    Name = UserName.Me.Profile,
+
+                    // default(GoogleFieldMask), not default — the property is nullable, so plain
+                    // 'default' is null and means no mask. This is the value Parse can no longer
+                    // produce and a struct can always be written to.
+                    UpdateMask = default(GoogleFieldMask),
+                    Body = new Profile { Age = 41 },
+                },
+                TestContext.Current.CancellationToken));
+
+        Assert.Contains("names no fields", thrown.Message, StringComparison.Ordinal);
+        Assert.Empty(handler.Requests);
+    }
+
+    [Fact]
+    public async Task NoUpdateMaskIsStillNoParameter()
+    {
+        // The other half: leaving it unset is a documented request, and stays one.
+        var (client, handler) = CreateClient();
+
+        await client.Users.UpdateProfileAsync(
+            new UpdateProfileRequest { Name = UserName.Me.Profile, Body = new Profile { Age = 41 } },
+            TestContext.Current.CancellationToken);
+
+        AssertRequest(handler, HttpMethod.Patch, "v4/users/me/profile");
+    }
+
     [Fact]
     public async Task UpdateSettings()
     {

@@ -61,28 +61,24 @@ public sealed class GoogleOAuthClient(HttpClient httpClient, GoogleOAuthOptions 
     /// <summary>
     /// Builds the URL to send the user to for consent.
     /// </summary>
-    /// <param name="scopes">The scopes to request.</param>
-    /// <param name="state">An opaque value echoed back, used to defend against CSRF.</param>
-    /// <param name="pkce">A PKCE challenge, recommended for any client that cannot keep a secret.</param>
-    /// <param name="offlineAccess">
-    /// Whether to request a refresh token. Sends <c>access_type=offline</c>, which the Google
-    /// Health setup guide names as the way to obtain one.
-    /// </param>
-    /// <param name="forceConsent">
-    /// Whether to force the consent screen even if the user already approved. Sends
-    /// <c>prompt=consent</c>, which the setup guide names as the way to re-request after
-    /// changing scopes.
-    /// </param>
-    /// <param name="loginHint">An email address to preselect an account.</param>
-    public Uri CreateAuthorizationUrl(
-        IEnumerable<string> scopes,
-        string? state = null,
-        PkceCodeChallenge? pkce = null,
-        bool offlineAccess = true,
-        bool forceConsent = false,
-        string? loginHint = null)
+    /// <param name="options">What to ask for. See <see cref="GoogleAuthorizationUrlOptions"/>.</param>
+    /// <remarks>
+    /// One options object rather than six parameters. Two of them were <see langword="bool"/>, and
+    /// <c>CreateAuthorizationUrl(scopes, state, pkce, true, false)</c> reads as nothing at all at
+    /// the call site — while getting them the wrong way round produces a grant with no refresh
+    /// token, which fails hours later and somewhere else.
+    /// </remarks>
+    public Uri CreateAuthorizationUrl(GoogleAuthorizationUrlOptions options)
     {
-        ArgumentNullException.ThrowIfNull(scopes);
+        ArgumentNullException.ThrowIfNull(options);
+        ArgumentNullException.ThrowIfNull(options.Scopes);
+
+        var scopes = options.Scopes;
+        var state = options.State;
+        var pkce = options.Pkce;
+        var offlineAccess = options.OfflineAccess;
+        var forceConsent = options.ForceConsent;
+        var loginHint = options.LoginHint;
 
         var parameters = new List<KeyValuePair<string, string>>
         {

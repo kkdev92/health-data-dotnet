@@ -141,6 +141,7 @@ internal static class DiscoveryParser
     private static IReadOnlyList<ScopeContract> BuildScopes(JsonElement root, SpecSet spec)
     {
         var declared = new List<ScopeContract>();
+        var kinds = ReadScopeKinds(spec);
 
         if (root.TryGetProperty("auth", out var auth) &&
             auth.TryGetProperty("oauth2", out var oauth2) &&
@@ -150,7 +151,8 @@ internal static class DiscoveryParser
                 .Select(scope => new ScopeContract(
                     scope.Name,
                     NamingNormalizer.ScopeConstantName(scope.Name),
-                    scope.Value.TryGetProperty("description", out var d) ? d.GetString() : null)));
+                    scope.Value.TryGetProperty("description", out var d) ? d.GetString() : null,
+                    KindOf(scope.Name, kinds))));
         }
 
         if (spec.Semantics.RootElement.TryGetProperty("scopeCrossCheck", out var crossCheck) &&
@@ -170,12 +172,67 @@ internal static class DiscoveryParser
                 declared.Add(new ScopeContract(
                     url,
                     NamingNormalizer.ScopeConstantName(url),
-                    scope.TryGetProperty("description", out var d) ? d.GetString() : null));
+                    scope.TryGetProperty("description", out var d) ? d.GetString() : null,
+                    KindOf(url, kinds)));
             }
         }
 
         return [.. declared.OrderBy(s => s.Url, StringComparer.Ordinal)];
     }
+
+    /// <summary>Reads the declared scope classification, keyed by scope url.</summary>
+    private static IReadOnlyDictionary<string, ScopeKind> ReadScopeKinds(SpecSet spec)
+    {
+        var kinds = new Dictionary<string, ScopeKind>(StringComparer.Ordinal);
+
+        if (!spec.Semantics.RootElement.TryGetProperty("authentication", out var authentication) ||
+            !authentication.TryGetProperty("scopeKinds", out var declared))
+        {
+            return kinds;
+        }
+
+        foreach (var (property, kind) in
+            new[] { ("read", ScopeKind.Read), ("write", ScopeKind.Write), ("project", ScopeKind.Project) })
+        {
+            if (!declared.TryGetProperty(property, out var list))
+            {
+                continue;
+            }
+
+            foreach (var scope in list.EnumerateArray())
+            {
+                var url = scope.GetString()!;
+
+                if (kinds.TryGetValue(url, out var already))
+                {
+                    throw new InvalidOperationException(
+                        $"semantics.json lists scope '{url}' as both {already} and {kind}. A scope grants "
+                        + "one of the three; two lists would make the generated sets overlap.");
+                }
+
+                kinds[url] = kind;
+            }
+        }
+
+        return kinds;
+    }
+
+    /// <summary>
+    /// The declared kind of a scope.
+    /// </summary>
+    /// <remarks>
+    /// Missing is a failure rather than a default. A scope Google adds would otherwise belong to no
+    /// kind, and an application asking for "everything that reads" would silently stop asking for
+    /// it — which looks like a permissions bug in the application long before anybody suspects the
+    /// package.
+    /// </remarks>
+    private static ScopeKind KindOf(string url, IReadOnlyDictionary<string, ScopeKind> kinds)
+        => kinds.TryGetValue(url, out var kind)
+            ? kind
+            : throw new InvalidOperationException(
+                $"Scope '{url}' is not classified in semantics.json under authentication.scopeKinds. "
+                + "Add it to read, write or project - Discovery states which in the scope's own "
+                + "description - so that the generated scope sets stay complete.");
 
     private static IReadOnlyList<ErrorReasonContract> BuildErrorReasons(SpecSet spec)
         => spec.Errors.RootElement.GetProperty("reasons")

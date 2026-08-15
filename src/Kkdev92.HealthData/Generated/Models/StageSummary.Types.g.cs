@@ -25,7 +25,10 @@ public sealed partial class StageSummary
         /// <summary>Wire values for StageSummary.type.</summary>
         /// <remarks>
         /// This is an open enum: values Google adds later are preserved verbatim rather than rejected. The
-        /// members below are only those known when this contract was generated.
+        /// members below are only those known when this contract was generated. It is not a C# enum - it is a
+        /// struct wrapping the wire string, which is what lets an unknown value through - so Enum.TryParse and
+        /// Enum.Parse do not work on it. They compile, because their constraint is only 'struct', and throw
+        /// ArgumentException at run time. Use FromValue to build one from a string, and Value to read it back.
         /// </remarks>
         [JsonConverter(typeof(OpenStringEnumConverter<Type>))]
         public readonly partial record struct Type(string Value) : IOpenStringValue<Type>

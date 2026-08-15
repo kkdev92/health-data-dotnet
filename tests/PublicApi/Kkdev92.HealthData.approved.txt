@@ -91,6 +91,7 @@ class Kkdev92.HealthData.HealthDataError
     System.String Status { get; set; }
 class Kkdev92.HealthData.HealthDataErrorDetail
     .ctor()
+    IReadOnlyDictionary<System.String, System.String> Metadata { get; set; }
     Nullable<Kkdev92.HealthData.GoogleDuration> RetryDelay { get; set; }
     System.Boolean IsErrorInfo { get; }
     System.Boolean IsRetryInfo { get; }
@@ -199,6 +200,10 @@ static class Kkdev92.HealthData.HealthDataGeneratedOperations
     Kkdev92.HealthData.Http.HealthDataOperationDescriptor UsersUpdateProfile
     Kkdev92.HealthData.Http.HealthDataOperationDescriptor UsersUpdateSettings
 static class Kkdev92.HealthData.HealthDataScopes
+    IReadOnlyList<System.String> All { get; }
+    IReadOnlyList<System.String> Project { get; }
+    IReadOnlyList<System.String> ReadOnly { get; }
+    IReadOnlyList<System.String> WriteOnly { get; }
     const System.String ActivityAndFitnessReadonly
     const System.String ActivityAndFitnessWriteonly
     const System.String CloudPlatform
@@ -3285,6 +3290,8 @@ class Kkdev92.HealthData.Serialization.HealthDataJsonContext
     Kkdev92.HealthData.Serialization.HealthDataJsonContext Default { get; }
     System.Text.Json.Serialization.Metadata.JsonTypeInfo GetTypeInfo(System.Type type)
 static class Kkdev92.HealthData.Serialization.HealthDataOutputOnlyProperties
+    IReadOnlyDictionary<System.Type, System.String[]> ByType
+static class Kkdev92.HealthData.Serialization.HealthDataUnionMembers
     IReadOnlyDictionary<System.Type, System.String[]> ByType
 class Kkdev92.HealthData.Serialization.Int64StringConverter
     .ctor()

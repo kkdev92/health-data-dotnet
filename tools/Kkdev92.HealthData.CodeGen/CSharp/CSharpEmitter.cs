@@ -67,6 +67,7 @@ internal sealed class CSharpEmitter(
             EmitOperations(),
             EmitJsonContext(),
             EmitOutputOnlyProperties(),
+            EmitUnionMembers(),
         };
 
         files.AddRange(contract.Schemas.Select(EmitModel));
@@ -188,9 +189,77 @@ internal sealed class CSharpEmitter(
                 writer.XmlDoc("summary", scope.Description ?? scope.Url);
                 writer.Line($"public const string {scope.CSharpName} = {CodeWriter.Literal(scope.Url)};");
             }
+
+            EmitScopeSet(
+                writer,
+                "All",
+                "Every scope this contract declares.",
+                "The set an application would present for review, and the one the three below "
+                + "partition. Not a promise of completeness about the service: an operation may "
+                + "start requiring a scope that is not here.",
+                contract.Scopes);
+
+            EmitScopeSet(
+                writer,
+                "ReadOnly",
+                "The scopes that only read a person's data.",
+                "For an application that shows data and does not change it. Asking for these and "
+                + "nothing else is what keeps the consent screen honest - and what stops a write "
+                + "scope arriving because an operation that reads happens to accept one.",
+                contract.Scopes.Where(scope => scope.Kind == ScopeKind.Read));
+
+            EmitScopeSet(
+                writer,
+                "WriteOnly",
+                "The scopes that add to, edit, or delete a person's data.",
+                "Google's own wording for each of these is \"Add ... and edit or delete the data it "
+                + "adds\", which is worth reading before asking for one.",
+                contract.Scopes.Where(scope => scope.Kind == ScopeKind.Write));
+
+            EmitScopeSet(
+                writer,
+                "Project",
+                "The scopes that authorize as the project rather than as a person.",
+                "cloud-platform, which a consent screen shows as \"see, edit, configure and delete "
+                + "your Google Cloud data\". The operations needing it are meant for a service "
+                + "account; asking a person for it so an app can list webhook subscribers is not a "
+                + "trade worth making.",
+                contract.Scopes.Where(scope => scope.Kind == ScopeKind.Project));
         }
 
         return new GeneratedFile("Generated/Scopes/HealthDataScopes.g.cs", writer.ToString());
+    }
+
+    /// <summary>
+    /// Emits one named set of scopes.
+    /// </summary>
+    /// <remarks>
+    /// Sets rather than a predicate, because the question a consumer has is "which ones do I ask
+    /// for". The classification is declared in <c>semantics.json</c>: an application that worked it
+    /// out by matching on <c>".writeonly"</c> was relying on Google's naming, which nothing in this
+    /// package promised to keep.
+    /// </remarks>
+    private static void EmitScopeSet(
+        CodeWriter writer,
+        string name,
+        string summary,
+        string remarks,
+        IEnumerable<ScopeContract> scopes)
+    {
+        writer.Line();
+        writer.XmlDoc("summary", summary);
+        writer.XmlDoc("remarks", remarks);
+
+        // A collection expression rather than a block: Block writes braces, and this is a list.
+        writer.Line($"public static IReadOnlyList<string> {name} {{ get; }} =");
+        writer.Line("[");
+
+        foreach (var scope in scopes)
+        {
+            writer.Line($"    {scope.CSharpName},");
+        }
+
+        writer.Line("];");
     }
 
     private GeneratedFile EmitErrorReasons()
@@ -555,7 +624,11 @@ internal sealed class CSharpEmitter(
                     writer.XmlDoc(
                         "remarks",
                         "This is an open enum: values Google adds later are preserved verbatim rather than " +
-                        "rejected. The members below are only those known when this contract was generated.");
+                        "rejected. The members below are only those known when this contract was generated. " +
+                        "It is not a C# enum - it is a struct wrapping the wire string, which is what lets an " +
+                        "unknown value through - so Enum.TryParse and Enum.Parse do not work on it. They " +
+                        "compile, because their constraint is only 'struct', and throw ArgumentException at " +
+                        "run time. Use FromValue to build one from a string, and Value to read it back.");
                     writer.Line($"[JsonConverter(typeof(OpenStringEnumConverter<{leaf}>))]");
 
                     using (writer.Block(
@@ -671,6 +744,59 @@ internal sealed class CSharpEmitter(
         }
 
         return new GeneratedFile("Generated/Serialization/HealthDataOutputOnlyProperties.g.cs", writer.ToString());
+    }
+
+    /// <summary>
+    /// Emits the alternatives of each union, for the check that runs before a request is written.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// The same member list <c>GetKind</c> is generated from, in a form the serializer can read.
+    /// Discovery cannot say "exactly one of these", so nothing in the type system stops two being
+    /// set; the service refuses it and says which operation failed rather than which pair did.
+    /// </para>
+    /// <para>
+    /// Wire names, because that is what the write contract's properties are keyed by, and what the
+    /// message should quote — a caller reading it is about to go and look at the JSON.
+    /// </para>
+    /// </remarks>
+    private GeneratedFile EmitUnionMembers()
+    {
+        var writer = Header(RootNamespace + ".Serialization", ModelsNamespace);
+
+        writer.XmlDoc("summary", "The mutually exclusive members of each union schema, keyed by model type.");
+        writer.XmlDoc(
+            "remarks",
+            "Used to refuse a request that sets two of them. Members that are not alternatives - "
+            + "dataSource, which every measurement carries - are not listed, exactly as they are "
+            + "left out of GetKind.");
+
+        using (writer.Block("public static class HealthDataUnionMembers"))
+        {
+            writer.XmlDoc("summary", "Wire property names that are alternatives, keyed by model type.");
+
+            using (writer.Block(
+                "public static readonly IReadOnlyDictionary<Type, string[]> ByType = new Dictionary<Type, string[]>",
+                closing: "};"))
+            {
+                foreach (var (unionSchema, declared) in _unions.OrderBy(u => u.Key, StringComparer.Ordinal))
+                {
+                    if (contract.Schemas.SingleOrDefault(s => s.WireName == unionSchema) is not { } schema)
+                    {
+                        continue;
+                    }
+
+                    var names = schema.Properties
+                        .Where(p => p.Type.Kind == TypeKind.Reference)
+                        .Where(p => !declared.ExcludedMembers.Contains(p.WireName))
+                        .Select(p => CodeWriter.Literal(p.WireName));
+
+                    writer.Line($"[typeof({schema.CSharpName})] = [{string.Join(", ", names)}],");
+                }
+            }
+        }
+
+        return new GeneratedFile("Generated/Serialization/HealthDataUnionMembers.g.cs", writer.ToString());
     }
 
     /// <summary>

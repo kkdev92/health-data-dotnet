@@ -121,8 +121,14 @@ var pending = new PendingAuthorization(
 
 await store.SaveAsync(session.Id, pending, cancellationToken);
 
-var url = oauth.CreateAuthorizationUrl(
-    scopes, state: pending.State, pkce: PkceCodeChallenge.FromVerifier(pending.Verifier));
+var url = oauth.CreateAuthorizationUrl(new GoogleAuthorizationUrlOptions
+{
+    // The generated sets, so an application that only reads does not have to work out which
+    // scopes those are by matching on their names.
+    Scopes = HealthDataScopes.ReadOnly,
+    State = pending.State,
+    Pkce = PkceCodeChallenge.FromVerifier(pending.Verifier),
+});
 
 // On /connect/callback, possibly in a different instance.
 //
@@ -288,6 +294,37 @@ every read operation according to their own reference pages, and a scope with no
 scope callers cannot name. Because the Discovery snapshot is a verbatim, hash-checked copy, the
 addition is declared in `spec/v4/semantics.json` rather than edited into the snapshot. These are
 recorded [documentation conflicts](architecture.md#known-documentation-conflicts).
+
+### Which scopes to ask for
+
+The three sets are generated from the contract, so an application does not have to work out which
+scope is which from its name:
+
+```csharp
+HealthDataScopes.All         // every scope this contract declares
+HealthDataScopes.ReadOnly    // 9 - reads a person's data
+HealthDataScopes.WriteOnly   // 10 - adds, edits or deletes it
+HealthDataScopes.Project     // cloud-platform, for the subscriber operations
+```
+
+They partition `All`: every scope is in exactly one, and a test holds that. Which set a scope
+belongs to is declared in `spec/v4/semantics.json` rather than derived. Two derivations were tried
+and both are wrong:
+
+- **By name** (`.writeonly`) — a rule about Google's naming that nothing here promises to keep,
+  and the one an application built on this SDK had resorted to writing for itself.
+- **By HTTP method** — measured 2026-08-15: five `.readonly` scopes are declared by POST
+  operations, because `rollUp`, `dailyRollUp` and `reconcile` are POSTs that read. The method
+  disagrees with the scope in 5 of 19 cases.
+
+What Discovery *does* say is in the description of each scope — "See your Google Health sleep
+data" against "Add sleep data to Google Health, and edit or delete the data it adds" — which is
+where the declaration came from. A scope added by a later revision and not classified fails
+generation rather than quietly belonging to no set.
+
+> `cloud-platform` is in neither read nor write. A consent screen shows it as "see, edit, configure
+> and delete your Google Cloud data", so an application asking for "everything that reads" must not
+> end up asking for it.
 
 > An operation's scope list is what the **method** accepts, not what a particular call needs.
 > `dataPoints.list` reads whichever data type the `parent` names, so a token holding only

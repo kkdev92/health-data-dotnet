@@ -120,7 +120,12 @@ var oauth = new GoogleOAuthClient(
     });
 
 var pkce = PkceCodeChallenge.Create();
-var authorizationUrl = oauth.CreateAuthorizationUrl([HealthDataScopes.ProfileReadonly], state: "xyz", pkce: pkce);
+var authorizationUrl = oauth.CreateAuthorizationUrl(new GoogleAuthorizationUrlOptions
+{
+    Scopes = [HealthDataScopes.ProfileReadonly],
+    State = "xyz",
+    Pkce = pkce,
+});
 
 Check("authorization url built", authorizationUrl.Query.Contains("code_challenge=", StringComparison.Ordinal));
 Check("pkce challenge is unpadded base64url", !pkce.CodeChallenge.Contains('=', StringComparison.Ordinal));

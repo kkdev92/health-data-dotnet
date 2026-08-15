@@ -72,7 +72,7 @@ public sealed class AuthorizationHandlerTests
         Assert.Contains(HealthDataScopes.ProfileReadonly, observed.Scopes.Scopes);
 
         // A Discovery scopes array means any one of them is accepted.
-        Assert.Equal(ScopeCombination.AnyOf, observed.Scopes.Combination);
+        Assert.Equal(HealthDataScopeCombination.AnyOf, observed.Scopes.Combination);
     }
 
     [Fact]
@@ -218,7 +218,7 @@ public sealed class ScopeRequirementTests
         var request = HealthDataTokenRequest.FromDescriptor(
             HealthDataGeneratedOperations.UsersDataTypesDataPointsExportExerciseTcx);
 
-        Assert.Equal(ScopeCombination.AllOf, request.Scopes.Combination);
+        Assert.Equal(HealthDataScopeCombination.AllOf, request.Scopes.Combination);
 
         Assert.False(request.Scopes.IsSatisfiedBy([HealthDataScopes.ActivityAndFitnessReadonly]));
         Assert.False(request.Scopes.IsSatisfiedBy([HealthDataScopes.LocationReadonly]));
@@ -236,7 +236,7 @@ public sealed class ScopeRequirementTests
         // it passed for as long as the contract was wrong.
         var combined = HealthDataGeneratedOperations.All
             .Where(d => HealthDataTokenRequest.FromDescriptor(d).Scopes.Combination
-                        == ScopeCombination.AllOf)
+                        == HealthDataScopeCombination.AllOf)
             .Select(d => d.Id)
             .ToArray();
 
@@ -264,7 +264,7 @@ public sealed class ScopeRequirementTests
 
         var request = HealthDataTokenRequest.FromDescriptor(descriptor);
 
-        Assert.Equal(ScopeCombination.AnyOf, request.Scopes.Combination);
+        Assert.Equal(HealthDataScopeCombination.AnyOf, request.Scopes.Combination);
         Assert.True(request.Scopes.IsSatisfiedBy(["a"]));
     }
 }

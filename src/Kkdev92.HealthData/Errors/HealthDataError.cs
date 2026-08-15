@@ -47,9 +47,24 @@ public sealed class HealthDataError
     /// The API-specific reason, for example <c>MISSING_OAUTH_SCOPE</c>.
     /// </summary>
     /// <remarks>
+    /// <para>
     /// Taken from the first <c>google.rpc.ErrorInfo</c> detail. Falls back to
     /// <see cref="Status"/> when the service sends no <c>ErrorInfo</c>, so that callers always
     /// have something machine-readable to branch on.
+    /// </para>
+    /// <para>
+    /// <strong>Two vocabularies, therefore a string.</strong> With an <c>ErrorInfo</c> this holds an
+    /// API-specific reason — <c>INVALID_DATA_POINT_FILTER</c> — and without one it holds a canonical
+    /// status — <c>INVALID_ARGUMENT</c>. Both have been observed on the same call: the 400 for an
+    /// unsupported filter member carries the first in its detail and the second in
+    /// <see cref="Status"/>. <see cref="HealthDataErrorReasons"/> lists the documented reasons and
+    /// is worth comparing against; it is deliberately not the type of this property, because a type
+    /// called "reason" that sometimes holds a status would be a worse description of what arrived
+    /// than a string is.
+    /// </para>
+    /// <para>
+    /// Which one it is, is answerable: a detail with <c>IsErrorInfo</c> means the first.
+    /// </para>
     /// </remarks>
     public string? Reason
         => Details.FirstOrDefault(d => d.IsErrorInfo)?.Reason ?? Status;
@@ -93,6 +108,29 @@ public sealed class HealthDataErrorDetail
 
     /// <summary>The retry delay, when this detail is a <c>RetryInfo</c>.</summary>
     public GoogleDuration? RetryDelay { get; init; }
+
+    /// <summary>
+    /// The <c>ErrorInfo.metadata</c> entries, when this detail is an <c>ErrorInfo</c>.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// The reason says a category and the metadata says which one. <c>MISSING_OAUTH_SCOPE</c> does
+    /// not name the scope; the metadata does, and a caller holding a grant that already includes
+    /// the obvious candidate has no other way to find out which one is missing.
+    /// </para>
+    /// <para>
+    /// Typed here because <see cref="Raw"/> was the only way to it, which meant walking a
+    /// <c>JsonElement</c> for a value the parser had already seen. <see cref="RetryDelay"/> is
+    /// typed for the same reason.
+    /// </para>
+    /// <para>
+    /// <strong>Not safe to log unread.</strong> Values seen in practice include
+    /// <c>method=google.health.v4.Users.GetProfile</c> and comma-separated internal reason codes,
+    /// and the service is free to put anything here — which is why none of it reaches the
+    /// exception message. Decide what to show before showing it.
+    /// </para>
+    /// </remarks>
+    public IReadOnlyDictionary<string, string>? Metadata { get; init; }
 
     /// <summary>The unmodified detail payload.</summary>
     public JsonElement Raw { get; init; }

@@ -92,11 +92,20 @@ Things worth knowing, each verified against Discovery rather than a guide:
 
 - `Reconcile` is a **GET**. It is a merge view with no side effects, despite the `:reconcile` verb.
 - `Patch` has **no** `updateMask` parameter, unlike every other patch in this API.
+- A `GoogleFieldMask` that names no fields is **refused**, both by `Parse("")` and when a request
+  carrying one is built. Omitting the mask is a documented request under
+  [AIP-134](https://google.aip.dev/134) — "replace fields which are present" — while the wire
+  meaning of an empty mask is undefined: `field_mask.proto` says implementations differ and tells
+  service authors to special-case it. Converting one into the other silently is what this used to
+  do.
 - `ExportExerciseTcx` is dual-natured: it returns JSON, or the TCX document itself when the
   request asks for media. Both overloads are generated.
-- `RollUp` carries its page size and token **inside the request body** rather than the query.
-  `DailyRollUp` accepts a page token but its response never returns one. Neither gets an
-  `EnumerateAsync` helper, because neither exposes a cursor that can be followed.
+- `RollUp` carries its page size and token **inside the request body** rather than the query. It
+  still gets an `EnumerateAsync` helper: where the cursor travels is a detail of the request, and
+  its response returns a next page token like any other list.
+- `DailyRollUp` accepts a page token and its response **never returns one**, so it is the one
+  operation with no `EnumerateAsync`. There is nothing to follow. The generated model says so on
+  the property itself.
 
 ## `client.Users.PairedDevices`
 
