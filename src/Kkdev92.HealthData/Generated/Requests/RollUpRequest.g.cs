@@ -12,11 +12,12 @@
 #nullable enable
 
 using Kkdev92.HealthData.Models;
+using Kkdev92.HealthData.Names;
 
 namespace Kkdev92.HealthData.Requests;
 
 /// <summary>Request for health.users.dataTypes.dataPoints.rollUp.</summary>
-public sealed class RollUpRequest
+public sealed record RollUpRequest
 {
     /// <summary>
     /// Required. Parent data type of the Data Point collection. Format:
@@ -24,9 +25,29 @@ public sealed class RollUpRequest
     /// <c>users/me/dataTypes/distance</c> For a list of the supported data types see the RollupDataPoint
     /// value union field.
     /// </summary>
-    /// <remarks>The service requires this to match the pattern ^users/[^/]+/dataTypes/[^/]+$.</remarks>
-    public required string Parent { get; init; }
+    public required DataTypeName Parent { get; init; }
+
+    /// <summary>Returns a copy of this request positioned at the given page.</summary>
+    /// <remarks>
+    /// This operation carries its cursor in the body, so the copy replaces the body's page token and leaves
+    /// everything else as it was.
+    /// </remarks>
+    public RollUpRequest WithPageToken(string? pageToken)
+    {
+        return new()
+        {
+            Parent = Parent,
+            Body = Body.WithPageToken(pageToken),
+        };
+    }
 
     /// <summary>The request body.</summary>
     public required RollUpDataPointsRequest Body { get; init; }
+
+    /// <summary>Returns the type name.</summary>
+    /// <remarks>
+    /// A request identifies whose data is being asked for. Rendering it into a log line is not something
+    /// this type will do on a caller's behalf.
+    /// </remarks>
+    public override string ToString() => nameof(RollUpRequest);
 }

@@ -11,10 +11,12 @@
 
 #nullable enable
 
+using Kkdev92.HealthData.Names;
+
 namespace Kkdev92.HealthData.Requests;
 
 /// <summary>Request for health.users.dataTypes.dataPoints.exportExerciseTcx.</summary>
-public sealed class ExportExerciseTcxRequest
+public sealed record ExportExerciseTcxRequest
 {
     /// <summary>
     /// Required. The resource name of the exercise data point to export. Format:
@@ -23,12 +25,18 @@ public sealed class ExportExerciseTcxRequest
     /// <c>"me"</c> currently. Future versions may support user IDs. The <c>{data_point}</c> ID maps to the
     /// exercise ID, which is a long integer.
     /// </summary>
-    /// <remarks>The service requires this to match the pattern ^users/[^/]+/dataTypes/[^/]+/dataPoints/[^/]+$.</remarks>
-    public required string Name { get; init; }
+    public required DataPointName Name { get; init; }
 
     /// <summary>
     /// Optional. Indicates whether to include the TCX data points when the GPS data is not available. If
     /// not specified, defaults to <c>false</c> and partial data will not be included.
     /// </summary>
     public bool? PartialData { get; init; }
+
+    /// <summary>Returns the type name.</summary>
+    /// <remarks>
+    /// A request identifies whose data is being asked for. Rendering it into a log line is not something
+    /// this type will do on a caller's behalf.
+    /// </remarks>
+    public override string ToString() => nameof(ExportExerciseTcxRequest);
 }

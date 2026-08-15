@@ -35,6 +35,10 @@ public sealed partial class DailyRollUpDataPointsRequest
     /// Optional. The maximum number of data points to return. If unspecified, at most 1440 data points will
     /// be returned. The maximum page size is 10000; values above that will be truncated accordingly.
     /// </summary>
+    /// <remarks>
+    /// This operation accepts a cursor but returns none: its response carries no next page token. There is
+    /// nothing to enumerate, which is why no streaming overload is generated for it.
+    /// </remarks>
     [JsonPropertyName("pageSize")]
     public int? PageSize { get; init; }
 
@@ -42,6 +46,10 @@ public sealed partial class DailyRollUpDataPointsRequest
     /// Optional. The <c>next_page_token</c> from a previous request, if any. All other request fields need
     /// to be the same as in the initial request when the page token is specified.
     /// </summary>
+    /// <remarks>
+    /// This operation accepts a cursor but returns none: its response carries no next page token. There is
+    /// nothing to enumerate, which is why no streaming overload is generated for it.
+    /// </remarks>
     [JsonPropertyName("pageToken")]
     public string? PageToken { get; init; }
 

@@ -1,6 +1,7 @@
 class Kkdev92.HealthData.DataPointsResource
     IAsyncEnumerable<Kkdev92.HealthData.Models.DataPoint> EnumerateAsync(Kkdev92.HealthData.Requests.ListDataPointsRequest request, System.Threading.CancellationToken cancellationToken = default)
     IAsyncEnumerable<Kkdev92.HealthData.Models.ReconciledDataPoint> EnumerateAsync(Kkdev92.HealthData.Requests.ReconcileRequest request, System.Threading.CancellationToken cancellationToken = default)
+    IAsyncEnumerable<Kkdev92.HealthData.Models.RollupDataPoint> EnumerateAsync(Kkdev92.HealthData.Requests.RollUpRequest request, System.Threading.CancellationToken cancellationToken = default)
     System.Threading.Tasks.Task ExportExerciseTcxAsync(Kkdev92.HealthData.Requests.ExportExerciseTcxRequest request, System.IO.Stream destination, System.Threading.CancellationToken cancellationToken = default)
     Task<Kkdev92.HealthData.Models.DailyRollUpDataPointsResponse> DailyRollUpAsync(Kkdev92.HealthData.Requests.DailyRollUpRequest request, System.Threading.CancellationToken cancellationToken = default)
     Task<Kkdev92.HealthData.Models.DataPoint> GetAsync(Kkdev92.HealthData.Requests.GetDataPointsRequest request, System.Threading.CancellationToken cancellationToken = default)
@@ -1862,6 +1863,7 @@ class Kkdev92.HealthData.Models.RestingHeartRatePersonalRangeRollupValue
 class Kkdev92.HealthData.Models.RollUpDataPointsRequest
     .ctor()
     Kkdev92.HealthData.Models.Interval Range { get; set; }
+    Kkdev92.HealthData.Models.RollUpDataPointsRequest WithPageToken(System.String pageToken)
     Nullable<Kkdev92.HealthData.GoogleDuration> WindowSize { get; set; }
     Nullable<System.Int32> PageSize { get; set; }
     System.String DataSourceFamily { get; set; }
@@ -2563,6 +2565,144 @@ struct Kkdev92.HealthData.Models.WeightQuantityRollup+Types+UserProvidedUnitLast
 class Kkdev92.HealthData.Models.WeightRollupValue
     .ctor()
     Nullable<System.Double> WeightGramsAvg { get; set; }
+class Kkdev92.HealthData.Names.DataPointName
+    Kkdev92.HealthData.Names.DataPointName <Clone>$()
+    Kkdev92.HealthData.Names.DataPointName Parse(System.String value)
+    Kkdev92.HealthData.Names.DataTypeName DataType { get; }
+    System.Boolean Equals(Kkdev92.HealthData.Names.DataPointName other)
+    System.Boolean Equals(System.Object obj)
+    System.Boolean TryParse(System.String value, Kkdev92.HealthData.Names.DataPointName& name)
+    System.Int32 GetHashCode()
+    System.String DataPointId { get; }
+    System.String DataTypeId { get; }
+    System.String ToString()
+    System.String UserId { get; }
+    const System.String Pattern
+class Kkdev92.HealthData.Names.DataTypeName
+    Kkdev92.HealthData.Names.DataPointName DataPoint(System.String dataPointId)
+    Kkdev92.HealthData.Names.DataTypeName <Clone>$()
+    Kkdev92.HealthData.Names.DataTypeName Parse(System.String value)
+    Kkdev92.HealthData.Names.UserName User { get; }
+    System.Boolean Equals(Kkdev92.HealthData.Names.DataTypeName other)
+    System.Boolean Equals(System.Object obj)
+    System.Boolean TryParse(System.String value, Kkdev92.HealthData.Names.DataTypeName& name)
+    System.Int32 GetHashCode()
+    System.String DataTypeId { get; }
+    System.String ToString()
+    System.String UserId { get; }
+    const System.String Pattern
+class Kkdev92.HealthData.Names.IdentityName
+    Kkdev92.HealthData.Names.IdentityName <Clone>$()
+    Kkdev92.HealthData.Names.IdentityName Parse(System.String value)
+    Kkdev92.HealthData.Names.UserName User { get; }
+    System.Boolean Equals(Kkdev92.HealthData.Names.IdentityName other)
+    System.Boolean Equals(System.Object obj)
+    System.Boolean TryParse(System.String value, Kkdev92.HealthData.Names.IdentityName& name)
+    System.Int32 GetHashCode()
+    System.String ToString()
+    System.String UserId { get; }
+    const System.String Pattern
+class Kkdev92.HealthData.Names.IrnProfileName
+    Kkdev92.HealthData.Names.IrnProfileName <Clone>$()
+    Kkdev92.HealthData.Names.IrnProfileName Parse(System.String value)
+    Kkdev92.HealthData.Names.UserName User { get; }
+    System.Boolean Equals(Kkdev92.HealthData.Names.IrnProfileName other)
+    System.Boolean Equals(System.Object obj)
+    System.Boolean TryParse(System.String value, Kkdev92.HealthData.Names.IrnProfileName& name)
+    System.Int32 GetHashCode()
+    System.String ToString()
+    System.String UserId { get; }
+    const System.String Pattern
+class Kkdev92.HealthData.Names.PairedDeviceName
+    Kkdev92.HealthData.Names.PairedDeviceName <Clone>$()
+    Kkdev92.HealthData.Names.PairedDeviceName Parse(System.String value)
+    Kkdev92.HealthData.Names.UserName User { get; }
+    System.Boolean Equals(Kkdev92.HealthData.Names.PairedDeviceName other)
+    System.Boolean Equals(System.Object obj)
+    System.Boolean TryParse(System.String value, Kkdev92.HealthData.Names.PairedDeviceName& name)
+    System.Int32 GetHashCode()
+    System.String PairedDeviceId { get; }
+    System.String ToString()
+    System.String UserId { get; }
+    const System.String Pattern
+class Kkdev92.HealthData.Names.ProfileName
+    Kkdev92.HealthData.Names.ProfileName <Clone>$()
+    Kkdev92.HealthData.Names.ProfileName Parse(System.String value)
+    Kkdev92.HealthData.Names.UserName User { get; }
+    System.Boolean Equals(Kkdev92.HealthData.Names.ProfileName other)
+    System.Boolean Equals(System.Object obj)
+    System.Boolean TryParse(System.String value, Kkdev92.HealthData.Names.ProfileName& name)
+    System.Int32 GetHashCode()
+    System.String ToString()
+    System.String UserId { get; }
+    const System.String Pattern
+class Kkdev92.HealthData.Names.ProjectName
+    Kkdev92.HealthData.Names.ProjectName <Clone>$()
+    Kkdev92.HealthData.Names.ProjectName From(System.String projectId)
+    Kkdev92.HealthData.Names.ProjectName Parse(System.String value)
+    Kkdev92.HealthData.Names.SubscriberName Subscriber(System.String subscriberId)
+    System.Boolean Equals(Kkdev92.HealthData.Names.ProjectName other)
+    System.Boolean Equals(System.Object obj)
+    System.Boolean TryParse(System.String value, Kkdev92.HealthData.Names.ProjectName& name)
+    System.Int32 GetHashCode()
+    System.String ProjectId { get; }
+    System.String ToString()
+    const System.String Pattern
+class Kkdev92.HealthData.Names.SettingsName
+    Kkdev92.HealthData.Names.SettingsName <Clone>$()
+    Kkdev92.HealthData.Names.SettingsName Parse(System.String value)
+    Kkdev92.HealthData.Names.UserName User { get; }
+    System.Boolean Equals(Kkdev92.HealthData.Names.SettingsName other)
+    System.Boolean Equals(System.Object obj)
+    System.Boolean TryParse(System.String value, Kkdev92.HealthData.Names.SettingsName& name)
+    System.Int32 GetHashCode()
+    System.String ToString()
+    System.String UserId { get; }
+    const System.String Pattern
+class Kkdev92.HealthData.Names.SubscriberName
+    Kkdev92.HealthData.Names.ProjectName Project { get; }
+    Kkdev92.HealthData.Names.SubscriberName <Clone>$()
+    Kkdev92.HealthData.Names.SubscriberName Parse(System.String value)
+    Kkdev92.HealthData.Names.SubscriptionName Subscription(System.String subscriptionId)
+    System.Boolean Equals(Kkdev92.HealthData.Names.SubscriberName other)
+    System.Boolean Equals(System.Object obj)
+    System.Boolean TryParse(System.String value, Kkdev92.HealthData.Names.SubscriberName& name)
+    System.Int32 GetHashCode()
+    System.String ProjectId { get; }
+    System.String SubscriberId { get; }
+    System.String ToString()
+    const System.String Pattern
+class Kkdev92.HealthData.Names.SubscriptionName
+    Kkdev92.HealthData.Names.SubscriberName Subscriber { get; }
+    Kkdev92.HealthData.Names.SubscriptionName <Clone>$()
+    Kkdev92.HealthData.Names.SubscriptionName Parse(System.String value)
+    System.Boolean Equals(Kkdev92.HealthData.Names.SubscriptionName other)
+    System.Boolean Equals(System.Object obj)
+    System.Boolean TryParse(System.String value, Kkdev92.HealthData.Names.SubscriptionName& name)
+    System.Int32 GetHashCode()
+    System.String ProjectId { get; }
+    System.String SubscriberId { get; }
+    System.String SubscriptionId { get; }
+    System.String ToString()
+    const System.String Pattern
+class Kkdev92.HealthData.Names.UserName
+    Kkdev92.HealthData.Names.DataTypeName DataType(System.String dataTypeId)
+    Kkdev92.HealthData.Names.IdentityName Identity { get; }
+    Kkdev92.HealthData.Names.IrnProfileName IrnProfile { get; }
+    Kkdev92.HealthData.Names.PairedDeviceName PairedDevice(System.String pairedDeviceId)
+    Kkdev92.HealthData.Names.ProfileName Profile { get; }
+    Kkdev92.HealthData.Names.SettingsName Settings { get; }
+    Kkdev92.HealthData.Names.UserName <Clone>$()
+    Kkdev92.HealthData.Names.UserName From(System.String userId)
+    Kkdev92.HealthData.Names.UserName Me { get; }
+    Kkdev92.HealthData.Names.UserName Parse(System.String value)
+    System.Boolean Equals(Kkdev92.HealthData.Names.UserName other)
+    System.Boolean Equals(System.Object obj)
+    System.Boolean TryParse(System.String value, Kkdev92.HealthData.Names.UserName& name)
+    System.Int32 GetHashCode()
+    System.String ToString()
+    System.String UserId { get; }
+    const System.String Pattern
 static class Kkdev92.HealthData.OperationExtensions
     System.Boolean IsFailed(Kkdev92.HealthData.Models.Operation operation)
     System.Boolean IsSucceeded(Kkdev92.HealthData.Models.Operation operation)
@@ -2580,111 +2720,242 @@ class Kkdev92.HealthData.ProjectsResource
 class Kkdev92.HealthData.Requests.BatchDeleteRequest
     .ctor()
     Kkdev92.HealthData.Models.BatchDeleteDataPointsRequest Body { get; set; }
-    System.String Parent { get; set; }
+    Kkdev92.HealthData.Names.DataTypeName Parent { get; set; }
+    Kkdev92.HealthData.Requests.BatchDeleteRequest <Clone>$()
+    System.Boolean Equals(Kkdev92.HealthData.Requests.BatchDeleteRequest other)
+    System.Boolean Equals(System.Object obj)
+    System.Int32 GetHashCode()
+    System.String ToString()
 class Kkdev92.HealthData.Requests.CreateDataPointsRequest
     .ctor()
     Kkdev92.HealthData.Models.DataPoint Body { get; set; }
-    System.String Parent { get; set; }
+    Kkdev92.HealthData.Names.DataTypeName Parent { get; set; }
+    Kkdev92.HealthData.Requests.CreateDataPointsRequest <Clone>$()
+    System.Boolean Equals(Kkdev92.HealthData.Requests.CreateDataPointsRequest other)
+    System.Boolean Equals(System.Object obj)
+    System.Int32 GetHashCode()
+    System.String ToString()
 class Kkdev92.HealthData.Requests.CreateSubscribersRequest
     .ctor()
     Kkdev92.HealthData.Models.CreateSubscriberPayload Body { get; set; }
-    System.String Parent { get; set; }
+    Kkdev92.HealthData.Names.ProjectName Parent { get; set; }
+    Kkdev92.HealthData.Requests.CreateSubscribersRequest <Clone>$()
+    System.Boolean Equals(Kkdev92.HealthData.Requests.CreateSubscribersRequest other)
+    System.Boolean Equals(System.Object obj)
+    System.Int32 GetHashCode()
     System.String SubscriberId { get; set; }
+    System.String ToString()
 class Kkdev92.HealthData.Requests.CreateSubscriptionsRequest
     .ctor()
     Kkdev92.HealthData.Models.CreateSubscriptionPayload Body { get; set; }
-    System.String Parent { get; set; }
+    Kkdev92.HealthData.Names.SubscriberName Parent { get; set; }
+    Kkdev92.HealthData.Requests.CreateSubscriptionsRequest <Clone>$()
+    System.Boolean Equals(Kkdev92.HealthData.Requests.CreateSubscriptionsRequest other)
+    System.Boolean Equals(System.Object obj)
+    System.Int32 GetHashCode()
     System.String SubscriptionId { get; set; }
+    System.String ToString()
 class Kkdev92.HealthData.Requests.DailyRollUpRequest
     .ctor()
     Kkdev92.HealthData.Models.DailyRollUpDataPointsRequest Body { get; set; }
-    System.String Parent { get; set; }
+    Kkdev92.HealthData.Names.DataTypeName Parent { get; set; }
+    Kkdev92.HealthData.Requests.DailyRollUpRequest <Clone>$()
+    System.Boolean Equals(Kkdev92.HealthData.Requests.DailyRollUpRequest other)
+    System.Boolean Equals(System.Object obj)
+    System.Int32 GetHashCode()
+    System.String ToString()
 class Kkdev92.HealthData.Requests.DeleteSubscribersRequest
     .ctor()
+    Kkdev92.HealthData.Names.SubscriberName Name { get; set; }
+    Kkdev92.HealthData.Requests.DeleteSubscribersRequest <Clone>$()
     Nullable<System.Boolean> Force { get; set; }
-    System.String Name { get; set; }
+    System.Boolean Equals(Kkdev92.HealthData.Requests.DeleteSubscribersRequest other)
+    System.Boolean Equals(System.Object obj)
+    System.Int32 GetHashCode()
+    System.String ToString()
 class Kkdev92.HealthData.Requests.DeleteSubscriptionsRequest
     .ctor()
-    System.String Name { get; set; }
+    Kkdev92.HealthData.Names.SubscriptionName Name { get; set; }
+    Kkdev92.HealthData.Requests.DeleteSubscriptionsRequest <Clone>$()
+    System.Boolean Equals(Kkdev92.HealthData.Requests.DeleteSubscriptionsRequest other)
+    System.Boolean Equals(System.Object obj)
+    System.Int32 GetHashCode()
+    System.String ToString()
 class Kkdev92.HealthData.Requests.ExportExerciseTcxRequest
     .ctor()
+    Kkdev92.HealthData.Names.DataPointName Name { get; set; }
+    Kkdev92.HealthData.Requests.ExportExerciseTcxRequest <Clone>$()
     Nullable<System.Boolean> PartialData { get; set; }
-    System.String Name { get; set; }
+    System.Boolean Equals(Kkdev92.HealthData.Requests.ExportExerciseTcxRequest other)
+    System.Boolean Equals(System.Object obj)
+    System.Int32 GetHashCode()
+    System.String ToString()
 class Kkdev92.HealthData.Requests.GetDataPointsRequest
     .ctor()
-    System.String Name { get; set; }
+    Kkdev92.HealthData.Names.DataPointName Name { get; set; }
+    Kkdev92.HealthData.Requests.GetDataPointsRequest <Clone>$()
+    System.Boolean Equals(Kkdev92.HealthData.Requests.GetDataPointsRequest other)
+    System.Boolean Equals(System.Object obj)
+    System.Int32 GetHashCode()
+    System.String ToString()
 class Kkdev92.HealthData.Requests.GetIdentityRequest
     .ctor()
-    System.String Name { get; set; }
+    Kkdev92.HealthData.Names.IdentityName Name { get; set; }
+    Kkdev92.HealthData.Requests.GetIdentityRequest <Clone>$()
+    System.Boolean Equals(Kkdev92.HealthData.Requests.GetIdentityRequest other)
+    System.Boolean Equals(System.Object obj)
+    System.Int32 GetHashCode()
+    System.String ToString()
 class Kkdev92.HealthData.Requests.GetIrnProfileRequest
     .ctor()
-    System.String Name { get; set; }
+    Kkdev92.HealthData.Names.IrnProfileName Name { get; set; }
+    Kkdev92.HealthData.Requests.GetIrnProfileRequest <Clone>$()
+    System.Boolean Equals(Kkdev92.HealthData.Requests.GetIrnProfileRequest other)
+    System.Boolean Equals(System.Object obj)
+    System.Int32 GetHashCode()
+    System.String ToString()
 class Kkdev92.HealthData.Requests.GetPairedDevicesRequest
     .ctor()
-    System.String Name { get; set; }
+    Kkdev92.HealthData.Names.PairedDeviceName Name { get; set; }
+    Kkdev92.HealthData.Requests.GetPairedDevicesRequest <Clone>$()
+    System.Boolean Equals(Kkdev92.HealthData.Requests.GetPairedDevicesRequest other)
+    System.Boolean Equals(System.Object obj)
+    System.Int32 GetHashCode()
+    System.String ToString()
 class Kkdev92.HealthData.Requests.GetProfileRequest
     .ctor()
-    System.String Name { get; set; }
+    Kkdev92.HealthData.Names.ProfileName Name { get; set; }
+    Kkdev92.HealthData.Requests.GetProfileRequest <Clone>$()
+    System.Boolean Equals(Kkdev92.HealthData.Requests.GetProfileRequest other)
+    System.Boolean Equals(System.Object obj)
+    System.Int32 GetHashCode()
+    System.String ToString()
 class Kkdev92.HealthData.Requests.GetSettingsRequest
     .ctor()
-    System.String Name { get; set; }
+    Kkdev92.HealthData.Names.SettingsName Name { get; set; }
+    Kkdev92.HealthData.Requests.GetSettingsRequest <Clone>$()
+    System.Boolean Equals(Kkdev92.HealthData.Requests.GetSettingsRequest other)
+    System.Boolean Equals(System.Object obj)
+    System.Int32 GetHashCode()
+    System.String ToString()
 class Kkdev92.HealthData.Requests.ListDataPointsRequest
     .ctor()
+    Kkdev92.HealthData.Names.DataTypeName Parent { get; set; }
+    Kkdev92.HealthData.Requests.ListDataPointsRequest <Clone>$()
+    Kkdev92.HealthData.Requests.ListDataPointsRequest WithPageToken(System.String pageToken)
     Nullable<System.Int32> PageSize { get; set; }
+    System.Boolean Equals(Kkdev92.HealthData.Requests.ListDataPointsRequest other)
+    System.Boolean Equals(System.Object obj)
+    System.Int32 GetHashCode()
     System.String Filter { get; set; }
     System.String PageToken { get; set; }
-    System.String Parent { get; set; }
+    System.String ToString()
 class Kkdev92.HealthData.Requests.ListPairedDevicesRequest
     .ctor()
+    Kkdev92.HealthData.Names.UserName Parent { get; set; }
+    Kkdev92.HealthData.Requests.ListPairedDevicesRequest <Clone>$()
+    Kkdev92.HealthData.Requests.ListPairedDevicesRequest WithPageToken(System.String pageToken)
     Nullable<System.Int32> PageSize { get; set; }
+    System.Boolean Equals(Kkdev92.HealthData.Requests.ListPairedDevicesRequest other)
+    System.Boolean Equals(System.Object obj)
+    System.Int32 GetHashCode()
     System.String PageToken { get; set; }
-    System.String Parent { get; set; }
+    System.String ToString()
 class Kkdev92.HealthData.Requests.ListSubscribersRequest
     .ctor()
+    Kkdev92.HealthData.Names.ProjectName Parent { get; set; }
+    Kkdev92.HealthData.Requests.ListSubscribersRequest <Clone>$()
+    Kkdev92.HealthData.Requests.ListSubscribersRequest WithPageToken(System.String pageToken)
     Nullable<System.Int32> PageSize { get; set; }
+    System.Boolean Equals(Kkdev92.HealthData.Requests.ListSubscribersRequest other)
+    System.Boolean Equals(System.Object obj)
+    System.Int32 GetHashCode()
     System.String PageToken { get; set; }
-    System.String Parent { get; set; }
+    System.String ToString()
 class Kkdev92.HealthData.Requests.ListSubscriptionsRequest
     .ctor()
+    Kkdev92.HealthData.Names.SubscriberName Parent { get; set; }
+    Kkdev92.HealthData.Requests.ListSubscriptionsRequest <Clone>$()
+    Kkdev92.HealthData.Requests.ListSubscriptionsRequest WithPageToken(System.String pageToken)
     Nullable<System.Int32> PageSize { get; set; }
+    System.Boolean Equals(Kkdev92.HealthData.Requests.ListSubscriptionsRequest other)
+    System.Boolean Equals(System.Object obj)
+    System.Int32 GetHashCode()
     System.String Filter { get; set; }
     System.String PageToken { get; set; }
-    System.String Parent { get; set; }
+    System.String ToString()
 class Kkdev92.HealthData.Requests.PatchDataPointsRequest
     .ctor()
     Kkdev92.HealthData.Models.DataPoint Body { get; set; }
-    System.String Name { get; set; }
+    Kkdev92.HealthData.Names.DataPointName Name { get; set; }
+    Kkdev92.HealthData.Requests.PatchDataPointsRequest <Clone>$()
+    System.Boolean Equals(Kkdev92.HealthData.Requests.PatchDataPointsRequest other)
+    System.Boolean Equals(System.Object obj)
+    System.Int32 GetHashCode()
+    System.String ToString()
 class Kkdev92.HealthData.Requests.PatchSubscribersRequest
     .ctor()
     Kkdev92.HealthData.Models.Subscriber Body { get; set; }
+    Kkdev92.HealthData.Names.SubscriberName Name { get; set; }
+    Kkdev92.HealthData.Requests.PatchSubscribersRequest <Clone>$()
     Nullable<Kkdev92.HealthData.GoogleFieldMask> UpdateMask { get; set; }
-    System.String Name { get; set; }
+    System.Boolean Equals(Kkdev92.HealthData.Requests.PatchSubscribersRequest other)
+    System.Boolean Equals(System.Object obj)
+    System.Int32 GetHashCode()
+    System.String ToString()
 class Kkdev92.HealthData.Requests.PatchSubscriptionsRequest
     .ctor()
     Kkdev92.HealthData.Models.Subscription Body { get; set; }
+    Kkdev92.HealthData.Names.SubscriptionName Name { get; set; }
+    Kkdev92.HealthData.Requests.PatchSubscriptionsRequest <Clone>$()
     Nullable<Kkdev92.HealthData.GoogleFieldMask> UpdateMask { get; set; }
-    System.String Name { get; set; }
+    System.Boolean Equals(Kkdev92.HealthData.Requests.PatchSubscriptionsRequest other)
+    System.Boolean Equals(System.Object obj)
+    System.Int32 GetHashCode()
+    System.String ToString()
 class Kkdev92.HealthData.Requests.ReconcileRequest
     .ctor()
+    Kkdev92.HealthData.Names.DataTypeName Parent { get; set; }
+    Kkdev92.HealthData.Requests.ReconcileRequest <Clone>$()
+    Kkdev92.HealthData.Requests.ReconcileRequest WithPageToken(System.String pageToken)
     Nullable<System.Int32> PageSize { get; set; }
+    System.Boolean Equals(Kkdev92.HealthData.Requests.ReconcileRequest other)
+    System.Boolean Equals(System.Object obj)
+    System.Int32 GetHashCode()
     System.String DataSourceFamily { get; set; }
     System.String Filter { get; set; }
     System.String PageToken { get; set; }
-    System.String Parent { get; set; }
+    System.String ToString()
 class Kkdev92.HealthData.Requests.RollUpRequest
     .ctor()
     Kkdev92.HealthData.Models.RollUpDataPointsRequest Body { get; set; }
-    System.String Parent { get; set; }
+    Kkdev92.HealthData.Names.DataTypeName Parent { get; set; }
+    Kkdev92.HealthData.Requests.RollUpRequest <Clone>$()
+    Kkdev92.HealthData.Requests.RollUpRequest WithPageToken(System.String pageToken)
+    System.Boolean Equals(Kkdev92.HealthData.Requests.RollUpRequest other)
+    System.Boolean Equals(System.Object obj)
+    System.Int32 GetHashCode()
+    System.String ToString()
 class Kkdev92.HealthData.Requests.UpdateProfileRequest
     .ctor()
     Kkdev92.HealthData.Models.Profile Body { get; set; }
+    Kkdev92.HealthData.Names.ProfileName Name { get; set; }
+    Kkdev92.HealthData.Requests.UpdateProfileRequest <Clone>$()
     Nullable<Kkdev92.HealthData.GoogleFieldMask> UpdateMask { get; set; }
-    System.String Name { get; set; }
+    System.Boolean Equals(Kkdev92.HealthData.Requests.UpdateProfileRequest other)
+    System.Boolean Equals(System.Object obj)
+    System.Int32 GetHashCode()
+    System.String ToString()
 class Kkdev92.HealthData.Requests.UpdateSettingsRequest
     .ctor()
     Kkdev92.HealthData.Models.Settings Body { get; set; }
+    Kkdev92.HealthData.Names.SettingsName Name { get; set; }
+    Kkdev92.HealthData.Requests.UpdateSettingsRequest <Clone>$()
     Nullable<Kkdev92.HealthData.GoogleFieldMask> UpdateMask { get; set; }
-    System.String Name { get; set; }
+    System.Boolean Equals(Kkdev92.HealthData.Requests.UpdateSettingsRequest other)
+    System.Boolean Equals(System.Object obj)
+    System.Int32 GetHashCode()
+    System.String ToString()
 class Kkdev92.HealthData.Resilience.HealthDataRetryHandler
     .ctor(Kkdev92.HealthData.Resilience.HealthDataRetryOptions options = default, System.TimeProvider timeProvider = default)
 class Kkdev92.HealthData.Resilience.HealthDataRetryOptions

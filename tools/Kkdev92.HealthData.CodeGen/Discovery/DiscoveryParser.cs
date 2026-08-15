@@ -48,6 +48,10 @@ internal static class DiscoveryParser
             Schemas = schemaContracts,
             ErrorReasons = BuildErrorReasons(spec),
             OpenEnums = openEnums,
+
+            // Derived from the operations rather than declared: every name parameter
+            // already carries the pattern that defines the shape.
+            ResourceNames = ResourceNameResolver.Resolve(operations),
         };
     }
 

@@ -88,6 +88,7 @@ Take only what you need. The core package has no dependency on the other three.
 ```csharp
 using Kkdev92.HealthData;
 using Kkdev92.HealthData.Authentication;
+using Kkdev92.HealthData.Names;
 using Kkdev92.HealthData.Requests;
 
 // The client holds no credentials. A delegating handler resolves a token per request from the
@@ -105,7 +106,7 @@ using var httpClient = new HttpClient(authorization)
 var client = new HealthDataClient(httpClient);
 
 var profile = await client.Users.GetProfileAsync(
-    new GetProfileRequest { Name = "users/me/profile" },
+    new GetProfileRequest { Name = UserName.Me.Profile },
     cancellationToken);
 ```
 
@@ -162,7 +163,7 @@ and owned here.
 var page = await client.Users.DataPoints.ListAsync(
     new ListDataPointsRequest
     {
-        Parent = "users/me/dataTypes/heart-rate",
+        Parent = UserName.Me.DataType("heart-rate"),
         // The resource name is kebab-case; the filter prefix is the type's snake_case filter
         // name, and heart rate is sample-timed rather than interval-timed.
         Filter = "heart_rate.sample_time.physical_time >= \"2026-08-01T00:00:00Z\"",
@@ -175,7 +176,7 @@ Pages are fetched lazily, so stopping early costs nothing:
 
 ```csharp
 await foreach (var point in client.Users.DataPoints.EnumerateAsync(
-    new ListDataPointsRequest { Parent = "users/me/dataTypes/heart-rate" },
+    new ListDataPointsRequest { Parent = UserName.Me.DataType("heart-rate") },
     cancellationToken))
 {
     if (point.HeartRate is { BeatsPerMinute: { } bpm })

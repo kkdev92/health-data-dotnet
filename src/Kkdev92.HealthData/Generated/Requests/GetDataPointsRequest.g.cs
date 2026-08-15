@@ -11,16 +11,24 @@
 
 #nullable enable
 
+using Kkdev92.HealthData.Names;
+
 namespace Kkdev92.HealthData.Requests;
 
 /// <summary>Request for health.users.dataTypes.dataPoints.get.</summary>
-public sealed class GetDataPointsRequest
+public sealed record GetDataPointsRequest
 {
     /// <summary>
     /// Required. The name of the data point to retrieve. Format:
     /// <c>users/{user}/dataTypes/{data_type}/dataPoints/{data_point}</c> See DataPoint.name for examples
     /// and possible values.
     /// </summary>
-    /// <remarks>The service requires this to match the pattern ^users/[^/]+/dataTypes/[^/]+/dataPoints/[^/]+$.</remarks>
-    public required string Name { get; init; }
+    public required DataPointName Name { get; init; }
+
+    /// <summary>Returns the type name.</summary>
+    /// <remarks>
+    /// A request identifies whose data is being asked for. Rendering it into a log line is not something
+    /// this type will do on a caller's behalf.
+    /// </remarks>
+    public override string ToString() => nameof(GetDataPointsRequest);
 }

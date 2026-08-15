@@ -11,14 +11,15 @@
 
 #nullable enable
 
+using Kkdev92.HealthData.Names;
+
 namespace Kkdev92.HealthData.Requests;
 
 /// <summary>Request for health.users.pairedDevices.list.</summary>
-public sealed class ListPairedDevicesRequest
+public sealed record ListPairedDevicesRequest
 {
     /// <summary>Required. The parent, which owns this collection of devices. Format: users/{user}</summary>
-    /// <remarks>The service requires this to match the pattern ^users/[^/]+$.</remarks>
-    public required string Parent { get; init; }
+    public required UserName Parent { get; init; }
 
     /// <summary>
     /// Optional. The maximum number of devices to return. The service may return fewer than this value. If
@@ -35,7 +36,11 @@ public sealed class ListPairedDevicesRequest
     public string? PageToken { get; init; }
 
     /// <summary>Returns a copy of this request positioned at the given page.</summary>
-    internal ListPairedDevicesRequest WithPageToken(string? pageToken)
+    /// <remarks>
+    /// The copy is exact but for the page token. Nothing is mutated, so the original request stays valid
+    /// and re-sendable.
+    /// </remarks>
+    public ListPairedDevicesRequest WithPageToken(string? pageToken)
     {
         return new()
         {
@@ -44,4 +49,11 @@ public sealed class ListPairedDevicesRequest
             Parent = Parent,
         };
     }
+
+    /// <summary>Returns the type name.</summary>
+    /// <remarks>
+    /// A request identifies whose data is being asked for. Rendering it into a log line is not something
+    /// this type will do on a caller's behalf.
+    /// </remarks>
+    public override string ToString() => nameof(ListPairedDevicesRequest);
 }

@@ -12,11 +12,12 @@
 #nullable enable
 
 using Kkdev92.HealthData.Models;
+using Kkdev92.HealthData.Names;
 
 namespace Kkdev92.HealthData.Requests;
 
 /// <summary>Request for health.projects.subscribers.patch.</summary>
-public sealed class PatchSubscribersRequest
+public sealed record PatchSubscribersRequest
 {
     /// <summary>
     /// Identifier. The resource name of the Subscriber. Format: projects/{project}/subscribers/{subscriber}
@@ -26,8 +27,7 @@ public sealed class PatchSubscribersRequest
     /// projects/my-project/subscribers/my-sub-123 Example (System-generated subscriber ID):
     /// projects/my-project/subscribers/a1b2c3d4-e5f6-7890-1234-567890abcdef
     /// </summary>
-    /// <remarks>The service requires this to match the pattern ^projects/[^/]+/subscribers/[^/]+$.</remarks>
-    public required string Name { get; init; }
+    public required SubscriberName Name { get; init; }
 
     /// <summary>
     /// Optional. A field mask that specifies which fields of the Subscriber message are to be updated. This
@@ -38,4 +38,11 @@ public sealed class PatchSubscribersRequest
 
     /// <summary>The request body.</summary>
     public required Subscriber Body { get; init; }
+
+    /// <summary>Returns the type name.</summary>
+    /// <remarks>
+    /// A request identifies whose data is being asked for. Rendering it into a log line is not something
+    /// this type will do on a caller's behalf.
+    /// </remarks>
+    public override string ToString() => nameof(PatchSubscribersRequest);
 }

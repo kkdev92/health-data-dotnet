@@ -2,6 +2,7 @@ using System.Net;
 using Kkdev92.HealthData.Http;
 using Kkdev92.HealthData.Models;
 using Kkdev92.HealthData.Requests;
+using Kkdev92.HealthData.Names;
 
 namespace Kkdev92.HealthData.ContractTests;
 
@@ -43,7 +44,7 @@ public sealed class OperationContractTests
     public async Task GetProfile()
     {
         var (client, handler) = CreateClient();
-        await client.Users.GetProfileAsync(new GetProfileRequest { Name = "users/me/profile" }, TestContext.Current.CancellationToken);
+        await client.Users.GetProfileAsync(new GetProfileRequest { Name = UserName.Me.Profile }, TestContext.Current.CancellationToken);
         AssertRequest(handler, HttpMethod.Get, "v4/users/me/profile");
     }
 
@@ -51,7 +52,7 @@ public sealed class OperationContractTests
     public async Task GetSettings()
     {
         var (client, handler) = CreateClient();
-        await client.Users.GetSettingsAsync(new GetSettingsRequest { Name = "users/me/settings" }, TestContext.Current.CancellationToken);
+        await client.Users.GetSettingsAsync(new GetSettingsRequest { Name = UserName.Me.Settings }, TestContext.Current.CancellationToken);
         AssertRequest(handler, HttpMethod.Get, "v4/users/me/settings");
     }
 
@@ -59,7 +60,7 @@ public sealed class OperationContractTests
     public async Task GetIdentity()
     {
         var (client, handler) = CreateClient();
-        await client.Users.GetIdentityAsync(new GetIdentityRequest { Name = "users/me/identity" }, TestContext.Current.CancellationToken);
+        await client.Users.GetIdentityAsync(new GetIdentityRequest { Name = UserName.Me.Identity }, TestContext.Current.CancellationToken);
         AssertRequest(handler, HttpMethod.Get, "v4/users/me/identity");
     }
 
@@ -67,7 +68,7 @@ public sealed class OperationContractTests
     public async Task GetIrnProfile()
     {
         var (client, handler) = CreateClient();
-        await client.Users.GetIrnProfileAsync(new GetIrnProfileRequest { Name = "users/me/irnProfile" }, TestContext.Current.CancellationToken);
+        await client.Users.GetIrnProfileAsync(new GetIrnProfileRequest { Name = UserName.Me.IrnProfile }, TestContext.Current.CancellationToken);
         AssertRequest(handler, HttpMethod.Get, "v4/users/me/irnProfile");
     }
 
@@ -79,7 +80,7 @@ public sealed class OperationContractTests
         await client.Users.UpdateProfileAsync(
             new UpdateProfileRequest
             {
-                Name = "users/me/profile",
+                Name = UserName.Me.Profile,
                 UpdateMask = new GoogleFieldMask("age"),
                 Body = new Profile { Age = 41 },
             },
@@ -97,7 +98,7 @@ public sealed class OperationContractTests
         await client.Users.UpdateSettingsAsync(
             new UpdateSettingsRequest
             {
-                Name = "users/me/settings",
+                Name = UserName.Me.Settings,
                 Body = new Settings { TimeZone = "America/New_York" },
             },
             TestContext.Current.CancellationToken);
@@ -115,7 +116,7 @@ public sealed class OperationContractTests
         await client.Users.DataPoints.ListAsync(
             new ListDataPointsRequest
             {
-                Parent = "users/me/dataTypes/heart-rate",
+                Parent = UserName.Me.DataType("heart-rate"),
                 Filter = "start_time >= \"2026-08-01T00:00:00Z\"",
                 PageSize = 1000,
                 PageToken = "CBI",
@@ -135,7 +136,7 @@ public sealed class OperationContractTests
         var (client, handler) = CreateClient();
 
         await client.Users.DataPoints.GetAsync(
-            new GetDataPointsRequest { Name = "users/me/dataTypes/heart-rate/dataPoints/abc" },
+            new GetDataPointsRequest { Name = UserName.Me.DataType("heart-rate").DataPoint("abc") },
             TestContext.Current.CancellationToken);
 
         AssertRequest(handler, HttpMethod.Get, "v4/users/me/dataTypes/heart-rate/dataPoints/abc");
@@ -149,7 +150,7 @@ public sealed class OperationContractTests
         await client.Users.DataPoints.CreateAsync(
             new CreateDataPointsRequest
             {
-                Parent = "users/me/dataTypes/weight",
+                Parent = UserName.Me.DataType("weight"),
                 Body = new DataPoint { Name = "users/me/dataTypes/weight/dataPoints/1" },
             },
             TestContext.Current.CancellationToken);
@@ -165,7 +166,7 @@ public sealed class OperationContractTests
         await client.Users.DataPoints.PatchAsync(
             new PatchDataPointsRequest
             {
-                Name = "users/me/dataTypes/weight/dataPoints/1",
+                Name = UserName.Me.DataType("weight").DataPoint("1"),
                 Body = new DataPoint(),
             },
             TestContext.Current.CancellationToken);
@@ -182,7 +183,7 @@ public sealed class OperationContractTests
         await client.Users.DataPoints.BatchDeleteAsync(
             new BatchDeleteRequest
             {
-                Parent = "users/me/dataTypes/weight",
+                Parent = UserName.Me.DataType("weight"),
                 Body = new BatchDeleteDataPointsRequest { Names = ["users/me/dataTypes/weight/dataPoints/1"] },
             },
             TestContext.Current.CancellationToken);
@@ -198,7 +199,7 @@ public sealed class OperationContractTests
         await client.Users.DataPoints.ReconcileAsync(
             new ReconcileRequest
             {
-                Parent = "users/me/dataTypes/steps",
+                Parent = UserName.Me.DataType("steps"),
                 DataSourceFamily = "GOOGLE_FIT",
                 PageSize = 50,
             },
@@ -219,7 +220,7 @@ public sealed class OperationContractTests
         await client.Users.DataPoints.RollUpAsync(
             new RollUpRequest
             {
-                Parent = "users/me/dataTypes/steps",
+                Parent = UserName.Me.DataType("steps"),
                 Body = new RollUpDataPointsRequest { PageSize = 10, WindowSize = new GoogleDuration(3600, 0) },
             },
             TestContext.Current.CancellationToken);
@@ -239,7 +240,7 @@ public sealed class OperationContractTests
         await client.Users.DataPoints.DailyRollUpAsync(
             new DailyRollUpRequest
             {
-                Parent = "users/me/dataTypes/steps",
+                Parent = UserName.Me.DataType("steps"),
                 Body = new DailyRollUpDataPointsRequest { WindowSizeDays = 7 },
             },
             TestContext.Current.CancellationToken);
@@ -255,7 +256,7 @@ public sealed class OperationContractTests
         var response = await client.Users.DataPoints.ExportExerciseTcxAsync(
             new ExportExerciseTcxRequest
             {
-                Name = "users/me/dataTypes/exercise/dataPoints/1",
+                Name = UserName.Me.DataType("exercise").DataPoint("1"),
                 PartialData = true,
             },
             TestContext.Current.CancellationToken);
@@ -275,7 +276,7 @@ public sealed class OperationContractTests
         using var destination = new MemoryStream();
 
         await client.Users.DataPoints.ExportExerciseTcxAsync(
-            new ExportExerciseTcxRequest { Name = "users/me/dataTypes/exercise/dataPoints/1" },
+            new ExportExerciseTcxRequest { Name = UserName.Me.DataType("exercise").DataPoint("1") },
             destination,
             TestContext.Current.CancellationToken);
 
@@ -296,7 +297,7 @@ public sealed class OperationContractTests
         var (client, handler) = CreateClient();
 
         await client.Users.PairedDevices.GetAsync(
-            new GetPairedDevicesRequest { Name = "users/me/pairedDevices/abc" },
+            new GetPairedDevicesRequest { Name = UserName.Me.PairedDevice("abc") },
             TestContext.Current.CancellationToken);
 
         AssertRequest(handler, HttpMethod.Get, "v4/users/me/pairedDevices/abc");
@@ -308,7 +309,7 @@ public sealed class OperationContractTests
         var (client, handler) = CreateClient();
 
         await client.Users.PairedDevices.ListAsync(
-            new ListPairedDevicesRequest { Parent = "users/me", PageSize = 25 },
+            new ListPairedDevicesRequest { Parent = UserName.Me, PageSize = 25 },
             TestContext.Current.CancellationToken);
 
         AssertRequest(handler, HttpMethod.Get, "v4/users/me/pairedDevices?pageSize=25");
@@ -324,7 +325,7 @@ public sealed class OperationContractTests
         await client.Projects.Subscribers.CreateAsync(
             new CreateSubscribersRequest
             {
-                Parent = "projects/my-project",
+                Parent = ProjectName.From("my-project"),
                 SubscriberId = "primary",
                 Body = new CreateSubscriberPayload { EndpointUri = "https://example.test/hook" },
             },
@@ -339,7 +340,7 @@ public sealed class OperationContractTests
         var (client, handler) = CreateClient();
 
         await client.Projects.Subscribers.DeleteAsync(
-            new DeleteSubscribersRequest { Name = "projects/my-project/subscribers/primary", Force = true },
+            new DeleteSubscribersRequest { Name = ProjectName.From("my-project").Subscriber("primary"), Force = true },
             TestContext.Current.CancellationToken);
 
         AssertRequest(handler, HttpMethod.Delete, "v4/projects/my-project/subscribers/primary?force=true");
@@ -351,7 +352,7 @@ public sealed class OperationContractTests
         var (client, handler) = CreateClient();
 
         await client.Projects.Subscribers.ListAsync(
-            new ListSubscribersRequest { Parent = "projects/my-project" },
+            new ListSubscribersRequest { Parent = ProjectName.From("my-project") },
             TestContext.Current.CancellationToken);
 
         AssertRequest(handler, HttpMethod.Get, "v4/projects/my-project/subscribers");
@@ -365,7 +366,7 @@ public sealed class OperationContractTests
         await client.Projects.Subscribers.PatchAsync(
             new PatchSubscribersRequest
             {
-                Name = "projects/my-project/subscribers/primary",
+                Name = ProjectName.From("my-project").Subscriber("primary"),
                 UpdateMask = new GoogleFieldMask("endpointUri"),
                 Body = new Subscriber { EndpointUri = "https://example.test/hook2" },
             },
@@ -391,7 +392,7 @@ public sealed class OperationContractTests
         await client.Projects.Subscribers.Subscriptions.CreateAsync(
             new CreateSubscriptionsRequest
             {
-                Parent = "projects/my-project/subscribers/primary",
+                Parent = ProjectName.From("my-project").Subscriber("primary"),
                 SubscriptionId = "sub-1",
                 Body = new CreateSubscriptionPayload { User = "users/1234" },
             },
@@ -409,7 +410,7 @@ public sealed class OperationContractTests
         var (client, handler) = CreateClient();
 
         await client.Projects.Subscribers.Subscriptions.DeleteAsync(
-            new DeleteSubscriptionsRequest { Name = "projects/my-project/subscribers/primary/subscriptions/sub-1" },
+            new DeleteSubscriptionsRequest { Name = ProjectName.From("my-project").Subscriber("primary").Subscription("sub-1") },
             TestContext.Current.CancellationToken);
 
         AssertRequest(
@@ -426,7 +427,7 @@ public sealed class OperationContractTests
         await client.Projects.Subscribers.Subscriptions.ListAsync(
             new ListSubscriptionsRequest
             {
-                Parent = "projects/my-project/subscribers/primary",
+                Parent = ProjectName.From("my-project").Subscriber("primary"),
                 Filter = "user=users/1234",
             },
             TestContext.Current.CancellationToken);
@@ -445,7 +446,7 @@ public sealed class OperationContractTests
         await client.Projects.Subscribers.Subscriptions.PatchAsync(
             new PatchSubscriptionsRequest
             {
-                Name = "projects/my-project/subscribers/primary/subscriptions/sub-1",
+                Name = ProjectName.From("my-project").Subscriber("primary").Subscription("sub-1"),
                 Body = new Subscription { DataTypes = ["steps"] },
             },
             TestContext.Current.CancellationToken);
@@ -528,7 +529,7 @@ public sealed class OperationContractTests
         using var httpClient = new HttpClient(handler) { BaseAddress = HealthDataApiMetadata.DefaultBaseAddress };
         var client = new HealthDataClient(httpClient);
 
-        await client.Users.GetProfileAsync(new GetProfileRequest { Name = "users/me/profile" }, TestContext.Current.CancellationToken);
+        await client.Users.GetProfileAsync(new GetProfileRequest { Name = UserName.Me.Profile }, TestContext.Current.CancellationToken);
 
         Assert.NotNull(observed);
         Assert.Equal("health.users.getProfile", observed!.Id);
@@ -546,7 +547,7 @@ public sealed class OperationContractTests
         var client = new HealthDataClient(httpClient);
 
         var exception = await Assert.ThrowsAsync<HealthDataApiException>(() =>
-            client.Users.GetProfileAsync(new GetProfileRequest { Name = "users/me/profile" }, TestContext.Current.CancellationToken));
+            client.Users.GetProfileAsync(new GetProfileRequest { Name = UserName.Me.Profile }, TestContext.Current.CancellationToken));
 
         Assert.Equal(HttpStatusCode.Forbidden, exception.StatusCode);
         Assert.Equal(HealthDataErrorReasons.MissingOauthScope, exception.Reason);

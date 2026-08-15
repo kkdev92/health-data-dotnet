@@ -37,7 +37,7 @@ public sealed class DataPointsResource
         ArgumentNullException.ThrowIfNull(request);
 
         var builder = new HealthDataRequestBuilder("v4/{+parent}/dataPoints:batchDelete")
-            .SetPath("parent", request.Parent)
+            .SetPath("parent", request.Parent.ToString())
             ;
 
         using var content = HealthDataTransport.CreateJsonContent(request.Body, HealthDataTransport.WriteInfo<BatchDeleteDataPointsRequest>());
@@ -52,7 +52,7 @@ public sealed class DataPointsResource
         ArgumentNullException.ThrowIfNull(request);
 
         var builder = new HealthDataRequestBuilder("v4/{+parent}/dataPoints")
-            .SetPath("parent", request.Parent)
+            .SetPath("parent", request.Parent.ToString())
             ;
 
         using var content = HealthDataTransport.CreateJsonContent(request.Body, HealthDataTransport.WriteInfo<DataPoint>());
@@ -67,7 +67,7 @@ public sealed class DataPointsResource
         ArgumentNullException.ThrowIfNull(request);
 
         var builder = new HealthDataRequestBuilder("v4/{+parent}/dataPoints:dailyRollUp")
-            .SetPath("parent", request.Parent)
+            .SetPath("parent", request.Parent.ToString())
             ;
 
         using var content = HealthDataTransport.CreateJsonContent(request.Body, HealthDataTransport.WriteInfo<DailyRollUpDataPointsRequest>());
@@ -92,7 +92,7 @@ public sealed class DataPointsResource
         ArgumentNullException.ThrowIfNull(request);
 
         var builder = new HealthDataRequestBuilder("v4/{+name}:exportExerciseTcx")
-            .SetPath("name", request.Name)
+            .SetPath("name", request.Name.ToString())
             .AddQuery("partialData", request.PartialData)
             ;
 
@@ -110,7 +110,7 @@ public sealed class DataPointsResource
         ArgumentNullException.ThrowIfNull(destination);
 
         var builder = new HealthDataRequestBuilder("v4/{+name}:exportExerciseTcx")
-            .SetPath("name", request.Name)
+            .SetPath("name", request.Name.ToString())
             .AddQuery("partialData", request.PartialData)
             .AddQuery("alt", "media")
             ;
@@ -126,7 +126,7 @@ public sealed class DataPointsResource
         ArgumentNullException.ThrowIfNull(request);
 
         var builder = new HealthDataRequestBuilder("v4/{+name}")
-            .SetPath("name", request.Name)
+            .SetPath("name", request.Name.ToString())
             ;
 
         return await _transport.SendAsync(HealthDataGeneratedOperations.UsersDataTypesDataPointsGet, builder.Build(), null, HealthDataTransport.ReadInfo<DataPoint>(), cancellationToken).ConfigureAwait(false);
@@ -140,7 +140,7 @@ public sealed class DataPointsResource
         ArgumentNullException.ThrowIfNull(request);
 
         var builder = new HealthDataRequestBuilder("v4/{+parent}/dataPoints")
-            .SetPath("parent", request.Parent)
+            .SetPath("parent", request.Parent.ToString())
             .AddQuery("filter", request.Filter)
             .AddQuery("pageSize", request.PageSize)
             .AddQuery("pageToken", request.PageToken)
@@ -176,7 +176,7 @@ public sealed class DataPointsResource
         ArgumentNullException.ThrowIfNull(request);
 
         var builder = new HealthDataRequestBuilder("v4/{+name}")
-            .SetPath("name", request.Name)
+            .SetPath("name", request.Name.ToString())
             ;
 
         using var content = HealthDataTransport.CreateJsonContent(request.Body, HealthDataTransport.WriteInfo<DataPoint>());
@@ -191,7 +191,7 @@ public sealed class DataPointsResource
         ArgumentNullException.ThrowIfNull(request);
 
         var builder = new HealthDataRequestBuilder("v4/{+parent}/dataPoints:reconcile")
-            .SetPath("parent", request.Parent)
+            .SetPath("parent", request.Parent.ToString())
             .AddQuery("dataSourceFamily", request.DataSourceFamily)
             .AddQuery("filter", request.Filter)
             .AddQuery("pageSize", request.PageSize)
@@ -228,10 +228,29 @@ public sealed class DataPointsResource
         ArgumentNullException.ThrowIfNull(request);
 
         var builder = new HealthDataRequestBuilder("v4/{+parent}/dataPoints:rollUp")
-            .SetPath("parent", request.Parent)
+            .SetPath("parent", request.Parent.ToString())
             ;
 
         using var content = HealthDataTransport.CreateJsonContent(request.Body, HealthDataTransport.WriteInfo<RollUpDataPointsRequest>());
         return await _transport.SendAsync(HealthDataGeneratedOperations.UsersDataTypesDataPointsRollUp, builder.Build(), content, HealthDataTransport.ReadInfo<RollUpDataPointsResponse>(), cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Enumerates every item returned by health.users.dataTypes.dataPoints.rollUp, fetching pages as
+    /// needed.
+    /// </summary>
+    /// <remarks>
+    /// Pages are requested lazily. Nothing accumulates the whole result set in memory, so a caller may stop
+    /// at any point.
+    /// </remarks>
+    public IAsyncEnumerable<RollupDataPoint> EnumerateAsync(RollUpRequest request, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+
+        return AsyncPageEnumerable.CreateAsync(
+            (pageToken, ct) => RollUpAsync(request.WithPageToken(pageToken), ct),
+            page => page.RollupDataPoints,
+            page => page.NextPageToken,
+            cancellationToken);
     }
 }

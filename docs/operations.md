@@ -143,7 +143,7 @@ follows the cursor:
 
 ```csharp
 await foreach (var point in client.Users.DataPoints.EnumerateAsync(
-    new ListDataPointsRequest { Parent = "users/me/dataTypes/heart-rate" },
+    new ListDataPointsRequest { Parent = UserName.Me.DataType("heart-rate") },
     cancellationToken))
 {
     // one page is held in memory at a time

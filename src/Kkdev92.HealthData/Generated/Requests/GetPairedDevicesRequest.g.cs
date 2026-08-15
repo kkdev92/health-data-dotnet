@@ -11,12 +11,20 @@
 
 #nullable enable
 
+using Kkdev92.HealthData.Names;
+
 namespace Kkdev92.HealthData.Requests;
 
 /// <summary>Request for health.users.pairedDevices.get.</summary>
-public sealed class GetPairedDevicesRequest
+public sealed record GetPairedDevicesRequest
 {
     /// <summary>Required. The name of the device to retrieve. Format: users/{user}/devices/{device}</summary>
-    /// <remarks>The service requires this to match the pattern ^users/[^/]+/pairedDevices/[^/]+$.</remarks>
-    public required string Name { get; init; }
+    public required PairedDeviceName Name { get; init; }
+
+    /// <summary>Returns the type name.</summary>
+    /// <remarks>
+    /// A request identifies whose data is being asked for. Rendering it into a log line is not something
+    /// this type will do on a caller's behalf.
+    /// </remarks>
+    public override string ToString() => nameof(GetPairedDevicesRequest);
 }

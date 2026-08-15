@@ -11,10 +11,12 @@
 
 #nullable enable
 
+using Kkdev92.HealthData.Names;
+
 namespace Kkdev92.HealthData.Requests;
 
 /// <summary>Request for health.users.getIrnProfile.</summary>
-public sealed class GetIrnProfileRequest
+public sealed record GetIrnProfileRequest
 {
     /// <summary>
     /// Required. The resource name of the IRN Profile. Format: <c>users/{user}/irnProfile</c> Example:
@@ -23,6 +25,12 @@ public sealed class GetIrnProfileRequest
     /// letters, numbers, and hyphens. The literal <c>me</c> can also be used to refer to the authenticated
     /// user.
     /// </summary>
-    /// <remarks>The service requires this to match the pattern ^users/[^/]+/irnProfile$.</remarks>
-    public required string Name { get; init; }
+    public required IrnProfileName Name { get; init; }
+
+    /// <summary>Returns the type name.</summary>
+    /// <remarks>
+    /// A request identifies whose data is being asked for. Rendering it into a log line is not something
+    /// this type will do on a caller's behalf.
+    /// </remarks>
+    public override string ToString() => nameof(GetIrnProfileRequest);
 }

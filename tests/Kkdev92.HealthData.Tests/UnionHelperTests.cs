@@ -1,4 +1,5 @@
 using Kkdev92.HealthData.Models;
+using Kkdev92.HealthData.Names;
 
 namespace Kkdev92.HealthData.Tests;
 

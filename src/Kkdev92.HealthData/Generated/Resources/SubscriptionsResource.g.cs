@@ -40,7 +40,7 @@ public sealed class SubscriptionsResource
         ArgumentNullException.ThrowIfNull(request);
 
         var builder = new HealthDataRequestBuilder("v4/{+parent}/subscriptions")
-            .SetPath("parent", request.Parent)
+            .SetPath("parent", request.Parent.ToString())
             .AddQuery("subscriptionId", request.SubscriptionId)
             ;
 
@@ -56,7 +56,7 @@ public sealed class SubscriptionsResource
         ArgumentNullException.ThrowIfNull(request);
 
         var builder = new HealthDataRequestBuilder("v4/{+name}")
-            .SetPath("name", request.Name)
+            .SetPath("name", request.Name.ToString())
             ;
 
         await _transport.SendAsync(HealthDataGeneratedOperations.ProjectsSubscribersSubscriptionsDelete, builder.Build(), null, cancellationToken).ConfigureAwait(false);
@@ -73,7 +73,7 @@ public sealed class SubscriptionsResource
         ArgumentNullException.ThrowIfNull(request);
 
         var builder = new HealthDataRequestBuilder("v4/{+parent}/subscriptions")
-            .SetPath("parent", request.Parent)
+            .SetPath("parent", request.Parent.ToString())
             .AddQuery("filter", request.Filter)
             .AddQuery("pageSize", request.PageSize)
             .AddQuery("pageToken", request.PageToken)
@@ -109,7 +109,7 @@ public sealed class SubscriptionsResource
         ArgumentNullException.ThrowIfNull(request);
 
         var builder = new HealthDataRequestBuilder("v4/{+name}")
-            .SetPath("name", request.Name)
+            .SetPath("name", request.Name.ToString())
             .AddQuery("updateMask", request.UpdateMask)
             ;
 

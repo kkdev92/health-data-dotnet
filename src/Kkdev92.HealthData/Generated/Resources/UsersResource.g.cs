@@ -48,7 +48,7 @@ public sealed class UsersResource
         ArgumentNullException.ThrowIfNull(request);
 
         var builder = new HealthDataRequestBuilder("v4/{+name}")
-            .SetPath("name", request.Name)
+            .SetPath("name", request.Name.ToString())
             ;
 
         return await _transport.SendAsync(HealthDataGeneratedOperations.UsersGetIdentity, builder.Build(), null, HealthDataTransport.ReadInfo<Identity>(), cancellationToken).ConfigureAwait(false);
@@ -62,7 +62,7 @@ public sealed class UsersResource
         ArgumentNullException.ThrowIfNull(request);
 
         var builder = new HealthDataRequestBuilder("v4/{+name}")
-            .SetPath("name", request.Name)
+            .SetPath("name", request.Name.ToString())
             ;
 
         return await _transport.SendAsync(HealthDataGeneratedOperations.UsersGetIrnProfile, builder.Build(), null, HealthDataTransport.ReadInfo<IrnProfile>(), cancellationToken).ConfigureAwait(false);
@@ -76,7 +76,7 @@ public sealed class UsersResource
         ArgumentNullException.ThrowIfNull(request);
 
         var builder = new HealthDataRequestBuilder("v4/{+name}")
-            .SetPath("name", request.Name)
+            .SetPath("name", request.Name.ToString())
             ;
 
         return await _transport.SendAsync(HealthDataGeneratedOperations.UsersGetProfile, builder.Build(), null, HealthDataTransport.ReadInfo<Profile>(), cancellationToken).ConfigureAwait(false);
@@ -90,7 +90,7 @@ public sealed class UsersResource
         ArgumentNullException.ThrowIfNull(request);
 
         var builder = new HealthDataRequestBuilder("v4/{+name}")
-            .SetPath("name", request.Name)
+            .SetPath("name", request.Name.ToString())
             ;
 
         return await _transport.SendAsync(HealthDataGeneratedOperations.UsersGetSettings, builder.Build(), null, HealthDataTransport.ReadInfo<Settings>(), cancellationToken).ConfigureAwait(false);
@@ -104,7 +104,7 @@ public sealed class UsersResource
         ArgumentNullException.ThrowIfNull(request);
 
         var builder = new HealthDataRequestBuilder("v4/{+name}")
-            .SetPath("name", request.Name)
+            .SetPath("name", request.Name.ToString())
             .AddQuery("updateMask", request.UpdateMask)
             ;
 
@@ -120,7 +120,7 @@ public sealed class UsersResource
         ArgumentNullException.ThrowIfNull(request);
 
         var builder = new HealthDataRequestBuilder("v4/{+name}")
-            .SetPath("name", request.Name)
+            .SetPath("name", request.Name.ToString())
             .AddQuery("updateMask", request.UpdateMask)
             ;
 

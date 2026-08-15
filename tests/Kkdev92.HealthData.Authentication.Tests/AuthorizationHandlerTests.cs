@@ -3,6 +3,7 @@ using Kkdev92.HealthData.Authentication;
 using Kkdev92.HealthData.Http;
 using Kkdev92.HealthData.Models;
 using Kkdev92.HealthData.Requests;
+using Kkdev92.HealthData.Names;
 
 namespace Kkdev92.HealthData.Authentication.Tests;
 
@@ -42,7 +43,7 @@ public sealed class AuthorizationHandlerTests
         var (client, handler) = CreateClient(new StaticAccessTokenProvider("test-token"));
 
         await client.Users.GetProfileAsync(
-            new GetProfileRequest { Name = "users/me/profile" },
+            new GetProfileRequest { Name = UserName.Me.Profile },
             TestContext.Current.CancellationToken);
 
         Assert.Equal("Bearer test-token", handler.AuthorizationHeaders[0]);
@@ -62,7 +63,7 @@ public sealed class AuthorizationHandlerTests
         var (client, _) = CreateClient(provider);
 
         await client.Users.GetProfileAsync(
-            new GetProfileRequest { Name = "users/me/profile" },
+            new GetProfileRequest { Name = UserName.Me.Profile },
             TestContext.Current.CancellationToken);
 
         Assert.NotNull(observed);
@@ -89,11 +90,11 @@ public sealed class AuthorizationHandlerTests
         var (client, _) = CreateClient(provider);
 
         await client.Users.GetProfileAsync(
-            new GetProfileRequest { Name = "users/me/profile" },
+            new GetProfileRequest { Name = UserName.Me.Profile },
             TestContext.Current.CancellationToken);
 
         await client.Projects.Subscribers.ListAsync(
-            new ListSubscribersRequest { Parent = "projects/p" },
+            new ListSubscribersRequest { Parent = ProjectName.From("p") },
             TestContext.Current.CancellationToken);
 
         Assert.Equal(("health.users.getProfile", false), seen[0]);
@@ -115,7 +116,7 @@ public sealed class AuthorizationHandlerTests
         for (var i = 0; i < 3; i++)
         {
             await client.Users.GetProfileAsync(
-                new GetProfileRequest { Name = "users/me/profile" },
+                new GetProfileRequest { Name = UserName.Me.Profile },
                 TestContext.Current.CancellationToken);
         }
 
@@ -131,7 +132,7 @@ public sealed class AuthorizationHandlerTests
         var (client, handler) = CreateClient(provider);
 
         await client.Users.GetProfileAsync(
-            new GetProfileRequest { Name = "users/me/profile" },
+            new GetProfileRequest { Name = UserName.Me.Profile },
             TestContext.Current.CancellationToken);
 
         Assert.Null(handler.AuthorizationHeaders[0]);

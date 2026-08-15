@@ -61,4 +61,21 @@ public sealed partial class RollUpDataPointsRequest
     [JsonPropertyName("windowSize")]
     [JsonConverter(typeof(GoogleDurationConverter))]
     public GoogleDuration? WindowSize { get; init; }
+
+    /// <summary>Returns a copy of this body positioned at the given page.</summary>
+    /// <remarks>
+    /// This operation's cursor travels in the body, so advancing a page means a new body. Everything but
+    /// the page token is carried over unchanged.
+    /// </remarks>
+    public RollUpDataPointsRequest WithPageToken(string? pageToken)
+    {
+        return new()
+        {
+            DataSourceFamily = DataSourceFamily,
+            PageSize = PageSize,
+            PageToken = pageToken,
+            Range = Range,
+            WindowSize = WindowSize,
+        };
+    }
 }

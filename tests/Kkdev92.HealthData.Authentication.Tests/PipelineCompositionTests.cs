@@ -8,6 +8,7 @@ using Kkdev92.HealthData.Models;
 using Kkdev92.HealthData.Requests;
 using Kkdev92.HealthData.Resilience;
 using Microsoft.Extensions.DependencyInjection;
+using Kkdev92.HealthData.Names;
 
 namespace Kkdev92.HealthData.Authentication.Tests;
 
@@ -90,7 +91,7 @@ public sealed class PipelineCompositionTests
 
             await Assert.ThrowsAsync<HealthDataApiException>(() =>
                 scope.ServiceProvider.GetRequiredService<HealthDataClient>().Users.GetProfileAsync(
-                    new GetProfileRequest { Name = "users/me/profile" },
+                    new GetProfileRequest { Name = UserName.Me.Profile },
                     TestContext.Current.CancellationToken));
         }
 
@@ -125,7 +126,7 @@ public sealed class PipelineCompositionTests
 
         await Assert.ThrowsAsync<HealthDataApiException>(() =>
             provider.GetRequiredService<HealthDataClient>().Users.GetProfileAsync(
-                new GetProfileRequest { Name = "users/me/profile" },
+                new GetProfileRequest { Name = UserName.Me.Profile },
                 TestContext.Current.CancellationToken));
 
         Assert.Equal(3, recorder.Authorizations.Count);
@@ -266,7 +267,7 @@ public sealed class TokenDestinationTests
         try
         {
             await client.Users.GetProfileAsync(
-                new GetProfileRequest { Name = "users/me/profile" },
+                new GetProfileRequest { Name = UserName.Me.Profile },
                 TestContext.Current.CancellationToken);
 
             return (null, recording);
@@ -351,7 +352,7 @@ public sealed class TokenDestinationTests
         var client = new HealthDataClient(httpClient);
 
         await client.Users.GetProfileAsync(
-            new GetProfileRequest { Name = "users/me/profile" },
+            new GetProfileRequest { Name = UserName.Me.Profile },
             TestContext.Current.CancellationToken);
 
         Assert.Equal("ya29.token", recording.LastAuthorization?.Parameter);
@@ -376,7 +377,7 @@ public sealed class TokenDestinationTests
 
         await Assert.ThrowsAsync<InvalidOperationException>(
             () => client.Users.GetProfileAsync(
-                new GetProfileRequest { Name = "users/me/profile" },
+                new GetProfileRequest { Name = UserName.Me.Profile },
                 TestContext.Current.CancellationToken));
 
         Assert.Null(recording.LastAuthorization);
@@ -408,7 +409,7 @@ public sealed class TokenDestinationTests
         var client = new HealthDataClient(httpClient, options);
 
         await Assert.ThrowsAsync<InvalidOperationException>(() => client.Users.GetProfileAsync(
-            new GetProfileRequest { Name = "users/me/profile" },
+            new GetProfileRequest { Name = UserName.Me.Profile },
             TestContext.Current.CancellationToken));
 
         Assert.Null(recording.LastUri);
@@ -431,7 +432,7 @@ public sealed class TokenDestinationTests
         var client = scope.ServiceProvider.GetRequiredService<HealthDataClient>();
 
         await Assert.ThrowsAsync<InvalidOperationException>(() => client.Users.GetProfileAsync(
-            new GetProfileRequest { Name = "users/me/profile" },
+            new GetProfileRequest { Name = UserName.Me.Profile },
             TestContext.Current.CancellationToken));
 
         Assert.Null(recording.LastUri);

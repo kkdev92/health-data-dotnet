@@ -4,6 +4,7 @@ using Kkdev92.HealthData.Models;
 using Kkdev92.HealthData.Requests;
 using Kkdev92.HealthData.Resilience;
 using Microsoft.Extensions.Time.Testing;
+using Kkdev92.HealthData.Names;
 
 namespace Kkdev92.HealthData.ContractTests;
 
@@ -96,7 +97,7 @@ public sealed class RetryHandlerTests
         var (client, time) = CreateClient(inner);
 
         var profile = await RunAsync(time, () => client.Users.GetProfileAsync(
-            new GetProfileRequest { Name = "users/me/profile" }, TestContext.Current.CancellationToken));
+            new GetProfileRequest { Name = UserName.Me.Profile }, TestContext.Current.CancellationToken));
 
         Assert.NotNull(profile);
         Assert.Equal(3, inner.Attempts);
@@ -112,7 +113,7 @@ public sealed class RetryHandlerTests
         await Assert.ThrowsAsync<HealthDataApiException>(() => RunAsync(time, () =>
             client.Users.DataPoints.CreateAsync(new CreateDataPointsRequest
             {
-                Parent = "users/me/dataTypes/weight",
+                Parent = UserName.Me.DataType("weight"),
                 Body = new DataPoint(),
             }, TestContext.Current.CancellationToken)));
 
@@ -132,7 +133,7 @@ public sealed class RetryHandlerTests
 
         await RunAsync(time, () => client.Users.DataPoints.RollUpAsync(new RollUpRequest
         {
-            Parent = "users/me/dataTypes/steps",
+            Parent = UserName.Me.DataType("steps"),
             Body = new RollUpDataPointsRequest(),
         }, TestContext.Current.CancellationToken));
 
@@ -147,7 +148,7 @@ public sealed class RetryHandlerTests
 
         await Assert.ThrowsAsync<HealthDataApiException>(() => RunAsync(time, () =>
             client.Projects.Subscribers.DeleteAsync(
-                new DeleteSubscribersRequest { Name = "projects/p/subscribers/s" },
+                new DeleteSubscribersRequest { Name = ProjectName.From("p").Subscriber("s") },
                 TestContext.Current.CancellationToken)));
 
         Assert.Equal(1, inner.Attempts);
@@ -166,7 +167,7 @@ public sealed class RetryHandlerTests
         });
 
         await RunAsync(time, () => client.Projects.Subscribers.DeleteAsync(
-            new DeleteSubscribersRequest { Name = "projects/p/subscribers/s" },
+            new DeleteSubscribersRequest { Name = ProjectName.From("p").Subscriber("s") },
             TestContext.Current.CancellationToken));
 
         Assert.Equal(2, inner.Attempts);
@@ -186,7 +187,7 @@ public sealed class RetryHandlerTests
 
         var exception = await Assert.ThrowsAsync<HealthDataApiException>(() => RunAsync(time, () =>
             client.Users.GetProfileAsync(
-                new GetProfileRequest { Name = "users/me/profile" }, TestContext.Current.CancellationToken)));
+                new GetProfileRequest { Name = UserName.Me.Profile }, TestContext.Current.CancellationToken)));
 
         Assert.Equal(4, inner.Attempts);
         Assert.True(exception.IsRateLimited);
@@ -201,7 +202,7 @@ public sealed class RetryHandlerTests
 
         await Assert.ThrowsAsync<HealthDataApiException>(() => RunAsync(time, () =>
             client.Users.GetProfileAsync(
-                new GetProfileRequest { Name = "users/me/profile" }, TestContext.Current.CancellationToken)));
+                new GetProfileRequest { Name = UserName.Me.Profile }, TestContext.Current.CancellationToken)));
 
         Assert.Equal(1, inner.Attempts);
     }
@@ -223,7 +224,7 @@ public sealed class RetryHandlerTests
         var client = new HealthDataClient(httpClient);
 
         var call = client.Users.GetProfileAsync(
-            new GetProfileRequest { Name = "users/me/profile" }, TestContext.Current.CancellationToken);
+            new GetProfileRequest { Name = UserName.Me.Profile }, TestContext.Current.CancellationToken);
 
         // Nothing has waited yet, so only the first attempt has been made.
         while (inner.Attempts < 1)
@@ -280,7 +281,7 @@ public sealed class RetryHandlerTests
         time.SetUtcNow(start);
 
         await RunAsync(time, () => client.Users.GetProfileAsync(
-            new GetProfileRequest { Name = "users/me/profile" },
+            new GetProfileRequest { Name = UserName.Me.Profile },
             TestContext.Current.CancellationToken));
 
         Assert.Equal(2, inner.Attempts);
@@ -307,7 +308,7 @@ public sealed class RetryHandlerTests
         time.SetUtcNow(start);
 
         await RunAsync(time, () => client.Users.GetProfileAsync(
-            new GetProfileRequest { Name = "users/me/profile" },
+            new GetProfileRequest { Name = UserName.Me.Profile },
             TestContext.Current.CancellationToken));
 
         Assert.Equal(2, inner.Attempts);
@@ -344,7 +345,7 @@ public sealed class RetryHandlerTests
 
         var failure = await Assert.ThrowsAsync<HealthDataApiException>(
             () => client.Users.GetProfileAsync(
-                new GetProfileRequest { Name = "users/me/profile" },
+                new GetProfileRequest { Name = UserName.Me.Profile },
                 TestContext.Current.CancellationToken));
 
         // One attempt only: no second call was made, early or otherwise.
@@ -382,7 +383,7 @@ public sealed class RetryHandlerTests
         var client = new HealthDataClient(httpClient);
 
         var call = client.Users.GetProfileAsync(
-            new GetProfileRequest { Name = "users/me/profile" }, TestContext.Current.CancellationToken);
+            new GetProfileRequest { Name = UserName.Me.Profile }, TestContext.Current.CancellationToken);
 
         while (inner.Attempts < 1)
         {
@@ -424,7 +425,7 @@ public sealed class RetryHandlerTests
         var client = new HealthDataClient(httpClient);
 
         var call = client.Users.GetProfileAsync(
-            new GetProfileRequest { Name = "users/me/profile" }, TestContext.Current.CancellationToken);
+            new GetProfileRequest { Name = UserName.Me.Profile }, TestContext.Current.CancellationToken);
 
         while (inner.Attempts < 1)
         {

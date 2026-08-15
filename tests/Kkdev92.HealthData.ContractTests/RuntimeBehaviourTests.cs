@@ -4,6 +4,7 @@ using Kkdev92.HealthData.Diagnostics;
 using Kkdev92.HealthData.Http;
 using Kkdev92.HealthData.Models;
 using Kkdev92.HealthData.Requests;
+using Kkdev92.HealthData.Names;
 
 namespace Kkdev92.HealthData.ContractTests;
 
@@ -85,15 +86,24 @@ public sealed class RuntimeBehaviourTests
 
         public List<string> RequestedUrls { get; } = [];
 
-        protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+        /// <summary>What was sent, for the operations whose cursor travels in the body.</summary>
+        public List<string> RequestedBodies { get; } = [];
+
+        protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
             RequestedUrls.Add(request.RequestUri!.PathAndQuery);
+
+            if (request.Content is { } content)
+            {
+                RequestedBodies.Add(await content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false));
+            }
+
             var body = bodies[Math.Min(_index++, bodies.Length - 1)];
 
-            return Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)
+            return new HttpResponseMessage(HttpStatusCode.OK)
             {
                 Content = new StringContent(body, System.Text.Encoding.UTF8, "application/json"),
-            });
+            };
         }
     }
 
@@ -110,7 +120,7 @@ public sealed class RuntimeBehaviourTests
         var names = new List<string>();
 
         await foreach (var point in client.Users.DataPoints.EnumerateAsync(
-            new ListDataPointsRequest { Parent = "users/me/dataTypes/steps", PageSize = 2 },
+            new ListDataPointsRequest { Parent = UserName.Me.DataType("steps"), PageSize = 2 },
             TestContext.Current.CancellationToken))
         {
             names.Add(point.Name!);
@@ -128,6 +138,45 @@ public sealed class RuntimeBehaviourTests
     }
 
     [Fact]
+    public async Task EnumerateFollowsACursorThatTravelsInTheBody()
+    {
+        // rollUp is the one operation that pages this way. It had no streaming overload for that
+        // reason alone — the generator only handled query cursors — so a caller who wanted every
+        // rolled-up point wrote the loop, rebuilt the body each time, and had to know that the
+        // token went inside it. Nothing about the response made that discoverable.
+        using var handler = new SequenceHandler(
+            """{"rollupDataPoints":[{"steps":{"countSum":"11"}}],"nextPageToken":"T2"}""",
+            """{"rollupDataPoints":[{"steps":{"countSum":"22"}}]}""");
+
+        var client = CreateClient(handler);
+
+        var counts = new List<long?>();
+
+        await foreach (var point in client.Users.DataPoints.EnumerateAsync(
+            new RollUpRequest
+            {
+                Parent = UserName.Me.DataType("steps"),
+                Body = new RollUpDataPointsRequest { PageSize = 1 },
+            },
+            TestContext.Current.CancellationToken))
+        {
+            counts.Add(point.Steps?.CountSum);
+        }
+
+        Assert.Equal([11L, 22L], counts);
+        Assert.Equal(2, handler.RequestedBodies.Count);
+
+        // The cursor is in the body, and everything else the caller set survives the copy.
+        Assert.DoesNotContain("pageToken", handler.RequestedBodies[0], StringComparison.Ordinal);
+        Assert.Contains("\"pageToken\":\"T2\"", handler.RequestedBodies[1], StringComparison.Ordinal);
+        Assert.All(handler.RequestedBodies, body => Assert.Contains("\"pageSize\":1", body, StringComparison.Ordinal));
+
+        // And it is not smuggled into the query as well, which would be a second cursor the
+        // service never asked for.
+        Assert.All(handler.RequestedUrls, url => Assert.DoesNotContain("pageToken", url, StringComparison.Ordinal));
+    }
+
+    [Fact]
     public async Task EnumerateIsLazyAndStopsWhenTheCallerStops()
     {
         using var handler = new SequenceHandler(
@@ -137,7 +186,7 @@ public sealed class RuntimeBehaviourTests
         var client = CreateClient(handler);
 
         await foreach (var point in client.Users.DataPoints.EnumerateAsync(
-            new ListDataPointsRequest { Parent = "users/me/dataTypes/steps" },
+            new ListDataPointsRequest { Parent = UserName.Me.DataType("steps") },
             TestContext.Current.CancellationToken))
         {
             Assert.Equal("a", point.Name);
@@ -161,7 +210,7 @@ public sealed class RuntimeBehaviourTests
         var count = 0;
 
         await foreach (var _ in client.Users.DataPoints.EnumerateAsync(
-            new ListDataPointsRequest { Parent = "users/me/dataTypes/steps" },
+            new ListDataPointsRequest { Parent = UserName.Me.DataType("steps") },
             TestContext.Current.CancellationToken))
         {
             count++;
@@ -182,7 +231,9 @@ public sealed class RuntimeBehaviourTests
         Assert.Equal(PaginationKind.RequestOnly,
             HealthDataGeneratedOperations.UsersDataTypesDataPointsDailyRollUp.Pagination);
 
-        // Exactly the five query-paginated operations across the whole surface have one.
+        // Six: the five that page by query parameter, and rollUp, which pages inside its body.
+        // Where the cursor travels is not a reason to withhold enumeration — whether the response
+        // returns one is, and dailyRollUp is the only operation where it does not.
         var enumerateCount = new[]
             {
                 typeof(DataPointsResource), typeof(PairedDevicesResource),
@@ -190,7 +241,18 @@ public sealed class RuntimeBehaviourTests
             }
                 .Sum(t => t.GetMethods().Count(m => m.Name == "EnumerateAsync"));
 
-        Assert.Equal(5, enumerateCount);
+        Assert.Equal(6, enumerateCount);
+
+        // The one that must not exist, named rather than counted: a count stays green if the
+        // missing overload is replaced by an extra one somewhere else.
+        var dailyRollUp = typeof(DataPointsResource)
+            .GetMethods()
+            .Where(m => m.Name == "EnumerateAsync")
+            .Select(m => m.GetParameters()[0].ParameterType.Name)
+            .ToArray();
+
+        Assert.DoesNotContain("DailyRollUpRequest", dailyRollUp);
+        Assert.Contains("RollUpRequest", dailyRollUp);
     }
 
     [Fact]
@@ -203,7 +265,7 @@ public sealed class RuntimeBehaviourTests
         var client = CreateClient(handler);
 
         await client.Users.GetProfileAsync(
-            new GetProfileRequest { Name = "users/me/profile" },
+            new GetProfileRequest { Name = UserName.Me.Profile },
             TestContext.Current.CancellationToken);
 
         Assert.Equal("/v4/users/me/profile?prettyPrint=false", handler.RequestedUrls[0]);
@@ -216,7 +278,7 @@ public sealed class RuntimeBehaviourTests
         var client = CreateClient(handler);
 
         await client.Users.PairedDevices.ListAsync(
-            new ListPairedDevicesRequest { Parent = "users/me", PageSize = 25 },
+            new ListPairedDevicesRequest { Parent = UserName.Me, PageSize = 25 },
             TestContext.Current.CancellationToken);
 
         Assert.Equal("/v4/users/me/pairedDevices?pageSize=25&prettyPrint=false", handler.RequestedUrls[0]);
@@ -231,7 +293,7 @@ public sealed class RuntimeBehaviourTests
         var client = new HealthDataClient(httpClient, new HealthDataClientOptions { PrettyPrintResponses = true });
 
         await client.Users.GetProfileAsync(
-            new GetProfileRequest { Name = "users/me/profile" },
+            new GetProfileRequest { Name = UserName.Me.Profile },
             TestContext.Current.CancellationToken);
 
         // The service default is to indent, so opting in means sending no parameter at all.
@@ -246,7 +308,7 @@ public sealed class RuntimeBehaviourTests
         var client = CreateClient(handler);
 
         await client.Users.GetProfileAsync(
-            new GetProfileRequest { Name = "users/1234/profile" },
+            new GetProfileRequest { Name = UserName.From("1234").Profile },
             TestContext.Current.CancellationToken);
 
         var activity = Assert.Single(scope.Captured);
@@ -278,7 +340,7 @@ public sealed class RuntimeBehaviourTests
         var client = CreateClient(handler);
 
         await Assert.ThrowsAsync<HealthDataApiException>(() => client.Users.GetProfileAsync(
-            new GetProfileRequest { Name = "users/me/profile" },
+            new GetProfileRequest { Name = UserName.Me.Profile },
             TestContext.Current.CancellationToken));
 
         var activity = Assert.Single(scope.Captured);
@@ -313,7 +375,7 @@ public sealed class RuntimeBehaviourTests
         var client = CreateClient(handler);
 
         var exception = await Assert.ThrowsAsync<HealthDataApiException>(() => client.Users.GetProfileAsync(
-            new GetProfileRequest { Name = "users/me/profile" },
+            new GetProfileRequest { Name = UserName.Me.Profile },
             TestContext.Current.CancellationToken));
 
         Assert.True(exception.IsRateLimited);
@@ -335,7 +397,7 @@ public sealed class RuntimeBehaviourTests
         var client = CreateClient(handler);
 
         var exception = await Assert.ThrowsAsync<HealthDataApiException>(() => client.Users.GetProfileAsync(
-            new GetProfileRequest { Name = "users/me/profile" },
+            new GetProfileRequest { Name = UserName.Me.Profile },
             TestContext.Current.CancellationToken));
 
         Assert.Equal(TimeSpan.FromSeconds(12.5), exception.RetryAfter);
@@ -362,7 +424,7 @@ public sealed class RuntimeBehaviourTests
         var client = CreateClient(handler);
 
         await Assert.ThrowsAnyAsync<OperationCanceledException>(() =>
-            client.Users.GetProfileAsync(new GetProfileRequest { Name = "users/me/profile" }, cts.Token));
+            client.Users.GetProfileAsync(new GetProfileRequest { Name = UserName.Me.Profile }, cts.Token));
     }
 
     /// <summary>A body that never completes until the test cancels it.</summary>

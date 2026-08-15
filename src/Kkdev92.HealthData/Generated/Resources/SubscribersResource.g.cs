@@ -57,7 +57,7 @@ public sealed class SubscribersResource
         ArgumentNullException.ThrowIfNull(request);
 
         var builder = new HealthDataRequestBuilder("v4/{+parent}/subscribers")
-            .SetPath("parent", request.Parent)
+            .SetPath("parent", request.Parent.ToString())
             .AddQuery("subscriberId", request.SubscriberId)
             ;
 
@@ -73,7 +73,7 @@ public sealed class SubscribersResource
         ArgumentNullException.ThrowIfNull(request);
 
         var builder = new HealthDataRequestBuilder("v4/{+name}")
-            .SetPath("name", request.Name)
+            .SetPath("name", request.Name.ToString())
             .AddQuery("force", request.Force)
             ;
 
@@ -88,7 +88,7 @@ public sealed class SubscribersResource
         ArgumentNullException.ThrowIfNull(request);
 
         var builder = new HealthDataRequestBuilder("v4/{+parent}/subscribers")
-            .SetPath("parent", request.Parent)
+            .SetPath("parent", request.Parent.ToString())
             .AddQuery("pageSize", request.PageSize)
             .AddQuery("pageToken", request.PageToken)
             ;
@@ -131,7 +131,7 @@ public sealed class SubscribersResource
         ArgumentNullException.ThrowIfNull(request);
 
         var builder = new HealthDataRequestBuilder("v4/{+name}")
-            .SetPath("name", request.Name)
+            .SetPath("name", request.Name.ToString())
             .AddQuery("updateMask", request.UpdateMask)
             ;
 

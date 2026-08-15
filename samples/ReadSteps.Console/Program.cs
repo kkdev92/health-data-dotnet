@@ -2,6 +2,7 @@ using Kkdev92.HealthData;
 using Kkdev92.HealthData.Authentication;
 using Kkdev92.HealthData.Models;
 using Kkdev92.HealthData.Requests;
+using Kkdev92.HealthData.Names;
 
 // Reads a user's step data.
 //
@@ -62,7 +63,7 @@ try
     await foreach (var point in client.Users.DataPoints.EnumerateAsync(
         new ListDataPointsRequest
         {
-            Parent = "users/me/dataTypes/steps",
+            Parent = UserName.Me.DataType("steps"),
             Filter = filter,
             PageSize = 100,
         },

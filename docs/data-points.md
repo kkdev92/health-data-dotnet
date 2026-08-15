@@ -120,7 +120,7 @@ if (sample.PhysicalTime is { } instant && sample.UtcOffset is { } offset)
 await foreach (var point in client.Users.DataPoints.EnumerateAsync(
     new ListDataPointsRequest
     {
-        Parent = "users/me/dataTypes/steps",
+        Parent = UserName.Me.DataType("steps"),
         Filter = "steps.interval.start_time >= \"2026-08-01T00:00:00Z\" "
                + "AND steps.interval.start_time < \"2026-08-08T00:00:00Z\"",   // steps is interval-shaped
     },
@@ -157,7 +157,7 @@ Three types are special-cased by Google:
 resource name.** They differ whenever the name has more than one word:
 
 ```csharp
-Parent = "users/me/dataTypes/heart-rate",          // kebab-case, in the resource name
+Parent = UserName.Me.DataType("heart-rate"),          // kebab-case, in the resource name
 Filter = "heart_rate.sample_time.physical_time >= \"2026-08-01T00:00:00Z\"",   // snake_case
 ```
 

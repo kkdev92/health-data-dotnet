@@ -21,7 +21,67 @@ internal sealed record ApiContract
     public required IReadOnlyList<SchemaContract> Schemas { get; init; }
     public required IReadOnlyList<ErrorReasonContract> ErrorReasons { get; init; }
     public required IReadOnlyList<OpenEnumContract> OpenEnums { get; init; }
+
+    /// <summary>The resource names the service accepts, one per distinct pattern.</summary>
+    public required IReadOnlyList<ResourceNameContract> ResourceNames { get; init; }
 }
+
+/// <summary>
+/// A generated resource name type, derived from the pattern Discovery puts on a name parameter.
+/// </summary>
+/// <remarks>
+/// <para>
+/// Every <c>name</c> and <c>parent</c> parameter in this contract carries a <c>pattern</c> — a
+/// regular expression the service applies before doing anything else. The generator used to put
+/// that expression in a doc comment above a <c>string</c>. Here it becomes the type of the
+/// parameter instead, so a name of the wrong shape stops being a 400 and starts being a compile
+/// error (ADR-0010).
+/// </para>
+/// <para>
+/// The pattern is also the definition of the type's structure: its segments say which ids the name
+/// carries and which name it descends from. Nothing about the hierarchy is written down here — it
+/// is read out of the expressions, so a resource Google adds arrives with the contract.
+/// </para>
+/// </remarks>
+internal sealed record ResourceNameContract
+{
+    /// <summary>The generated type name, for example <c>PairedDeviceName</c>.</summary>
+    public required string CSharpName { get; init; }
+
+    /// <summary>The pattern exactly as Discovery states it, anchors included.</summary>
+    public required string Pattern { get; init; }
+
+    /// <summary>The segments the pattern is made of, in order.</summary>
+    public required IReadOnlyList<ResourceNameSegment> Segments { get; init; }
+
+    /// <summary>
+    /// The name this one descends from, or <see langword="null"/> for a root such as
+    /// <c>users/{user}</c>.
+    /// </summary>
+    public string? ParentCSharpName { get; init; }
+
+    /// <summary>
+    /// The member the parent offers to build this name: a method taking an id for a collection
+    /// member, a property for a singleton such as <c>profile</c>.
+    /// </summary>
+    public required string MemberName { get; init; }
+
+    /// <summary>The id parameter this name adds to its parent's, or null for a singleton.</summary>
+    public string? IdParameterName { get; init; }
+
+    /// <summary>Every id the name carries, outermost first — one per variable segment.</summary>
+    public required IReadOnlyList<string> IdParameterNames { get; init; }
+
+    /// <summary>An example of the wire form, for doc comments.</summary>
+    public required string Example { get; init; }
+}
+
+/// <summary>One <c>/</c>-separated part of a resource name pattern.</summary>
+/// <param name="Literal">The literal text, for example <c>pairedDevices</c> or <c>profile</c>.</param>
+/// <param name="IsVariable">
+/// True when the segment is <c>[^/]+</c> — an id supplied by the caller rather than fixed text.
+/// </param>
+internal sealed record ResourceNameSegment(string Literal, bool IsVariable);
 
 /// <summary>
 /// A generated open enum type.

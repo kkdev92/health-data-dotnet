@@ -37,7 +37,7 @@ public sealed class PairedDevicesResource
         ArgumentNullException.ThrowIfNull(request);
 
         var builder = new HealthDataRequestBuilder("v4/{+name}")
-            .SetPath("name", request.Name)
+            .SetPath("name", request.Name.ToString())
             ;
 
         return await _transport.SendAsync(HealthDataGeneratedOperations.UsersPairedDevicesGet, builder.Build(), null, HealthDataTransport.ReadInfo<PairedDevice>(), cancellationToken).ConfigureAwait(false);
@@ -51,7 +51,7 @@ public sealed class PairedDevicesResource
         ArgumentNullException.ThrowIfNull(request);
 
         var builder = new HealthDataRequestBuilder("v4/{+parent}/pairedDevices")
-            .SetPath("parent", request.Parent)
+            .SetPath("parent", request.Parent.ToString())
             .AddQuery("pageSize", request.PageSize)
             .AddQuery("pageToken", request.PageToken)
             ;

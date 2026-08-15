@@ -10,6 +10,7 @@ using Kkdev92.HealthData.Resilience;
 using Kkdev92.HealthData.Serialization;
 using Kkdev92.HealthData.Webhooks;
 using Microsoft.Extensions.DependencyInjection;
+using Kkdev92.HealthData.Names;
 
 // Native AOT smoke application.
 // A library that merely compiles is not evidence of AOT compatibility. This is a real consumer
@@ -95,7 +96,7 @@ var client = new HealthDataClient(httpClient);
 
 var listed = await client.Users.DataPoints.ListAsync(new ListDataPointsRequest
 {
-    Parent = "users/me/dataTypes/heart-rate",
+    Parent = UserName.Me.DataType("heart-rate"),
     PageSize = 2,
 });
 
@@ -135,7 +136,7 @@ using var authorized = new HttpClient(
 
 var authorizedList = await new HealthDataClient(authorized).Users.DataPoints.ListAsync(new ListDataPointsRequest
 {
-    Parent = "users/me/dataTypes/heart-rate",
+    Parent = UserName.Me.DataType("heart-rate"),
 });
 
 Check("authorized call round-trips", authorizedList.DataPoints is { Count: 1 });

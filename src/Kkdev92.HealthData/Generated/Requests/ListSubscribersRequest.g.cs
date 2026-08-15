@@ -11,14 +11,15 @@
 
 #nullable enable
 
+using Kkdev92.HealthData.Names;
+
 namespace Kkdev92.HealthData.Requests;
 
 /// <summary>Request for health.projects.subscribers.list.</summary>
-public sealed class ListSubscribersRequest
+public sealed record ListSubscribersRequest
 {
     /// <summary>Required. The parent, which owns this collection of subscribers. Format: projects/{project}</summary>
-    /// <remarks>The service requires this to match the pattern ^projects/[^/]+$.</remarks>
-    public required string Parent { get; init; }
+    public required ProjectName Parent { get; init; }
 
     /// <summary>
     /// Optional. The maximum number of subscribers to return. The service may return fewer than this value.
@@ -35,7 +36,11 @@ public sealed class ListSubscribersRequest
     public string? PageToken { get; init; }
 
     /// <summary>Returns a copy of this request positioned at the given page.</summary>
-    internal ListSubscribersRequest WithPageToken(string? pageToken)
+    /// <remarks>
+    /// The copy is exact but for the page token. Nothing is mutated, so the original request stays valid
+    /// and re-sendable.
+    /// </remarks>
+    public ListSubscribersRequest WithPageToken(string? pageToken)
     {
         return new()
         {
@@ -44,4 +49,11 @@ public sealed class ListSubscribersRequest
             Parent = Parent,
         };
     }
+
+    /// <summary>Returns the type name.</summary>
+    /// <remarks>
+    /// A request identifies whose data is being asked for. Rendering it into a log line is not something
+    /// this type will do on a caller's behalf.
+    /// </remarks>
+    public override string ToString() => nameof(ListSubscribersRequest);
 }
