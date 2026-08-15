@@ -27,6 +27,19 @@ union helpers leave it out. `spec/v4/semantics.json` records that decision with 
 wording for why, and it matters: counted as a member, it sorts first and `GetKind()` answers
 `DataSource` for every real measurement.
 
+**Setting two is refused when the request is written.** Nothing in the type system stops it — the
+members are ordinary properties, and they have to stay settable because `dataPoints.patch` is read,
+modify, send — so the check runs where the body is serialized, which is the last point at which the
+object is finished and nothing has left yet. The message names both members:
+
+```text
+System.InvalidOperationException: A DataPoint carries one measurement, and this one has 2:
+steps, weight. The service accepts exactly one, so this request would be refused.
+```
+
+Reading is unaffected. A response carrying two still deserializes: refusing it would drop a
+person's data over a client-side rule about a shape the service chose to send.
+
 ```mermaid
 flowchart LR
     DP["DataPoint"]

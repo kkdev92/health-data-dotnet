@@ -353,7 +353,50 @@
       "health.projects.subscribers.subscriptions.list",
       "health.projects.subscribers.subscriptions.patch"
     ],
-    "$comment": "These use project/IAM credentials (cloud-platform), not end-user OAuth."
+    "$comment": "These use project/IAM credentials (cloud-platform), not end-user OAuth.",
+    "scopeKinds": {
+      "$comment": [
+        "What a scope grants, which Discovery states in prose and not in a field. Read from the",
+        "description on each scope: Google writes 'See your Google Health X data' for one that",
+        "reads and 'Add X data to Google Health, and edit or delete the data it adds.' for one",
+        "that writes. Listed here rather than derived at generation time, because a rule over the",
+        "text would be a rule over Google's copywriting.",
+        "Not derivable from the operations either, measured on 2026-08-15: five .readonly scopes",
+        "are declared by POST operations - rollUp, dailyRollUp and reconcile are POSTs that read -",
+        "so 'appears on a mutating method' classifies them as writes. The suffix and the HTTP",
+        "method disagree in 5 of 19 cases; the description agrees with the suffix in all 19.",
+        "Generation fails if a scope in Discovery is missing from these lists, so a scope Google",
+        "adds is a build failure rather than a scope that silently belongs to no kind.",
+        "Includes the scopes semantics.json adds under scopeCrossCheck.additionalScopes, which are generated alongside Discovery's own and would otherwise be unclassified."
+      ],
+      "verifiedOn": "2026-08-15",
+      "read": [
+        "https://www.googleapis.com/auth/googlehealth.activity_and_fitness.readonly",
+        "https://www.googleapis.com/auth/googlehealth.ecg.readonly",
+        "https://www.googleapis.com/auth/googlehealth.health_metrics_and_measurements.readonly",
+        "https://www.googleapis.com/auth/googlehealth.irn.readonly",
+        "https://www.googleapis.com/auth/googlehealth.location.readonly",
+        "https://www.googleapis.com/auth/googlehealth.nutrition.readonly",
+        "https://www.googleapis.com/auth/googlehealth.profile.readonly",
+        "https://www.googleapis.com/auth/googlehealth.settings.readonly",
+        "https://www.googleapis.com/auth/googlehealth.sleep.readonly"
+      ],
+      "write": [
+        "https://www.googleapis.com/auth/googlehealth.activity_and_fitness.writeonly",
+        "https://www.googleapis.com/auth/googlehealth.health_metrics_and_measurements.writeonly",
+        "https://www.googleapis.com/auth/googlehealth.location.writeonly",
+        "https://www.googleapis.com/auth/googlehealth.logged_symptoms.writeonly",
+        "https://www.googleapis.com/auth/googlehealth.mindfulness.writeonly",
+        "https://www.googleapis.com/auth/googlehealth.nutrition.writeonly",
+        "https://www.googleapis.com/auth/googlehealth.profile.writeonly",
+        "https://www.googleapis.com/auth/googlehealth.reproductive_health.writeonly",
+        "https://www.googleapis.com/auth/googlehealth.settings.writeonly",
+        "https://www.googleapis.com/auth/googlehealth.sleep.writeonly"
+      ],
+      "project": [
+        "https://www.googleapis.com/auth/cloud-platform"
+      ]
+    }
   },
   "unions": {
     "$comment": [

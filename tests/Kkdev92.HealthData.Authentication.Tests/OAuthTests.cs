@@ -326,9 +326,11 @@ public sealed class OAuthTests
     [Fact]
     public void AuthorizationUrlUsesGooglesEndpointAndParameters()
     {
-        var url = CreateClient().CreateAuthorizationUrl(
-            [HealthDataScopes.ProfileReadonly, HealthDataScopes.SleepReadonly],
-            state: "xyz");
+        var url = CreateClient().CreateAuthorizationUrl(new GoogleAuthorizationUrlOptions
+        {
+            Scopes = [HealthDataScopes.ProfileReadonly, HealthDataScopes.SleepReadonly],
+            State = "xyz",
+        });
 
         Assert.StartsWith("https://accounts.google.com/o/oauth2/v2/auth?", url.ToString(), StringComparison.Ordinal);
 
@@ -351,10 +353,12 @@ public sealed class OAuthTests
     [Fact]
     public void OfflineAccessAndForcedConsentAreOptional()
     {
-        var url = CreateClient().CreateAuthorizationUrl(
-            [HealthDataScopes.ProfileReadonly],
-            offlineAccess: false,
-            forceConsent: true);
+        var url = CreateClient().CreateAuthorizationUrl(new GoogleAuthorizationUrlOptions
+        {
+            Scopes = [HealthDataScopes.ProfileReadonly],
+            OfflineAccess = false,
+            ForceConsent = true,
+        });
 
         var query = HttpUtility.ParseQueryString(url.Query);
 
@@ -368,7 +372,11 @@ public sealed class OAuthTests
     public void AuthorizationUrlCarriesThePkceChallenge()
     {
         var pkce = PkceCodeChallenge.Create();
-        var url = CreateClient().CreateAuthorizationUrl([HealthDataScopes.ProfileReadonly], pkce: pkce);
+        var url = CreateClient().CreateAuthorizationUrl(new GoogleAuthorizationUrlOptions
+        {
+            Scopes = [HealthDataScopes.ProfileReadonly],
+            Pkce = pkce,
+        });
         var query = HttpUtility.ParseQueryString(url.Query);
 
         Assert.Equal(pkce.CodeChallenge, query["code_challenge"]);
@@ -553,7 +561,7 @@ public sealed class OAuthTests
                 RedirectUri = new Uri(Registered),
             });
 
-        var query = HttpUtility.ParseQueryString(client.CreateAuthorizationUrl(["scope"]).Query);
+        var query = HttpUtility.ParseQueryString(client.CreateAuthorizationUrl(new GoogleAuthorizationUrlOptions { Scopes = ["scope"] }).Query);
 
         Assert.Equal(Registered, query["redirect_uri"]);
     }

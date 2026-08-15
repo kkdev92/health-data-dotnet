@@ -4,8 +4,17 @@ namespace Kkdev92.HealthData;
 /// Options for <see cref="HealthDataClient"/>.
 /// </summary>
 /// <remarks>
+/// <para>
 /// Deliberately minimal. Credentials never appear here: the client does not own them
 /// (ADR-0007), and a token on a shared client is a data-leak hazard in a multi-user server.
+/// </para>
+/// <para>
+/// There is no timeout here either, and that is not an omission. The timeout is the
+/// <see cref="HttpClient"/>'s — <c>httpClient.Timeout</c>, or a
+/// <see cref="System.Threading.CancellationToken"/> per call, both of which this SDK passes
+/// straight through. A second timeout on this object would be a second answer to the same
+/// question, and the one that lost would be silent.
+/// </para>
 /// </remarks>
 public sealed class HealthDataClientOptions
 {

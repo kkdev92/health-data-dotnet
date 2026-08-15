@@ -50,14 +50,102 @@ public readonly struct GoogleFieldMask : IEquatable<GoogleFieldMask>
     /// <summary>True when the mask names no fields.</summary>
     public bool IsEmpty => Paths.Count == 0;
 
-    /// <summary>Parses the comma-separated wire representation.</summary>
+    /// <summary>
+    /// Parses the comma-separated wire representation.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// Syntax only. Whether <c>age</c> is a field of the message being patched is the service's
+    /// question and it answers it; whether <c>a..b</c> could be a field path of anything is this
+    /// side's, and answering it here turns a 400 into a line number.
+    /// </para>
+    /// <para>
+    /// An empty mask throws rather than parsing to nothing. <c>field_mask.proto</c> says libraries
+    /// "have various different behaviors in the face of empty masks" and tells service authors to
+    /// special-case it, so there is no meaning here to preserve. Returning <c>default</c> meant the
+    /// request builder dropped the parameter, and an omitted mask has a documented meaning under
+    /// AIP-134 — "replace fields which are present" — which is a decision the caller did not make.
+    /// </para>
+    /// <para>
+    /// <c>*</c> is accepted as itself: AIP-134 requires update methods to support it as "full
+    /// replace", and it is not a field path.
+    /// </para>
+    /// </remarks>
+    /// <exception cref="FormatException">
+    /// The value is empty, contains an empty segment, or contains something that is not a field
+    /// path.
+    /// </exception>
     public static GoogleFieldMask Parse(string value)
     {
         ArgumentNullException.ThrowIfNull(value);
 
-        return value.Length == 0
-            ? default
-            : new GoogleFieldMask(value.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries));
+        if (value.Trim().Length == 0)
+        {
+            throw new FormatException(
+                "A field mask cannot be empty. The wire meaning of an empty mask is undefined - "
+                + "field_mask.proto says implementations differ - so it cannot be sent as one, and "
+                + "it is not the same as sending no mask at all. Omit the mask to leave it unset, "
+                + "or pass \"*\" for a full replacement.");
+        }
+
+        // TrimEntries, but not RemoveEmptyEntries: "a,,b" used to arrive as two paths, so a typo
+        // in the middle of a mask silently narrowed what was being written.
+        var paths = value.Split(',', StringSplitOptions.TrimEntries);
+
+        foreach (var path in paths)
+        {
+            if (path.Length == 0)
+            {
+                throw new FormatException(
+                    $"The field mask '{value}' has an empty path in it. Each comma separates one "
+                    + "field path, so a doubled or trailing comma is a path that names nothing.");
+            }
+
+            if (!IsFieldPath(path))
+            {
+                throw new FormatException(
+                    $"'{path}' is not a field path. Google documents these as lower camel case "
+                    + "names, dot-separated for nested fields, for example "
+                    + "\"age,interval.startTime\".");
+            }
+        }
+
+        return new GoogleFieldMask(paths);
+    }
+
+    /// <summary>Whether a single path is syntactically a field path.</summary>
+    /// <remarks>
+    /// Deliberately loose about the casing. Google documents lower camel case, and the mask is
+    /// stated by the caller against a message this type knows nothing about, so a wire name whose
+    /// shape this side did not anticipate should reach the service rather than be refused here.
+    /// What is checked is structure: dot-separated segments, each non-empty and made of
+    /// name characters.
+    /// </remarks>
+    private static bool IsFieldPath(string path)
+    {
+        // AIP-134 requires update methods to support "*". It is not a path, but it is a mask.
+        if (path == "*")
+        {
+            return true;
+        }
+
+        foreach (var segment in path.Split('.'))
+        {
+            if (segment.Length == 0)
+            {
+                return false;
+            }
+
+            foreach (var character in segment)
+            {
+                if (!char.IsLetterOrDigit(character) && character != '_')
+                {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 
     /// <summary>Renders the comma-separated wire representation.</summary>

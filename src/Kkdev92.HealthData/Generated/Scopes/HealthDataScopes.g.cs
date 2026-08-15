@@ -82,4 +82,83 @@ public static class HealthDataScopes
 
     /// <summary>Add sleep data to Google Health, and edit or delete the data it adds.</summary>
     public const string SleepWriteonly = "https://www.googleapis.com/auth/googlehealth.sleep.writeonly";
+
+    /// <summary>Every scope this contract declares.</summary>
+    /// <remarks>
+    /// The set an application would present for review, and the one the three below partition. Not a
+    /// promise of completeness about the service: an operation may start requiring a scope that is not
+    /// here.
+    /// </remarks>
+    public static IReadOnlyList<string> All { get; } =
+    [
+        CloudPlatform,
+        ActivityAndFitnessReadonly,
+        ActivityAndFitnessWriteonly,
+        EcgReadonly,
+        HealthMetricsAndMeasurementsReadonly,
+        HealthMetricsAndMeasurementsWriteonly,
+        IrnReadonly,
+        LocationReadonly,
+        LocationWriteonly,
+        LoggedSymptomsWriteonly,
+        MindfulnessWriteonly,
+        NutritionReadonly,
+        NutritionWriteonly,
+        ProfileReadonly,
+        ProfileWriteonly,
+        ReproductiveHealthWriteonly,
+        SettingsReadonly,
+        SettingsWriteonly,
+        SleepReadonly,
+        SleepWriteonly,
+    ];
+
+    /// <summary>The scopes that only read a person's data.</summary>
+    /// <remarks>
+    /// For an application that shows data and does not change it. Asking for these and nothing else is what
+    /// keeps the consent screen honest - and what stops a write scope arriving because an operation that
+    /// reads happens to accept one.
+    /// </remarks>
+    public static IReadOnlyList<string> ReadOnly { get; } =
+    [
+        ActivityAndFitnessReadonly,
+        EcgReadonly,
+        HealthMetricsAndMeasurementsReadonly,
+        IrnReadonly,
+        LocationReadonly,
+        NutritionReadonly,
+        ProfileReadonly,
+        SettingsReadonly,
+        SleepReadonly,
+    ];
+
+    /// <summary>The scopes that add to, edit, or delete a person's data.</summary>
+    /// <remarks>
+    /// Google's own wording for each of these is "Add ... and edit or delete the data it adds", which is
+    /// worth reading before asking for one.
+    /// </remarks>
+    public static IReadOnlyList<string> WriteOnly { get; } =
+    [
+        ActivityAndFitnessWriteonly,
+        HealthMetricsAndMeasurementsWriteonly,
+        LocationWriteonly,
+        LoggedSymptomsWriteonly,
+        MindfulnessWriteonly,
+        NutritionWriteonly,
+        ProfileWriteonly,
+        ReproductiveHealthWriteonly,
+        SettingsWriteonly,
+        SleepWriteonly,
+    ];
+
+    /// <summary>The scopes that authorize as the project rather than as a person.</summary>
+    /// <remarks>
+    /// cloud-platform, which a consent screen shows as "see, edit, configure and delete your Google Cloud
+    /// data". The operations needing it are meant for a service account; asking a person for it so an app
+    /// can list webhook subscribers is not a trade worth making.
+    /// </remarks>
+    public static IReadOnlyList<string> Project { get; } =
+    [
+        CloudPlatform,
+    ];
 }

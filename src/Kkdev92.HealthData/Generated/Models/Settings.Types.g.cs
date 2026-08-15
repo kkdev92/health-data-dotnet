@@ -25,7 +25,10 @@ public sealed partial class Settings
         /// <summary>Wire values for Settings.distanceUnit.</summary>
         /// <remarks>
         /// This is an open enum: values Google adds later are preserved verbatim rather than rejected. The
-        /// members below are only those known when this contract was generated.
+        /// members below are only those known when this contract was generated. It is not a C# enum - it is a
+        /// struct wrapping the wire string, which is what lets an unknown value through - so Enum.TryParse and
+        /// Enum.Parse do not work on it. They compile, because their constraint is only 'struct', and throw
+        /// ArgumentException at run time. Use FromValue to build one from a string, and Value to read it back.
         /// </remarks>
         [JsonConverter(typeof(OpenStringEnumConverter<DistanceUnit>))]
         public readonly partial record struct DistanceUnit(string Value) : IOpenStringValue<DistanceUnit>
@@ -49,7 +52,10 @@ public sealed partial class Settings
         /// <summary>Wire values for Settings.glucoseUnit.</summary>
         /// <remarks>
         /// This is an open enum: values Google adds later are preserved verbatim rather than rejected. The
-        /// members below are only those known when this contract was generated.
+        /// members below are only those known when this contract was generated. It is not a C# enum - it is a
+        /// struct wrapping the wire string, which is what lets an unknown value through - so Enum.TryParse and
+        /// Enum.Parse do not work on it. They compile, because their constraint is only 'struct', and throw
+        /// ArgumentException at run time. Use FromValue to build one from a string, and Value to read it back.
         /// </remarks>
         [JsonConverter(typeof(OpenStringEnumConverter<GlucoseUnit>))]
         public readonly partial record struct GlucoseUnit(string Value) : IOpenStringValue<GlucoseUnit>
@@ -73,7 +79,10 @@ public sealed partial class Settings
         /// <summary>Wire values for Settings.heightUnit.</summary>
         /// <remarks>
         /// This is an open enum: values Google adds later are preserved verbatim rather than rejected. The
-        /// members below are only those known when this contract was generated.
+        /// members below are only those known when this contract was generated. It is not a C# enum - it is a
+        /// struct wrapping the wire string, which is what lets an unknown value through - so Enum.TryParse and
+        /// Enum.Parse do not work on it. They compile, because their constraint is only 'struct', and throw
+        /// ArgumentException at run time. Use FromValue to build one from a string, and Value to read it back.
         /// </remarks>
         [JsonConverter(typeof(OpenStringEnumConverter<HeightUnit>))]
         public readonly partial record struct HeightUnit(string Value) : IOpenStringValue<HeightUnit>
@@ -97,7 +106,10 @@ public sealed partial class Settings
         /// <summary>Wire values for Settings.strideLengthRunningType.</summary>
         /// <remarks>
         /// This is an open enum: values Google adds later are preserved verbatim rather than rejected. The
-        /// members below are only those known when this contract was generated.
+        /// members below are only those known when this contract was generated. It is not a C# enum - it is a
+        /// struct wrapping the wire string, which is what lets an unknown value through - so Enum.TryParse and
+        /// Enum.Parse do not work on it. They compile, because their constraint is only 'struct', and throw
+        /// ArgumentException at run time. Use FromValue to build one from a string, and Value to read it back.
         /// </remarks>
         [JsonConverter(typeof(OpenStringEnumConverter<StrideLengthRunningType>))]
         public readonly partial record struct StrideLengthRunningType(string Value) : IOpenStringValue<StrideLengthRunningType>
@@ -124,7 +136,10 @@ public sealed partial class Settings
         /// <summary>Wire values for Settings.strideLengthWalkingType.</summary>
         /// <remarks>
         /// This is an open enum: values Google adds later are preserved verbatim rather than rejected. The
-        /// members below are only those known when this contract was generated.
+        /// members below are only those known when this contract was generated. It is not a C# enum - it is a
+        /// struct wrapping the wire string, which is what lets an unknown value through - so Enum.TryParse and
+        /// Enum.Parse do not work on it. They compile, because their constraint is only 'struct', and throw
+        /// ArgumentException at run time. Use FromValue to build one from a string, and Value to read it back.
         /// </remarks>
         [JsonConverter(typeof(OpenStringEnumConverter<StrideLengthWalkingType>))]
         public readonly partial record struct StrideLengthWalkingType(string Value) : IOpenStringValue<StrideLengthWalkingType>
@@ -151,7 +166,10 @@ public sealed partial class Settings
         /// <summary>Wire values for Settings.swimUnit.</summary>
         /// <remarks>
         /// This is an open enum: values Google adds later are preserved verbatim rather than rejected. The
-        /// members below are only those known when this contract was generated.
+        /// members below are only those known when this contract was generated. It is not a C# enum - it is a
+        /// struct wrapping the wire string, which is what lets an unknown value through - so Enum.TryParse and
+        /// Enum.Parse do not work on it. They compile, because their constraint is only 'struct', and throw
+        /// ArgumentException at run time. Use FromValue to build one from a string, and Value to read it back.
         /// </remarks>
         [JsonConverter(typeof(OpenStringEnumConverter<SwimUnit>))]
         public readonly partial record struct SwimUnit(string Value) : IOpenStringValue<SwimUnit>
@@ -175,7 +193,10 @@ public sealed partial class Settings
         /// <summary>Wire values for Settings.temperatureUnit.</summary>
         /// <remarks>
         /// This is an open enum: values Google adds later are preserved verbatim rather than rejected. The
-        /// members below are only those known when this contract was generated.
+        /// members below are only those known when this contract was generated. It is not a C# enum - it is a
+        /// struct wrapping the wire string, which is what lets an unknown value through - so Enum.TryParse and
+        /// Enum.Parse do not work on it. They compile, because their constraint is only 'struct', and throw
+        /// ArgumentException at run time. Use FromValue to build one from a string, and Value to read it back.
         /// </remarks>
         [JsonConverter(typeof(OpenStringEnumConverter<TemperatureUnit>))]
         public readonly partial record struct TemperatureUnit(string Value) : IOpenStringValue<TemperatureUnit>
@@ -199,7 +220,10 @@ public sealed partial class Settings
         /// <summary>Wire values for Settings.waterUnit.</summary>
         /// <remarks>
         /// This is an open enum: values Google adds later are preserved verbatim rather than rejected. The
-        /// members below are only those known when this contract was generated.
+        /// members below are only those known when this contract was generated. It is not a C# enum - it is a
+        /// struct wrapping the wire string, which is what lets an unknown value through - so Enum.TryParse and
+        /// Enum.Parse do not work on it. They compile, because their constraint is only 'struct', and throw
+        /// ArgumentException at run time. Use FromValue to build one from a string, and Value to read it back.
         /// </remarks>
         [JsonConverter(typeof(OpenStringEnumConverter<WaterUnit>))]
         public readonly partial record struct WaterUnit(string Value) : IOpenStringValue<WaterUnit>
@@ -226,7 +250,10 @@ public sealed partial class Settings
         /// <summary>Wire values for Settings.weightUnit.</summary>
         /// <remarks>
         /// This is an open enum: values Google adds later are preserved verbatim rather than rejected. The
-        /// members below are only those known when this contract was generated.
+        /// members below are only those known when this contract was generated. It is not a C# enum - it is a
+        /// struct wrapping the wire string, which is what lets an unknown value through - so Enum.TryParse and
+        /// Enum.Parse do not work on it. They compile, because their constraint is only 'struct', and throw
+        /// ArgumentException at run time. Use FromValue to build one from a string, and Value to read it back.
         /// </remarks>
         [JsonConverter(typeof(OpenStringEnumConverter<WeightUnit>))]
         public readonly partial record struct WeightUnit(string Value) : IOpenStringValue<WeightUnit>

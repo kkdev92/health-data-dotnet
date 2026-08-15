@@ -59,9 +59,38 @@ public sealed class HealthDataRequestBuilder
     public HealthDataRequestBuilder AddQuery(string wireName, int? value)
         => AddQuery(wireName, value?.ToString(System.Globalization.CultureInfo.InvariantCulture));
 
-    /// <summary>Adds a field mask query parameter.</summary>
+    /// <summary>
+    /// Adds a field mask query parameter.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// Null means the caller set no mask, and no parameter goes out — which AIP-134 defines as
+    /// "replace fields which are present".
+    /// </para>
+    /// <para>
+    /// An empty mask is not the same thing and is not treated as one. It used to be: both arrived
+    /// here and both dropped the parameter, so "I set a mask" and "my mask names nothing" produced
+    /// the same request. The second is a contradiction the caller has to resolve, and the wire
+    /// meaning of an empty mask is undefined in any case. <see cref="GoogleFieldMask.Parse"/>
+    /// refuses to build one; this catches the other way in, <c>default(GoogleFieldMask)</c>, which
+    /// no constructor sees.
+    /// </para>
+    /// </remarks>
+    /// <exception cref="ArgumentException">The mask is present and names no fields.</exception>
     public HealthDataRequestBuilder AddQuery(string wireName, GoogleFieldMask? value)
-        => AddQuery(wireName, value is null || value.Value.IsEmpty ? null : value.Value.ToString());
+    {
+        if (value is { IsEmpty: true })
+        {
+            throw new ArgumentException(
+                $"The '{wireName}' field mask names no fields. An empty mask has no defined meaning "
+                + "on the wire, and sending nothing instead would mean \"replace the fields present "
+                + "in the body\", which is a different request. Omit the mask for that, or name the "
+                + "fields to write.",
+                nameof(value));
+        }
+
+        return AddQuery(wireName, value?.ToString());
+    }
 
     /// <summary>Builds the relative URI, escaped according to the Google path template rules.</summary>
     public string Build()

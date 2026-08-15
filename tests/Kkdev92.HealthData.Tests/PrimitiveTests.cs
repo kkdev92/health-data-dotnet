@@ -156,4 +156,72 @@ public sealed class GoogleFieldMaskTests
         Assert.Equal(new GoogleFieldMask("a", "b"), new GoogleFieldMask("a", "b"));
         Assert.NotEqual(new GoogleFieldMask("a", "b"), new GoogleFieldMask("b", "a"));
     }
+
+    /// <summary>
+    /// An empty mask is not a mask that means "nothing", and not one that means "everything".
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// <c>field_mask.proto</c> says libraries "have various different behaviors in the face of
+    /// empty masks", and tells service authors to special-case it. So the wire meaning is
+    /// genuinely undefined, and there is nothing for this side to convert it into.
+    /// </para>
+    /// <para>
+    /// It used to parse to <c>default</c>, which the request builder then treated as "no mask
+    /// supplied" — a documented meaning under AIP-134, "replace fields which are present", and not
+    /// the one the caller wrote. Undefined turned into something specific, silently, one layer
+    /// below where anybody was looking.
+    /// </para>
+    /// </remarks>
+    [Fact]
+    public void ParsingAnEmptyMaskThrowsRatherThanMeaningSomethingElse()
+    {
+        var thrown = Assert.Throws<FormatException>(() => GoogleFieldMask.Parse(""));
+
+        Assert.Contains("empty", thrown.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Theory]
+    [InlineData("a,,b")]
+    [InlineData(",")]
+    [InlineData("a,")]
+    [InlineData(",a")]
+    [InlineData("   ")]
+    public void AnEmptySegmentIsNotSilentlyDropped(string value)
+    {
+        // "a,,b" used to parse as "a,b". The caller wrote three paths and two went out, which is a
+        // typo the service never sees and the caller never hears about.
+        Assert.Throws<FormatException>(() => GoogleFieldMask.Parse(value));
+    }
+
+    [Theory]
+    [InlineData("a..b")]
+    [InlineData(".a")]
+    [InlineData("a.")]
+    [InlineData("a b")]
+    public void APathThatIsNotAFieldPathIsRejected(string value)
+    {
+        // Syntax only. Whether 'age' is a field of the message being patched is the service's
+        // question; whether 'a..b' could be a field path of anything is this side's.
+        Assert.Throws<FormatException>(() => GoogleFieldMask.Parse(value));
+    }
+
+    [Fact]
+    public void TheSpecialFullReplacementMaskParses()
+    {
+        // AIP-134: update methods "MUST support the special value * meaning full replace". It is
+        // not a field path, so the syntax check has to know about it.
+        var mask = GoogleFieldMask.Parse("*");
+
+        Assert.Equal(["*"], mask.Paths);
+        Assert.False(mask.IsEmpty);
+    }
+
+    [Fact]
+    public void ANestedPathParses()
+    {
+        var mask = GoogleFieldMask.Parse("interval.startTime,steps.count");
+
+        Assert.Equal(["interval.startTime", "steps.count"], mask.Paths);
+    }
 }

@@ -41,11 +41,7 @@ public sealed class HealthDataTokenRequest
             // The combination comes from the descriptor rather than from a rule applied here.
             // Assuming any-of for everything was this method's previous behaviour, and it
             // misreported the one operation Google documents as needing two scopes together.
-            Scopes = descriptor.ScopeCombination switch
-            {
-                HealthDataScopeCombination.AllOf => ScopeRequirement.AllOf(descriptor.Scopes),
-                _ => ScopeRequirement.AnyOf(descriptor.Scopes),
-            },
+            Scopes = ScopeRequirement.For(descriptor),
             RequiresProjectCredentials = descriptor.RequiresProjectCredentials,
         };
     }
