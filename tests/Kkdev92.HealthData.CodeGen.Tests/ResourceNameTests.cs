@@ -134,6 +134,7 @@ public sealed class ResourceNameTests
             Scopes = [],
             Operations = operations ?? [],
             ResourceNames = names,
+            DataTypes = [],
             Schemas = [],
             ErrorReasons = [],
             OpenEnums = [],

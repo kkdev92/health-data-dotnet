@@ -513,6 +513,7 @@ public sealed class GeneratorTests
             Scopes = [],
             Operations = [],
             ResourceNames = [],
+            DataTypes = [],
             Schemas =
             [
                 new SchemaContract
