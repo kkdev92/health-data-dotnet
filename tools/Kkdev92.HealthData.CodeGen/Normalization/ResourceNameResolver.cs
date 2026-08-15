@@ -151,6 +151,17 @@ internal static partial class ResourceNameResolver
                 + "nothing to name the type after.");
         }
 
+        // Every collection a type is named after has to be one this can singularize, and here is
+        // where a pattern is first read - so a plural with no rule fails at the same point as a
+        // segment with no meaning, rather than several steps later inside a type name.
+        for (var index = 0; index < segments.Count; index++)
+        {
+            if (segments[index].IsVariable)
+            {
+                _ = SingularWord(segments[index - 1].Literal);
+            }
+        }
+
         return segments;
     }
 
@@ -184,9 +195,52 @@ internal static partial class ResourceNameResolver
     /// </remarks>
     private static string Singular(string collection)
     {
-        var singular = collection.EndsWith('s') ? collection[..^1] : collection;
+        return NamingNormalizer.ToPascalCase(SingularWord(collection));
+    }
 
-        return NamingNormalizer.ToPascalCase(singular);
+    /// <summary>
+    /// The singular of a collection word, or a refusal.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// Two rules, both of them regular English orthography rather than a guess: a word ending in a
+    /// consonant plus <c>ies</c> is a <c>y</c> pluralized, and a word ending in <c>s</c> is the
+    /// word plus an <c>s</c>. Every collection in this contract is one or the other.
+    /// </para>
+    /// <para>
+    /// The <c>ies</c> rule is not speculative. <c>dataSourceFamilies</c> is in this contract's own
+    /// descriptions — <c>users/me/dataSourceFamilies/{data_source_family}</c> on reconcile and both
+    /// roll-ups — as a resource with no operations of its own yet. Stripping the trailing <c>s</c>
+    /// produced <c>DataSourceFamilieName</c>, which compiles and ships and reads as a typo.
+    /// </para>
+    /// <para>
+    /// Anything with no <c>s</c> to remove refuses: <c>data</c> is a mass noun and <c>address</c> is
+    /// already singular, and naming a type after the word it was given would be a guess.
+    /// </para>
+    /// <para>
+    /// An irregular plural is <em>not</em> caught, and cannot be by any rule over the ending.
+    /// <c>indices</c> becomes <c>Indice</c>, which is wrong and accepted — because
+    /// <c>pairedDevices</c> ends the same way and is a regular <c>device</c> plus <c>s</c>.
+    /// Refusing that ending would refuse a resource this SDK already generates. What catches an
+    /// irregular plural is a person reading the generated diff, which this repository commits.
+    /// </para>
+    /// </remarks>
+    private static string SingularWord(string collection)
+    {
+        if (collection.EndsWith("ies", StringComparison.Ordinal) && collection.Length > 3)
+        {
+            return collection[..^3] + "y";
+        }
+
+        if (collection.EndsWith('s') && !collection.EndsWith("ss", StringComparison.Ordinal))
+        {
+            return collection[..^1];
+        }
+
+        throw new InvalidOperationException(
+            $"The collection '{collection}' is not a plural this generator can undo. It knows two "
+            + "rules - '...ies' to '...y', and a trailing 's' removed - because those are the two "
+            + "this contract uses. Singularizing anything else would name a type after a guess.");
     }
 
     /// <summary>The camelCase parameter name for the id a collection segment introduces.</summary>

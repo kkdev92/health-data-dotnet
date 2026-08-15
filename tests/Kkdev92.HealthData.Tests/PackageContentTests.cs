@@ -580,4 +580,62 @@ public sealed partial class PackageContentTests
             Assert.Empty(generatedInternals);
         }
     }
+
+    /// <summary>
+    /// A public generic method keeps its documentation.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// The filter compares a documentation id against the members the assembly declares, and an id
+    /// for a generic method carries its arity: <c>TryGetResponse``1</c> against a member table that
+    /// says <c>TryGetResponse</c>. Compared literally, every public generic method looks like a
+    /// member the assembly does not have, and its documentation is removed.
+    /// </para>
+    /// <para>
+    /// Which is the exact failure the filter exists to avoid, pointed the other way — and it is
+    /// invisible in the package: a consumer hovering over <c>TryGetResponse&lt;T&gt;</c> gets
+    /// nothing, and nothing anywhere says why.
+    /// </para>
+    /// </remarks>
+    [Fact]
+    public void ThePackagedDocumentationKeepsPublicGenericMethods()
+    {
+        var packages = Packages()
+            .Where(p => p.EndsWith(".nupkg", StringComparison.OrdinalIgnoreCase))
+            .Where(p => Path.GetFileName(p).StartsWith("Kkdev92.HealthData.0", StringComparison.Ordinal))
+            .ToArray();
+
+        Assert.SkipWhen(packages.Length == 0, "No package found; run 'dotnet pack -c Release -o artifacts' first.");
+
+        foreach (var package in packages)
+        {
+            using var archive = ZipFile.OpenRead(package);
+
+            var entry = archive.Entries.Single(e =>
+                e.FullName.StartsWith("lib/", StringComparison.Ordinal)
+                && e.FullName.EndsWith(".xml", StringComparison.Ordinal));
+
+            using var stream = entry.Open();
+            var documented = System.Xml.Linq.XDocument.Load(stream)
+                .Descendants("member")
+                .Select(member => (string?)member.Attribute("name") ?? string.Empty)
+                .ToArray();
+
+            // Three public generic methods, in three different namespaces, all of them the kind of
+            // member a caller reaches for and then wants to read about.
+            string[] expected =
+            [
+                "M:Kkdev92.HealthData.OperationExtensions.TryGetResponse",
+                "M:Kkdev92.HealthData.OperationExtensions.TryGetMetadata",
+                "M:Kkdev92.HealthData.Serialization.HealthDataJson.ReadInfo",
+                "M:Kkdev92.HealthData.Serialization.HealthDataJson.WriteInfo",
+                "M:Kkdev92.HealthData.Pagination.AsyncPageEnumerable.CreateAsync",
+            ];
+
+            foreach (var member in expected)
+            {
+                Assert.Contains(documented, id => id.StartsWith(member, StringComparison.Ordinal));
+            }
+        }
+    }
 }

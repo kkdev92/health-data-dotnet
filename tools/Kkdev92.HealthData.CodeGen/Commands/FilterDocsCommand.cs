@@ -1,6 +1,7 @@
 using System.Reflection;
 using System.Reflection.Metadata;
 using System.Reflection.PortableExecutable;
+using System.Text.RegularExpressions;
 using System.Xml.Linq;
 
 namespace Kkdev92.HealthData.CodeGen.Commands;
@@ -27,7 +28,7 @@ namespace Kkdev92.HealthData.CodeGen.Commands;
 /// trimming inside an element could break a reference the surviving documentation depends on.
 /// </para>
 /// </remarks>
-internal static class FilterDocsCommand
+internal static partial class FilterDocsCommand
 {
     public static int Run(string documentationFile, string assemblyFile)
     {
@@ -89,10 +90,21 @@ internal static class FilterDocsCommand
     /// Whether a documentation id names something a consumer can reach.
     /// </summary>
     /// <remarks>
-    /// The id carries a signature and arity that the member table does not — <c>M:T.M(System.String)</c>
-    /// against <c>M:T.M</c>, and <c>T:T`1</c> against <c>T:T</c> — so the comparison is on the part
-    /// before either. Overloads share a visibility in every case this contract produces, and a
-    /// member the assembly does not admit to at all is removed whatever its signature says.
+    /// <para>
+    /// A documentation id carries things the member table does not: a signature
+    /// (<c>M:T.M(System.String)</c> against <c>M:T.M</c>), a conversion operator's return type
+    /// after <c>~</c>, and an interface spelled with <c>#</c>. Those are cut here. Overloads share
+    /// a visibility in every case this contract produces, and a member the assembly does not admit
+    /// to at all is removed whatever its signature says.
+    /// </para>
+    /// <para>
+    /// Arity is cut from <em>both</em> sides rather than compared. A generic method's id is
+    /// <c>TryGetResponse``1</c>, a generic type's is <c>List`1</c>, and the table spells the type
+    /// the same way but the method without it. Comparing literally made every public generic
+    /// method look like one the assembly does not declare, and removed its documentation — this
+    /// filter's own failure mode pointed the wrong way, and invisible in the package: hovering
+    /// over the method simply shows nothing.
+    /// </para>
     /// </remarks>
     private static bool IsVisible(string id, IReadOnlySet<string> visible)
     {
@@ -109,17 +121,35 @@ internal static class FilterDocsCommand
             normalized = normalized[..brace];
         }
 
-        if (visible.Contains(normalized))
+        if (normalized.IndexOf('~', StringComparison.Ordinal) is var tilde and >= 0)
         {
-            return true;
+            normalized = normalized[..tilde];
         }
 
-        // Arity: the id says List`1, the table says the same, but a conversion operator's id
-        // carries a return type after '~'.
-        var tilde = normalized.IndexOf('~', StringComparison.Ordinal);
-
-        return tilde >= 0 && visible.Contains(normalized[..tilde]);
+        return visible.Contains(StripArity(normalized));
     }
+
+    /// <summary>
+    /// Records a member the same way an id will be looked up: without its arity.
+    /// </summary>
+    /// <remarks>
+    /// Both sides go through this. A generic type is <c>Owner`1</c> in metadata and in the id, and
+    /// a generic method carries its arity only in the id — so normalizing one side and not the
+    /// other trades one mismatch for another.
+    /// </remarks>
+    private static void Add(HashSet<string> visible, string member) => visible.Add(StripArity(member));
+
+    /// <summary>Removes the <c>`n</c> and <c>``n</c> arity markers wherever they appear.</summary>
+    /// <remarks>
+    /// Wherever, not at the first one: a member of a generic type is
+    /// <c>M:Ns.Owner`1.Method``1</c>, and cutting at the first backtick would throw away the
+    /// method and leave the owner — which would keep documentation for anything the owner
+    /// declares, public or not.
+    /// </remarks>
+    private static string StripArity(string id) => Arity().Replace(id, string.Empty);
+
+    [GeneratedRegex("``?[0-9]+")]
+    private static partial Regex Arity();
 
     private static IReadOnlySet<string> ReadVisibleMembers(string assemblyFile)
     {
@@ -140,7 +170,7 @@ internal static class FilterDocsCommand
             }
 
             var typeName = XmlTypeName(metadata, definition);
-            visible.Add("T:" + typeName);
+            Add(visible, "T:" + typeName);
 
             foreach (var methodHandle in definition.GetMethods())
             {
@@ -148,8 +178,8 @@ internal static class FilterDocsCommand
 
                 if (IsAccessible(method.Attributes & MethodAttributes.MemberAccessMask))
                 {
-                    visible.Add("M:" + typeName + "." + metadata.GetString(method.Name).Replace('.', '#'));
-                    visible.Add("M:" + typeName + "." + metadata.GetString(method.Name));
+                    Add(visible, "M:" + typeName + "." + metadata.GetString(method.Name).Replace('.', '#'));
+                    Add(visible, "M:" + typeName + "." + metadata.GetString(method.Name));
                 }
             }
 
@@ -160,7 +190,7 @@ internal static class FilterDocsCommand
 
                 if (IsAccessorVisible(metadata, accessors.Getter) || IsAccessorVisible(metadata, accessors.Setter))
                 {
-                    visible.Add("P:" + typeName + "." + metadata.GetString(property.Name));
+                    Add(visible, "P:" + typeName + "." + metadata.GetString(property.Name));
                 }
             }
 
@@ -170,7 +200,7 @@ internal static class FilterDocsCommand
 
                 if (IsAccessible(field.Attributes & FieldAttributes.FieldAccessMask))
                 {
-                    visible.Add("F:" + typeName + "." + metadata.GetString(field.Name));
+                    Add(visible, "F:" + typeName + "." + metadata.GetString(field.Name));
                 }
             }
 
@@ -180,7 +210,7 @@ internal static class FilterDocsCommand
 
                 if (IsAccessorVisible(metadata, declaration.GetAccessors().Adder))
                 {
-                    visible.Add("E:" + typeName + "." + metadata.GetString(declaration.Name));
+                    Add(visible, "E:" + typeName + "." + metadata.GetString(declaration.Name));
                 }
             }
         }

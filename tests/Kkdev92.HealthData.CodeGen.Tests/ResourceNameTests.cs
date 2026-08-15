@@ -223,7 +223,7 @@ public sealed class ResourceNameTests
             Crafted(
             [
                 Name("UserName", "^users/[^/]+$", "User"),
-                Name("PatternName", "^users/[^/]+/pattern/[^/]+$", "Pattern", "UserName", "patternId"),
+                Name("PatternName", "^users/[^/]+/patterns/[^/]+$", "Pattern", "UserName", "patternId"),
             ]),
             errors);
 
@@ -250,5 +250,87 @@ public sealed class ResourceNameTests
         Assert.True(segments[1].IsVariable);
         Assert.Equal(new ResourceNameSegment("pairedDevices", IsVariable: false), segments[2]);
         Assert.True(segments[3].IsVariable);
+    }
+
+    /// <summary>
+    /// A collection whose plural is not just a trailing <c>s</c>.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// Not hypothetical. <c>dataSourceFamilies</c> is in this contract already — it appears in the
+    /// description of <c>reconcile</c> and both roll-ups as
+    /// <c>users/me/dataSourceFamilies/{data_source_family}</c> — and it is a resource with no
+    /// operations of its own yet. A revision that gives it one arrives here.
+    /// </para>
+    /// <para>
+    /// Stripping the trailing <c>s</c> produced <c>DataSourceFamilieName</c>: a type that compiles,
+    /// ships, and reads as a typo in every call site that names it. The rule handles the two
+    /// regular English plurals and nothing else, which is why the guard below exists.
+    /// </para>
+    /// </remarks>
+    [Theory]
+    [InlineData("^users/[^/]+/dataSourceFamilies/[^/]+$", "DataSourceFamilyName", "dataSourceFamilyId")]
+    [InlineData("^users/[^/]+/pairedDevices/[^/]+$", "PairedDeviceName", "pairedDeviceId")]
+    [InlineData("^projects/[^/]+$", "ProjectName", "projectId")]
+    public void ACollectionIsSingularizedByTheRulesEnglishActuallyHas(
+        string pattern, string typeName, string idParameter)
+    {
+        var resolved = Assert.Single(ResourceNameResolver.Resolve(
+        [
+            new OperationContract
+            {
+                Id = "health.test.get",
+                ResourcePath = "test",
+                CSharpName = "Get",
+                HttpMethod = "GET",
+                PathTemplate = "v4/{+name}",
+                Parameters =
+                [
+                    new ParameterContract
+                    {
+                        WireName = "name",
+                        CSharpName = "Name",
+                        Location = ParameterLocation.Path,
+                        IsRequired = true,
+                        Type = new TypeContract { Kind = TypeKind.Primitive, CSharpType = "string", WireType = "string" },
+                        Pattern = pattern,
+                    },
+                ],
+                Scopes = [],
+                ResponseKind = ResponseKind.Json,
+                RetryClassification = RetryClassification.Safe,
+            },
+        ]));
+
+        Assert.Equal(typeName, resolved.CSharpName);
+        Assert.Equal(idParameter, resolved.IdParameterName);
+    }
+
+    /// <summary>
+    /// A collection segment that is not a plural at all is refused.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// <c>data</c> is a mass noun and <c>address</c> is singular; neither has an <c>s</c> to
+    /// remove, so there is no rule to apply and the generator says so rather than naming a type
+    /// after the word it was given.
+    /// </para>
+    /// <para>
+    /// <strong>An irregular plural is not caught, and cannot be by any rule over the ending.</strong>
+    /// <c>indices</c> would become <c>IndiceName</c> — wrong, and accepted. The reason is in this
+    /// contract: <c>pairedDevices</c> ends in <c>ices</c> too and is a perfectly regular
+    /// <c>device</c> plus <c>s</c>. Refusing that ending would refuse a resource this SDK already
+    /// generates. What catches an irregular plural is a person reading the generated diff, which
+    /// this repository commits for exactly that reason.
+    /// </para>
+    /// </remarks>
+    [Theory]
+    [InlineData("^users/[^/]+/data/[^/]+$")]
+    [InlineData("^users/[^/]+/address/[^/]+$")]
+    public void ASegmentThatIsNotAPluralIsRefusedRatherThanNamedAfterItself(string pattern)
+    {
+        var thrown = Assert.Throws<InvalidOperationException>(() => ResourceNameResolver.Parse(pattern));
+
+        Assert.Contains("not a plural this generator can undo", thrown.Message, StringComparison.Ordinal);
     }
 }
