@@ -203,8 +203,16 @@ API. That is Google's contract, verified against Discovery, not an omission here
 | `DailyRollUpAsync` | Per calendar day | Request accepts a page token; the response returns none |
 
 Both are `POST` but neither writes anything, so both are classified `SemanticallySafe` and are
-retried when retry is enabled. Neither gets an `EnumerateAsync` helper: `RollUp` paginates through
-the body rather than the query, and `DailyRollUp` gives you no cursor to follow.
+retried when retry is enabled.
+
+`RollUp` has an `EnumerateAsync` helper like every other paged operation. Where the cursor travels
+is a detail of the request — its body carries a `WithPageToken` copy, generated from the same
+declaration — and what decides whether enumeration is possible is the response, which returns a
+next page token.
+
+`DailyRollUp` is the one operation without one, and not by preference: it accepts a page token and
+its response returns none, so there is nothing to follow. The generated model says so on the
+property itself.
 
 Roll-up results are `RollupDataPoint`, a second union with its own `GetKind()` and 21 measurement
 members — a smaller set, because not every measurement aggregates.
