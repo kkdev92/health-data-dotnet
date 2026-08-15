@@ -8,3 +8,13 @@ static class Kkdev92.HealthData.DependencyInjection.HealthDataServiceCollectionE
     Microsoft.Extensions.DependencyInjection.IServiceCollection AddHealthDataAccessToken(Microsoft.Extensions.DependencyInjection.IServiceCollection services, Func<System.IServiceProvider, Kkdev92.HealthData.Authentication.HealthDataTokenRequest, System.Threading.CancellationToken, ValueTask<Kkdev92.HealthData.Authentication.HealthDataAccessToken>> resolve)
     Microsoft.Extensions.DependencyInjection.IServiceCollection AddHealthDataAccessToken(Microsoft.Extensions.DependencyInjection.IServiceCollection services, System.String accessToken)
     const System.String HttpClientName
+class Kkdev92.HealthData.DependencyInjection.HealthDataWebhookOptions
+    .ctor()
+    IList<System.String> EndpointSecrets { get; }
+    Nullable<System.TimeSpan> CacheDuration { get; set; }
+    Nullable<System.TimeSpan> MaximumStaleAge { get; set; }
+    Nullable<System.TimeSpan> MinimumRefreshInterval { get; set; }
+    System.Uri KeysetUri { get; set; }
+static class Kkdev92.HealthData.DependencyInjection.HealthDataWebhookServiceCollectionExtensions
+    Microsoft.Extensions.DependencyInjection.IHttpClientBuilder AddHealthDataWebhooks(Microsoft.Extensions.DependencyInjection.IServiceCollection services, Action<Kkdev92.HealthData.DependencyInjection.HealthDataWebhookOptions> configure = default)
+    const System.String KeysetHttpClientName

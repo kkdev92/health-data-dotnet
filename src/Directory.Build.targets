@@ -1,0 +1,13 @@
+<Project>
+
+  <!--
+    Imported here rather than from Directory.Build.props because the target needs NetCoreRoot and
+    BundledNETCoreAppPackageVersion, and the SDK does not set those until after props are read.
+
+    The XML documentation the compiler writes covers private members too, because this repository
+    comments them. See the target itself for why that is filtered rather than left alone or
+    stopped at the source.
+  -->
+  <Import Project="$(MSBuildThisFileDirectory)../eng/FilterDocumentation.targets" />
+
+</Project>

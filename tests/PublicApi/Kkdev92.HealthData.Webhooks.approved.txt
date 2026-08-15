@@ -54,6 +54,7 @@ class Kkdev92.HealthData.Webhooks.HealthDataWebhookReceiver
     .ctor(Kkdev92.HealthData.Webhooks.HealthDataWebhookSignatureVerifier verifier, System.String endpointSecret = default)
     System.Boolean IsVerificationChallenge(ReadOnlySpan<System.Byte> rawBody)
     Task<Kkdev92.HealthData.Webhooks.WebhookRequestResult> HandleAsync(ReadOnlyMemory<System.Byte> rawBody, System.String signatureHeader, System.String authorizationHeader = default, System.Threading.CancellationToken cancellationToken = default)
+    const System.String VerificationChallengeBody
     const System.String VerificationUserAgent
 class Kkdev92.HealthData.Webhooks.HealthDataWebhookSignatureVerifier
     .ctor(Kkdev92.HealthData.Webhooks.HealthDataWebhookKeyProvider keyProvider)

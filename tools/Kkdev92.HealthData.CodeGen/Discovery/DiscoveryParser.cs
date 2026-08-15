@@ -52,6 +52,10 @@ internal static class DiscoveryParser
             // Derived from the operations rather than declared: every name parameter
             // already carries the pattern that defines the shape.
             ResourceNames = ResourceNameResolver.Resolve(operations),
+
+            // Read rather than derived: none of this is in Discovery, which is the whole reason
+            // the snapshot exists.
+            DataTypes = BuildDataTypes(spec),
         };
     }
 
@@ -233,6 +237,39 @@ internal static class DiscoveryParser
                 $"Scope '{url}' is not classified in semantics.json under authentication.scopeKinds. "
                 + "Add it to read, write or project - Discovery states which in the scope's own "
                 + "description - so that the generated scope sets stay complete.");
+
+    /// <summary>
+    /// Reads the data type table, which Discovery does not carry.
+    /// </summary>
+    /// <remarks>
+    /// The generator loaded this file and used none of it. That is how an application ended up
+    /// asking <c>steps</c> for a <c>get</c>: the information was in the repository and not in the
+    /// package.
+    /// </remarks>
+    private static IReadOnlyList<DataTypeContract> BuildDataTypes(SpecSet spec)
+    {
+        if (!spec.DataTypes.RootElement.TryGetProperty("dataTypes", out var dataTypes))
+        {
+            return [];
+        }
+
+        return
+        [
+            .. dataTypes.EnumerateArray()
+                .Select(dataType => new DataTypeContract
+                {
+                    Id = dataType.GetProperty("id").GetString()!,
+                    FilterName = dataType.GetProperty("filterName").GetString()!,
+                    Operations =
+                    [
+                        .. dataType.GetProperty("operations")
+                            .EnumerateArray()
+                            .Select(operation => operation.GetString()!)
+                    ],
+                })
+                .OrderBy(dataType => dataType.Id, StringComparer.Ordinal)
+        ];
+    }
 
     private static IReadOnlyList<ErrorReasonContract> BuildErrorReasons(SpecSet spec)
         => spec.Errors.RootElement.GetProperty("reasons")

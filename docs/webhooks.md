@@ -80,6 +80,26 @@ trustworthy one.
 Three objects, one direction. The key provider fetches and caches Google's keyset, the verifier
 checks a signature against it, and the receiver decides what the request was.
 
+With the dependency-injection package, that is one call:
+
+```csharp
+builder.Services.AddHealthDataWebhooks(options =>
+{
+    // The credential configured on the subscriber. More than one is for rotation: the secret
+    // changes at Google and here at two different moments, and notifications keep arriving in
+    // between.
+    options.EndpointSecrets.Add(builder.Configuration["GoogleHealth:WebhookEndpointSecret"]!);
+});
+```
+
+The lifetimes are the part worth having written down, and they are what that call fixes: the key
+provider holds the cache so it is a singleton, its `HttpClient` comes from the factory under a
+named client you can still configure, and no receiver is registered at all when no secret is —
+because a receiver with no secret answers 401 to Google's verification challenge, which reads like
+a signature problem and is not one.
+
+By hand, it is these three registrations:
+
 ```csharp
 // A singleton, deliberately: the cache and the shared in-flight fetch are the whole point of the
 // provider, and one per application is what makes them work.

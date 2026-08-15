@@ -81,6 +81,17 @@ class Kkdev92.HealthData.HealthDataClientOptions
     System.Boolean PrettyPrintResponses { get; set; }
     System.Int32 MaxErrorResponseBytes { get; set; }
     System.Uri BaseAddress { get; set; }
+class Kkdev92.HealthData.HealthDataDataTypeDescriptor
+    .ctor()
+    IReadOnlyList<System.String> Operations { get; set; }
+    Kkdev92.HealthData.HealthDataDataTypeDescriptor <Clone>$()
+    System.Boolean Equals(Kkdev92.HealthData.HealthDataDataTypeDescriptor other)
+    System.Boolean Equals(System.Object obj)
+    System.Boolean Supports(System.String operation)
+    System.Int32 GetHashCode()
+    System.String FilterName { get; set; }
+    System.String Id { get; set; }
+    System.String ToString()
 class Kkdev92.HealthData.HealthDataError
     .ctor()
     IReadOnlyList<Kkdev92.HealthData.HealthDataErrorDetail> Details { get; set; }
@@ -172,6 +183,9 @@ static class Kkdev92.HealthData.HealthDataGeneratedApi
     const System.String ApiVersion
     const System.String DiscoveryRevision
     const System.String SpecSha256
+static class Kkdev92.HealthData.HealthDataGeneratedDataTypes
+    IReadOnlyList<Kkdev92.HealthData.HealthDataDataTypeDescriptor> All { get; }
+    Kkdev92.HealthData.HealthDataDataTypeDescriptor Find(System.String id)
 static class Kkdev92.HealthData.HealthDataGeneratedOperations
     IReadOnlyList<Kkdev92.HealthData.Http.HealthDataOperationDescriptor> All
     Kkdev92.HealthData.Http.HealthDataOperationDescriptor ProjectsSubscribersCreate
