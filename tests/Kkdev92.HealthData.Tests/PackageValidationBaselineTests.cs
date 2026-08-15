@@ -54,6 +54,10 @@ public sealed class PackageValidationBaselineTests
     /// an MSBuild condition can be written so it never evaluates true, and reading it would not
     /// say so. Both directions are checked — past the exemption it fails, and with a baseline set
     /// the same version builds.
+    ///
+    /// The baseline used here has to be a version that is actually on nuget.org. Package
+    /// validation restores it, so an unpublished one fails the build with NU1102 and the test
+    /// would pass for the wrong reason on a machine that happens to have it cached.
     /// </remarks>
     [Fact]
     public void PastThatVersionTheBuildStopsUntilABaselineIsSet()
@@ -65,7 +69,11 @@ public sealed class PackageValidationBaselineTests
         Assert.NotEqual(0, withoutBaseline.ExitCode);
         Assert.Contains("PackageValidationBaselineVersion", withoutBaseline.Output, StringComparison.Ordinal);
 
-        var withBaseline = Build(project, "-p:VersionPrefix=99.0.0", "-p:PackageValidationBaselineVersion=0.2.0-alpha");
+        // 0.1.0-alpha, because it is on nuget.org. Naming a version that is not yet published
+        // fails with NU1102 rather than passing the guard — which is what happened first, and only
+        // in CI: this machine had the package cached from a local pack and the restore never went
+        // out. The guard is what is under test, so the baseline has to be one that resolves.
+        var withBaseline = Build(project, "-p:VersionPrefix=99.0.0", "-p:PackageValidationBaselineVersion=0.1.0-alpha");
 
         Assert.Equal(0, withBaseline.ExitCode);
     }
