@@ -110,7 +110,8 @@ public sealed partial class PackagedConsumerTests
 
                 Console.WriteLine(HealthDataApiMetadata.DefaultBaseAddress);
                 Console.WriteLine(client.Users is not null);
-                Console.WriteLine(oauth.CreateAuthorizationUrl([HealthDataScopes.ProfileReadonly]).Host);
+                Console.WriteLine(oauth.CreateAuthorizationUrl(
+                    new GoogleAuthorizationUrlOptions { Scopes = HealthDataScopes.ReadOnly }).Host);
                 Console.WriteLine(HealthDataWebhookReceiver.VerificationUserAgent);
                 Console.WriteLine(HealthDataWebhookKeyProvider.DefaultKeysetUri.Host);
                 Console.WriteLine("consumer ok");
