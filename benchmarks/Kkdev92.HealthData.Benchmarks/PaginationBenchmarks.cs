@@ -1,6 +1,7 @@
 using System.Net;
 using BenchmarkDotNet.Attributes;
 using Kkdev92.HealthData.Models;
+using Kkdev92.HealthData.Names;
 using Kkdev92.HealthData.Requests;
 
 namespace Kkdev92.HealthData.Benchmarks;
@@ -40,7 +41,7 @@ public class PaginationBenchmarks
         var count = 0;
 
         await foreach (var _ in _client.Users.DataPoints.EnumerateAsync(
-            new ListDataPointsRequest { Parent = "users/me/dataTypes/steps" }))
+            new ListDataPointsRequest { Parent = UserName.Me.DataType("steps") }))
         {
             count++;
         }
@@ -58,7 +59,7 @@ public class PaginationBenchmarks
         {
             var page = await _client.Users.DataPoints.ListAsync(new ListDataPointsRequest
             {
-                Parent = "users/me/dataTypes/steps",
+                Parent = UserName.Me.DataType("steps"),
                 PageToken = pageToken,
             });
 
@@ -74,7 +75,7 @@ public class PaginationBenchmarks
     public async Task<int> SinglePage()
     {
         var page = await _client.Users.DataPoints.ListAsync(
-            new ListDataPointsRequest { Parent = "users/me/dataTypes/steps" });
+            new ListDataPointsRequest { Parent = UserName.Me.DataType("steps") });
 
         return page.DataPoints?.Count ?? 0;
     }

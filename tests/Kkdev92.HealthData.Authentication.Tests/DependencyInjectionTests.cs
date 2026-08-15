@@ -1,6 +1,7 @@
 using Kkdev92.HealthData.Authentication;
 using Kkdev92.HealthData.DependencyInjection;
 using Kkdev92.HealthData.Models;
+using Kkdev92.HealthData.Names;
 using Kkdev92.HealthData.Requests;
 using Kkdev92.HealthData.Resilience;
 using Microsoft.Extensions.DependencyInjection;
@@ -105,7 +106,7 @@ public sealed class DependencyInjectionTests
         var (client, primary) = BuildClient(configure: null);
 
         await Assert.ThrowsAsync<HealthDataApiException>(() => client.Users.GetProfileAsync(
-            new GetProfileRequest { Name = "users/me/profile" },
+            new GetProfileRequest { Name = UserName.Me.Profile },
             TestContext.Current.CancellationToken));
 
         Assert.Equal(1, primary.Attempts);
@@ -122,7 +123,7 @@ public sealed class DependencyInjectionTests
         });
 
         await Assert.ThrowsAsync<HealthDataApiException>(() => client.Users.GetProfileAsync(
-            new GetProfileRequest { Name = "users/me/profile" },
+            new GetProfileRequest { Name = UserName.Me.Profile },
             TestContext.Current.CancellationToken));
 
         Assert.Equal(3, primary.Attempts);
@@ -187,7 +188,7 @@ public sealed class DependencyInjectionTests
         // Any transport outcome is fine; an InvalidOperationException from the check is not.
         var failure = await Record.ExceptionAsync(
             () => client.Users.GetProfileAsync(
-                new GetProfileRequest { Name = "users/me/profile" },
+                new GetProfileRequest { Name = UserName.Me.Profile },
                 TestContext.Current.CancellationToken));
 
         Assert.False(

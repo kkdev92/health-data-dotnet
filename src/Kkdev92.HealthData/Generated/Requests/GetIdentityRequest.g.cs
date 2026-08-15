@@ -11,12 +11,20 @@
 
 #nullable enable
 
+using Kkdev92.HealthData.Names;
+
 namespace Kkdev92.HealthData.Requests;
 
 /// <summary>Request for health.users.getIdentity.</summary>
-public sealed class GetIdentityRequest
+public sealed record GetIdentityRequest
 {
     /// <summary>Required. The resource name of the Identity. Format: <c>users/me/identity</c></summary>
-    /// <remarks>The service requires this to match the pattern ^users/[^/]+/identity$.</remarks>
-    public required string Name { get; init; }
+    public required IdentityName Name { get; init; }
+
+    /// <summary>Returns the type name.</summary>
+    /// <remarks>
+    /// A request identifies whose data is being asked for. Rendering it into a log line is not something
+    /// this type will do on a caller's behalf.
+    /// </remarks>
+    public override string ToString() => nameof(GetIdentityRequest);
 }

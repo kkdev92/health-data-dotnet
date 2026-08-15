@@ -1,5 +1,6 @@
 using Kkdev92.HealthData.DependencyInjection;
 using Kkdev92.HealthData.Models;
+using Kkdev92.HealthData.Names;
 using Kkdev92.HealthData.Requests;
 using Microsoft.Extensions.DependencyInjection;
 namespace Kkdev92.HealthData.IntegrationTests;
@@ -54,7 +55,7 @@ public sealed class RealApiSmokeTests
         var response = await client.Users.DataPoints.ListAsync(
             new ListDataPointsRequest
             {
-                Parent = "users/me/dataTypes/steps",
+                Parent = UserName.Me.DataType("steps"),
                 PageSize = 1,
             },
             TestContext.Current.CancellationToken);

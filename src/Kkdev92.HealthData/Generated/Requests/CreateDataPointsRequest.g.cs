@@ -12,19 +12,26 @@
 #nullable enable
 
 using Kkdev92.HealthData.Models;
+using Kkdev92.HealthData.Names;
 
 namespace Kkdev92.HealthData.Requests;
 
 /// <summary>Request for health.users.dataTypes.dataPoints.create.</summary>
-public sealed class CreateDataPointsRequest
+public sealed record CreateDataPointsRequest
 {
     /// <summary>
     /// Required. The parent resource name where the data point will be created. Format:
     /// <c>users/{user}/dataTypes/{data_type}</c>
     /// </summary>
-    /// <remarks>The service requires this to match the pattern ^users/[^/]+/dataTypes/[^/]+$.</remarks>
-    public required string Parent { get; init; }
+    public required DataTypeName Parent { get; init; }
 
     /// <summary>The request body.</summary>
     public required DataPoint Body { get; init; }
+
+    /// <summary>Returns the type name.</summary>
+    /// <remarks>
+    /// A request identifies whose data is being asked for. Rendering it into a log line is not something
+    /// this type will do on a caller's behalf.
+    /// </remarks>
+    public override string ToString() => nameof(CreateDataPointsRequest);
 }

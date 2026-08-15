@@ -173,7 +173,7 @@ ends in `Async`, accepts a `CancellationToken`, and returns `Task<T>`.
 
 ```csharp
 var profile = await client.Users.GetProfileAsync(
-    new GetProfileRequest { Name = "users/me/profile" },
+    new GetProfileRequest { Name = UserName.Me.Profile },
     cancellationToken);
 ```
 

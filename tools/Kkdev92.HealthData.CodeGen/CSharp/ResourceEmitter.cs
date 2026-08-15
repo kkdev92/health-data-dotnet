@@ -124,17 +124,28 @@ internal sealed class ResourceEmitter(ApiContract contract, IReadOnlySet<string>
         {
             var typeName = RequestTypeNames[operation.Id];
 
-            // Only a request that carries a body names a model type. The using is conditional
-            // because an unused one is an IDE0005 build error in this repository, not a nicety.
-            var usings = operation.RequestSchema is null
-                ? System.Array.Empty<string>()
-                : [CSharpEmitter.ModelsNamespace];
+            // Computed from what the request actually mentions, because an unused using is an
+            // IDE0005 build error in this repository rather than a nicety. A body names a model;
+            // a name parameter names its own type.
+            var usings = new List<string>();
 
-            var writer = header(CSharpEmitter.RequestsNamespace, usings);
+            if (operation.Parameters.Any(parameter => parameter.Pattern is not null))
+            {
+                usings.Add(ResourceNameEmitter.NamesNamespace);
+            }
+
+            if (operation.RequestSchema is not null)
+            {
+                usings.Add(CSharpEmitter.ModelsNamespace);
+            }
+
+            var writer = header(CSharpEmitter.RequestsNamespace, [.. usings]);
 
             writer.XmlDoc("summary", $"Request for {operation.Id}.");
 
-            using (writer.Block($"public sealed class {typeName}"))
+            // A record rather than a class: a request is a set of values, and paging, retrying and
+            // "the same call with one thing changed" are all 'with' expressions once it is one.
+            using (writer.Block($"public sealed record {typeName}"))
             {
                 var first = true;
 
@@ -149,39 +160,58 @@ internal sealed class ResourceEmitter(ApiContract contract, IReadOnlySet<string>
 
                     writer.XmlDoc("summary", parameter.Description ?? parameter.WireName);
 
-                    if (parameter.Pattern is { } pattern)
-                    {
-                        writer.XmlDoc("remarks", $"The service requires this to match the pattern {pattern}.");
-                    }
-
                     // 'required' is used only for genuinely required path parameters. It is not
                     // sprayed across models; here it turns a
                     // guaranteed runtime failure into a compile error.
                     var modifier = parameter.IsRequired ? "required " : string.Empty;
                     var type = parameter.IsRequired ? StripNullable(parameter.Type.CSharpType) : parameter.Type.CSharpType;
 
+                    // A parameter with a pattern is a resource name, and the pattern is the type.
+                    // Saying so in prose above a string was the old arrangement: it put the rule
+                    // where a human could read it and a compiler could not, so a name of the wrong
+                    // resource was a 400 from the service rather than an error here.
+                    if (ResourceNameTypeFor(parameter) is { } nameType)
+                    {
+                        type = parameter.IsRequired ? nameType : nameType + "?";
+                    }
+
                     writer.Line($"public {modifier}{type} {parameter.CSharpName} {{ get; init; }}");
                 }
 
-                if (operation.Pagination?.Kind == PaginationKind.Query)
+                if (operation.Pagination?.Kind is PaginationKind.Query or PaginationKind.Body)
                 {
-                    // Requests are init-only, so paging needs an explicit copy rather than a
-                    // mutation. The generator knows every property, so the copy is exact.
+                    var inBody = operation.Pagination.Kind == PaginationKind.Body;
+
+                    // Public, not internal. EnumerateAsync covers the usual case, but a caller who
+                    // wants one page at a time — to show a cursor, or to stop and resume across
+                    // requests — was left writing this copy by hand against an init-only type,
+                    // which is the one thing the generator can do exactly.
                     writer.Line();
                     writer.XmlDoc("summary", "Returns a copy of this request positioned at the given page.");
-                    using (writer.Block($"internal {typeName} WithPageToken(string? pageToken)"))
+                    writer.XmlDoc(
+                        "remarks",
+                        inBody
+                            ? "This operation carries its cursor in the body, so the copy replaces the body's "
+                              + "page token and leaves everything else as it was."
+                            : "The copy is exact but for the page token. Nothing is mutated, so the original "
+                              + "request stays valid and re-sendable.");
+
+                    using (writer.Block($"public {typeName} WithPageToken(string? pageToken)"))
                     {
                         using (writer.Block("return new()", closing: "};"))
                         {
                             foreach (var parameter in operation.Parameters)
                             {
-                                var value = parameter.WireName == "pageToken" ? "pageToken" : $"{parameter.CSharpName}";
+                                var value = !inBody && parameter.WireName == "pageToken"
+                                    ? "pageToken"
+                                    : $"{parameter.CSharpName}";
+
                                 writer.Line($"{parameter.CSharpName} = {value},");
                             }
 
                             if (operation.RequestSchema is not null)
                             {
-                                writer.Line("Body = Body,");
+                                writer.Line(inBody ? "Body = Body.WithPageToken(pageToken)," : "Body = Body,");
                             }
                         }
                     }
@@ -198,6 +228,18 @@ internal sealed class ResourceEmitter(ApiContract contract, IReadOnlySet<string>
                     writer.Line(
                         $"public required {NamingNormalizer.ToPascalCase(bodySchema)} Body {{ get; init; }}");
                 }
+
+                // A record prints every property unless told otherwise, and a request holds the
+                // name of a person's record, the filter asked of it and the body about to be
+                // written. Models are classes for this reason; a request keeps the value semantics
+                // and gives up the rendering.
+                writer.Line();
+                writer.XmlDoc("summary", "Returns the type name.");
+                writer.XmlDoc(
+                    "remarks",
+                    "A request identifies whose data is being asked for. Rendering it into a log line is "
+                    + "not something this type will do on a caller's behalf.");
+                writer.Line($"public override string ToString() => nameof({typeName});");
             }
 
             yield return new GeneratedFile($"Generated/Requests/{typeName}.g.cs", writer.ToString());
@@ -303,16 +345,7 @@ internal sealed class ResourceEmitter(ApiContract contract, IReadOnlySet<string>
             writer.Line("ArgumentNullException.ThrowIfNull(request);");
             writer.Line();
             writer.Line($"var builder = new HealthDataRequestBuilder({CodeWriter.Literal(operation.PathTemplate)})");
-
-            foreach (var parameter in operation.Parameters.Where(p => p.Location == ParameterLocation.Path))
-            {
-                writer.Line($"    .SetPath({CodeWriter.Literal(parameter.WireName)}, request.{parameter.CSharpName})");
-            }
-
-            foreach (var parameter in operation.Parameters.Where(p => p.Location == ParameterLocation.Query))
-            {
-                writer.Line($"    .AddQuery({CodeWriter.Literal(parameter.WireName)}, request.{parameter.CSharpName})");
-            }
+            EmitParameterBinding(writer, operation);
 
             writer.Line("    ;");
             writer.Line();
@@ -338,10 +371,10 @@ internal sealed class ResourceEmitter(ApiContract contract, IReadOnlySet<string>
             }
         }
 
-        // Query-paginated operations get a streaming convenience overload. Body-paginated and
-        // request-only operations deliberately do not: rollUp carries its cursor inside the body,
-        // and dailyRollUp returns no cursor at all.
-        if (operation.Pagination?.Kind == PaginationKind.Query &&
+        // Every operation whose response carries a cursor gets a streaming overload, whether the
+        // cursor goes out in the query or in the body. Only dailyRollUp is left out, and not by
+        // preference: it returns no next page token, so there is nothing to follow.
+        if (operation.Pagination?.Kind is PaginationKind.Query or PaginationKind.Body &&
             operation.Pagination.Items is { } itemsProperty &&
             operation.ResponseSchema is { } listSchema)
         {
@@ -384,16 +417,7 @@ internal sealed class ResourceEmitter(ApiContract contract, IReadOnlySet<string>
                 writer.Line("ArgumentNullException.ThrowIfNull(destination);");
                 writer.Line();
                 writer.Line($"var builder = new HealthDataRequestBuilder({CodeWriter.Literal(operation.PathTemplate)})");
-
-                foreach (var parameter in operation.Parameters.Where(p => p.Location == ParameterLocation.Path))
-                {
-                    writer.Line($"    .SetPath({CodeWriter.Literal(parameter.WireName)}, request.{parameter.CSharpName})");
-                }
-
-                foreach (var parameter in operation.Parameters.Where(p => p.Location == ParameterLocation.Query))
-                {
-                    writer.Line($"    .AddQuery({CodeWriter.Literal(parameter.WireName)}, request.{parameter.CSharpName})");
-                }
+                EmitParameterBinding(writer, operation);
 
                 writer.Line("    .AddQuery(\"alt\", \"media\")");
                 writer.Line("    ;");
@@ -449,4 +473,45 @@ internal sealed class ResourceEmitter(ApiContract contract, IReadOnlySet<string>
         => NamingNormalizer.ToPascalCase(operationId["health.".Length..].Replace('.', '_'));
 
     private static string StripNullable(string type) => type.EndsWith('?') ? type[..^1] : type;
+
+    /// <summary>
+    /// Binds every parameter onto the request builder, path first and then query.
+    /// </summary>
+    /// <remarks>
+    /// Shared by the ordinary call and the media overload, which used to carry a copy each. They
+    /// drifted the moment names became types: one rendered the name and the other passed the
+    /// object, and only the compiler noticed.
+    /// </remarks>
+    private void EmitParameterBinding(CodeWriter writer, OperationContract operation)
+    {
+        foreach (var parameter in operation.Parameters.Where(p => p.Location == ParameterLocation.Path))
+        {
+            // A name renders itself. The builder still takes a string, because that is what a path
+            // segment is once it has been checked.
+            var value = ResourceNameTypeFor(parameter) is null
+                ? $"request.{parameter.CSharpName}"
+                : $"request.{parameter.CSharpName}.ToString()";
+
+            writer.Line($"    .SetPath({CodeWriter.Literal(parameter.WireName)}, {value})");
+        }
+
+        foreach (var parameter in operation.Parameters.Where(p => p.Location == ParameterLocation.Query))
+        {
+            writer.Line($"    .AddQuery({CodeWriter.Literal(parameter.WireName)}, request.{parameter.CSharpName})");
+        }
+    }
+
+    /// <summary>
+    /// The resource name type a parameter takes, or null when it is an ordinary value.
+    /// </summary>
+    /// <remarks>
+    /// Matched on the pattern rather than on the parameter's name. Two operations that take the
+    /// same shape of name get the same type whatever the parameter is called, which is what makes
+    /// <c>parent</c> on one call and <c>name</c> on another interchangeable when — and only when —
+    /// the service says they are.
+    /// </remarks>
+    private string? ResourceNameTypeFor(ParameterContract parameter)
+        => parameter.Pattern is { } pattern
+            ? contract.ResourceNames.Single(name => name.Pattern == pattern).CSharpName
+            : null;
 }

@@ -11,10 +11,12 @@
 
 #nullable enable
 
+using Kkdev92.HealthData.Names;
+
 namespace Kkdev92.HealthData.Requests;
 
 /// <summary>Request for health.users.dataTypes.dataPoints.reconcile.</summary>
-public sealed class ReconcileRequest
+public sealed record ReconcileRequest
 {
     /// <summary>
     /// Required. Parent data type of the Data Point collection. Format:
@@ -22,8 +24,7 @@ public sealed class ReconcileRequest
     /// <c>users/me/dataTypes/heart-rate</c> For a list of the supported data types see the DataPoint data
     /// union field.
     /// </summary>
-    /// <remarks>The service requires this to match the pattern ^users/[^/]+/dataTypes/[^/]+$.</remarks>
-    public required string Parent { get; init; }
+    public required DataTypeName Parent { get; init; }
 
     /// <summary>
     /// Optional. The data source family name to reconcile. If empty, data points from all data sources will
@@ -54,7 +55,11 @@ public sealed class ReconcileRequest
     public string? PageToken { get; init; }
 
     /// <summary>Returns a copy of this request positioned at the given page.</summary>
-    internal ReconcileRequest WithPageToken(string? pageToken)
+    /// <remarks>
+    /// The copy is exact but for the page token. Nothing is mutated, so the original request stays valid
+    /// and re-sendable.
+    /// </remarks>
+    public ReconcileRequest WithPageToken(string? pageToken)
     {
         return new()
         {
@@ -65,4 +70,11 @@ public sealed class ReconcileRequest
             Parent = Parent,
         };
     }
+
+    /// <summary>Returns the type name.</summary>
+    /// <remarks>
+    /// A request identifies whose data is being asked for. Rendering it into a log line is not something
+    /// this type will do on a caller's behalf.
+    /// </remarks>
+    public override string ToString() => nameof(ReconcileRequest);
 }

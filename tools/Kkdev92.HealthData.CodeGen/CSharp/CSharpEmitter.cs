@@ -86,6 +86,10 @@ internal sealed class CSharpEmitter(
             }
         }
 
+        // The name types come before the requests that use them, so a reader of the generated
+        // set meets the type before the property typed with it.
+        files.AddRange(new ResourceNameEmitter(contract).Emit(Header));
+
         var resources = new ResourceEmitter(contract, _flattenedResourcePaths);
         resources.ResolveRequestTypeNames();
         RequestTypeNames = resources.RequestTypeNames;
@@ -371,6 +375,19 @@ internal sealed class CSharpEmitter(
 
                 writer.XmlDoc("summary", property.Description ?? property.WireName);
 
+                // A cursor the service accepts and never returns. dailyRollUp takes a page token
+                // like every other paged call and answers without a next one, so a loop written
+                // the usual way either stops after one page or never stops at all. Saying so on
+                // the property is the only place a caller is looking when they write that loop.
+                if (CursorWithNoAnswer(schema, property))
+                {
+                    writer.XmlDoc(
+                        "remarks",
+                        "This operation accepts a cursor but returns none: its response carries no next page "
+                        + "token. There is nothing to enumerate, which is why no streaming overload is "
+                        + "generated for it.");
+                }
+
                 if (property.IsReadOnly)
                 {
                     // ADR-0006: the property stays readable but the generated write contract
@@ -417,9 +434,76 @@ internal sealed class CSharpEmitter(
                     "public System.Collections.Generic.IDictionary<string, System.Text.Json.JsonElement>? "
                     + "ExtensionData { get; set; }");
             }
+
+            EmitBodyPaging(writer, schema);
         }
 
         return new GeneratedFile($"Generated/Models/{schema.CSharpName}.g.cs", writer.ToString());
+    }
+
+    /// <summary>
+    /// Whether a property is a paging cursor on an operation whose response returns no cursor.
+    /// </summary>
+    /// <remarks>
+    /// Read from the pagination declaration rather than from the property's name: <c>pageToken</c>
+    /// on a body that pages normally is not this, and the difference is the whole point.
+    /// </remarks>
+    private bool CursorWithNoAnswer(SchemaContract schema, PropertyContract property)
+        => contract.Operations
+            .Where(operation => operation.Pagination?.Kind == PaginationKind.RequestOnly)
+            .Where(operation => operation.RequestSchema == schema.WireName)
+            .Any(operation => operation.Pagination!.PageToken == property.WireName
+                || operation.Pagination!.PageSize == property.WireName);
+
+    /// <summary>
+    /// Gives a request body that carries a cursor the copy its enumeration needs.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// One operation pages this way: <c>dataPoints.rollUp</c> puts <c>pageToken</c> in the body
+    /// rather than the query. Its request could not be advanced a page without rebuilding the body
+    /// by hand, so the streaming overload every other list operation gets was not generated for it
+    /// and callers wrote the loop themselves.
+    /// </para>
+    /// <para>
+    /// A copy method rather than making the model a record: a record's generated
+    /// <c>ToString</c> would print a person's measurements, which is why models are classes at all.
+    /// The generator knows every property, so the copy is exact without borrowing that.
+    /// </para>
+    /// </remarks>
+    private void EmitBodyPaging(CodeWriter writer, SchemaContract schema)
+    {
+        var pagination = contract.Operations
+            .Where(operation => operation.Pagination?.Kind == PaginationKind.Body)
+            .Where(operation => operation.RequestSchema == schema.WireName)
+            .Select(operation => operation.Pagination!)
+            .FirstOrDefault();
+
+        if (pagination?.PageToken is not { } pageToken)
+        {
+            return;
+        }
+
+        var tokenProperty = schema.Properties.Single(property => property.WireName == pageToken);
+
+        writer.Line();
+        writer.XmlDoc("summary", "Returns a copy of this body positioned at the given page.");
+        writer.XmlDoc(
+            "remarks",
+            "This operation's cursor travels in the body, so advancing a page means a new body. "
+            + "Everything but the page token is carried over unchanged.");
+
+        using (writer.Block($"public {schema.CSharpName} WithPageToken(string? pageToken)"))
+        {
+            using (writer.Block("return new()", closing: "};"))
+            {
+                foreach (var property in schema.Properties)
+                {
+                    var value = property == tokenProperty ? "pageToken" : property.CSharpName;
+                    writer.Line($"{property.CSharpName} = {value},");
+                }
+            }
+        }
     }
 
     /// <summary>

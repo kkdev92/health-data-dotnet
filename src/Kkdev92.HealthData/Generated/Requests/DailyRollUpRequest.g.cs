@@ -12,11 +12,12 @@
 #nullable enable
 
 using Kkdev92.HealthData.Models;
+using Kkdev92.HealthData.Names;
 
 namespace Kkdev92.HealthData.Requests;
 
 /// <summary>Request for health.users.dataTypes.dataPoints.dailyRollUp.</summary>
-public sealed class DailyRollUpRequest
+public sealed record DailyRollUpRequest
 {
     /// <summary>
     /// Required. Parent data type of the Data Point collection. Format:
@@ -24,9 +25,15 @@ public sealed class DailyRollUpRequest
     /// <c>users/me/dataTypes/distance</c> For a list of the supported data types see the
     /// DailyRollupDataPoint value union field.
     /// </summary>
-    /// <remarks>The service requires this to match the pattern ^users/[^/]+/dataTypes/[^/]+$.</remarks>
-    public required string Parent { get; init; }
+    public required DataTypeName Parent { get; init; }
 
     /// <summary>The request body.</summary>
     public required DailyRollUpDataPointsRequest Body { get; init; }
+
+    /// <summary>Returns the type name.</summary>
+    /// <remarks>
+    /// A request identifies whose data is being asked for. Rendering it into a log line is not something
+    /// this type will do on a caller's behalf.
+    /// </remarks>
+    public override string ToString() => nameof(DailyRollUpRequest);
 }

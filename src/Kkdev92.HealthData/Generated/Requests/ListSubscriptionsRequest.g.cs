@@ -11,18 +11,19 @@
 
 #nullable enable
 
+using Kkdev92.HealthData.Names;
+
 namespace Kkdev92.HealthData.Requests;
 
 /// <summary>Request for health.projects.subscribers.subscriptions.list.</summary>
-public sealed class ListSubscriptionsRequest
+public sealed record ListSubscriptionsRequest
 {
     /// <summary>
     /// Required. The parent subscriber. Format: projects/{project}/subscribers/{subscriber} The
     /// {subscriber} ID is user-settable (4-36 characters, matching /a-z/) if provided during creation, or
     /// system-generated otherwise.
     /// </summary>
-    /// <remarks>The service requires this to match the pattern ^projects/[^/]+/subscribers/[^/]+$.</remarks>
-    public required string Parent { get; init; }
+    public required SubscriberName Parent { get; init; }
 
     /// <summary>
     /// Optional. A filter to apply to the list of subscriptions. The filter syntax is described in
@@ -48,7 +49,11 @@ public sealed class ListSubscriptionsRequest
     public string? PageToken { get; init; }
 
     /// <summary>Returns a copy of this request positioned at the given page.</summary>
-    internal ListSubscriptionsRequest WithPageToken(string? pageToken)
+    /// <remarks>
+    /// The copy is exact but for the page token. Nothing is mutated, so the original request stays valid
+    /// and re-sendable.
+    /// </remarks>
+    public ListSubscriptionsRequest WithPageToken(string? pageToken)
     {
         return new()
         {
@@ -58,4 +63,11 @@ public sealed class ListSubscriptionsRequest
             Parent = Parent,
         };
     }
+
+    /// <summary>Returns the type name.</summary>
+    /// <remarks>
+    /// A request identifies whose data is being asked for. Rendering it into a log line is not something
+    /// this type will do on a caller's behalf.
+    /// </remarks>
+    public override string ToString() => nameof(ListSubscriptionsRequest);
 }

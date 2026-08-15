@@ -11,12 +11,20 @@
 
 #nullable enable
 
+using Kkdev92.HealthData.Names;
+
 namespace Kkdev92.HealthData.Requests;
 
 /// <summary>Request for health.users.getProfile.</summary>
-public sealed class GetProfileRequest
+public sealed record GetProfileRequest
 {
     /// <summary>Required. The name of the Profile. Format: <c>users/me/profile</c>.</summary>
-    /// <remarks>The service requires this to match the pattern ^users/[^/]+/profile$.</remarks>
-    public required string Name { get; init; }
+    public required ProfileName Name { get; init; }
+
+    /// <summary>Returns the type name.</summary>
+    /// <remarks>
+    /// A request identifies whose data is being asked for. Rendering it into a log line is not something
+    /// this type will do on a caller's behalf.
+    /// </remarks>
+    public override string ToString() => nameof(GetProfileRequest);
 }

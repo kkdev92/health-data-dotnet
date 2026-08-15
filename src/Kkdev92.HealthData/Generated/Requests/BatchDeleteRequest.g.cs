@@ -12,11 +12,12 @@
 #nullable enable
 
 using Kkdev92.HealthData.Models;
+using Kkdev92.HealthData.Names;
 
 namespace Kkdev92.HealthData.Requests;
 
 /// <summary>Request for health.users.dataTypes.dataPoints.batchDelete.</summary>
-public sealed class BatchDeleteRequest
+public sealed record BatchDeleteRequest
 {
     /// <summary>
     /// Optional. Parent (data type) for the Data Point collection Format:
@@ -26,9 +27,15 @@ public sealed class BatchDeleteRequest
     /// https://aip.dev/159. If this is set, the parent of all of the data points specified in <c>names</c>
     /// must match this field.
     /// </summary>
-    /// <remarks>The service requires this to match the pattern ^users/[^/]+/dataTypes/[^/]+$.</remarks>
-    public required string Parent { get; init; }
+    public required DataTypeName Parent { get; init; }
 
     /// <summary>The request body.</summary>
     public required BatchDeleteDataPointsRequest Body { get; init; }
+
+    /// <summary>Returns the type name.</summary>
+    /// <remarks>
+    /// A request identifies whose data is being asked for. Rendering it into a log line is not something
+    /// this type will do on a caller's behalf.
+    /// </remarks>
+    public override string ToString() => nameof(BatchDeleteRequest);
 }

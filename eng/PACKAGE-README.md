@@ -49,6 +49,7 @@ operation descriptor, which is what makes one client safe to share across users 
 ```csharp
 using Kkdev92.HealthData;
 using Kkdev92.HealthData.Authentication;
+using Kkdev92.HealthData.Names;
 using Kkdev92.HealthData.Requests;
 
 var authorization = new HealthDataAuthorizationHandler(new StaticAccessTokenProvider(accessToken))
@@ -64,7 +65,7 @@ using var httpClient = new HttpClient(authorization)
 var client = new HealthDataClient(httpClient);
 
 var profile = await client.Users.GetProfileAsync(
-    new GetProfileRequest { Name = "users/me/profile" },
+    new GetProfileRequest { Name = UserName.Me.Profile },
     cancellationToken);
 ```
 
@@ -72,7 +73,7 @@ Stream across pages — they are fetched lazily, so stopping early costs nothing
 
 ```csharp
 await foreach (var point in client.Users.DataPoints.EnumerateAsync(
-    new ListDataPointsRequest { Parent = "users/me/dataTypes/heart-rate" },
+    new ListDataPointsRequest { Parent = UserName.Me.DataType("heart-rate") },
     cancellationToken))
 {
     if (point.HeartRate is { BeatsPerMinute: { } bpm })

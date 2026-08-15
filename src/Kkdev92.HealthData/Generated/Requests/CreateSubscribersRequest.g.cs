@@ -12,18 +12,18 @@
 #nullable enable
 
 using Kkdev92.HealthData.Models;
+using Kkdev92.HealthData.Names;
 
 namespace Kkdev92.HealthData.Requests;
 
 /// <summary>Request for health.projects.subscribers.create.</summary>
-public sealed class CreateSubscribersRequest
+public sealed record CreateSubscribersRequest
 {
     /// <summary>
     /// Required. The parent resource where this subscriber will be created. Format:
     /// projects/{project_number} Example: projects/1234567890
     /// </summary>
-    /// <remarks>The service requires this to match the pattern ^projects/[^/]+$.</remarks>
-    public required string Parent { get; init; }
+    public required ProjectName Parent { get; init; }
 
     /// <summary>
     /// Optional. The ID to use for the subscriber, which will become the final component of the
@@ -33,4 +33,11 @@ public sealed class CreateSubscribersRequest
 
     /// <summary>The request body.</summary>
     public required CreateSubscriberPayload Body { get; init; }
+
+    /// <summary>Returns the type name.</summary>
+    /// <remarks>
+    /// A request identifies whose data is being asked for. Rendering it into a log line is not something
+    /// this type will do on a caller's behalf.
+    /// </remarks>
+    public override string ToString() => nameof(CreateSubscribersRequest);
 }

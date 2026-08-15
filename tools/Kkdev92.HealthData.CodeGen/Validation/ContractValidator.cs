@@ -27,6 +27,7 @@ internal static class ContractValidator
         ValidatePagination(spec, contract, errors, warnings);
         ValidateIdentifiers(contract, errors);
         ValidateOpenEnums(contract, errors);
+        ValidateResourceNames(contract, errors);
         ValidateSerializableShapes(contract, errors);
 
         return new ValidationResult(errors, warnings);
@@ -260,6 +261,71 @@ internal static class ContractValidator
                         $"'{openEnum.DeclaringSchema}.{openEnum.DeclaringProperty}' value '{value.WireValue}' " +
                         $"normalizes to '{value.CSharpName}', which collides with its own enum type name (CS0542).");
                 }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Checks the resource name types against what generation assumes about them.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// Two of these can only be broken by a future revision, and both would produce code that
+    /// compiles and is wrong rather than code that fails: a name parameter with no type would fall
+    /// back to <c>string</c> and quietly lose its checking, and two patterns resolving to one type
+    /// name would give a caller a type that accepts names of two different resources — the exact
+    /// hole these types exist to close.
+    /// </para>
+    /// <para>
+    /// The third is about the members: a name whose collection is called <c>parse</c> or
+    /// <c>pattern</c> would emit a builder that collides with the type's own API (CS0102).
+    /// </para>
+    /// </remarks>
+    internal static void ValidateResourceNames(ApiContract contract, List<string> errors)
+    {
+        var byPattern = contract.ResourceNames
+            .GroupBy(name => name.Pattern, StringComparer.Ordinal)
+            .ToDictionary(group => group.Key, group => group.ToArray(), StringComparer.Ordinal);
+
+        foreach (var parameter in contract.Operations.SelectMany(operation => operation.Parameters))
+        {
+            if (parameter.Pattern is { } pattern && !byPattern.ContainsKey(pattern))
+            {
+                errors.Add(
+                    $"Parameter '{parameter.WireName}' states the pattern '{pattern}', which resolved to no "
+                    + "resource name type. It would be emitted as an unchecked string.");
+            }
+        }
+
+        foreach (var duplicate in contract.ResourceNames
+            .GroupBy(name => name.CSharpName, StringComparer.Ordinal)
+            .Where(group => group.Count() > 1))
+        {
+            errors.Add(
+                $"Resource name type '{duplicate.Key}' would be generated for {duplicate.Count()} different "
+                + $"patterns ({string.Join(", ", duplicate.Select(name => name.Pattern))}). One type accepting "
+                + "two shapes of name would defeat the point of having it.");
+        }
+
+        var reserved = new[] { "Parse", "TryParse", "Pattern", "ToString", "From", "Me", "Equals", "GetHashCode" };
+
+        foreach (var name in contract.ResourceNames)
+        {
+            foreach (var child in contract.ResourceNames.Where(c => c.ParentCSharpName == name.CSharpName))
+            {
+                if (reserved.Contains(child.MemberName, StringComparer.Ordinal))
+                {
+                    errors.Add(
+                        $"'{name.CSharpName}' would declare a member '{child.MemberName}' for its child "
+                        + $"'{child.CSharpName}', which collides with a member every name type has (CS0102).");
+                }
+            }
+
+            if (name.IdParameterNames.Count != name.Segments.Count(segment => segment.IsVariable))
+            {
+                errors.Add(
+                    $"'{name.CSharpName}' names {name.IdParameterNames.Count} ids but its pattern has "
+                    + $"{name.Segments.Count(segment => segment.IsVariable)} variable segments.");
             }
         }
     }

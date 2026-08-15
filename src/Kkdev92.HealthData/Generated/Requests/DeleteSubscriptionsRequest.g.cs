@@ -11,10 +11,12 @@
 
 #nullable enable
 
+using Kkdev92.HealthData.Names;
+
 namespace Kkdev92.HealthData.Requests;
 
 /// <summary>Request for health.projects.subscribers.subscriptions.delete.</summary>
-public sealed class DeleteSubscriptionsRequest
+public sealed record DeleteSubscriptionsRequest
 {
     /// <summary>
     /// Required. The resource name of the subscription to delete. Format:
@@ -24,9 +26,12 @@ public sealed class DeleteSubscriptionsRequest
     /// system-generated otherwise. The {subscription} ID is user-settable (4-36 characters, matching /a-z/)
     /// or system-generated if not provided during creation.
     /// </summary>
+    public required SubscriptionName Name { get; init; }
+
+    /// <summary>Returns the type name.</summary>
     /// <remarks>
-    /// The service requires this to match the pattern
-    /// ^projects/[^/]+/subscribers/[^/]+/subscriptions/[^/]+$.
+    /// A request identifies whose data is being asked for. Rendering it into a log line is not something
+    /// this type will do on a caller's behalf.
     /// </remarks>
-    public required string Name { get; init; }
+    public override string ToString() => nameof(DeleteSubscriptionsRequest);
 }

@@ -11,22 +11,30 @@
 
 #nullable enable
 
+using Kkdev92.HealthData.Names;
+
 namespace Kkdev92.HealthData.Requests;
 
 /// <summary>Request for health.projects.subscribers.delete.</summary>
-public sealed class DeleteSubscribersRequest
+public sealed record DeleteSubscribersRequest
 {
     /// <summary>
     /// Required. The name of the subscriber to delete. Format: projects/{project}/subscribers/{subscriber}
     /// Example: projects/my-project/subscribers/my-subscriber-123 The {subscriber} ID is user-settable
     /// (4-36 characters, matching /a-z/) or system-generated if not provided during creation.
     /// </summary>
-    /// <remarks>The service requires this to match the pattern ^projects/[^/]+/subscribers/[^/]+$.</remarks>
-    public required string Name { get; init; }
+    public required SubscriberName Name { get; init; }
 
     /// <summary>
     /// Optional. If set to true, any child resources (e.g., subscriptions) will also be deleted. If false
     /// (default) and child resources exist, the request will fail.
     /// </summary>
     public bool? Force { get; init; }
+
+    /// <summary>Returns the type name.</summary>
+    /// <remarks>
+    /// A request identifies whose data is being asked for. Rendering it into a log line is not something
+    /// this type will do on a caller's behalf.
+    /// </remarks>
+    public override string ToString() => nameof(DeleteSubscribersRequest);
 }

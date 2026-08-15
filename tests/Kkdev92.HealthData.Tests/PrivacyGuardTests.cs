@@ -1,6 +1,7 @@
 using System.Net;
 using System.Reflection;
 using Kkdev92.HealthData.Models;
+using Kkdev92.HealthData.Names;
 using Kkdev92.HealthData.Requests;
 using Kkdev92.HealthData.Serialization;
 
@@ -15,6 +16,48 @@ namespace Kkdev92.HealthData.Tests;
 /// </remarks>
 public sealed class PrivacyGuardTests
 {
+    [Fact]
+    public void NoRequestGeneratesAToStringThatPrintsWhoseDataItIsAbout()
+    {
+        // Requests are records, for 'with'. A record's generated ToString prints every property,
+        // and a request's properties are the name of a person's record, the filter asked of it and
+        // the body about to be written — so each one overrides ToString rather than inheriting the
+        // generated one. Models solve the same problem by being classes; a request cannot, because
+        // paging needs the copy semantics.
+        var requests = typeof(HealthDataApiMetadata).Assembly
+            .GetExportedTypes()
+            .Where(t => t is { IsClass: true, IsAbstract: false } && t.Namespace == "Kkdev92.HealthData.Requests")
+            .ToArray();
+
+        Assert.NotEmpty(requests);
+
+        foreach (var request in requests)
+        {
+            var toString = request.GetMethod(nameof(ToString), BindingFlags.Public | BindingFlags.Instance, Type.EmptyTypes);
+
+            Assert.True(
+                toString?.DeclaringType == request,
+                $"{request.Name} does not override ToString(). A record's generated one prints the "
+                + "resource name and the body.");
+        }
+    }
+
+    [Fact]
+    public void ARequestWithValuesRendersNothingIdentifying()
+    {
+        var request = new ListDataPointsRequest
+        {
+            Parent = UserName.From("1234567890").DataType("heart-rate"),
+            Filter = "heart_rate.sample_time.physical_time >= \"2026-08-01T00:00:00Z\"",
+        };
+
+        var rendered = request.ToString();
+
+        Assert.Equal(nameof(ListDataPointsRequest), rendered);
+        Assert.DoesNotContain("1234567890", rendered, StringComparison.Ordinal);
+        Assert.DoesNotContain("heart-rate", rendered, StringComparison.Ordinal);
+    }
+
     [Fact]
     public void NoHealthModelGeneratesAToStringThatPrintsItsValues()
     {

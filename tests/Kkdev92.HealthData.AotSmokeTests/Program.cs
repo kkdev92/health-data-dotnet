@@ -5,6 +5,7 @@ using Kkdev92.HealthData.Authentication.OAuth;
 using Kkdev92.HealthData.DependencyInjection;
 using Kkdev92.HealthData.Http;
 using Kkdev92.HealthData.Models;
+using Kkdev92.HealthData.Names;
 using Kkdev92.HealthData.Requests;
 using Kkdev92.HealthData.Resilience;
 using Kkdev92.HealthData.Serialization;
@@ -95,7 +96,7 @@ var client = new HealthDataClient(httpClient);
 
 var listed = await client.Users.DataPoints.ListAsync(new ListDataPointsRequest
 {
-    Parent = "users/me/dataTypes/heart-rate",
+    Parent = UserName.Me.DataType("heart-rate"),
     PageSize = 2,
 });
 
@@ -135,7 +136,7 @@ using var authorized = new HttpClient(
 
 var authorizedList = await new HealthDataClient(authorized).Users.DataPoints.ListAsync(new ListDataPointsRequest
 {
-    Parent = "users/me/dataTypes/heart-rate",
+    Parent = UserName.Me.DataType("heart-rate"),
 });
 
 Check("authorized call round-trips", authorizedList.DataPoints is { Count: 1 });

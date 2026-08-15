@@ -12,11 +12,12 @@
 #nullable enable
 
 using Kkdev92.HealthData.Models;
+using Kkdev92.HealthData.Names;
 
 namespace Kkdev92.HealthData.Requests;
 
 /// <summary>Request for health.users.dataTypes.dataPoints.patch.</summary>
-public sealed class PatchDataPointsRequest
+public sealed record PatchDataPointsRequest
 {
     /// <summary>
     /// Identifier. Data point name, only supported for the subset of identifiable data types. For the
@@ -29,9 +30,15 @@ public sealed class PatchDataPointsRequest
     /// be client-provided or system-generated. If client-provided, it must be a string of 4-63 characters,
     /// containing only lowercase letters, numbers, and hyphens.
     /// </summary>
-    /// <remarks>The service requires this to match the pattern ^users/[^/]+/dataTypes/[^/]+/dataPoints/[^/]+$.</remarks>
-    public required string Name { get; init; }
+    public required DataPointName Name { get; init; }
 
     /// <summary>The request body.</summary>
     public required DataPoint Body { get; init; }
+
+    /// <summary>Returns the type name.</summary>
+    /// <remarks>
+    /// A request identifies whose data is being asked for. Rendering it into a log line is not something
+    /// this type will do on a caller's behalf.
+    /// </remarks>
+    public override string ToString() => nameof(PatchDataPointsRequest);
 }

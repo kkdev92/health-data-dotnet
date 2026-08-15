@@ -451,6 +451,11 @@ public sealed class GeneratorTests
                     => "namespace Kkdev92.HealthData.Models;",
                 var p when p.StartsWith("Generated/Requests/", StringComparison.Ordinal)
                     => "namespace Kkdev92.HealthData.Requests;",
+
+                // A resource name is a third kind: not a wire schema and not an envelope, but the
+                // identity of a thing the service holds.
+                var p when p.StartsWith("Generated/Names/", StringComparison.Ordinal)
+                    => "namespace Kkdev92.HealthData.Names;",
                 var p when p.StartsWith("Generated/Serialization/", StringComparison.Ordinal)
                     => "namespace Kkdev92.HealthData.Serialization;",
                 _ => "namespace Kkdev92.HealthData;",
@@ -507,6 +512,7 @@ public sealed class GeneratorTests
             SpecSha256 = "test",
             Scopes = [],
             Operations = [],
+            ResourceNames = [],
             Schemas =
             [
                 new SchemaContract
