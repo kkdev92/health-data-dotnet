@@ -17,7 +17,118 @@ determines the wire contract.
 
 Nothing yet.
 
-## [0.1.0-alpha] - unreleased
+## [0.2.0-alpha] - unreleased
+
+Generated from Google Health API `v4`, Discovery revision `20260805` — the same contract as
+0.1.0-alpha. Everything here is a change to the shape of the SDK, not to what it talks to.
+
+The reason for all of it is one thing: 0.1.0-alpha was built without a consumer, and then an
+application was built on it. Eleven pieces of friction came back, and this release is those eleven
+answered. **Every one of them is breaking**, which is what an alpha is for.
+
+### Breaking
+
+- **Resource names are types.** `Name` and `Parent` no longer take `string`. Each of the eleven
+  name shapes in the contract is a generated type in `Kkdev92.HealthData.Names`, built from the
+  regular expression Discovery already states for that parameter — which the generator was reading
+  and rendering as a doc comment above a `string`.
+
+  ```csharp
+  // before: compiles, is sent, answers 400
+  new GetPairedDevicesRequest { Name = "users/me/dataTypes/steps/dataPoints/abc" }
+
+  // now
+  new GetPairedDevicesRequest { Name = UserName.Me.PairedDevice("abc") }
+  ```
+
+  Build a name from its parts — `UserName.Me.DataType("steps").DataPoint(id)` — or parse one that
+  came from a response with `PairedDeviceName.Parse(point.Name!)`. There is no implicit conversion
+  in either direction, deliberately.
+
+- **Models moved to `Kkdev92.HealthData.Models`, request envelopes to `.Requests`.** 249 of the
+  core assembly's 270 public types were in one namespace; typing `Kkdev92.HealthData.` offered every
+  measurement, request, response and enum at once.
+
+- **Open enums are nested inside the model that declares them.** `SettingsDistanceUnit` is
+  `Settings.Types.DistanceUnit`, protobuf style — the same shape anyone who has consumed a Google
+  API from C# has seen. They are still not C# enums, and their documentation now says so:
+  `Enum.TryParse` compiles against them and throws at run time. Use `FromValue`.
+
+- **Requests are records**, so `with` covers "the same call, one page on". `WithPageToken` is public
+  rather than internal for the same reason. Every request overrides `ToString` to return its type
+  name: a record prints every property, and a request's properties are whose record it is and what
+  is being asked of it.
+
+- **`ScopeCombination` exists once.** The duplicate in `Kkdev92.HealthData.Authentication` is gone;
+  `Kkdev92.HealthData.Http.HealthDataScopeCombination` is the one. `ScopeRequirement.For(descriptor)`
+  replaces the two-arm switch every caller was writing.
+
+- **`CreateAuthorizationUrl` takes `GoogleAuthorizationUrlOptions`** instead of six parameters, two
+  of them `bool` — the pair that decides whether the grant comes back with a refresh token.
+
+- **An empty field mask is refused**, by `GoogleFieldMask.Parse("")` and by the request builder. Its
+  wire meaning is undefined — `field_mask.proto` says implementations differ — and it used to be
+  silently converted into "no mask", which AIP-134 defines as "replace the fields present in the
+  body". `Parse` also stopped dropping empty segments (`"a,,b"` was becoming two paths) and now
+  rejects anything that is not a field path, `*` excepted.
+
+- **A union carrying two measurements is refused when the request is written.** `DataPoint` is a
+  name plus forty-two mutually exclusive members and nothing stopped setting two; the service
+  refuses it and says which operation failed, not which pair. The message names both. Reading two
+  still works — refusing a response would drop a person's data over a client-side rule.
+
+### Added
+
+- **`HealthDataScopes.ReadOnly` / `.WriteOnly` / `.Project` / `.All`.** An application that reads
+  and gates writes had no way to ask which scopes are which, and the first one built on this SDK
+  matched on the string `".writeonly"`. The classification is declared in `semantics.json`: deriving
+  it from the HTTP method is wrong, because `rollUp`, `dailyRollUp` and `reconcile` are POSTs that
+  read — measured, the method disagrees with the scope in 5 of 19 cases.
+
+- **`HealthDataGeneratedDataTypes`** — all 43 data types with the operations Google documents for
+  each, and the snake_case name filters are written against. None of this is in Discovery, which is
+  why asking `steps` for a `get` answers `400 UNSUPPORTED_DATA_TYPE_ACTION`. It is metadata and the
+  SDK never consults it before sending: `Find` returning null means "not in the table", not "not
+  supported".
+
+- **`AddHealthDataWebhooks()`** in the dependency-injection package, which fixes the lifetimes the
+  webhook constructors do not state — the key provider holds the cache, so it is a singleton, and
+  its `HttpClient` has to outlive a request. No receiver is registered when no secret is configured,
+  because one without a secret answers 401 to Google's verification challenge.
+
+- **`HealthDataErrorDetail.Metadata`**, typed. It holds which scope is missing when the reason only
+  says `MISSING_OAUTH_SCOPE`, and reaching it meant walking `Raw`. Still out of exception messages.
+
+- **`HealthDataWebhookReceiver.VerificationChallengeBody`** — the body was documented in prose and
+  nowhere reachable, so every test that posted one wrote the literal again.
+
+- **`EnumerateAsync` for `dataPoints.rollUp`.** It pages through its body rather than the query and
+  was excluded for that reason alone; what decides whether enumeration is possible is the response,
+  and its response returns a cursor. `dailyRollUp` is still the one operation without one — it
+  accepts a page token and returns none — and now says so on the property.
+
+### Fixed
+
+- The packaged XML documentation no longer describes private members. 134 entries, private fields
+  included, were being shipped; Microsoft's own guidance on the switch is that documenting private
+  members "exposes the inner (potentially confidential) workings of your library", and there is no
+  compiler option for it.
+
+### Notes
+
+- **The package-validation baseline is absent for this release**, and for this release only.
+  Comparing this surface against 0.1.0-alpha would produce hundreds of intentional CP0002s. The
+  build now refuses to go past 0.2.0 without one, so the exemption cannot be inherited.
+
+- **Thirteen of the twenty-five operations have never been run against the live service.** Five are
+  writes, which need a write scope and would change a real person's health record; eight are the
+  project operations, which need `cloud-platform`. Both are refused before a request is built when
+  the corresponding gate is off. The other twelve were exercised end to end against Google.
+
+- Webhook signature verification has been tested against crafted requests, not against a real
+  delivery from Google — that needs a subscriber, which needs `cloud-platform`.
+
+## [0.1.0-alpha] - 2026-08-12
 
 First public build. Generated from Google Health API `v4`, Discovery revision `20260805`.
 
@@ -56,5 +167,6 @@ First public build. Generated from Google Health API `v4`, Discovery revision `2
   reported as a bare status with the RFC 6749 reason discarded, which made the seven-day refresh
   expiry indistinguishable from a malformed request. Both were invisible to fixtures.
 
-[Unreleased]: https://github.com/kkdev92/health-data-dotnet/compare/v0.1.0-alpha...HEAD
+[Unreleased]: https://github.com/kkdev92/health-data-dotnet/compare/v0.2.0-alpha...HEAD
+[0.2.0-alpha]: https://github.com/kkdev92/health-data-dotnet/releases/tag/v0.2.0-alpha
 [0.1.0-alpha]: https://github.com/kkdev92/health-data-dotnet/releases/tag/v0.1.0-alpha
