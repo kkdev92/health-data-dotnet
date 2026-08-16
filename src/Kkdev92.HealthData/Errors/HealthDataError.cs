@@ -114,9 +114,14 @@ public sealed class HealthDataErrorDetail
     /// </summary>
     /// <remarks>
     /// <para>
-    /// The reason says a category and the metadata says which one. <c>MISSING_OAUTH_SCOPE</c> does
-    /// not name the scope; the metadata does, and a caller holding a grant that already includes
-    /// the obvious candidate has no other way to find out which one is missing.
+    /// The reason says a category and the metadata narrows it. A reason on its own is often not
+    /// enough to act on — <c>MISSING_OAUTH_SCOPE</c> says a scope is missing without saying which
+    /// — and whatever the service has to add about a particular failure arrives here.
+    /// </para>
+    /// <para>
+    /// What arrives is the service's choice and not a contract. A scope refused before the request
+    /// reaches the service carries <c>service</c> and <c>method</c>, naming the RPC rather than the
+    /// scope, so do not write code that requires a particular key to be present.
     /// </para>
     /// <para>
     /// Typed here because <see cref="Raw"/> was the only way to it, which meant walking a
