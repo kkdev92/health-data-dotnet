@@ -17,7 +17,15 @@ Dates are UTC, taken from when the packages went to nuget.org.
 
 ## [Unreleased]
 
-Nothing yet.
+### Notes
+
+- **The numbers a release has to move now check each other.** `VersionPrefix`, the newest changelog
+  entry and its date, the readme's status line, and `PackageValidationBaselineVersion` are four
+  hand-kept values that are each only correct relative to the others, and nothing was comparing
+  them — which is how the changelog said `unreleased` for a version that was on nuget.org, and how
+  the readme's status line went on describing the release before the current one. Tests read what
+  is already written down rather than asking the network, so getting one wrong fails the build
+  instead of shipping.
 
 ## [0.2.1-alpha] - 2026-08-16
 

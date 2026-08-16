@@ -111,6 +111,29 @@ public sealed partial class ReleaseVersionTests
     /// third file that changes nothing anybody can see, and leaving it behind costs nothing until
     /// the release after that.
     /// </remarks>
+    /// <summary>
+    /// The readme's status line names the version being built.
+    /// </summary>
+    /// <remarks>
+    /// It is not decoration. What follows it is a claim about that release and nothing else — how
+    /// many operations have been run against Google, what has not been, what running them turned
+    /// up — so a stale number does not read as an out-of-date label, it reads as those claims
+    /// being about a version they were never true of. The line was still saying 0.2.0-alpha after
+    /// 0.2.1-alpha was published, which is what put this test here.
+    /// </remarks>
+    [Fact]
+    public void TheReadmeStatusLineNamesTheVersionBeingBuilt()
+    {
+        var readme = File.ReadAllText(Path.Combine(RepositoryRoot.Value, "README.md"));
+        var status = StatusLine().Match(readme);
+
+        Assert.True(status.Success, "The readme has no `**Status:** `x.y.z`` line to check.");
+        Assert.Equal(BuiltVersion, status.Groups["version"].Value);
+    }
+
+    [GeneratedRegex(@"\*\*Status:\*\* `(?<version>[^`]+)`")]
+    private static partial Regex StatusLine();
+
     [Fact]
     public void TheBaselineNamesThePreviousRelease()
     {
