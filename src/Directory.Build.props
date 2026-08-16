@@ -61,7 +61,11 @@
     validator back on during a release that does change the surface would have meant separating
     real breaks from the noise of enabling it, at the same time.
 
-    Point it at the last version actually on nuget.org, and move it on every release.
+    Point it at the last version actually on nuget.org, and move it on every release. That last
+    part is not left to whoever is reading this: ReleaseVersionTests compares it against the
+    release the changelog names below the one being built, so forgetting it fails the build rather
+    than quietly comparing against the wrong surface. A baseline that is not published at all
+    already fails the restore with NU1102; the test is for the one that is published but stale.
 
     This complements rather than replaces the approved public API snapshot in tests/PublicApi:
     that catches a source-level change at test time, this catches a binary-level one at pack
