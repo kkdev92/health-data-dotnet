@@ -26,7 +26,7 @@ Any non-success status becomes a `HealthDataApiException`.
 |---|---|
 | `StatusCode` | The HTTP status |
 | `OperationId` | The Discovery operation id that failed, when known |
-| `Reason` | The machine-readable reason, for example `MISSING_OAUTH_SCOPE` |
+| `Reason` | The machine-readable reason, for example `MISSING_OAUTH_SCOPE`. Passed through as the service sent it, including values this contract does not document — it is for branching on |
 | `RetryAfter` | The server's requested wait, when it sent one |
 | `IsRateLimited` | True when the status was `429 Too Many Requests` |
 | `Error` | The full parsed envelope |
@@ -36,9 +36,11 @@ try
 {
     var profile = await client.Users.GetProfileAsync(request, cancellationToken);
 }
-catch (HealthDataApiException ex) when (ex.Reason == HealthDataErrorReasons.MissingOauthScope)
+catch (HealthDataApiException ex) when (
+    ex.Reason is HealthDataErrorReasons.MissingOauthScope or "ACCESS_TOKEN_SCOPE_INSUFFICIENT")
 {
     // The grant is missing a scope this operation needs. Re-consent; retrying will not help.
+    // Both, because a scope can be refused in two places — see below.
 }
 catch (HealthDataApiException ex) when (ex.IsRateLimited)
 {
@@ -46,9 +48,36 @@ catch (HealthDataApiException ex) when (ex.IsRateLimited)
 }
 ```
 
-**The exception message contains only the operation id, the status, and the reason.** Google's own
-error messages quote user ids and data types, and an exception message is the string most likely
-to end up in a log. The full envelope stays on `Error` for callers with somewhere safe to put it.
+**The exception message contains only the operation id, the status, and the reason when this
+contract documents that reason.** Google's own error messages quote user ids and data types, and an
+exception message is the string most likely to end up in a log. A reason the contract does not
+document is left out of the message and stays on `Reason` and `Error`, for callers with somewhere
+safe to put it.
+
+### A missing scope is refused in two places, and only one of them is in the catalogue
+
+`MISSING_OAUTH_SCOPE` is the reason Google's error catalogue documents, so it is a constant on
+`HealthDataErrorReasons` and it reaches the exception message.
+
+A token that carries **none** of an operation's accepted scopes never reaches the Health service at
+all. Google's front end refuses it first, with `PERMISSION_DENIED` and the reason
+`ACCESS_TOKEN_SCOPE_INSUFFICIENT` — which is not in the catalogue, so there is no constant for it
+and it does not appear in the exception message. Its `ErrorInfo.metadata` carries `service` and
+`method`, naming the RPC that was refused, rather than the scope that was missing.
+
+There is no constant for it on purpose. `HealthDataErrorReasons` is generated from the catalogue
+snapshot in `spec/v4`, and adding a value Google did not publish there would put something in the
+contract that is not in the contract. Compare the string, and know why it is a string.
+
+```csharp
+// Reason is unfiltered, so this matches whichever layer did the refusing.
+catch (HealthDataApiException ex) when (
+    ex.Reason is HealthDataErrorReasons.MissingOauthScope or "ACCESS_TOKEN_SCOPE_INSUFFICIENT")
+```
+
+Branching on the message instead would miss the second one entirely, which is the more likely of
+the two to be what an application actually meets: it is what a grant that was never asked for the
+scope produces.
 
 ### Where the reason comes from
 
