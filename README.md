@@ -12,19 +12,24 @@ offline generator, so the client and the API cannot quietly drift apart.
 _Built for applications that read or write a person's health data and would
 rather the SDK be boring about it._
 
-> **Status:** `0.1.0-alpha`. The client is complete and covered by tests, and the
-> OAuth flow and `dataPoints.list` have been exercised against the live service —
-> a full authorization, and thousands of real data points read back with
-> pagination following the cursor. Most other operations have only been run
-> against fixtures.
+> **Status:** `0.2.0-alpha`. **17 of the 25 operations have been run against the
+> live service and answered** — reads, roll-ups, the TCX export, and all five
+> writes, including creating, patching and deleting real data points. The other
+> eight are the subscriber and subscription operations, which accept only
+> `cloud-platform` and are meant for a service account rather than a user grant;
+> they have not been run. Webhook signature verification has been tested against
+> crafted requests, not against a real delivery from Google.
 >
-> Expect the rough edges of a first release. Two bugs found by actually using it
-> are fixed and regression-tested: `GetKind()` mis-resolving every real
-> `DataPoint`, and a rejected token request arriving with no diagnosis at all —
-> the code Google sent now reaches `ErrorCode`, and the server's own wording
-> reaches `Error`, deliberately not the exception message. Both bugs were
-> invisible to fixtures, which is a fair warning about what else the fixtures may
-> be hiding.
+> `0.2.0-alpha` reshaped the whole public surface on the first real consumer's
+> feedback, so it is breaking throughout — that is what an alpha is for, and
+> [CHANGELOG.md](CHANGELOG.md) lists every piece of it.
+>
+> Running the writes for the first time found four defects and none of them were
+> in this SDK: two in the application driving it, and two in the service — a
+> missing required field answered with `500 INTERNAL` rather than a field
+> violation, and a resource name the service returns that some operations then
+> refuse. The second one is a trap for callers and is written up in
+> [docs/data-points.md](docs/data-points.md#use-usernameme-for-a-parent-even-when-you-have-a-name-from-the-service).
 
 ---
 
@@ -64,8 +69,8 @@ rather the SDK be boring about it._
 ## Installation
 
 ```bash
-# --prerelease, because 0.1.0-alpha is the only version so far and the CLI does not
-# consider pre-release versions unless asked.
+# --prerelease, because every version so far is one and the CLI does not consider
+# pre-release versions unless asked.
 dotnet add package Kkdev92.HealthData --prerelease
 
 # The Quick Start below also uses the authentication package.
@@ -260,9 +265,22 @@ return Results.StatusCode((int)result.StatusCode);
 
 ## Known Limitations
 
-- **Mostly unexercised against the live service.** The OAuth flow and `dataPoints.list` have run
-  against Google and returned real data; everything else is verified against the committed
-  specification and Google's published documentation only
+- **Eight operations have never been run against the live service.** The subscriber and
+  subscription pair accept only `cloud-platform`, so they are verified against the committed
+  specification and Google's published documentation only. The other 17 have run against Google
+  and answered
+- **Webhook delivery is unverified end to end.** Signature verification is tested against crafted
+  requests; receiving a real notification needs a subscriber, which needs the scope above
+- **A name from the service cannot always be used as a parent.** `list` returns names carrying the
+  numeric user id, and five of the six data point collection operations refuse it — build parents
+  from `UserName.Me`. Measured, and not derivable from the contract; see
+  [`docs/data-points.md`](docs/data-points.md#use-usernameme-for-a-parent-even-when-you-have-a-name-from-the-service)
+- **Following the cursor can return fewer records than exist.** The service drops records sharing a
+  timestamp with the last record of a page — no error, no duplicate, enumeration just ends short.
+  Data types whose entries all carry the same instant each day are the ones this bites.
+  `EnumerateAsync` returns exactly what the same cursor walked by hand returns, so there is nothing
+  here to fix; see
+  [`docs/operations.md`](docs/operations.md#following-the-cursor-can-return-fewer-records-than-exist)
 - **Access may be gated.** `API_PRIVATE_PREVIEW_ACCESS_DENIED` exists in the errors catalogue
 - **`net10.0` only.** There is no multi-targeting and none is planned
 - **Two operations are not exposed.** The SMART Health Links pair is excluded on purpose; see

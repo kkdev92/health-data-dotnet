@@ -8,10 +8,15 @@ generated from a committed Discovery snapshot by a deterministic offline code ge
 > this package interoperates with. Google's own client for this API is
 > [`Google.Apis.GoogleHealthAPI.v4`](https://www.nuget.org/packages/Google.Apis.GoogleHealthAPI.v4).
 
-> **Pre-release.** The OAuth flow and `dataPoints.list` have been exercised against the live
-> service; the remaining operations have only met fixtures. Google's error catalogue defines
-> `API_PRIVATE_PREVIEW_ACCESS_DENIED`, so calling the real API may require access to be granted on
-> Google's side regardless of your OAuth setup.
+> **Pre-release.** 17 of the 25 operations have been run against the live service and answered,
+> including all five writes. The remaining eight are the subscriber and subscription operations,
+> which accept only `cloud-platform`; those have met fixtures only. Google's error catalogue
+> defines `API_PRIVATE_PREVIEW_ACCESS_DENIED`, so calling the real API may require access to be
+> granted on Google's side regardless of your OAuth setup.
+>
+> One thing worth knowing before you hit it: `list` returns resource names carrying the numeric
+> user id, and five of the six data point collection operations refuse that form as a `Parent`.
+> Build parents from `UserName.Me`; a name inside a request body is fine as it arrived.
 
 ## Why this exists
 
@@ -25,8 +30,8 @@ generated from a committed Discovery snapshot by a deterministic offline code ge
 ## Install
 
 ```bash
-# --prerelease, because 0.1.0-alpha is the only version so far and the CLI does not consider
-# pre-release versions unless asked. Take only the packages you need; the table says which.
+# --prerelease, because every version so far is one and the CLI does not consider pre-release
+# versions unless asked. Take only the packages you need; the table says which.
 dotnet add package Kkdev92.HealthData --prerelease
 dotnet add package Kkdev92.HealthData.Authentication --prerelease
 ```
