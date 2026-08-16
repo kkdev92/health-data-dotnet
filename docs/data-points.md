@@ -199,6 +199,14 @@ await foreach (var point in client.Users.DataPoints.EnumerateAsync(
 }
 ```
 
+> **An enumeration that finishes is not the same as an enumeration that was complete.** The service
+> drops records that share a timestamp with the last record of a page, with no error and no
+> duplicate. One account's 74 hydration entries came back as 66 at `PageSize = 10` and as 57 at
+> `PageSize = 5`. Hydration is the worst case because Fitbit stamps every entry at the same instant
+> each day; `steps` paged cleanly over the same account. The measurements and why this SDK cannot
+> repair it are in
+> [operations.md](operations.md#following-the-cursor-can-return-fewer-records-than-exist).
+
 ### The filter field depends on the time shape
 
 The filter is an [AIP-160](https://google.aip.dev/160) expression, and **the field you filter on

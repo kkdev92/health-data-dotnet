@@ -34,6 +34,15 @@ Dates are UTC, taken from when the packages went to nuget.org.
   paper over — `users/{id}` is correct when a subscription names a user other than the caller. See
   [docs/data-points.md](docs/data-points.md#use-usernameme-for-a-parent-even-when-you-have-a-name-from-the-service).
 
+- **Following the cursor can return fewer records than exist.** The service drops records that
+  share a timestamp with the last record of a page: no error, no duplicate, the enumeration simply
+  ends short. One account's 74 hydration entries came back as 66 at a page size of 10 and 57 at 5.
+  How exposed you are depends on how tied the timestamps are, not on how small the page is — a day
+  of `steps` paged cleanly. `EnumerateAsync` returns exactly what the same cursor walked by hand
+  with `curl` returns, the same records in the same order, so there is nothing in this package to
+  fix. See
+  [docs/operations.md](docs/operations.md#following-the-cursor-can-return-fewer-records-than-exist).
+
 ## [0.2.0-alpha] - 2026-08-15
 
 Generated from Google Health API `v4`, Discovery revision `20260805` — the same contract as

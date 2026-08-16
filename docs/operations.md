@@ -163,6 +163,39 @@ await foreach (var point in client.Users.DataPoints.EnumerateAsync(
 is purely additive and costs effectively nothing over it. See
 [runtime.md](runtime.md#performance-baseline).
 
+### Following the cursor can return fewer records than exist
+
+**The service drops records that share a timestamp with the last record of a page.** Enumeration
+ends normally, `nextPageToken` simply stops arriving, and the count is short. There is no error and
+no duplicate — the records are never sent.
+
+Measured on 2026-08-16 against one account's `hydration-log`, 74 entries, no filter:
+
+| `PageSize` | Pages | Returned | Missing |
+|---|---|---|---|
+| 5 | 12 | 57 | **17** |
+| 10 | 7 | 66 | **8** |
+| 20 | 4 | 73 | 1 |
+| 25 | 3 | 69 | 5 |
+| 37, 50, 100 | 2, 2, 1 | 74 | 0 |
+
+Every missing record shared its `startTime` with the record immediately before it, and each run of
+missing records began directly after a page boundary — consistent with a cursor keyed on that
+timestamp and resumed strictly after it. `pageSize=10` reproduced to the record twice.
+
+**The exposure is how tied your data is, not how small the page is.** Fitbit stamps every hydration
+entry at the same instant each day, so boundaries land on ties constantly; one day of `steps` — 767
+points, 751 distinct start times — paged at 50 and at 100 with nothing missing. A larger page is not
+a guarantee either: the same `hydration-log` read loses 5 records at 25 and none at 37.
+
+This SDK cannot repair it. `EnumerateAsync` was compared against the same cursor walked by hand with
+`curl`: 66 records both ways, **the same records in the same order**. A record the service does not
+send cannot be recovered by de-duplicating or retrying, and raising `PageSize` behind the caller's
+back would both ignore what they asked for and fail to fix it.
+
+If completeness matters — reconciling a person's record, or anything a number is computed from —
+read within a bounded range you can check rather than trusting a single enumeration to be whole.
+
 ## Not exposed
 
 Two Discovery operations are deliberately excluded, recorded with a reason in
