@@ -14,6 +14,62 @@ The data type is chosen through the resource name, not through a separate parame
 `client.Users.DataPoints` has no `dataTypes` level in C#: `dataTypes` declares no methods of its
 own, so it is flattened away.
 
+## Use `UserName.Me` for a parent, even when you have a name from the service
+
+A name that comes back from the service carries the numeric user id, not `me`:
+
+```text
+users/1234567890123456789/dataTypes/hydration-log/dataPoints/9876543210
+```
+
+`DataPointName.Parse` accepts it, and sending it back where a **name** is expected works —
+`GetAsync`, `PatchAsync`, `ExportExerciseTcxAsync`. Sending it back where a **parent** is expected
+mostly does not. Measured against the live service on 2026-08-16, three runs, identical:
+
+| Operation | `users/me` | `users/{id}` |
+|---|---|---|
+| `ListAsync` | 200 | **400** |
+| `ReconcileAsync` | 200 | **400** |
+| `RollUpAsync` | 200 | **400** |
+| `DailyRollUpAsync` | 200 | **400** |
+| `BatchDeleteAsync` | 200 | **400** |
+| `CreateAsync` | 200 | 200 |
+| `PairedDevices.ListAsync` | 200 | 200 |
+
+So this is the shape that fails:
+
+```csharp
+var name = DataPointName.Parse(point.Name!);
+
+// 400 INVALID_ARGUMENT — the parent carries the numeric user id
+await client.Users.DataPoints.ListAsync(new ListDataPointsRequest { Parent = name.DataType });
+```
+
+and this is the shape that works:
+
+```csharp
+await client.Users.DataPoints.ListAsync(
+    new ListDataPointsRequest { Parent = UserName.Me.DataType(name.DataTypeId) });
+```
+
+Only the parent needs rebuilding. A name inside a request **body** is fine as it arrived —
+`BatchDeleteAsync` answers 200 to a numeric id in `Names` as long as `Parent` says `me`.
+
+The rule is not one you can derive. `list` and `create` are the same path and disagree;
+`pairedDevices.list` has the same shape and is accepted; it is not reads against writes, and it is
+not the URL template. It is not stated in Discovery either, so the generator cannot know it and no
+type here encodes it. The sharp end is that `list` returns the names that `list` will not take
+back.
+
+The refusal is `400 INVALID_ARGUMENT`, `"Request contains an invalid argument."`, with **no**
+`details` — so `HealthDataApiException.Error.Details` is empty and `Reason` falls back to the
+canonical status. There is nothing for this SDK to surface, which is why it is written down here
+instead.
+
+This SDK does not rewrite the segment for you. It cannot: `users/{id}` is the correct form when a
+subscription names a user other than the caller, and silently turning it into `me` would break that
+while fixing this.
+
 ## One type, one measurement
 
 `DataPoint` is a **union**: exactly one of its **42 measurement members** is set, and the other
