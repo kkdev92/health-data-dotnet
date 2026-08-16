@@ -19,6 +19,30 @@ Dates are UTC, taken from when the packages went to nuget.org.
 
 ### Notes
 
+- **The eight project operations have now been run against the live service**, so every operation
+  in the contract has been. Seven of the eight succeed; `subscriptions.patch` is answered
+  `400 INVALID_ARGUMENT` with no details for every body tried, including an empty one, and the
+  same is true of patching a subscriber's `subscriberConfigs` — patching its `endpointUri` works.
+  What they turned up is documented rather than worked around:
+
+  - **A token cannot carry both scope families.** A grant that includes `cloud-platform` beside the
+    `googlehealth.*` scopes is refused by every user-facing operation with
+    `403 DISALLOWED_OAUTH_SCOPES`. The two credential contexts this SDK has always modelled are not
+    a tidiness preference; the service enforces them. See
+    [docs/authentication.md](docs/authentication.md#two-credential-contexts-not-one).
+  - **`ProjectName` must be the project number.** The project id string is answered
+    `403 PERMISSION_DENIED`, and the pattern cannot tell them apart.
+  - **`Subscription.User` is `users/{healthUserId}`**, not the bare id `getIdentity` returns.
+  - **Two more reasons that are not in the catalogue**: `IAM_PERMISSION_DENIED` when the scope is
+    right and the caller has no role on the project, joining
+    `ACCESS_TOKEN_SCOPE_INSUFFICIENT`. Both are refused before the Health service sees the request,
+    which is why neither is in its error list. See
+    [docs/runtime.md](docs/runtime.md#a-missing-scope-is-refused-in-two-places-and-only-one-of-them-is-in-the-catalogue).
+
+- **Webhook delivery is verified end to end.** Creating a subscriber makes Google send the two
+  verification challenges to the endpoint, and the receiver in `Kkdev92.HealthData.Webhooks`
+  answered them `201` and `401` as the guide requires. Updating the endpoint verifies again.
+
 - **The numbers a release has to move now check each other.** `VersionPrefix`, the newest changelog
   entry and its date, the readme's status line, and `PackageValidationBaselineVersion` are four
   hand-kept values that are each only correct relative to the others, and nothing was comparing

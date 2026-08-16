@@ -8,15 +8,18 @@ generated from a committed Discovery snapshot by a deterministic offline code ge
 > this package interoperates with. Google's own client for this API is
 > [`Google.Apis.GoogleHealthAPI.v4`](https://www.nuget.org/packages/Google.Apis.GoogleHealthAPI.v4).
 
-> **Pre-release.** 17 of the 25 operations have been run against the live service and answered,
-> including all five writes. The remaining eight are the subscriber and subscription operations,
-> which accept only `cloud-platform`; those have met fixtures only. Google's error catalogue
-> defines `API_PRIVATE_PREVIEW_ACCESS_DENIED`, so calling the real API may require access to be
-> granted on Google's side regardless of your OAuth setup.
+> **Pre-release.** Every operation in the contract has been run against the live service and 24 of
+> the 25 answered, including all five writes and the subscriber operations under their own
+> `cloud-platform` credential. `subscriptions.patch` is the exception: the service refuses it with
+> a bare `400` whatever it is sent. Google's error catalogue defines
+> `API_PRIVATE_PREVIEW_ACCESS_DENIED`, so calling the real API may require access to be granted on
+> Google's side regardless of your OAuth setup.
 >
-> One thing worth knowing before you hit it: `list` returns resource names carrying the numeric
-> user id, and five of the six data point collection operations refuse that form as a `Parent`.
-> Build parents from `UserName.Me`; a name inside a request body is fine as it arrived.
+> Two things worth knowing before you hit them. `list` returns resource names carrying the numeric
+> user id, and five of the six data point collection operations refuse that form as a `Parent` —
+> build parents from `UserName.Me`. And a token cannot carry both scope families: adding
+> `cloud-platform` to an end user's grant stops every user-facing operation working. A name inside
+> a request body is fine as it arrived; it is only the parent that has to be rebuilt.
 
 ## Why this exists
 

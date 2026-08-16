@@ -12,13 +12,13 @@ offline generator, so the client and the API cannot quietly drift apart.
 _Built for applications that read or write a person's health data and would
 rather the SDK be boring about it._
 
-> **Status:** `0.2.1-alpha`. **17 of the 25 operations have been run against the
-> live service and answered** — reads, roll-ups, the TCX export, and all five
-> writes, including creating, patching and deleting real data points. The other
-> eight are the subscriber and subscription operations, which accept only
-> `cloud-platform` and are meant for a service account rather than a user grant;
-> they have not been run. Webhook signature verification has been tested against
-> crafted requests, not against a real delivery from Google.
+> **Status:** `0.2.1-alpha`. **Every operation in the contract has been run
+> against the live service**, and 24 of the 25 answered — reads, roll-ups, the
+> TCX export, all five writes on real data points, and the subscriber and
+> subscription operations under a separate `cloud-platform` credential. The one
+> that does not is `subscriptions.patch`, which the service refuses with a bare
+> `400` whatever it is sent. Webhook delivery is verified end to end: creating a
+> subscriber makes Google challenge the endpoint, and the receiver answers.
 >
 > `0.2.0-alpha` reshaped the whole public surface on the first real consumer's
 > feedback, so it is breaking throughout — that is what an alpha is for, and
@@ -265,12 +265,14 @@ return Results.StatusCode((int)result.StatusCode);
 
 ## Known Limitations
 
-- **Eight operations have never been run against the live service.** The subscriber and
-  subscription pair accept only `cloud-platform`, so they are verified against the committed
-  specification and Google's published documentation only. The other 17 have run against Google
-  and answered
-- **Webhook delivery is unverified end to end.** Signature verification is tested against crafted
-  requests; receiving a real notification needs a subscriber, which needs the scope above
+- **`subscriptions.patch` does not work.** The service answers a bare `400 INVALID_ARGUMENT`, with
+  no field violations, to every body — including an empty one. Patching a subscriber's
+  `subscriberConfigs` is refused the same way, though its `endpointUri` can be patched. Delete and
+  recreate is the way through
+- **The subscriber operations need their own credential**, and not merely as a matter of tidiness:
+  a token carrying `cloud-platform` beside the `googlehealth.*` scopes is refused by every
+  user-facing operation. See
+  [`docs/authentication.md`](docs/authentication.md#two-credential-contexts-not-one)
 - **A name from the service cannot always be used as a parent.** `list` returns names carrying the
   numeric user id, and five of the six data point collection operations refuse it — build parents
   from `UserName.Me`. Measured, and not derivable from the contract; see

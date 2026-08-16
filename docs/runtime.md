@@ -65,9 +65,18 @@ all. Google's front end refuses it first, with `PERMISSION_DENIED` and the reaso
 and it does not appear in the exception message. Its `ErrorInfo.metadata` carries `service` and
 `method`, naming the RPC that was refused, rather than the scope that was missing.
 
-There is no constant for it on purpose. `HealthDataErrorReasons` is generated from the catalogue
-snapshot in `spec/v4`, and adding a value Google did not publish there would put something in the
-contract that is not in the contract. Compare the string, and know why it is a string.
+A third refusal is possible once the scope is right and the caller is not: `IAM_PERMISSION_DENIED`,
+naming the permission and the project, when the account has the scope but no role on the project
+the request is for. Also not in the catalogue.
+
+There is no constant for any of them on purpose. `HealthDataErrorReasons` is generated from the
+catalogue snapshot in `spec/v4`, and adding a value Google did not publish there would put
+something in the contract that is not in the contract. Compare the string, and know why it is a
+string.
+
+Two of the three are reached before the Health service sees the request, which is why neither is
+in its catalogue: the front end checks scopes, IAM checks the project, and only then does the
+service get to say `MISSING_OAUTH_SCOPE`.
 
 ```csharp
 // Reason is unfiltered, so this matches whichever layer did the refusing.
