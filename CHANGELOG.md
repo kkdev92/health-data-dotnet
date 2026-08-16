@@ -17,6 +17,29 @@ Dates are UTC, taken from when the packages went to nuget.org.
 
 ## [Unreleased]
 
+Nothing yet.
+
+## [0.2.2-alpha] - 2026-08-16
+
+Generated from Google Health API `v4`, Discovery revision `20260805` — the same contract and the
+same public surface as 0.2.1-alpha. **No code changed in this release.** What ships is the readme
+on nuget.org and the documentation comments the package carries, both of which now describe a
+contract that has been exercised end to end rather than one that mostly had not.
+
+### Changed
+
+- **The readme no longer says eight operations have never been run, or that webhook delivery is
+  unverified.** Both were true when written and are not now.
+
+### Added
+
+- **`ReleaseVersionTests`.** Five values a release has to move — `VersionPrefix`, the newest
+  changelog entry, its date, `PackageValidationBaselineVersion`, and the readme's status line —
+  are each only correct relative to the others, and nothing was comparing them. That is how the
+  changelog said `unreleased` for a version already on nuget.org, and how the readme's status line
+  went a release stale. The tests read what is already written down rather than asking the network,
+  so getting one wrong fails the build.
+
 ### Notes
 
 - **The eight project operations have now been run against the live service**, so every operation
@@ -42,14 +65,6 @@ Dates are UTC, taken from when the packages went to nuget.org.
 - **Webhook delivery is verified end to end.** Creating a subscriber makes Google send the two
   verification challenges to the endpoint, and the receiver in `Kkdev92.HealthData.Webhooks`
   answered them `201` and `401` as the guide requires. Updating the endpoint verifies again.
-
-- **The numbers a release has to move now check each other.** `VersionPrefix`, the newest changelog
-  entry and its date, the readme's status line, and `PackageValidationBaselineVersion` are four
-  hand-kept values that are each only correct relative to the others, and nothing was comparing
-  them — which is how the changelog said `unreleased` for a version that was on nuget.org, and how
-  the readme's status line went on describing the release before the current one. Tests read what
-  is already written down rather than asking the network, so getting one wrong fails the build
-  instead of shipping.
 
 ## [0.2.1-alpha] - 2026-08-16
 
@@ -260,7 +275,8 @@ First public build. Generated from Google Health API `v4`, Discovery revision `2
   reported as a bare status with the RFC 6749 reason discarded, which made the seven-day refresh
   expiry indistinguishable from a malformed request. Both were invisible to fixtures.
 
-[Unreleased]: https://github.com/kkdev92/health-data-dotnet/compare/v0.2.1-alpha...HEAD
+[Unreleased]: https://github.com/kkdev92/health-data-dotnet/compare/v0.2.2-alpha...HEAD
+[0.2.2-alpha]: https://github.com/kkdev92/health-data-dotnet/releases/tag/v0.2.2-alpha
 [0.2.1-alpha]: https://github.com/kkdev92/health-data-dotnet/releases/tag/v0.2.1-alpha
 [0.2.0-alpha]: https://github.com/kkdev92/health-data-dotnet/releases/tag/v0.2.0-alpha
 [0.1.0-alpha]: https://github.com/kkdev92/health-data-dotnet/releases/tag/v0.1.0-alpha
