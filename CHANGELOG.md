@@ -13,11 +13,28 @@ version does not by itself cause a major bump — see
 Each release records the Discovery revision it was generated from, because that is what actually
 determines the wire contract.
 
+Dates are UTC, taken from when the packages went to nuget.org.
+
 ## [Unreleased]
 
-Nothing yet.
+### Notes
 
-## [0.2.0-alpha] - unreleased
+- **Five of the thirteen operations 0.2.0-alpha recorded as never run have now been run.** All of
+  the writes: a data point created, patched and deleted in a real account, and the two profile
+  patches sent with the values they had just read back. Seventeen of the twenty-five have now been
+  exercised against the live service. The eight that remain are the project operations, which need
+  `cloud-platform`. Nothing in the package changed — the note in 0.2.0-alpha was true when it
+  shipped and is left as it was.
+
+- **A name the service returns is refused as a `parent` by most of the data point collection.**
+  `list` returns names carrying the numeric user id, and `list`, `reconcile`, `rollUp`,
+  `dailyRollUp` and `batchDelete` answer `400 INVALID_ARGUMENT` to that form, while `create` and
+  `pairedDevices.list` accept it. Build parents from `UserName.Me`; a name inside a request body is
+  fine as it arrived. Measured, not derivable from Discovery, and not something this SDK can
+  paper over — `users/{id}` is correct when a subscription names a user other than the caller. See
+  [docs/data-points.md](docs/data-points.md#use-usernameme-for-a-parent-even-when-you-have-a-name-from-the-service).
+
+## [0.2.0-alpha] - 2026-08-15
 
 Generated from Google Health API `v4`, Discovery revision `20260805` — the same contract as
 0.1.0-alpha. Everything here is a change to the shape of the SDK, not to what it talks to.
