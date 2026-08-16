@@ -171,10 +171,11 @@ skipped and never sent. Enumeration ends normally — `nextPageToken` simply sto
 duplicate is ever returned, so nothing about the result says it is short.
 
 **What decides your exposure is how tied the data is, not how small the page is.** A type recorded
-through the day rarely has two records on the same instant and pages cleanly. A type whose entries
-are all stamped at the same time each day — which is how some sources record a daily total — ties
-constantly, and then almost any boundary lands on one. A larger page is not a guarantee: it moves
-where the boundaries fall rather than removing them.
+through the day seldom has two records on the same instant, so few boundaries can land on a tie —
+less exposed, not immune. A type whose entries are all stamped at the same time each day, which is
+how some sources record a daily total, ties constantly, and then almost any boundary lands on one.
+A larger page is not a guarantee either: it moves where the boundaries fall rather than removing
+them.
 
 This SDK cannot repair it. `EnumerateAsync` returns exactly what the same cursor returns when it is
 walked by hand — the same records, in the same order. A record the service does not send cannot be
@@ -182,8 +183,8 @@ recovered by de-duplicating or retrying, and raising `PageSize` behind the calle
 ignore what they asked for without fixing anything.
 
 If completeness matters — reconciling a person's record, or anything a number is computed from —
-read within a range small enough to come back in one page, rather than trusting a single
-enumeration to be whole.
+narrow the range until `ListAsync` answers with an empty `NextPageToken`, and take that page. A
+result that needed no second page cannot have lost anything at a boundary, because it had none.
 
 ## Not exposed
 

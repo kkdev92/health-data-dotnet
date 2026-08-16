@@ -202,8 +202,8 @@ await foreach (var point in client.Users.DataPoints.EnumerateAsync(
 > **An enumeration that finishes is not the same as an enumeration that was complete.** The service
 > drops records that share a timestamp with the last record of a page, with no error and no
 > duplicate to show for it. Types whose entries are all stamped at the same instant each day —
-> `hydration-log` among them — are the ones this bites; types recorded through the day, like
-> `steps`, page cleanly. Why this SDK cannot repair it is in
+> `hydration-log` among them — are the ones this bites hardest; a type recorded through the day,
+> like `steps`, is less exposed rather than immune. Why this SDK cannot repair it is in
 > [operations.md](operations.md#following-the-cursor-can-return-fewer-records-than-exist).
 
 ### The filter field depends on the time shape
