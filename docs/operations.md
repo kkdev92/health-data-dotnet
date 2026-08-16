@@ -131,6 +131,17 @@ coming back directly. Discovery and the per-method reference agree on `Operation
 is the contract the service enforces — one of the recorded
 [documentation conflicts](architecture.md#known-documentation-conflicts).
 
+**`ProjectName` takes the project number, not the project id.** The pattern accepts either, because
+the pattern is `projects/{project}` and both are projects; the service accepts only the number and
+answers `403 PERMISSION_DENIED` to the id. Google's webhook guide says as much — "the project
+number" — but nothing in the contract does, so nothing here can check it for you.
+
+`CreateAsync` verifies the endpoint before it returns. The endpoint must be HTTPS and reachable
+from the internet, and it has to answer two challenges correctly — see
+[webhooks.md](webhooks.md#endpoint-verification). `PatchAsync` verifies again whenever it changes
+the endpoint. Both fail outright if verification does, so neither is a call you can make against a
+development machine.
+
 ## `client.Projects.Subscribers.Subscriptions`
 
 Also `cloud-platform`.
@@ -144,6 +155,17 @@ Also `cloud-platform`.
 
 Subscription writes do **not** return an `Operation`, unlike subscriber writes. The asymmetry is
 Google's, and it is reproduced rather than smoothed over.
+
+**`Subscription.User` is `users/{healthUserId}`, not the bare id.** `getIdentity` answers with the
+bare id and the field is called `user`, so passing the id is the obvious move and it is answered
+`400 INVALID_USER_RESOURCE_NAME`. The generated property says the right thing; it is worth reading
+before assuming. Note also that `getIdentity` is a user operation, so the credential that may
+create the subscription is not the one that may look the id up — see
+[authentication.md](authentication.md#two-credential-contexts-not-one).
+
+`CreateAsync` additionally needs the subscriber to have been created with
+`SubscriptionCreatePolicy.Manual` for those data types; that is Google's documented precondition
+for creating a subscription by hand rather than letting the subscriber create them itself.
 
 ## Pagination
 

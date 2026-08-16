@@ -15,6 +15,25 @@ your token provider on each call. Of the 25 operations, 8 use project credential
 under `projects.subscribers`. The per-operation breakdown is in
 [operations.md](operations.md).
 
+**One token cannot carry both, and the service enforces that.** It is not that two credentials are
+merely tidier: a grant that includes `cloud-platform` alongside the `googlehealth.*` scopes is
+refused by every user-facing operation, before it does anything.
+
+```text
+403 PERMISSION_DENIED
+reason   DISALLOWED_OAUTH_SCOPES
+message  Request contains disallowed OAuth scope(s).
+metadata disallowed_scopes = cloud_platform
+```
+
+So the two contexts are two credentials, obtained separately and kept apart, and the subscriber
+operations are meant for a service account rather than for anybody's consent screen. If you add
+`cloud-platform` to an end user's grant to save a step, reading their data stops working.
+
+The practical consequence when you set the project side up: `getIdentity` is a user operation, and
+a subscription needs the `healthUserId` it returns. Read that with the user's credential and keep
+it; the credential that may create the subscription is not allowed to ask.
+
 ## The client holds no credentials
 
 Authorization is a pipeline concern. A delegating handler reads the operation descriptor from the
