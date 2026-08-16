@@ -12,7 +12,7 @@ offline generator, so the client and the API cannot quietly drift apart.
 _Built for applications that read or write a person's health data and would
 rather the SDK be boring about it._
 
-> **Status:** `0.2.0-alpha`. **17 of the 25 operations have been run against the
+> **Status:** `0.2.1-alpha`. **17 of the 25 operations have been run against the
 > live service and answered** — reads, roll-ups, the TCX export, and all five
 > writes, including creating, patching and deleting real data points. The other
 > eight are the subscriber and subscription operations, which accept only
