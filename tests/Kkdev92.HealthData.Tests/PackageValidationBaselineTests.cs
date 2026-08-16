@@ -4,21 +4,27 @@ using System.Xml.Linq;
 namespace Kkdev92.HealthData.Tests;
 
 /// <summary>
-/// The absent package-validation baseline is a decision about one version, not a habit.
+/// The package-validation baseline is set, and the exemption it replaced covered one version.
 /// </summary>
 /// <remarks>
 /// <para>
 /// <c>PackageValidationBaselineVersion</c> is what compares the assemblies being packed against
 /// the last version on nuget.org, so a binary breaking change fails the pack rather than reaching
-/// a consumer. It is deliberately absent for 0.2.0-alpha: that release reshaped the whole surface
+/// a consumer. It was deliberately absent for 0.2.0-alpha: that release reshaped the whole surface
 /// on the first real consumer's feedback, and comparing against 0.1.0-alpha would have produced
 /// hundreds of intentional CP0002s whose only cure is a suppression file nobody reads.
 /// </para>
 /// <para>
-/// The risk is not the decision, it is inheriting it. A note in a comment saying "restore this
+/// The risk was never the decision, it was inheriting it. A note in a comment saying "restore this
 /// when you publish" is exactly the kind of instruction that is still there three releases later,
-/// with nothing having compared anything in the meantime — so the build refuses to go past the
-/// version the exemption was written for.
+/// with nothing having compared anything in the meantime — so the build refused to go past the
+/// version the exemption was written for, and 0.2.1-alpha is where it did.
+/// </para>
+/// <para>
+/// These tests now guard the other direction. The exemption is spent, and a later release must not
+/// be able to quietly reintroduce it by clearing the property: the guard only fires when the
+/// baseline is absent, so an absent baseline has to be a test failure rather than something the
+/// build waves through.
 /// </para>
 /// </remarks>
 public sealed class PackageValidationBaselineTests
@@ -29,20 +35,35 @@ public sealed class PackageValidationBaselineTests
         => XDocument.Load(PropsPath).Descendants(name).FirstOrDefault()?.Value;
 
     [Fact]
-    public void TheExemptionNamesTheVersionItWasWrittenFor()
+    public void TheExemptionIsBehindTheVersionBeingBuilt()
     {
-        // If these ever disagree, the exemption has silently widened to cover a release nobody
-        // decided about.
-        Assert.Equal(Property("LastVersionWithoutBaseline"), Property("VersionPrefix"));
+        // The exemption covered exactly the version named here. Once VersionPrefix is past it the
+        // exemption is spent, and moving the two back into line would be reinstating it for a
+        // release nobody decided that about.
+        var exemption = Property("LastVersionWithoutBaseline");
+        var version = Property("VersionPrefix");
+
+        Assert.NotNull(exemption);
+        Assert.NotNull(version);
+        Assert.True(
+            Version.Parse(version) > Version.Parse(exemption),
+            $"VersionPrefix is {version} and the baseline exemption named {exemption}. "
+            + "Going back to or below it would re-enter the state where nothing compares binaries.");
     }
 
     [Fact]
-    public void TheBaselineIsAbsentAndThatIsOnPurpose()
+    public void TheBaselineIsSet()
     {
-        Assert.Null(Property("PackageValidationBaselineVersion"));
+        var baseline = Property("PackageValidationBaselineVersion");
 
-        // Absent, not disabled: everything package validation does that is not a comparison —
-        // framework compatibility, package structure — is still running.
+        Assert.False(
+            string.IsNullOrWhiteSpace(baseline),
+            "PackageValidationBaselineVersion is empty. The MSBuild guard only fires below "
+            + $"{Property("LastVersionWithoutBaseline")}, so past that this test is the only thing "
+            + "stopping a release from shipping with nothing comparing binary compatibility.");
+
+        // Set, and still not disabled: everything package validation does that is not a comparison
+        // — framework compatibility, package structure — runs either way.
         Assert.Equal("true", Property("EnablePackageValidation"));
     }
 
@@ -55,6 +76,11 @@ public sealed class PackageValidationBaselineTests
     /// say so. Both directions are checked — past the exemption it fails, and with a baseline set
     /// the same version builds.
     ///
+    /// The baseline is now set in the props file, so the failing direction has to clear it. An
+    /// empty command-line property does that: it is a global property, it wins over the one in the
+    /// file, and the guard tests for emptiness rather than for absence — which is the same state a
+    /// release that deleted the line would be in, and the state this guard exists to catch.
+    ///
     /// The baseline used here has to be a version that is actually on nuget.org. Package
     /// validation restores it, so an unpublished one fails the build with NU1102 and the test
     /// would pass for the wrong reason on a machine that happens to have it cached.
@@ -64,7 +90,7 @@ public sealed class PackageValidationBaselineTests
     {
         var project = Path.Combine(RepositoryRoot.Value, "src", "Kkdev92.HealthData");
 
-        var withoutBaseline = Build(project, "-p:VersionPrefix=99.0.0");
+        var withoutBaseline = Build(project, "-p:VersionPrefix=99.0.0", "-p:PackageValidationBaselineVersion=");
 
         Assert.NotEqual(0, withoutBaseline.ExitCode);
         Assert.Contains("PackageValidationBaselineVersion", withoutBaseline.Output, StringComparison.Ordinal);

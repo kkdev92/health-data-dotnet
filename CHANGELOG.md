@@ -17,7 +17,43 @@ Dates are UTC, taken from when the packages went to nuget.org.
 
 ## [Unreleased]
 
+Nothing yet.
+
+## [0.2.1-alpha] - 2026-08-16
+
+Generated from Google Health API `v4`, Discovery revision `20260805` — the same contract as
+0.2.0-alpha, and the same public surface. **No code changed in this release.** What ships is the
+readme on nuget.org, the documentation comments the package carries, and one thing about how the
+package is built.
+
+### Changed
+
+- **The package-validation baseline is back on**, pointing at `0.2.0-alpha`, so a binary breaking
+  change now fails the pack again. It was left out of 0.2.0-alpha because that release reshaped
+  the whole surface deliberately; this is the release to restore it in, because the surface here is
+  identical and the comparison came back clean without a single suppression. Restoring it during a
+  release that does change the surface would mean separating real breaks from the noise of turning
+  the validator on, at the same time.
+
+- **`HealthDataErrorDetail.Metadata` no longer claims to name the missing scope.** It said the
+  metadata answers "which scope", which was asserted rather than measured. What a real refusal
+  carries is `service` and `method`, naming the RPC. The remark now says the metadata narrows the
+  reason without promising any particular key.
+
 ### Notes
+
+Everything below is about the service rather than about this package. None of it is fixable here,
+which is why it is written down.
+
+- **A missing scope is refused in two places, and only one of them is in the catalogue.**
+  `MISSING_OAUTH_SCOPE` is the service's and is documented. A token carrying none of an
+  operation's accepted scopes never reaches the service: Google's front end refuses it with
+  `PERMISSION_DENIED` and the reason `ACCESS_TOKEN_SCOPE_INSUFFICIENT`, which is not in the
+  catalogue — so it is not a constant on `HealthDataErrorReasons` and does not reach the exception
+  message. It does reach `Reason`, which is unfiltered on purpose. The catch clause in
+  [docs/runtime.md](docs/runtime.md#a-missing-scope-is-refused-in-two-places-and-only-one-of-them-is-in-the-catalogue)
+  compares both; the one printed there before this release compared only the first and matched
+  neither refusal in practice.
 
 - **Five of the thirteen operations 0.2.0-alpha recorded as never run have now been run.** All of
   the writes: a data point created, patched and deleted in a real account, and the two profile
@@ -192,6 +228,7 @@ First public build. Generated from Google Health API `v4`, Discovery revision `2
   reported as a bare status with the RFC 6749 reason discarded, which made the seven-day refresh
   expiry indistinguishable from a malformed request. Both were invisible to fixtures.
 
-[Unreleased]: https://github.com/kkdev92/health-data-dotnet/compare/v0.2.0-alpha...HEAD
+[Unreleased]: https://github.com/kkdev92/health-data-dotnet/compare/v0.2.1-alpha...HEAD
+[0.2.1-alpha]: https://github.com/kkdev92/health-data-dotnet/releases/tag/v0.2.1-alpha
 [0.2.0-alpha]: https://github.com/kkdev92/health-data-dotnet/releases/tag/v0.2.0-alpha
 [0.1.0-alpha]: https://github.com/kkdev92/health-data-dotnet/releases/tag/v0.1.0-alpha
