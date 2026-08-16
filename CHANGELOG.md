@@ -36,11 +36,10 @@ Dates are UTC, taken from when the packages went to nuget.org.
 
 - **Following the cursor can return fewer records than exist.** The service drops records that
   share a timestamp with the last record of a page: no error, no duplicate, the enumeration simply
-  ends short. One account's 74 hydration entries came back as 66 at a page size of 10 and 57 at 5.
-  How exposed you are depends on how tied the timestamps are, not on how small the page is — a day
-  of `steps` paged cleanly. `EnumerateAsync` returns exactly what the same cursor walked by hand
-  with `curl` returns, the same records in the same order, so there is nothing in this package to
-  fix. See
+  ends short. How exposed you are depends on how tied the timestamps are rather than on how small
+  the page is, so a data type whose entries all carry the same instant each day is the one to
+  watch. `EnumerateAsync` returns exactly what the same cursor returns when it is walked by hand —
+  the same records in the same order — so there is nothing in this package to fix. See
   [docs/operations.md](docs/operations.md#following-the-cursor-can-return-fewer-records-than-exist).
 
 ## [0.2.0-alpha] - 2026-08-15

@@ -24,17 +24,17 @@ users/1234567890123456789/dataTypes/hydration-log/dataPoints/9876543210
 
 `DataPointName.Parse` accepts it, and sending it back where a **name** is expected works —
 `GetAsync`, `PatchAsync`, `ExportExerciseTcxAsync`. Sending it back where a **parent** is expected
-mostly does not. Measured against the live service on 2026-08-16, three runs, identical:
+mostly does not:
 
 | Operation | `users/me` | `users/{id}` |
 |---|---|---|
-| `ListAsync` | 200 | **400** |
-| `ReconcileAsync` | 200 | **400** |
-| `RollUpAsync` | 200 | **400** |
-| `DailyRollUpAsync` | 200 | **400** |
-| `BatchDeleteAsync` | 200 | **400** |
-| `CreateAsync` | 200 | 200 |
-| `PairedDevices.ListAsync` | 200 | 200 |
+| `ListAsync` | works | **refused** |
+| `ReconcileAsync` | works | **refused** |
+| `RollUpAsync` | works | **refused** |
+| `DailyRollUpAsync` | works | **refused** |
+| `BatchDeleteAsync` | works | **refused** |
+| `CreateAsync` | works | works |
+| `PairedDevices.ListAsync` | works | works |
 
 So this is the shape that fails:
 
@@ -53,7 +53,7 @@ await client.Users.DataPoints.ListAsync(
 ```
 
 Only the parent needs rebuilding. A name inside a request **body** is fine as it arrived —
-`BatchDeleteAsync` answers 200 to a numeric id in `Names` as long as `Parent` says `me`.
+`BatchDeleteAsync` accepts a numeric id in `Names` as long as `Parent` says `me`.
 
 The rule is not one you can derive. `list` and `create` are the same path and disagree;
 `pairedDevices.list` has the same shape and is accepted; it is not reads against writes, and it is
@@ -201,10 +201,9 @@ await foreach (var point in client.Users.DataPoints.EnumerateAsync(
 
 > **An enumeration that finishes is not the same as an enumeration that was complete.** The service
 > drops records that share a timestamp with the last record of a page, with no error and no
-> duplicate. One account's 74 hydration entries came back as 66 at `PageSize = 10` and as 57 at
-> `PageSize = 5`. Hydration is the worst case because Fitbit stamps every entry at the same instant
-> each day; `steps` paged cleanly over the same account. The measurements and why this SDK cannot
-> repair it are in
+> duplicate to show for it. Types whose entries are all stamped at the same instant each day —
+> `hydration-log` among them — are the ones this bites; types recorded through the day, like
+> `steps`, page cleanly. Why this SDK cannot repair it is in
 > [operations.md](operations.md#following-the-cursor-can-return-fewer-records-than-exist).
 
 ### The filter field depends on the time shape

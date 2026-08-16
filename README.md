@@ -277,8 +277,9 @@ return Results.StatusCode((int)result.StatusCode);
   [`docs/data-points.md`](docs/data-points.md#use-usernameme-for-a-parent-even-when-you-have-a-name-from-the-service)
 - **Following the cursor can return fewer records than exist.** The service drops records sharing a
   timestamp with the last record of a page — no error, no duplicate, enumeration just ends short.
-  74 hydration entries came back as 66 at a page size of 10. `EnumerateAsync` returns exactly what
-  the same cursor walked by hand returns, so there is nothing here to fix; see
+  Data types whose entries all carry the same instant each day are the ones this bites.
+  `EnumerateAsync` returns exactly what the same cursor walked by hand returns, so there is nothing
+  here to fix; see
   [`docs/operations.md`](docs/operations.md#following-the-cursor-can-return-fewer-records-than-exist)
 - **Access may be gated.** `API_PRIVATE_PREVIEW_ACCESS_DENIED` exists in the errors catalogue
 - **`net10.0` only.** There is no multi-targeting and none is planned
