@@ -17,7 +17,11 @@ Dates are UTC, taken from when the packages went to nuget.org.
 
 ## [Unreleased]
 
-Nothing yet.
+### Changed
+
+- `PackageProjectUrl` now points at <https://kkdev92.dev/> rather than repeating the repository
+  URL. nuget.org shows "Project website" and "Source repository" as separate links, and both led
+  to the same place. The repository stays where the code, the docs and the issues are.
 
 ## [0.2.2-alpha] - 2026-08-16
 

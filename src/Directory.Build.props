@@ -25,7 +25,13 @@
     <Product>Kkdev92.HealthData</Product>
     <Copyright>Copyright (c) kkdev92</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageProjectUrl>https://github.com/kkdev92/health-data-dotnet</PackageProjectUrl>
+    <!--
+      Two different destinations, deliberately. nuget.org renders these as "Project website" and
+      "Source repository" in the sidebar, and until there was a site to point at, both said the
+      same thing: two links, one place. The site is where the project sits among the others; the
+      repository is where the code, the docs and the issues are.
+    -->
+    <PackageProjectUrl>https://kkdev92.dev/</PackageProjectUrl>
     <RepositoryUrl>https://github.com/kkdev92/health-data-dotnet</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>google-health;health;fitness;sdk;rest;aot</PackageTags>

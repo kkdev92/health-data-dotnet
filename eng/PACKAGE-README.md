@@ -155,6 +155,8 @@ application's responsibility.
 
 Source, issues and discussion: <https://github.com/kkdev92/health-data-dotnet>
 
+Author and other projects: <https://kkdev92.dev/>
+
 ## License
 
 The original code is MIT, which is what the package metadata says.
