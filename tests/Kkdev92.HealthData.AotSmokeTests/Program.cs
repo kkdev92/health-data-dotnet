@@ -106,6 +106,22 @@ Check(
     stubHandler.LastUrl == "/v4/users/me/dataTypes/heart-rate/dataPoints?pageSize=2&prettyPrint=false");
 Check("operation descriptor attached", stubHandler.LastOperationId == "health.users.dataTypes.dataPoints.list");
 
+// A double the service could not compute travels as the string "NaN". The reader has to accept
+// it and the writer has to send it back, or a point becomes readable and then uneditable — this
+// API has no field mask, so every update is read, change, send whole.
+var withNaN = JsonSerializer.Deserialize(
+    """{"dailySleepTemperatureDerivations":{"baselineTemperatureCelsius":"NaN","nightlyTemperatureCelsius":31.87}}""",
+    HealthDataJson.ReadInfo<DataPoint>());
+
+Check(
+    "named floating-point literal read",
+    withNaN?.DailySleepTemperatureDerivations?.BaselineTemperatureCelsius is { } celsius && double.IsNaN(celsius));
+
+Check(
+    "named floating-point literal written",
+    JsonSerializer.Serialize(withNaN!, HealthDataJson.WriteInfo<DataPoint>())
+        .Contains("\"baselineTemperatureCelsius\":\"NaN\"", StringComparison.Ordinal));
+
 
 // Authentication: the authorization URL and PKCE are string work, and the handler is the piece
 // that actually has to run under AOT for any call to be authorized.

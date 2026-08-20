@@ -17,6 +17,17 @@ Dates are UTC, taken from when the packages went to nuget.org.
 
 ## [Unreleased]
 
+### Fixed
+
+- A response carrying `"NaN"` for a `double` is now readable. The service sends the named
+  floating-point literals as JSON strings, which is what the protobuf JSON mapping prescribes and
+  what `System.Text.Json` rejects by default, so a single such value failed the whole response.
+  Measured on `daily-sleep-temperature-derivations`: six points out of 1,719 carried
+  `"baselineTemperatureCelsius": "NaN"`, and the first of them cost the other 1,713. Writing
+  accepts them too — this API has no field mask, so an update is a read, a change and a send of
+  the whole point, and a value that could be read but not sent back would make the point
+  uneditable.
+
 ### Changed
 
 - `PackageProjectUrl` now points at <https://kkdev92.dev/> rather than repeating the repository

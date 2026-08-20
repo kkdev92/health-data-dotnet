@@ -1,6 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Json.Serialization.Metadata;
+using Kkdev92.HealthData.Models;
 using Kkdev92.HealthData.Serialization;
 
 namespace Kkdev92.HealthData.Tests;
@@ -201,5 +202,40 @@ public sealed class SerializationContractTests
 
         Assert.Contains("\"startTime\":\"2026-08-09T12:34:56.789Z\"", written, StringComparison.Ordinal);
         Assert.Contains("\"startUtcOffset\":\"-14400s\"", written, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void ADoubleTheServiceCouldNotComputeArrivesAsNaN()
+    {
+        // The service sends "NaN" as a JSON string, which is what the protobuf JSON mapping
+        // prescribes and what System.Text.Json rejects by default. Observed live on
+        // daily-sleep-temperature-derivations: six points in 1,719 carried it, and one of them
+        // failed the entire response — 1,713 good points lost to a strict number reader.
+        const string Payload = """
+            {"date":{"year":2024,"month":9,"day":25},
+             "nightlyTemperatureCelsius":31.878450363196126,
+             "baselineTemperatureCelsius":"NaN",
+             "relativeNightlyStddev30dCelsius":"NaN"}
+            """;
+
+        var point = JsonSerializer.Deserialize(Payload, HealthDataJson.ReadInfo<DailySleepTemperatureDerivations>())!;
+
+        Assert.Equal(31.878450363196126, point.NightlyTemperatureCelsius);
+        Assert.True(double.IsNaN(point.BaselineTemperatureCelsius!.Value));
+        Assert.True(double.IsNaN(point.RelativeNightlyStddev30dCelsius!.Value));
+    }
+
+    [Fact]
+    public void ANaNThatWasReadCanBeSentBack()
+    {
+        // This API has no field mask, so an update is read, change, send whole. A value that is
+        // readable but unsendable would make the point uneditable for reasons the caller cannot
+        // see or fix.
+        var point = new DailySleepTemperatureDerivations { BaselineTemperatureCelsius = double.NaN };
+
+        var written = JsonSerializer.Serialize(
+            point, HealthDataJson.WriteInfo<DailySleepTemperatureDerivations>());
+
+        Assert.Contains("\"baselineTemperatureCelsius\":\"NaN\"", written, StringComparison.Ordinal);
     }
 }
