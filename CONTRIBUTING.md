@@ -112,7 +112,7 @@ ordinary test run because it needs the packed output to exist.
 | `Kkdev92.HealthData.Tests` | Runtime unit tests |
 | `Kkdev92.HealthData.ContractTests` | Exact HTTP wire contract, via a fake `HttpMessageHandler` |
 | `Kkdev92.HealthData.CodeGen.Tests` | Spec integrity and generator golden tests |
-| `Kkdev92.HealthData.IntegrationTests` | Real API. `[Trait("Category", "Integration")]`, never a pull-request gate; its own scheduled and manual workflow runs it |
+| `Kkdev92.HealthData.IntegrationTests` | Real API. `[Trait("Category", "Integration")]`, never a pull-request gate; `integration.yml` runs it on demand |
 | `Kkdev92.HealthData.AotSmokeTests` | A console app that CI publishes with Native AOT |
 
 Integration tests must **skip**, not fail, when credentials are absent.
@@ -140,3 +140,22 @@ infrastructure or documentation change — say that instead, and why.
 Behaviour that depends on Google's contract belongs in `spec/v4/semantics.json` with its source
 and the date it was read, not in a comment. Behaviour that depends on untrusted input deserves a
 test over generated input rather than a handful of examples: see `GeneratedInputTests`.
+
+## Releasing
+
+1. Version bump, `CHANGELOG.md` and the README status line, in a pull request. Merge it.
+2. Dispatch `release.yml` by hand. A manual run is always a dry run — it builds, verifies and
+   packs, and stops before every publishing job. Tags here are immutable, so a pipeline that
+   fails after the tag exists costs a version number.
+3. Dispatch `integration.yml` by hand, with a credential. This is the only check that talks to
+   the live API.
+4. Tag `vX.Y.Z` and push it.
+5. Approve the `release` environment.
+
+Step 3 is the one that looks skippable. Everything else in CI reads what Google *says* — the
+committed `spec/v4` snapshot, and `spec-check.yml` watching Discovery and the reference pages for
+drift. None of it can see a field that is documented as one thing and arrives as another, which
+has happened. That gap is only visible from a real request, and a release is when it is worth
+the credential: the smoke test needs one, and a consent screen still in Testing issues refresh
+tokens that expire in seven days, so there is no standing credential to keep warm. Mint one when
+you are about to ship.
