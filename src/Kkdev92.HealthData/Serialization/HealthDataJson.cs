@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Text.Json.Serialization.Metadata;
 
 namespace Kkdev92.HealthData.Serialization;
@@ -17,6 +18,13 @@ namespace Kkdev92.HealthData.Serialization;
 /// disabled for this assembly, so a type missing from that context fails loudly rather than
 /// silently falling back and then breaking only under Native AOT.
 /// </para>
+/// <para>
+/// Both also accept the named floating-point literals. The service sends <c>"NaN"</c> as a JSON
+/// string for a double it could not compute, which is what the protobuf JSON mapping prescribes
+/// and what System.Text.Json rejects by default. Observed on
+/// <c>daily-sleep-temperature-derivations</c>: six points in 1,719 carried
+/// <c>"baselineTemperatureCelsius": "NaN"</c>, and one of them failed the whole response.
+/// </para>
 /// </remarks>
 public static class HealthDataJson
 {
@@ -24,6 +32,7 @@ public static class HealthDataJson
     public static JsonSerializerOptions ReadOptions { get; } = new()
     {
         TypeInfoResolver = HealthDataJsonContext.Default,
+        NumberHandling = JsonNumberHandling.AllowNamedFloatingPointLiterals,
     };
 
     /// <summary>Options for serializing request payloads, excluding output-only properties.</summary>
@@ -35,7 +44,12 @@ public static class HealthDataJson
 
         // Absent and null are the same thing on this wire contract, and omitting nulls keeps
         // PATCH payloads to what the caller actually set.
-        DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull,
+        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+
+        // Writing needs it as well as reading. This API has no field mask, so an update is a
+        // read, a change and a send of the whole point. A point that came back carrying NaN
+        // would otherwise be readable and then unsendable.
+        NumberHandling = JsonNumberHandling.AllowNamedFloatingPointLiterals,
     };
 
     /// <summary>Returns the read contract for <typeparamref name="T"/>.</summary>
