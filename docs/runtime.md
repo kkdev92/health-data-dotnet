@@ -276,6 +276,28 @@ a whitespace-only difference. A second Google endpoint showed 16.3%.
 
 Set it to `true` to accept the service default, which is convenient when capturing traffic by hand.
 
+## Numbers the service could not compute
+
+A `double` the service has no value for arrives as the JSON **string** `"NaN"`, not as a number
+and not as an absent field. This is what the protobuf JSON mapping prescribes for `float` and
+`double`, and it is what `System.Text.Json` rejects by default, so both the read and the write
+options carry `JsonNumberHandling.AllowNamedFloatingPointLiterals`.
+
+Measured on a live account, 2026-08-21: of the 36 data types that support `list`, exactly one
+sends them. `daily-sleep-temperature-derivations` returned 1,719 points, six of which carried
+`"baselineTemperatureCelsius": "NaN"` and `"relativeNightlyStddev30dCelsius": "NaN"` — nights with
+no baseline yet. No `"Infinity"` or `"-Infinity"` appeared anywhere. Without the setting the first
+such point fails the whole response, so six nights cost the other 1,713.
+
+The value is carried through as `double.NaN` rather than folded into `null`. What it means — no
+baseline yet, too few nights, a sensor that could not settle — is the caller's to decide.
+
+Writing accepts them for the same reason updates exist at all: this API has no field mask, so
+changing a point means reading it, altering one field and sending the whole thing back. A value
+that could be read but not written would leave the point permanently uneditable. Whether the
+service *accepts* a written `NaN` has not been measured — no writable type has been observed
+sending one, and finding out means putting one into a real health record.
+
 ## Native AOT and trimming
 
 The shipping packages are `IsAotCompatible`, and CI publishes a real consumer application with
