@@ -11,6 +11,21 @@ updates:
         patterns:
           - "xunit*"
           - "Microsoft.NET.Test.Sdk"
+    ignore:
+      # xunit.v3 4.0 drops the VSTest path on the .NET 10 SDK, so taking it means
+      # migrating this repository to the MTP mode of `dotnet test` — a `test.runner`
+      # entry in global.json, rewritten test invocations in ci.yml and
+      # integration.yml, and a filter expressed in xunit's query language rather
+      # than VSTest's. Under MTP an assembly that matches no tests fails the run,
+      # so the solution-wide filtered invocation has to stop covering the
+      # integration project as well. That is a change to how this repository is
+      # tested, not a version bump, and it is not something a bot PR can carry.
+      #
+      # Remove this once that migration lands. Minor and patch updates still flow.
+      - dependency-name: "xunit.v3"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "xunit.runner.visualstudio"
+        update-types: ["version-update:semver-major"]
     # Core must keep zero third-party runtime dependencies.
     # Any bot PR that adds a package reference to src/Kkdev92.HealthData is wrong by
     # construction and must be closed rather than merged.
