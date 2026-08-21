@@ -35,7 +35,8 @@ public sealed class PublicApiTests
     /// <remarks>
     /// An environment variable rather than a constant, so approving a deliberate API change does
     /// not require editing and reverting test code:
-    /// <c>APPROVE_PUBLIC_API=1 dotnet test --filter PublicApi</c>, then review the diff.
+    /// <c>APPROVE_PUBLIC_API=1 dotnet test --project tests/Kkdev92.HealthData.Tests --
+    /// --filter-class *PublicApiTests</c>, then review the diff.
     /// </remarks>
     private static bool OverwriteApprovedFile
         => Environment.GetEnvironmentVariable("APPROVE_PUBLIC_API") == "1";

@@ -395,7 +395,7 @@ The index, with a reading order for each kind of reader, is in [`docs/`](docs/RE
 ```bash
 dotnet restore HealthData.slnx
 dotnet build   HealthData.slnx -c Release
-dotnet test    HealthData.slnx -c Release --filter "Category!=Integration&Category!=Package"
+dotnet test --solution HealthData.slnx -c Release -- --filter-not-trait Category=Package
 ```
 
 Read [CONTRIBUTING.md](CONTRIBUTING.md) first — particularly the rules that are not negotiable,

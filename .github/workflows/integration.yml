@@ -127,7 +127,7 @@ jobs:
         id: tests
         env:
           GOOGLEHEALTH_ACCESS_TOKEN: ${{ steps.token.outputs.token }}
-        run: dotnet test tests/Kkdev92.HealthData.IntegrationTests -c Release --filter "Category=Integration"
+        run: dotnet test --project tests/Kkdev92.HealthData.IntegrationTests -c Release -- --filter-trait Category=Integration
 
       # So that "when did this last actually reach Google?" has an answer that is not inferred from
       # a green tick. Keyed on the tests having passed rather than on a credential existing: the
