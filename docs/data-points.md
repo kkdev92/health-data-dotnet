@@ -307,6 +307,32 @@ property itself.
 Roll-up results are `RollupDataPoint`, a second union with its own `GetKind()` and 21 measurement
 members — a smaller set, because not every measurement aggregates.
 
+### `PageSize` on a roll-up is a constraint on duration, not a page size
+
+Leave it unset. Every roll-up tested returns all of its windows in one response whether it is set
+or not, and setting it only adds ways to be refused.
+
+Both requests carry the property because Discovery declares it, and its description — the maximum
+number of points, 1440 by default, 10000 truncated — is Google's own wording, reproduced as given.
+Observed behaviour differs: a request that returns 1,686 points returns the same 1,686 with
+`PageSize` set to 1440. It does not cap the result.
+
+What it does do is get multiplied by the window and checked against the range cap for the data
+type. The check ignores the range you asked for, so a one-day request is refused just the same:
+
+```csharp
+// steps caps at 90 days. 2161 hours is 90 days and an hour, so this is refused
+// even though the range is one day.
+Range = OneDay, WindowSize = OneHour, PageSize = 2161   // INVALID_ROLLUP_QUERY_DURATION
+```
+
+The error names the duration, and the duration is fine — the offending field is `PageSize`.
+
+`DailyRollUp` adds a floor: `PageSize` must also be at least the number of windows the range
+covers. Below that it is refused as `INVALID_DATA_POINT_NAME`, which likewise names something
+that is not wrong. Over ninety days of daily windows, the only accepted value is exactly 90.
+`RollUp` has no floor.
+
 **`RollUp` and `Rollup` are both correct, and the difference is not a typo here.** Discovery spells
 the methods `rollUp` and `dailyRollUp`, and the schemas `RollupDataPoint` and
 `DailyRollupDataPoint`. The generator reproduces each as it is given, so `RollUpAsync` returns a
