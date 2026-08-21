@@ -146,6 +146,33 @@ round-trips and reports `Unknown` instead of throwing — the same reasoning as
 The helpers are generated from the contract, so a new member appears in both the enum and the
 switch surface the next time the snapshot is refreshed.
 
+## Points arrive per source, so adding them up double-counts
+
+A person can have more than one thing recording the same measurement — a wrist device and a
+phone, say. Each reports its own points, so `list` returns the same walk twice, once per source.
+Sum them and the total is inflated. Nothing in the response says so: every point is genuine, and
+the count is only wrong once you treat the set as one person's day.
+
+**Filtering by `Platform` does not separate them.** A phone's built-in tracking and a wrist
+device from the same vendor report the same platform. `DataSource` carries `Platform`,
+`RecordingMethod`, `Application` and `Device`, and it is `Device.DisplayName` that tells two
+devices apart.
+
+**Use a roll-up for the figure.** `RollUpAsync` and `DailyRollUpAsync` aggregate across sources
+and answer with one number for the person. Reach for `list` when the question is *which device*,
+not *how much*.
+
+`ReconcileAsync` also answers across sources, and it does so by resolving them: the value is the
+merged one. What it cannot tell you is where that value came from — a `ReconciledDataPoint`
+carries no `dataSource`, because after merging there is no single source to name. It also calls
+the point `DataPointName` rather than `Name`.
+
+| You want | Use | Attribution |
+|---|---|---|
+| One number for the person | `RollUpAsync`, `DailyRollUpAsync` | — |
+| One number, reconciled point by point | `ReconcileAsync` | dropped |
+| Which device recorded what | `ListAsync` | `DataSource.Device` |
+
 ## Time comes in three parts
 
 A measurement is timed one of two ways, depending on whether it is a span or a reading:
