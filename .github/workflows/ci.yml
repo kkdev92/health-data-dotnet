@@ -83,10 +83,13 @@ jobs:
       - name: Build
         run: dotnet build HealthData.slnx -c Release --no-restore
 
-      # Real-API tests never gate a pull request.
-      # They live in integration.yml, which is manual or scheduled.
+      # Real-API tests never gate a pull request. They live in integration.yml, which is manual.
+      # The integration project is not excluded here, and must not be: under Microsoft.Testing
+      # .Platform an assembly that matches no tests fails the run rather than printing a note, so
+      # filtering it out would turn it red. It is included and skips itself for want of a
+      # credential, which also means a break in that project surfaces here rather than at release.
       - name: Test
-        run: dotnet test HealthData.slnx -c Release --no-build --filter "Category!=Integration&Category!=Package"
+        run: dotnet test --solution HealthData.slnx -c Release --no-build -- --filter-not-trait Category=Package
 
       # Regenerating from the committed snapshot must reproduce the checked-in sources byte for
       # byte. Running it on both operating systems is deliberate: it is the canary for
@@ -114,7 +117,7 @@ jobs:
       # This lane also builds and runs a consumer that has only the packages, which is the one
       # thing a ProjectReference can never tell us.
       - name: Verify the packages
-        run: dotnet test tests/Kkdev92.HealthData.Tests -c Release --no-build --filter "Category=Package"
+        run: dotnet test --project tests/Kkdev92.HealthData.Tests -c Release --no-build -- --filter-trait Category=Package
 
       # The AOT smoke above references the projects, so it would keep passing if the packages
       # stopped carrying what a consumer's own AOT publish needs. This one has only the nupkgs, and

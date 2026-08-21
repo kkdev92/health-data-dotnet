@@ -10,9 +10,10 @@ namespace Kkdev92.HealthData.IntegrationTests;
 /// </summary>
 /// <remarks>
 /// <para>
-/// These never gate a pull request. CI runs
-/// <c>--filter "Category!=Integration"</c>; this suite is exercised only by the manual or
-/// scheduled <c>integration.yml</c> workflow.
+/// These never gate a pull request, but they are not excluded from CI either: under
+/// Microsoft.Testing.Platform an assembly that matches no tests fails the run, so filtering this
+/// one out would turn it red. CI discovers these and they skip themselves for want of a
+/// credential. Actually running them is the job of <c>integration.yml</c>, which is manual.
 /// </para>
 /// <para>
 /// The errors catalog documents <c>API_PRIVATE_PREVIEW_ACCESS_DENIED</c>, so access may require

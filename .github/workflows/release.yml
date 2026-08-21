@@ -74,8 +74,10 @@ jobs:
       - name: Verify generated sources
         run: dotnet run --project tools/Kkdev92.HealthData.CodeGen -c Release --no-build -- verify --version v4
 
+      # The integration project runs and skips itself for want of a credential. Excluding it would
+      # match no tests in that assembly, which Microsoft.Testing.Platform treats as a failed run.
       - name: Test
-        run: dotnet test HealthData.slnx -c Release --no-build --filter "Category!=Integration&Category!=Package"
+        run: dotnet test --solution HealthData.slnx -c Release --no-build -- --filter-not-trait Category=Package
 
       - name: Native AOT smoke
         run: |
@@ -208,7 +210,7 @@ jobs:
       # replaced, only unlisted. Contents, legal files, and a consumer built from nothing but
       # these four packages.
       - name: Verify the packages
-        run: dotnet test tests/Kkdev92.HealthData.Tests -c Release --no-build --filter "Category=Package"
+        run: dotnet test --project tests/Kkdev92.HealthData.Tests -c Release --no-build -- --filter-trait Category=Package
 
       # CI has a lane that publishes an AOT consumer from the packages alone. Release used to run
       # only the ProjectReference one, so a regression that exists solely in what gets packed —

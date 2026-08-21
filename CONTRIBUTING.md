@@ -9,8 +9,13 @@
 ```bash
 dotnet restore HealthData.slnx
 dotnet build   HealthData.slnx -c Release
-dotnet test    HealthData.slnx -c Release --filter "Category!=Integration"
+dotnet test --solution HealthData.slnx -c Release -- --filter-not-trait Category=Package
 ```
+
+Tests run on Microsoft.Testing.Platform, so filters are its options rather than VSTest's and
+belong after the `--`. Only the package tests are excluded here: they need `dotnet pack` to have
+run first. The integration tests are included and skip themselves for want of a credential —
+excluding them would leave that assembly matching nothing, which MTP treats as a failed run.
 
 The build treats warnings as errors. A pull request that introduces a warning does not pass.
 
@@ -97,7 +102,7 @@ If you need to inspect a package locally, build it the way CI does:
 ```bash
 CI=true dotnet build HealthData.slnx -c Release
 CI=true dotnet pack  HealthData.slnx -c Release --no-build -o artifacts
-dotnet test tests/Kkdev92.HealthData.Tests -c Release --no-build --filter "Category=Package"
+dotnet test --project tests/Kkdev92.HealthData.Tests -c Release --no-build -- --filter-trait Category=Package
 ```
 
 That last step is the guard. `.gitignore` has no bearing on what gets packed — NuGet packs MSBuild

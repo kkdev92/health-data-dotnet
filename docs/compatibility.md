@@ -49,7 +49,7 @@ Five independent signals, because each catches something the others miss:
 To approve a deliberate API change:
 
 ```bash
-APPROVE_PUBLIC_API=1 dotnet test --filter PublicApi
+APPROVE_PUBLIC_API=1 dotnet test --project tests/Kkdev92.HealthData.Tests -- --filter-class *PublicApiTests
 git diff tests/PublicApi   # review this carefully before committing
 ```
 
