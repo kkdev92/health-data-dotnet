@@ -92,8 +92,14 @@
           "url": "https://health.googleapis.com/$discovery/rest?version=v4",
           "kind": "discovery",
           "verifiedOn": "2026-08-09"
+        },
+        {
+          "url": "https://health.googleapis.com/v4/users/me/dataTypes/{dataType}/dataPoints:rollUp",
+          "kind": "measured",
+          "verifiedOn": "2026-08-21"
         }
-      ]
+      ],
+      "pageSizeNote": "pageSize does not bound the response: a request returning 1,686 points returns the same 1,686 with pageSize set to 1440, and the count was unchanged across eleven shapes and four data types. It bounds the query instead. The ceiling is floor(range cap / window) — whole windows that fit the data type's cap — and the check ignores the range requested, so a one-day request is refused on the same boundary as a ninety-day one. Boundaries land on that value exactly, including for windows that do not divide the cap, and the rule holds for both the 90-day and the 14-day types. The refusal is INVALID_ROLLUP_QUERY_DURATION, which names the duration rather than the field at fault. Left unset, the service behaves as though pageSize were ceil(range / window), and that implied value is subject to the same ceiling — so a range needing more windows than the cap allows is refused with nothing set. Measured against the live service on 2026-08-21."
     },
     "health.users.dataTypes.dataPoints.dailyRollUp": {
       "pagination": {
@@ -121,8 +127,14 @@
           "url": "https://health.googleapis.com/$discovery/rest?version=v4",
           "kind": "discovery",
           "verifiedOn": "2026-08-09"
+        },
+        {
+          "url": "https://health.googleapis.com/v4/users/me/dataTypes/{dataType}/dataPoints:rollUp",
+          "kind": "measured",
+          "verifiedOn": "2026-08-21"
         }
-      ]
+      ],
+      "pageSizeNote": "pageSize does not bound the response: a request returning 1,686 points returns the same 1,686 with pageSize set to 1440, and the count was unchanged across eleven shapes and four data types. It bounds the query instead. The ceiling is floor(range cap / window) — whole windows that fit the data type's cap — and the check ignores the range requested, so a one-day request is refused on the same boundary as a ninety-day one. Boundaries land on that value exactly, including for windows that do not divide the cap, and the rule holds for both the 90-day and the 14-day types. The refusal is INVALID_ROLLUP_QUERY_DURATION, which names the duration rather than the field at fault. Left unset, the service behaves as though pageSize were ceil(range / window), and that implied value is subject to the same ceiling — so a range needing more windows than the cap allows is refused with nothing set. Measured against the live service on 2026-08-21. dailyRollUp additionally requires pageSize to be at least ceil(range / window), refusing smaller values as INVALID_DATA_POINT_NAME — again not the field at fault. The two bounds round in opposite directions: the ceiling truncates, the floor counts a partial window as a window, so twenty days of seven-day windows requires 3 and ten days of three-day windows requires 4. The floor counts windows and not days: eighty-four days of seven-day windows accepts 12 and rejects 84. Because the bounds are independent, a range needing more windows than the cap allows leaves no accepted value and cannot be requested. rollUp has no floor, so there an explicit pageSize within the ceiling is the way to request such a range."
     },
     "health.users.dataTypes.dataPoints.exportExerciseTcx": {
       "responseKind": "mediaOrJson",
