@@ -3,13 +3,25 @@ name: integration
 # Real API smoke tests. Never a pull-request gate: they need
 # credentials, they touch a real person's health data, and they consume quota.
 #
+# Run this by hand after merging the version bump and before tagging. It used to run weekly, and
+# that could not work. A consent screen with an external user type and a publishing status of
+# "Testing" is *issued* a refresh token expiring in seven days — absolute from the moment it is
+# granted, not a window that using it slides forward, and a refresh exchange returns only a new
+# access token, so there is nothing to rotate either. No interval buys a credential that outlives
+# the next re-consent. The schedule was therefore a red tick every Monday and a chore nobody had
+# a reason to perform on any particular day. At release time the question is worth asking anyway,
+# and the consent is fresh because somebody is already at the keyboard.
+#
+# This is the only check that reads what Google *does*. What it *says* — the Discovery document
+# and the per-method reference pages — is watched by spec-check, which needs no credentials and
+# still runs weekly. The gap this one covers is behaviour that changed while the documentation
+# stood still.
+#
 # Note that the errors catalog defines API_PRIVATE_PREVIEW_ACCESS_DENIED, so this may not be
 # runnable at all without Google-side allowlisting.
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: "0 7 * * 1"
 
 permissions:
   contents: read
@@ -34,20 +46,16 @@ jobs:
         with:
           global-json-file: global.json
 
-      # An access token lives an hour, so one pasted into a secret stops working the same day and
-      # every weekly run after that skips. A refresh token is what survives, and minting from it
-      # here is the same exchange GoogleOAuthClient.RefreshAsync performs. Done with curl so that
-      # the long-lived halves — the refresh token and the client secret — stay inside this step.
-      # The hour-long access token does go to the test process, because that is what it is for.
+      # An access token lives an hour, so one pasted into a secret stops working the same day. A
+      # refresh token is what survives between runs, and minting from it here is the same exchange
+      # GoogleOAuthClient.RefreshAsync performs. Done with curl so that the long-lived halves —
+      # the refresh token and the client secret — stay inside this step. The hour-long access
+      # token does go to the test process, because that is what it is for.
       #
       # Set GOOGLEHEALTH_REFRESH_TOKEN, GOOGLEHEALTH_CLIENT_ID and GOOGLEHEALTH_CLIENT_SECRET in
-      # the "integration" environment. GOOGLEHEALTH_ACCESS_TOKEN still works and is the quicker
-      # thing to use for a one-off manual run.
-      #
-      # A consent screen set to an external user type with a publishing status of Testing is
-      # issued refresh tokens that expire in seven days, which puts a weekly schedule right at the
-      # edge: expect to re-consent until the status changes. That is what the scheduled failure
-      # below is for — it is the notification.
+      # the "integration" environment. Given the seven-day ceiling described at the top of this
+      # file, GOOGLEHEALTH_ACCESS_TOKEN is usually the honest choice: it expires in an hour, which
+      # is long enough for a release and short enough that nobody mistakes it for a standing key.
       - name: Obtain an access token
         id: token
         env:
@@ -100,16 +108,19 @@ jobs:
             echo "present=false" >> "$GITHUB_OUTPUT"
           fi
 
-      # A fork, or a manual run by someone without the secrets, gets a skip and a green tick —
-      # a red run there would say nothing about the code. A scheduled run is the opposite: it
-      # exists to notice that the live API still answers, and a skip means it noticed nothing.
-      # That used to be reported as success, which is how a monitor stops being one.
-      - name: Require credentials on a scheduled run
-        if: github.event_name == 'schedule' && steps.token.outputs.present != 'true'
+      # Every run of this workflow is now somebody deciding to ask the question, so a skip is a
+      # non-answer rather than a polite no-op — and a non-answer read as a pass is how a check
+      # stops being one. This repository has already made that mistake once, back when a
+      # credential-less scheduled run reported success.
+      #
+      # A fork without the secrets gets a red tick here. That is the correct answer to a
+      # deliberate dispatch: the error below says what is missing.
+      - name: Require credentials
+        if: steps.token.outputs.present != 'true'
         run: |
-          echo "::error::No usable credential. The weekly live check cannot run, so it is failing" \
-               "rather than reporting a pass it did not earn. Refresh the secrets in the" \
-               "'integration' environment." >&2
+          echo "::error::No usable credential, so the live check cannot run and is failing rather" \
+               "than reporting a pass it did not earn. Set GOOGLEHEALTH_ACCESS_TOKEN, or the" \
+               "refresh-token trio, in the 'integration' environment." >&2
           exit 1
 
       - name: Run integration tests
