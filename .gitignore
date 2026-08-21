@@ -102,3 +102,7 @@ application_default_credentials.json
 # nobody else's business and never part of a change.
 .playwright-cli/
 
+
+# ブラウザ操作ツールのローカル設定。成果物ではない。
+.playwright/
+.playwright-cli/

@@ -307,6 +307,47 @@ property itself.
 Roll-up results are `RollupDataPoint`, a second union with its own `GetKind()` and 21 measurement
 members — a smaller set, because not every measurement aggregates.
 
+### `PageSize` on a roll-up bounds the query, not the response
+
+Both roll-up requests carry `PageSize` because Discovery declares it, and the description it
+carries — a maximum number of points, 1440 by default — is Google's own, reproduced as given. The
+service does not behave that way. Setting it does not reduce what comes back: a response of 1,686
+points is still 1,686 with `PageSize` at 1440.
+
+What it does is bound the query. Two checks use it, they round in opposite directions, and neither
+names it when it refuses:
+
+| | Rule | Refusal |
+|---|---|---|
+| Ceiling, both operations | at most `⌊cap ÷ window⌋` — whole windows that fit the data type's range cap | `INVALID_ROLLUP_QUERY_DURATION` |
+| Floor, `DailyRollUp` only | at least `⌈range ÷ window⌉` — windows needed to cover the range, a partial one counting as one | `INVALID_DATA_POINT_NAME` |
+
+The ceiling ignores the range you asked for, so a one-day request is refused at the same boundary
+as a ninety-day one:
+
+```csharp
+// steps caps at 90 days, and 2161 hours is 90 days and an hour.
+Range = OneDay, WindowSize = OneHour, PageSize = 2161   // INVALID_ROLLUP_QUERY_DURATION
+```
+
+Leave `PageSize` unset and both checks are usually satisfied for you — unset behaves as though it
+were `⌈range ÷ window⌉`.
+
+**Usually, not always.** That implied value is itself subject to the ceiling, so a range that needs
+more windows than the cap allows is refused with nothing set:
+
+```csharp
+// steps caps at 2160 hours. Ninety days of seven-hour windows needs 309 of them, and 309 × 7
+// is 2163, so this is refused before it starts.
+Range = NinetyDays, WindowSize = SevenHours    // INVALID_ROLLUP_QUERY_DURATION
+```
+
+On `RollUp`, setting `PageSize` explicitly is then the way through: there is no floor, so any value
+within the ceiling is accepted and the response is unaffected — `308` here returns every window the
+cap can cover. `DailyRollUp` has a floor as well as a ceiling, so when the range needs more windows
+than the cap allows there is no value that satisfies both and the combination cannot be requested
+at all. Widen the window or shorten the range.
+
 **`RollUp` and `Rollup` are both correct, and the difference is not a typo here.** Discovery spells
 the methods `rollUp` and `dailyRollUp`, and the schemas `RollupDataPoint` and
 `DailyRollupDataPoint`. The generator reproduces each as it is given, so `RollUpAsync` returns a
