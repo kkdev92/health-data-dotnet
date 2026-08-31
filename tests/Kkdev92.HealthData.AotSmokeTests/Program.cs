@@ -86,7 +86,12 @@ Check("write contract keeps wire names", written.Contains("\"startUtcOffset\":\"
 
 // Scope and error constants are generated, not handwritten.
 Check("scopes generated", HealthDataScopes.ProfileReadonly.EndsWith("googlehealth.profile.readonly", StringComparison.Ordinal));
-Check("error reasons generated", HealthDataErrorReasons.AccountNotLinked == "ACCOUNT_NOT_LINKED");
+// Through the switch rather than by comparing the constant with itself: `AccountNotLinked ==
+// "ACCOUNT_NOT_LINKED"` folds to true at compile time and proves nothing about the published
+// binary. IsDocumented branches over all 58 reasons at run time, so if the generated table were
+// trimmed or mis-emitted, this is the check that would notice.
+Check("error reasons generated", HealthDataErrorReasons.IsDocumented("ACCOUNT_NOT_LINKED")
+    && !HealthDataErrorReasons.IsDocumented("NOT_A_DOCUMENTED_REASON"));
 
 // The full client path: request building, descriptor propagation, send, deserialize. A stub
 // handler keeps this offline while still exercising every generated code path under AOT.

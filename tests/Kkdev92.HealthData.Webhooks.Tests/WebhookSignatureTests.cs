@@ -23,15 +23,31 @@ internal sealed class TinkTestKey : IDisposable
     public uint KeyId { get; }
 
     /// <summary>Renders this key as a Tink keyset JSON document.</summary>
-    public string ToKeysetJson(string status = "ENABLED", string outputPrefixType = "TINK")
-        => ToKeysetJson([(this, status, outputPrefixType)]);
+    /// <param name="extraProtobufFields">
+    /// Raw protobuf appended after the real fields, for proving that a reader skips what it does
+    /// not know. Nothing checks these bytes; a caller supplies well-formed fields with numbers the
+    /// key does not use.
+    /// </param>
+    /// <param name="paramsBytes">
+    /// Replaces the serialized <c>EcdsaParams</c> message (field 2), for feeding the parser a params
+    /// encoding it must reject while the public point stays genuine. Null keeps the real one.
+    /// </param>
+    public string ToKeysetJson(
+        string status = "ENABLED",
+        string outputPrefixType = "TINK",
+        byte[]? extraProtobufFields = null,
+        byte[]? paramsBytes = null)
+        => ToKeysetJson([(this, status, outputPrefixType)], extraProtobufFields, paramsBytes);
 
-    public static string ToKeysetJson(IReadOnlyList<(TinkTestKey Key, string Status, string Prefix)> keys)
+    public static string ToKeysetJson(
+        IReadOnlyList<(TinkTestKey Key, string Status, string Prefix)> keys,
+        byte[]? extraProtobufFields = null,
+        byte[]? paramsBytes = null)
     {
         var entries = keys.Select(k =>
             $$"""
               {"keyData":{"typeUrl":"type.googleapis.com/google.crypto.tink.EcdsaPublicKey",
-              "value":"{{Convert.ToBase64String(k.Key.SerializeEcdsaPublicKey())}}",
+              "value":"{{Convert.ToBase64String([.. k.Key.SerializeEcdsaPublicKey(paramsBytes), .. extraProtobufFields ?? []])}}",
               "keyMaterialType":"ASYMMETRIC_PUBLIC"},
               "status":"{{k.Status}}","keyId":{{k.Key.KeyId}},"outputPrefixType":"{{k.Prefix}}"}
               """);
@@ -56,14 +72,14 @@ internal sealed class TinkTestKey : IDisposable
     }
 
     /// <summary>Serializes the public key as a google.crypto.tink.EcdsaPublicKey protobuf.</summary>
-    private byte[] SerializeEcdsaPublicKey()
+    private byte[] SerializeEcdsaPublicKey(byte[]? paramsOverride = null)
     {
         var parameters = _ecdsa.ExportParameters(includePrivateParameters: false);
 
         var buffer = new List<byte>();
 
         // field 2 (params): hash_type=3 (SHA256), curve=2 (NIST_P256), encoding=2 (DER)
-        var paramsBytes = new byte[] { 0x08, 0x03, 0x10, 0x02, 0x18, 0x02 };
+        var paramsBytes = paramsOverride ?? [0x08, 0x03, 0x10, 0x02, 0x18, 0x02];
         buffer.Add(0x12);
         buffer.Add((byte)paramsBytes.Length);
         buffer.AddRange(paramsBytes);
@@ -122,6 +138,16 @@ internal sealed class KeysetHandler(Func<string> keyset) : HttpMessageHandler
             Content = new StringContent(keyset(), Encoding.UTF8, "application/json"),
         });
     }
+}
+
+/// <summary>A clock a test can move, so cache expiry and staleness are exact rather than waited for.</summary>
+internal sealed class MutableClock(DateTimeOffset start) : TimeProvider
+{
+    private DateTimeOffset _now = start;
+
+    public override DateTimeOffset GetUtcNow() => _now;
+
+    public void Advance(TimeSpan delta) => _now += delta;
 }
 
 public sealed class WebhookSignatureTests
@@ -499,15 +525,6 @@ public sealed class WebhookSignatureTests
 
         await Assert.ThrowsAsync<HttpRequestException>(() =>
             verifier.VerifyAsync(payload, key.Sign(payload), TestContext.Current.CancellationToken));
-    }
-
-    private sealed class MutableClock(DateTimeOffset start) : TimeProvider
-    {
-        private DateTimeOffset _now = start;
-
-        public override DateTimeOffset GetUtcNow() => _now;
-
-        public void Advance(TimeSpan delta) => _now += delta;
     }
 
     [Theory]
