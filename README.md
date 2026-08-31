@@ -12,7 +12,7 @@ offline generator, so the client and the API cannot quietly drift apart.
 _Built for applications that read or write a person's health data and would
 rather the SDK be boring about it._
 
-> **Status:** `0.2.3-alpha`. **Every operation in the contract has been run
+> **Status:** `0.3.0-alpha`. **Every operation in the contract has been run
 > against the live service**, and 24 of the 25 answered — reads, roll-ups, the
 > TCX export, all five writes on real data points, and the subscriber and
 > subscription operations under a separate `cloud-platform` credential. The one

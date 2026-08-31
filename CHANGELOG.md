@@ -17,6 +17,8 @@ Dates are UTC, taken from when the packages went to nuget.org.
 
 ## [Unreleased]
 
+## [0.3.0-alpha] - 2026-08-31
+
 Regenerated from Google Health API `v4`, Discovery revision `20260826`.
 
 ### Added
@@ -42,6 +44,8 @@ the per-method reference precedence over Discovery — removing the constant wou
 change made on one source of two. Those three pages are now watched by the scheduled check, so if
 they stop listing it the decision gets revisited rather than quietly outliving its evidence.
 
+Confirmed against Google's authorization server on 2026-08-31: a consent request that includes the
+scope is still granted it.
 
 ## [0.2.3-alpha] - 2026-08-20
 
@@ -322,7 +326,8 @@ First public build. Generated from Google Health API `v4`, Discovery revision `2
   reported as a bare status with the RFC 6749 reason discarded, which made the seven-day refresh
   expiry indistinguishable from a malformed request. Both were invisible to fixtures.
 
-[Unreleased]: https://github.com/kkdev92/health-data-dotnet/compare/v0.2.3-alpha...HEAD
+[Unreleased]: https://github.com/kkdev92/health-data-dotnet/compare/v0.3.0-alpha...HEAD
+[0.3.0-alpha]: https://github.com/kkdev92/health-data-dotnet/releases/tag/v0.3.0-alpha
 [0.2.3-alpha]: https://github.com/kkdev92/health-data-dotnet/releases/tag/v0.2.3-alpha
 [0.2.2-alpha]: https://github.com/kkdev92/health-data-dotnet/releases/tag/v0.2.2-alpha
 [0.2.1-alpha]: https://github.com/kkdev92/health-data-dotnet/releases/tag/v0.2.1-alpha

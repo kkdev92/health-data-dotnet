@@ -18,7 +18,7 @@
   <!-- Package identity:
        the NuGet version axis is independent of the Google Health API version. -->
   <PropertyGroup>
-    <VersionPrefix>0.2.3</VersionPrefix>
+    <VersionPrefix>0.3.0</VersionPrefix>
     <VersionSuffix Condition="'$(VersionSuffix)' == ''">alpha</VersionSuffix>
     <Authors>kkdev92</Authors>
     <Company>kkdev92</Company>
@@ -80,7 +80,7 @@
   -->
   <PropertyGroup>
     <EnablePackageValidation>true</EnablePackageValidation>
-    <PackageValidationBaselineVersion>0.2.2-alpha</PackageValidationBaselineVersion>
+    <PackageValidationBaselineVersion>0.2.3-alpha</PackageValidationBaselineVersion>
     <LastVersionWithoutBaseline>0.2.0</LastVersionWithoutBaseline>
   </PropertyGroup>
 
