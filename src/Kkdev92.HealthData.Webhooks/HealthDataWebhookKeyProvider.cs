@@ -114,33 +114,42 @@ public sealed class HealthDataWebhookKeyProvider : IDisposable
         _maximumStaleAge = maximumStaleAge ?? TimeSpan.FromHours(24);
         _timeProvider = timeProvider ?? TimeProvider.System;
 
-        // Positive, because every one of these is compared against elapsed time. A negative cache
-        // duration expires the keyset the instant it is fetched, which turns the throttle into the
-        // only thing standing between a forged key id and gstatic.com; a negative stale limit fails
-        // every verification. Neither is a configuration anybody means.
-        if (_cacheDuration <= TimeSpan.Zero)
+        ValidateDurations(_cacheDuration, _minimumRefreshInterval, _maximumStaleAge);
+    }
+
+    /// <summary>
+    /// Rejects the durations that would quietly disable one of this class's guarantees.
+    /// </summary>
+    /// <remarks>
+    /// Every one of these is compared against elapsed time. A cache duration that is not positive
+    /// expires the keyset the instant it is fetched, which leaves the throttle as the only thing
+    /// between a flood of forged key ids and gstatic.com. A refresh interval of zero switches that
+    /// throttle off — which is why zero is refused and not merely negative values. And a stale
+    /// limit shorter than the cache duration means a keyset goes stale before it expires, so a
+    /// failing refresh never falls back at all.
+    /// </remarks>
+    private static void ValidateDurations(TimeSpan cacheDuration, TimeSpan minimumRefreshInterval, TimeSpan maximumStaleAge)
+    {
+        if (cacheDuration <= TimeSpan.Zero)
         {
             throw new ArgumentOutOfRangeException(
-                nameof(cacheDuration), _cacheDuration, "The cache duration must be positive.");
+                nameof(cacheDuration), cacheDuration, "The cache duration must be positive.");
         }
 
-        // Positive, not merely non-negative. Zero switches the throttle off, and the throttle is
-        // what stops a flood of forged signatures naming random key ids from becoming a request
-        // amplifier against gstatic.com — which is the reason given for it a few lines above.
-        if (_minimumRefreshInterval <= TimeSpan.Zero)
+        if (minimumRefreshInterval <= TimeSpan.Zero)
         {
             throw new ArgumentOutOfRangeException(
                 nameof(minimumRefreshInterval),
-                _minimumRefreshInterval,
+                minimumRefreshInterval,
                 "The refresh interval must be positive; zero would disable the throttle.");
         }
 
-        if (_maximumStaleAge < _cacheDuration)
+        if (maximumStaleAge < cacheDuration)
         {
             throw new ArgumentOutOfRangeException(
                 nameof(maximumStaleAge),
-                _maximumStaleAge,
-                $"A keyset cannot go stale ({_maximumStaleAge}) before it expires ({_cacheDuration}).");
+                maximumStaleAge,
+                $"A keyset cannot go stale ({maximumStaleAge}) before it expires ({cacheDuration}).");
         }
     }
 

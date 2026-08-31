@@ -127,29 +127,44 @@ public readonly struct GoogleDuration : IEquatable<GoogleDuration>
             return false;
         }
 
-        var nanos = 0;
-
-        if (!fractionPart.IsEmpty)
+        if (!TryParseFraction(fractionPart, out var nanos))
         {
-            // More than nanosecond precision is not representable and is rejected rather than
-            // silently truncated.
-            if (fractionPart.Length > 9)
-            {
-                return false;
-            }
-
-            if (!int.TryParse(fractionPart, NumberStyles.None, CultureInfo.InvariantCulture, out nanos))
-            {
-                return false;
-            }
-
-            for (var i = fractionPart.Length; i < 9; i++)
-            {
-                nanos *= 10;
-            }
+            return false;
         }
 
         result = negative ? new GoogleDuration(-seconds, -nanos) : new GoogleDuration(seconds, nanos);
+        return true;
+    }
+
+    /// <summary>
+    /// Reads the fractional digits as a nanosecond count.
+    /// </summary>
+    /// <remarks>
+    /// An empty fraction is zero nanoseconds, not a failure — <c>"3s"</c> is a valid duration.
+    /// Anything finer than a nanosecond is refused rather than truncated: dropping digits from a
+    /// health measurement without saying so is worse than not reading it.
+    /// </remarks>
+    private static bool TryParseFraction(ReadOnlySpan<char> fraction, out int nanos)
+    {
+        nanos = 0;
+
+        if (fraction.IsEmpty)
+        {
+            return true;
+        }
+
+        if (fraction.Length > 9
+            || !int.TryParse(fraction, NumberStyles.None, CultureInfo.InvariantCulture, out nanos))
+        {
+            return false;
+        }
+
+        // The digits are the most significant ones: "1.5s" is 500,000,000 nanoseconds, not 5.
+        for (var i = fraction.Length; i < 9; i++)
+        {
+            nanos *= 10;
+        }
+
         return true;
     }
 
