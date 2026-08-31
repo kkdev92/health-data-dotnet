@@ -123,6 +123,20 @@ ordinary test run because it needs the packed output to exist.
 
 Integration tests must **skip**, not fail, when credentials are absent.
 
+### Coverage
+
+Reported on every pull request, and never enforced. A threshold turns coverage into a number
+people write tests to satisfy; a report turns it into something a reviewer can look at when a
+change claims to cover something.
+
+```bash
+dotnet tool restore
+dotnet tool run dotnet-coverage collect -f cobertura -o coverage.cobertura.xml   -- dotnet test --solution HealthData.slnx -c Release -- --filter-not-trait Category=Package
+```
+
+Out of process, rather than the test platform's own `--coverage`: that produced an empty report
+for four of the five suites when it was measured.
+
 ### What a change has to bring with it
 
 **A change in behaviour comes with a test, and a fix comes with a test that fails without it.**
