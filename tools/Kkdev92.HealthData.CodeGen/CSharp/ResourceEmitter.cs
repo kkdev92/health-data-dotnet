@@ -147,75 +147,9 @@ internal sealed class ResourceEmitter(ApiContract contract, IReadOnlySet<string>
             // "the same call with one thing changed" are all 'with' expressions once it is one.
             using (writer.Block($"public sealed record {typeName}"))
             {
-                var first = true;
+                var first = EmitRequestProperties(writer, operation);
 
-                foreach (var parameter in operation.Parameters.OrderBy(p => p.Location).ThenBy(p => p.WireName, StringComparer.Ordinal))
-                {
-                    if (!first)
-                    {
-                        writer.Line();
-                    }
-
-                    first = false;
-
-                    writer.XmlDoc("summary", parameter.Description ?? parameter.WireName);
-
-                    // 'required' is used only for genuinely required path parameters. It is not
-                    // sprayed across models; here it turns a
-                    // guaranteed runtime failure into a compile error.
-                    var modifier = parameter.IsRequired ? "required " : string.Empty;
-                    var type = parameter.IsRequired ? StripNullable(parameter.Type.CSharpType) : parameter.Type.CSharpType;
-
-                    // A parameter with a pattern is a resource name, and the pattern is the type.
-                    // Saying so in prose above a string was the old arrangement: it put the rule
-                    // where a human could read it and a compiler could not, so a name of the wrong
-                    // resource was a 400 from the service rather than an error here.
-                    if (ResourceNameTypeFor(parameter) is { } nameType)
-                    {
-                        type = parameter.IsRequired ? nameType : nameType + "?";
-                    }
-
-                    writer.Line($"public {modifier}{type} {parameter.CSharpName} {{ get; init; }}");
-                }
-
-                if (operation.Pagination?.Kind is PaginationKind.Query or PaginationKind.Body)
-                {
-                    var inBody = operation.Pagination.Kind == PaginationKind.Body;
-
-                    // Public, not internal. EnumerateAsync covers the usual case, but a caller who
-                    // wants one page at a time — to show a cursor, or to stop and resume across
-                    // requests — was left writing this copy by hand against an init-only type,
-                    // which is the one thing the generator can do exactly.
-                    writer.Line();
-                    writer.XmlDoc("summary", "Returns a copy of this request positioned at the given page.");
-                    writer.XmlDoc(
-                        "remarks",
-                        inBody
-                            ? "This operation carries its cursor in the body, so the copy replaces the body's "
-                              + "page token and leaves everything else as it was."
-                            : "The copy is exact but for the page token. Nothing is mutated, so the original "
-                              + "request stays valid and re-sendable.");
-
-                    using (writer.Block($"public {typeName} WithPageToken(string? pageToken)"))
-                    {
-                        using (writer.Block("return new()", closing: "};"))
-                        {
-                            foreach (var parameter in operation.Parameters)
-                            {
-                                var value = !inBody && parameter.WireName == "pageToken"
-                                    ? "pageToken"
-                                    : $"{parameter.CSharpName}";
-
-                                writer.Line($"{parameter.CSharpName} = {value},");
-                            }
-
-                            if (operation.RequestSchema is not null)
-                            {
-                                writer.Line(inBody ? "Body = Body.WithPageToken(pageToken)," : "Body = Body,");
-                            }
-                        }
-                    }
-                }
+                EmitWithPageToken(writer, operation, typeName);
 
                 if (operation.RequestSchema is { } bodySchema)
                 {
@@ -245,6 +179,101 @@ internal sealed class ResourceEmitter(ApiContract contract, IReadOnlySet<string>
             yield return new GeneratedFile($"Generated/Requests/{typeName}.g.cs", writer.ToString());
         }
     }
+
+    /// <summary>
+    /// Writes one property per parameter, and reports whether anything was written.
+    /// </summary>
+    /// <returns>
+    /// True when the record is still empty, which is what the caller uses to decide whether a
+    /// blank line is needed before whatever comes next.
+    /// </returns>
+    private bool EmitRequestProperties(CodeWriter writer, OperationContract operation)
+    {
+        var first = true;
+
+        foreach (var parameter in operation.Parameters.OrderBy(p => p.Location).ThenBy(p => p.WireName, StringComparer.Ordinal))
+        {
+            if (!first)
+            {
+                writer.Line();
+            }
+
+            first = false;
+
+            writer.XmlDoc("summary", parameter.Description ?? parameter.WireName);
+
+            // 'required' is used only for genuinely required path parameters. It is not
+            // sprayed across models; here it turns a
+            // guaranteed runtime failure into a compile error.
+            var modifier = parameter.IsRequired ? "required " : string.Empty;
+            var type = parameter.IsRequired ? StripNullable(parameter.Type.CSharpType) : parameter.Type.CSharpType;
+
+            // A parameter with a pattern is a resource name, and the pattern is the type.
+            // Saying so in prose above a string was the old arrangement: it put the rule
+            // where a human could read it and a compiler could not, so a name of the wrong
+            // resource was a 400 from the service rather than an error here.
+            if (ResourceNameTypeFor(parameter) is { } nameType)
+            {
+                type = parameter.IsRequired ? nameType : nameType + "?";
+            }
+
+            writer.Line($"public {modifier}{type} {parameter.CSharpName} {{ get; init; }}");
+        }
+
+        return first;
+    }
+
+    /// <summary>
+    /// Writes the copy-with-a-page-token method, for an operation that has a cursor.
+    /// </summary>
+    /// <remarks>
+    /// Nothing is written for an operation without one. Where the cursor lives decides the body:
+    /// a query cursor is replaced on the request, a body cursor is replaced on the body.
+    /// </remarks>
+    private static void EmitWithPageToken(CodeWriter writer, OperationContract operation, string typeName)
+    {
+        if (operation.Pagination?.Kind is not (PaginationKind.Query or PaginationKind.Body))
+        {
+            return;
+        }
+
+        var inBody = operation.Pagination.Kind == PaginationKind.Body;
+
+        // Public, not internal. EnumerateAsync covers the usual case, but a caller who
+        // wants one page at a time — to show a cursor, or to stop and resume across
+        // requests — was left writing this copy by hand against an init-only type,
+        // which is the one thing the generator can do exactly.
+        writer.Line();
+        writer.XmlDoc("summary", "Returns a copy of this request positioned at the given page.");
+        writer.XmlDoc(
+            "remarks",
+            inBody
+                ? "This operation carries its cursor in the body, so the copy replaces the body's "
+                  + "page token and leaves everything else as it was."
+                : "The copy is exact but for the page token. Nothing is mutated, so the original "
+                  + "request stays valid and re-sendable.");
+
+        using (writer.Block($"public {typeName} WithPageToken(string? pageToken)"))
+        {
+            using (writer.Block("return new()", closing: "};"))
+            {
+                foreach (var parameter in operation.Parameters)
+                {
+                    var value = !inBody && parameter.WireName == "pageToken"
+                        ? "pageToken"
+                        : $"{parameter.CSharpName}";
+
+                    writer.Line($"{parameter.CSharpName} = {value},");
+                }
+
+                if (operation.RequestSchema is not null)
+                {
+                    writer.Line(inBody ? "Body = Body.WithPageToken(pageToken)," : "Body = Body,");
+                }
+            }
+        }
+    }
+
 
     public IEnumerable<GeneratedFile> EmitResources(ResourceNode root, Func<string, string[], CodeWriter> header)
     {
@@ -371,6 +400,22 @@ internal sealed class ResourceEmitter(ApiContract contract, IReadOnlySet<string>
             }
         }
 
+        EmitEnumerateOverload(writer, operation, requestType);
+
+        EmitDownloadOverload(writer, operation, requestType, descriptor);
+
+    }
+
+    /// <summary>
+    /// Writes the streaming overload, for an operation whose response carries a cursor.
+    /// </summary>
+    /// <remarks>
+    /// Nothing is written for an operation without one. dailyRollUp accepts a page token and
+    /// returns none, so there is nothing to follow and no overload is generated — which is
+    /// enforced by the validator rather than discovered here.
+    /// </remarks>
+    private void EmitEnumerateOverload(CodeWriter writer, OperationContract operation, string requestType)
+    {
         // Every operation whose response carries a cursor gets a streaming overload, whether the
         // cursor goes out in the query or in the body. Only dailyRollUp is left out, and not by
         // preference: it returns no next page token, so there is nothing to follow.
@@ -401,7 +446,16 @@ internal sealed class ResourceEmitter(ApiContract contract, IReadOnlySet<string>
                 writer.Line("    cancellationToken);");
             }
         }
+    }
 
+    /// <summary>
+    /// Writes the stream-first overload, for an operation that can return media.
+    /// </summary>
+    /// <remarks>
+    /// Buffering an exported TCX into a string would defeat the point of asking for media at all.
+    /// </remarks>
+    private void EmitDownloadOverload(CodeWriter writer, OperationContract operation, string requestType, string descriptor)
+    {
         // A media-capable operation also gets a stream-first overload. Buffering an exported TCX
         // into a string would defeat the point.
         if (operation.ResponseKind == ResponseKind.MediaOrJson)
@@ -427,6 +481,7 @@ internal sealed class ResourceEmitter(ApiContract contract, IReadOnlySet<string>
             }
         }
     }
+
 
     private GeneratedFile EmitClientPartial(ResourceNode root, Func<string, string[], CodeWriter> header)
     {
