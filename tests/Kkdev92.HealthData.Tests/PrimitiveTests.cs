@@ -121,6 +121,45 @@ public sealed class GoogleTimestampTests
         var exception = Assert.Throws<FormatException>(() => GoogleTimestamp.Parse("2026-08-09T12:34:56.123456789Z"));
         Assert.DoesNotContain("2026", exception.Message, StringComparison.Ordinal);
     }
+
+    [Fact]
+    public void OrdersByInstantRegardlessOfTheOffsetItWasParsedFrom()
+    {
+        // The same instant written two ways compares equal; an earlier one compares smaller.
+        // Eight operators and CompareTo, none of which anything reached before this test.
+        var noon = GoogleTimestamp.Parse("2026-08-09T12:00:00Z");
+        var alsoNoon = GoogleTimestamp.Parse("2026-08-09T08:00:00-04:00");
+        var later = GoogleTimestamp.Parse("2026-08-09T12:00:00.001Z");
+
+        Assert.True(noon == alsoNoon);
+        Assert.False(noon != alsoNoon);
+        Assert.Equal(0, noon.CompareTo(alsoNoon));
+        Assert.Equal(noon.GetHashCode(), alsoNoon.GetHashCode());
+
+        Assert.True(noon < later);
+        Assert.True(noon <= later);
+        Assert.True(noon <= alsoNoon);
+        Assert.True(later > noon);
+        Assert.True(later >= noon);
+        Assert.True(alsoNoon >= noon);
+
+        Assert.False(later < noon);
+        Assert.False(noon > later);
+    }
+
+    [Fact]
+    public void ConvertsImplicitlyToAndFromDateTimeOffsetAsUtc()
+    {
+        var local = new DateTimeOffset(2026, 8, 9, 8, 0, 0, TimeSpan.FromHours(-4));
+
+        GoogleTimestamp timestamp = local;
+        DateTimeOffset back = timestamp;
+
+        Assert.Equal(TimeSpan.Zero, timestamp.Value.Offset);
+        Assert.Equal(local, back);
+        Assert.Equal(timestamp, GoogleTimestamp.FromDateTimeOffset(local));
+        Assert.Equal(back, timestamp.ToDateTimeOffset());
+    }
 }
 
 public sealed class GoogleFieldMaskTests
