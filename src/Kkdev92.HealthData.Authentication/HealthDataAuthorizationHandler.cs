@@ -93,66 +93,28 @@ public sealed class HealthDataAuthorizationHandler(IHealthDataAccessTokenProvide
     /// </remarks>
     private void RequireSecureDestination(Uri? destination)
     {
-        if (destination is not { IsAbsoluteUri: true }
-            || (destination.Scheme != Uri.UriSchemeHttps
-                && !(destination.Scheme == Uri.UriSchemeHttp && destination.IsLoopback)))
+        if (!SecureUri.IsHttpsOrLoopback(destination))
         {
             throw new InvalidOperationException(
-                $"Refusing to send an access token to '{Describe(destination)}'. Requests carrying a token "
+                $"Refusing to send an access token to '{SecureUri.Describe(destination)}'. Requests carrying a token "
                 + "must be HTTPS, or plain HTTP to a loopback address for a local test server. Check "
                 + "HttpClient.BaseAddress, and any ConfigureHttpClient that sets it.");
         }
 
         // Loopback stays allowed without configuration: a token sent to this machine has not left
         // it, and every local test server would otherwise need registering.
-        if (destination.IsLoopback ||
-            IsSameOrigin(destination, HealthDataApiMetadata.DefaultBaseAddress) ||
-            AdditionalTrustedOrigins.Any(origin => IsSameOrigin(destination, origin)))
+        if (destination!.IsLoopback ||
+            SecureUri.IsSameOrigin(destination, HealthDataApiMetadata.DefaultBaseAddress) ||
+            AdditionalTrustedOrigins.Any(origin => SecureUri.IsSameOrigin(destination, origin)))
         {
             return;
         }
 
         throw new InvalidOperationException(
-            $"Refusing to send an access token to '{Describe(destination)}'. It is a valid HTTPS "
+            $"Refusing to send an access token to '{SecureUri.Describe(destination)}'. It is a valid HTTPS "
             + $"address but not one this handler trusts with a credential: only "
-            + $"{Describe(HealthDataApiMetadata.DefaultBaseAddress)}, a loopback address, and "
+            + $"{SecureUri.Describe(HealthDataApiMetadata.DefaultBaseAddress)}, a loopback address, and "
             + "anything listed in AdditionalTrustedOrigins. If the address is deliberate — a "
             + "proxy, or a service emulator — add its origin to AdditionalTrustedOrigins.");
-    }
-
-    /// <summary>Whether two addresses name the same server.</summary>
-    /// <remarks>
-    /// Compared field by field rather than with <c>GetLeftPart(UriPartial.Authority)</c>, which
-    /// includes userinfo: <c>https://attacker@health.googleapis.com</c> would otherwise fail to
-    /// match while still resolving to Google, and the reverse trick is worse.
-    /// <see cref="Uri.IdnHost"/> rather than <see cref="Uri.Host"/> so a Unicode spelling of the
-    /// host cannot present as a different origin.
-    /// </remarks>
-    private static bool IsSameOrigin(Uri destination, Uri origin)
-        => origin.IsAbsoluteUri
-           && string.Equals(destination.Scheme, origin.Scheme, StringComparison.OrdinalIgnoreCase)
-           && string.Equals(destination.IdnHost, origin.IdnHost, StringComparison.OrdinalIgnoreCase)
-           && destination.Port == origin.Port;
-
-    /// <summary>
-    /// Names an address well enough to fix it, without repeating a credential someone put in it.
-    /// </summary>
-    /// <remarks>
-    /// <c>GetLeftPart(UriPartial.Authority)</c> was the obvious choice and the wrong one: the
-    /// authority includes the userinfo component, so
-    /// <c>http://user:secret@example.test</c> came back whole. The misconfiguration this method
-    /// exists to complain about is exactly the one where a credential ends up in a URI, and the
-    /// complaint would have written it to a log.
-    /// </remarks>
-    private static string Describe(Uri? destination)
-    {
-        if (destination is not { IsAbsoluteUri: true })
-        {
-            return "(no address)";
-        }
-
-        var port = destination.IsDefaultPort ? string.Empty : $":{destination.Port}";
-
-        return $"{destination.Scheme}://{destination.IdnHost}{port}";
     }
 }

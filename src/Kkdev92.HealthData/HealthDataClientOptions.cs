@@ -39,16 +39,13 @@ public sealed class HealthDataClientOptions
             // put it on the wire in the clear. This property exists to be overridden, which is
             // exactly why it needs a floor.
             //
-            // Loopback alone would not do: IsLoopback is true for ftp://localhost and
-            // file://localhost too, and the host being this machine says nothing about the scheme.
             // The floor that matters is enforced again in HealthDataAuthorizationHandler, because
             // this property is not what a request is necessarily sent to.
-            if (value.Scheme != Uri.UriSchemeHttps
-                && !(value.Scheme == Uri.UriSchemeHttp && value.IsLoopback))
+            if (!Http.SecureUri.IsHttpsOrLoopback(value))
             {
                 throw new ArgumentException(
-                    $"'{Describe(value)}' is not HTTPS. Requests to this address carry an access "
-                    + "token; use HTTPS, or a loopback address for a local test server.",
+                    $"'{Http.SecureUri.Describe(value)}' is not HTTPS. Requests to this address carry an "
+                    + "access token; use HTTPS, or a loopback address for a local test server.",
                     nameof(BaseAddress));
             }
 
@@ -82,24 +79,4 @@ public sealed class HealthDataClientOptions
     /// </para>
     /// </remarks>
     public bool PrettyPrintResponses { get; init; }
-
-    /// <summary>
-    /// Names an address well enough to fix it, without repeating a credential put inside it.
-    /// </summary>
-    /// <remarks>
-    /// A URI can carry a secret in its userinfo or its query, and the misconfiguration these
-    /// messages complain about is precisely the one where somebody has done that. Printing the
-    /// whole thing would write the credential to a log as the price of objecting to it.
-    /// </remarks>
-    private static string Describe(Uri? uri)
-    {
-        if (uri is not { IsAbsoluteUri: true })
-        {
-            return "(not an absolute address)";
-        }
-
-        var port = uri.IsDefaultPort ? string.Empty : $":{uri.Port}";
-
-        return $"{uri.Scheme}://{uri.IdnHost}{port}";
-    }
 }

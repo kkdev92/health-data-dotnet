@@ -1,5 +1,6 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Kkdev92.HealthData.Http;
 
 namespace Kkdev92.HealthData.Authentication.OAuth;
 
@@ -274,35 +275,21 @@ public sealed class GoogleOAuthClient(HttpClient httpClient, GoogleOAuthOptions 
     }
 
     /// <summary>Reads a response body, refusing one that is implausibly large.</summary>
-    /// <remarks>
-    /// The declared length is checked first so an oversized response costs nothing, and the read
-    /// is checked as well because a server is free to declare nothing at all.
-    /// </remarks>
     private static async Task<byte[]> ReadBodyAsync(HttpResponseMessage response, CancellationToken cancellationToken)
     {
-        if (response.Content.Headers.ContentLength is > MaximumResponseBytes)
-        {
-            throw new InvalidOperationException(
-                $"The token endpoint declared more than {MaximumResponseBytes} bytes.");
-        }
+        // Read before the body is: once it has been buffered, Content-Length answers with the
+        // real size rather than what the server declared.
+        var declared = response.Content.Headers.ContentLength;
 
-        await using var stream = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
-        using var buffer = new MemoryStream();
+        var body = await BoundedBody
+            .ReadAsync(response.Content, MaximumResponseBytes, cancellationToken)
+            .ConfigureAwait(false);
 
-        var chunk = new byte[8192];
-        int read;
-
-        while ((read = await stream.ReadAsync(chunk, cancellationToken).ConfigureAwait(false)) > 0)
-        {
-            if (buffer.Length + read > MaximumResponseBytes)
-            {
-                throw new InvalidOperationException(
-                    $"The token endpoint returned more than {MaximumResponseBytes} bytes.");
-            }
-
-            buffer.Write(chunk, 0, read);
-        }
-
-        return buffer.ToArray();
+        // A response that declared more than this was refused before a byte of it arrived; one
+        // that merely turned out to be larger declared nothing, or declared something untrue.
+        return body ?? throw new InvalidOperationException(
+            declared > MaximumResponseBytes
+                ? $"The token endpoint declared more than {MaximumResponseBytes} bytes."
+                : $"The token endpoint returned more than {MaximumResponseBytes} bytes.");
     }
 }
