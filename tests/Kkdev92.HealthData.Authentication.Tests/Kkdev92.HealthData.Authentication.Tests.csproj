@@ -1,8 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.TimeProvider.Testing" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="../../src/Kkdev92.HealthData.Authentication/Kkdev92.HealthData.Authentication.csproj" />
     <ProjectReference Include="../../src/Kkdev92.HealthData.DependencyInjection/Kkdev92.HealthData.DependencyInjection.csproj" />
+    <ProjectReference Include="../Kkdev92.HealthData.TestSupport/Kkdev92.HealthData.TestSupport.csproj" />
   </ItemGroup>
 
 </Project>

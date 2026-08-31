@@ -1,6 +1,8 @@
 using System.Text;
 using System.Text.Json;
+using Kkdev92.HealthData.TestSupport;
 using Kkdev92.HealthData.Webhooks;
+using Microsoft.Extensions.Time.Testing;
 
 namespace Kkdev92.HealthData.Webhooks.Tests;
 
@@ -58,7 +60,7 @@ public sealed class TinkKeysetParsingTests
         var serveBroken = false;
         var handler = new KeysetHandler(() => serveBroken ? KeysetWith(material) : key.ToKeysetJson());
 
-        var time = new MutableClock(new DateTimeOffset(2026, 8, 10, 12, 0, 0, TimeSpan.Zero));
+        var time = new FakeTimeProvider(new DateTimeOffset(2026, 8, 10, 12, 0, 0, TimeSpan.Zero));
         using var provider = new HealthDataWebhookKeyProvider(new HttpClient(handler), timeProvider: time);
         var verifier = new HealthDataWebhookSignatureVerifier(provider);
         var payload = Encoding.UTF8.GetBytes(NotificationJson);

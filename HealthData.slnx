@@ -22,5 +22,6 @@
     <Project Path="tests/Kkdev92.HealthData.Webhooks.Tests/Kkdev92.HealthData.Webhooks.Tests.csproj" />
     <Project Path="tests/Kkdev92.HealthData.IntegrationTests/Kkdev92.HealthData.IntegrationTests.csproj" />
     <Project Path="tests/Kkdev92.HealthData.AotSmokeTests/Kkdev92.HealthData.AotSmokeTests.csproj" />
+    <Project Path="tests/Kkdev92.HealthData.TestSupport/Kkdev92.HealthData.TestSupport.csproj" />
   </Folder>
 </Solution>

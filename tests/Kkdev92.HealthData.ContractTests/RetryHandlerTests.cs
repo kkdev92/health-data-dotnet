@@ -4,6 +4,7 @@ using Kkdev92.HealthData.Models;
 using Kkdev92.HealthData.Names;
 using Kkdev92.HealthData.Requests;
 using Kkdev92.HealthData.Resilience;
+using Kkdev92.HealthData.TestSupport;
 using Microsoft.Extensions.Time.Testing;
 
 namespace Kkdev92.HealthData.ContractTests;
@@ -34,10 +35,7 @@ public sealed class RetryHandlerTests
             {
                 var failure = new HttpResponseMessage(failWith)
                 {
-                    Content = new StringContent(
-                        """{"error":{"code":429,"status":"RESOURCE_EXHAUSTED"}}""",
-                        System.Text.Encoding.UTF8,
-                        "application/json"),
+                    Content = JsonContent.Of("""{"error":{"code":429,"status":"RESOURCE_EXHAUSTED"}}"""),
                 };
 
                 if (RetryAfter is { } delta)
@@ -54,7 +52,7 @@ public sealed class RetryHandlerTests
 
             return Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)
             {
-                Content = new StringContent("{}", System.Text.Encoding.UTF8, "application/json"),
+                Content = JsonContent.Of("{}"),
             });
         }
     }

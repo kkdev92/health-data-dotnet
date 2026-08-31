@@ -119,6 +119,7 @@ ordinary test run because it needs the packed output to exist.
 | `Kkdev92.HealthData.CodeGen.Tests` | Spec integrity and generator golden tests |
 | `Kkdev92.HealthData.IntegrationTests` | Real API. `[Trait("Category", "Integration")]`, never a pull-request gate; `integration.yml` runs it on demand |
 | `Kkdev92.HealthData.AotSmokeTests` | A console app that CI publishes with Native AOT |
+| `Kkdev92.HealthData.TestSupport` | Fakes the suites share. Not a test project, and deliberately free of xUnit, because the AOT smoke app uses it too |
 
 Integration tests must **skip**, not fail, when credentials are absent.
 
