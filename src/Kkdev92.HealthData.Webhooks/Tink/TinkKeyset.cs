@@ -112,35 +112,7 @@ internal static class TinkKeysetParser
 
     private static TinkEcdsaPublicKey ParseEcdsaPublicKey(uint keyId, byte[] material)
     {
-        int? hashType = null;
-        int? curve = null;
-        int? encoding = null;
-        byte[]? x = null;
-        byte[]? y = null;
-
-        foreach (var (field, value) in ProtobufReader.Read(material))
-        {
-            switch (field)
-            {
-                case 2 when value.Bytes is { } paramBytes:
-                    foreach (var (paramField, paramValue) in ProtobufReader.Read(paramBytes))
-                    {
-                        switch (paramField)
-                        {
-                            case 1: hashType = (int)paramValue.Varint; break;
-                            case 2: curve = (int)paramValue.Varint; break;
-                            case 3: encoding = (int)paramValue.Varint; break;
-                            default: break;
-                        }
-                    }
-
-                    break;
-
-                case 3: x = value.Bytes; break;
-                case 4: y = value.Bytes; break;
-                default: break;
-            }
-        }
+        var (hashType, curve, encoding, x, y) = ReadEcdsaFields(material);
 
         if (x is null || y is null)
         {
@@ -190,6 +162,61 @@ internal static class TinkKeysetParser
             Parameters = parameters,
             OutputPrefix = BuildOutputPrefix(keyId),
         };
+    }
+
+    /// <summary>
+    /// Walks the <c>EcdsaPublicKey</c> message and picks out the four fields this needs.
+    /// </summary>
+    /// <remarks>
+    /// Separated from the checking below because they fail differently: a field this does not
+    /// recognise is skipped, as protobuf requires of any reader, while a field it does recognise
+    /// and disagrees with stops the parse. Reading the two as one method made it easy to mistake
+    /// which of those a given branch was doing.
+    /// </remarks>
+    private static (int? HashType, int? Curve, int? Encoding, byte[]? X, byte[]? Y) ReadEcdsaFields(byte[] material)
+    {
+        int? hashType = null;
+        int? curve = null;
+        int? encoding = null;
+        byte[]? x = null;
+        byte[]? y = null;
+
+        foreach (var (field, value) in ProtobufReader.Read(material))
+        {
+            switch (field)
+            {
+                case 2 when value.Bytes is { } paramBytes:
+                    (hashType, curve, encoding) = ReadEcdsaParams(paramBytes);
+                    break;
+
+                case 3: x = value.Bytes; break;
+                case 4: y = value.Bytes; break;
+                default: break;
+            }
+        }
+
+        return (hashType, curve, encoding, x, y);
+    }
+
+    /// <summary>Reads the nested <c>EcdsaParams</c> message: hash, curve and signature encoding.</summary>
+    private static (int? HashType, int? Curve, int? Encoding) ReadEcdsaParams(byte[] paramBytes)
+    {
+        int? hashType = null;
+        int? curve = null;
+        int? encoding = null;
+
+        foreach (var (field, value) in ProtobufReader.Read(paramBytes))
+        {
+            switch (field)
+            {
+                case 1: hashType = (int)value.Varint; break;
+                case 2: curve = (int)value.Varint; break;
+                case 3: encoding = (int)value.Varint; break;
+                default: break;
+            }
+        }
+
+        return (hashType, curve, encoding);
     }
 
     /// <summary>
