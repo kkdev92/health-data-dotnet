@@ -1,5 +1,7 @@
 using System.Net;
 
+using Kkdev92.HealthData.TestSupport;
+
 namespace Kkdev92.HealthData.ContractTests;
 
 /// <summary>
@@ -13,7 +15,7 @@ public sealed class FakeHttpMessageHandlerTests
         using var handler = FakeHttpMessageHandler.Responding(HttpStatusCode.OK, """{"ok":true}""");
         using var client = new HttpClient(handler) { BaseAddress = HealthDataApiMetadata.DefaultBaseAddress };
 
-        using var content = new StringContent("""{"age":42}""", System.Text.Encoding.UTF8, "application/json");
+        using var content = JsonContent.Of("""{"age":42}""");
         using var response = await client.PatchAsync("v4/users/me/profile?updateMask=age", content, TestContext.Current.CancellationToken);
 
         var recorded = handler.SingleRequest;

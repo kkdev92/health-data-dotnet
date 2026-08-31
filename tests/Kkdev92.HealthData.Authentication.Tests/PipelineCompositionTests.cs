@@ -8,6 +8,7 @@ using Kkdev92.HealthData.Models;
 using Kkdev92.HealthData.Names;
 using Kkdev92.HealthData.Requests;
 using Kkdev92.HealthData.Resilience;
+using Kkdev92.HealthData.TestSupport;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Kkdev92.HealthData.Authentication.Tests;
@@ -37,7 +38,7 @@ public sealed class PipelineCompositionTests
 
             return Task.FromResult(new HttpResponseMessage(Status)
             {
-                Content = new StringContent("{}"),
+                Content = JsonContent.Of("{}"),
                 RequestMessage = request,
             });
         }
@@ -244,7 +245,7 @@ public sealed class TokenDestinationTests
 
             return Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)
             {
-                Content = new StringContent("{}", Encoding.UTF8, "application/json"),
+                Content = new StringContent("{}"),
             });
         }
     }

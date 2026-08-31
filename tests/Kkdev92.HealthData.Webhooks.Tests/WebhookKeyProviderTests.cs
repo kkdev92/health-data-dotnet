@@ -1,6 +1,8 @@
 using System.Net;
 using System.Text;
+using Kkdev92.HealthData.TestSupport;
 using Kkdev92.HealthData.Webhooks;
+using Microsoft.Extensions.Time.Testing;
 
 namespace Kkdev92.HealthData.Webhooks.Tests;
 
@@ -100,7 +102,8 @@ public sealed class WebhookKeyProviderTests
     public async Task AKeysetThatDeclaresItselfOversizedIsRefusedBeforeItIsRead()
     {
         using var key = new TinkTestKey(1);
-        var handler = new RawKeysetHandler(Encoding.UTF8.GetBytes(key.ToKeysetJson()), declaredLength: 256 * 1024 + 1);
+        var body = new DeclaredLengthContent(Encoding.UTF8.GetBytes(key.ToKeysetJson()), declaredLength: 256 * 1024 + 1);
+        var handler = new ContentHandler(() => body);
 
         using var provider = new HealthDataWebhookKeyProvider(new HttpClient(handler));
         var verifier = new HealthDataWebhookSignatureVerifier(provider);
@@ -110,7 +113,7 @@ public sealed class WebhookKeyProviderTests
             verifier.VerifyAsync(payload, key.Sign(payload), TestContext.Current.CancellationToken));
 
         Assert.Contains("declares more than", exception.Message, StringComparison.Ordinal);
-        Assert.Equal(0, handler.BytesServed);
+        Assert.Equal(0, body.BytesServed);
     }
 
     /// <summary>
@@ -130,7 +133,7 @@ public sealed class WebhookKeyProviderTests
         Array.Fill(padded, (byte)' ');
         keyset.CopyTo(padded, 0);
 
-        var handler = new RawKeysetHandler(padded, declaredLength: null);
+        var handler = new ContentHandler(() => new DeclaredLengthContent(padded, declaredLength: null));
 
         using var provider = new HealthDataWebhookKeyProvider(new HttpClient(handler));
         var verifier = new HealthDataWebhookSignatureVerifier(provider);
@@ -151,12 +154,10 @@ public sealed class WebhookKeyProviderTests
         using var key = new TinkTestKey(1);
         var good = Encoding.UTF8.GetBytes(key.ToKeysetJson());
         var serveOversized = false;
-        var handler = new RawKeysetHandler(good, declaredLength: null)
-        {
-            DeclaredLengthOverride = () => serveOversized ? 256 * 1024 + 1 : null,
-        };
+        var handler = new ContentHandler(() =>
+            new DeclaredLengthContent(good, serveOversized ? 256 * 1024 + 1 : null));
 
-        var time = new MutableClock(new DateTimeOffset(2026, 8, 10, 12, 0, 0, TimeSpan.Zero));
+        var time = new FakeTimeProvider(new DateTimeOffset(2026, 8, 10, 12, 0, 0, TimeSpan.Zero));
         using var provider = new HealthDataWebhookKeyProvider(new HttpClient(handler), timeProvider: time);
         var verifier = new HealthDataWebhookSignatureVerifier(provider);
         var payload = Encoding.UTF8.GetBytes(NotificationJson);
@@ -169,37 +170,4 @@ public sealed class WebhookKeyProviderTests
         Assert.True((await verifier.VerifyAsync(payload, key.Sign(payload), TestContext.Current.CancellationToken)).IsValid);
     }
 
-    /// <summary>
-    /// Serves fixed bytes with full control over the declared length, unlike <see cref="StringContent"/>,
-    /// which always declares the true one.
-    /// </summary>
-    private sealed class RawKeysetHandler(byte[] body, long? declaredLength) : HttpMessageHandler
-    {
-        public long BytesServed { get; private set; }
-
-        public Func<long?>? DeclaredLengthOverride { get; init; }
-
-        protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
-        {
-            var length = DeclaredLengthOverride is { } pick ? pick() : declaredLength;
-            var content = new CountingContent(body, length, served => BytesServed += served);
-
-            return Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK) { Content = content });
-        }
-
-        private sealed class CountingContent(byte[] body, long? declaredLength, Action<long> onServed) : HttpContent
-        {
-            protected override async Task SerializeToStreamAsync(Stream stream, System.Net.TransportContext? context)
-            {
-                await stream.WriteAsync(body);
-                onServed(body.Length);
-            }
-
-            protected override bool TryComputeLength(out long length)
-            {
-                length = declaredLength ?? 0;
-                return declaredLength is not null;
-            }
-        }
-    }
 }

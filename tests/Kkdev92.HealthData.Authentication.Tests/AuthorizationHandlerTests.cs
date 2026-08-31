@@ -5,6 +5,8 @@ using Kkdev92.HealthData.Models;
 using Kkdev92.HealthData.Names;
 using Kkdev92.HealthData.Requests;
 
+using Kkdev92.HealthData.TestSupport;
+
 namespace Kkdev92.HealthData.Authentication.Tests;
 
 /// <summary>
@@ -22,7 +24,7 @@ public sealed class AuthorizationHandlerTests
 
             return Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)
             {
-                Content = new StringContent("{}", System.Text.Encoding.UTF8, "application/json"),
+                Content = JsonContent.Of("{}"),
             });
         }
     }

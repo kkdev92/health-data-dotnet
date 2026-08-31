@@ -5,6 +5,8 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Web;
 using Kkdev92.HealthData.Authentication.OAuth;
+using Kkdev92.HealthData.TestSupport;
+using Microsoft.Extensions.Time.Testing;
 
 namespace Kkdev92.HealthData.Authentication.Tests;
 
@@ -43,14 +45,11 @@ public sealed class OAuthTests
 
             return new HttpResponseMessage(Status)
             {
-                Content = new StringContent(
-                    Body ??
+                Content = JsonContent.Of(Body ??
                     """
                     {"access_token":"ya29.token","expires_in":3599,"refresh_token":"1//refresh",
                      "scope":"https://www.googleapis.com/auth/googlehealth.profile.readonly","token_type":"Bearer"}
-                    """,
-                    Encoding.UTF8,
-                    "application/json"),
+                    """),
             };
         }
     }
@@ -133,7 +132,7 @@ public sealed class OAuthTests
 
             return Task.FromResult(new HttpResponseMessage(status)
             {
-                Content = new StringContent("""{"error":"invalid_grant"}""", Encoding.UTF8, "application/json"),
+                Content = JsonContent.Of("""{"error":"invalid_grant"}"""),
             });
         }
     }
@@ -590,7 +589,7 @@ public sealed class OAuthTests
     public void TokenResponseConvertsToAnAccessTokenWithExpiry()
     {
         var now = new DateTimeOffset(2026, 8, 10, 12, 0, 0, TimeSpan.Zero);
-        var time = new FakeClock(now);
+        var time = new FakeTimeProvider(now);
 
         var token = GoogleOAuthClient.ToAccessToken(
             new GoogleTokenResponse
@@ -611,10 +610,6 @@ public sealed class OAuthTests
         => Assert.Throws<InvalidOperationException>(() =>
             GoogleOAuthClient.ToAccessToken(new GoogleTokenResponse { ExpiresIn = 60 }));
 
-    private sealed class FakeClock(DateTimeOffset now) : TimeProvider
-    {
-        public override DateTimeOffset GetUtcNow() => now;
-    }
 }
 
 public sealed class PkceTests

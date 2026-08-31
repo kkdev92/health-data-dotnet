@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <ProjectReference Include="../../src/Kkdev92.HealthData/Kkdev92.HealthData.csproj" />
+    <ProjectReference Include="../Kkdev92.HealthData.TestSupport/Kkdev92.HealthData.TestSupport.csproj" />
   </ItemGroup>
 
 </Project>

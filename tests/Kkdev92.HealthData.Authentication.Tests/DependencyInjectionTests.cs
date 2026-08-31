@@ -4,6 +4,7 @@ using Kkdev92.HealthData.Models;
 using Kkdev92.HealthData.Names;
 using Kkdev92.HealthData.Requests;
 using Kkdev92.HealthData.Resilience;
+using Kkdev92.HealthData.TestSupport;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Kkdev92.HealthData.Authentication.Tests;
@@ -80,7 +81,7 @@ public sealed class DependencyInjectionTests
 
             return Task.FromResult(new HttpResponseMessage(System.Net.HttpStatusCode.ServiceUnavailable)
             {
-                Content = new StringContent("{}", System.Text.Encoding.UTF8, "application/json"),
+                Content = JsonContent.Of("{}"),
             });
         }
     }

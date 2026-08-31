@@ -9,6 +9,7 @@ using Kkdev92.HealthData.Names;
 using Kkdev92.HealthData.Requests;
 using Kkdev92.HealthData.Resilience;
 using Kkdev92.HealthData.Serialization;
+using Kkdev92.HealthData.TestSupport;
 using Kkdev92.HealthData.Webhooks;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -95,7 +96,10 @@ Check("error reasons generated", HealthDataErrorReasons.IsDocumented("ACCOUNT_NO
 
 // The full client path: request building, descriptor propagation, send, deserialize. A stub
 // handler keeps this offline while still exercising every generated code path under AOT.
-using var stubHandler = new StubHandler();
+using var stubHandler = FakeHttpMessageHandler.Responding(
+    System.Net.HttpStatusCode.OK,
+    """{"dataPoints":[{"name":"users/me/dataTypes/heart-rate/dataPoints/1"}]}""");
+
 using var httpClient = new HttpClient(stubHandler) { BaseAddress = HealthDataApiMetadata.DefaultBaseAddress };
 var client = new HealthDataClient(httpClient);
 
@@ -108,8 +112,11 @@ var listed = await client.Users.DataPoints.ListAsync(new ListDataPointsRequest
 Check("resource client round-trips", listed.DataPoints is { Count: 1 });
 Check(
     "request url is exact",
-    stubHandler.LastUrl == "/v4/users/me/dataTypes/heart-rate/dataPoints?pageSize=2&prettyPrint=false");
-Check("operation descriptor attached", stubHandler.LastOperationId == "health.users.dataTypes.dataPoints.list");
+    stubHandler.SingleRequest.RequestUri?.PathAndQuery
+        == "/v4/users/me/dataTypes/heart-rate/dataPoints?pageSize=2&prettyPrint=false");
+Check(
+    "operation descriptor attached",
+    stubHandler.SingleRequest.OperationId == "health.users.dataTypes.dataPoints.list");
 
 // A double the service could not compute travels as the string "NaN". The reader has to accept
 // it and the writer has to send it back, or a point becomes readable and then uneditable — this
@@ -126,7 +133,6 @@ Check(
     "named floating-point literal written",
     JsonSerializer.Serialize(withNaN!, HealthDataJson.WriteInfo<DataPoint>())
         .Contains("\"baselineTemperatureCelsius\":\"NaN\"", StringComparison.Ordinal));
-
 
 // Authentication: the authorization URL and PKCE are string work, and the handler is the piece
 // that actually has to run under AOT for any call to be authorized.
@@ -154,7 +160,9 @@ Check("pkce challenge is unpadded base64url", !pkce.CodeChallenge.Contains('=', 
 using var authorized = new HttpClient(
     new HealthDataAuthorizationHandler(new StaticAccessTokenProvider("ya29.token"))
     {
-        InnerHandler = new StubHandler(),
+        InnerHandler = FakeHttpMessageHandler.Responding(
+            System.Net.HttpStatusCode.OK,
+            """{"dataPoints":[{"name":"users/me/dataTypes/heart-rate/dataPoints/1"}]}"""),
     })
 {
     BaseAddress = HealthDataApiMetadata.DefaultBaseAddress,
@@ -187,8 +195,9 @@ const string notificationPayload =
 
 var notificationBytes = System.Text.Encoding.UTF8.GetBytes(notificationPayload);
 
-using var webhookKey = new TinkSmokeKey(keyId: 1);
-using var keyProvider = new HealthDataWebhookKeyProvider(new HttpClient(new KeysetStubHandler(webhookKey.ToKeysetJson())));
+using var webhookKey = new TinkTestKey(keyId: 1);
+using var keyProvider = new HealthDataWebhookKeyProvider(
+    new HttpClient(new KeysetHandler(() => webhookKey.ToKeysetJson())));
 
 var receiver = new HealthDataWebhookReceiver(
     new HealthDataWebhookSignatureVerifier(keyProvider), endpointSecret: "smoke-secret");
@@ -208,89 +217,3 @@ Console.WriteLine();
 Console.WriteLine(failures == 0 ? "AOT smoke: PASS" : $"AOT smoke: FAIL ({failures})");
 return failures == 0 ? 0 : 1;
 
-/// <summary>Serves a fixed keyset, so the verifier has something to fetch without a network.</summary>
-internal sealed class KeysetStubHandler(string keyset) : HttpMessageHandler
-{
-    protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
-        => Task.FromResult(new HttpResponseMessage(System.Net.HttpStatusCode.OK)
-        {
-            Content = new StringContent(keyset, System.Text.Encoding.UTF8, "application/json"),
-        });
-}
-
-/// <summary>
-/// A P-256 key rendered the way Google publishes one, and signatures in the same layout.
-/// </summary>
-/// <remarks>
-/// The keyset JSON and the signature framing here are byte-compatible with Google's: an
-/// EcdsaPublicKey protobuf in Base64, and a 5-byte TINK prefix of 0x01 then the key id
-/// big-endian. That compatibility is what makes verifying against it evidence of anything.
-/// </remarks>
-internal sealed class TinkSmokeKey(uint keyId) : IDisposable
-{
-    private readonly System.Security.Cryptography.ECDsa _ecdsa =
-        System.Security.Cryptography.ECDsa.Create(System.Security.Cryptography.ECCurve.NamedCurves.nistP256);
-
-    public string ToKeysetJson()
-    {
-        var parameters = _ecdsa.ExportParameters(includePrivateParameters: false);
-        var material = new List<byte>();
-
-        // field 2 (params): hash_type=3 (SHA256), curve=2 (NIST_P256), encoding=2 (DER)
-        material.AddRange([0x12, 0x06, 0x08, 0x03, 0x10, 0x02, 0x18, 0x02]);
-
-        AppendBytes(material, field: 3, [0x00, .. parameters.Q.X!]);
-        AppendBytes(material, field: 4, [0x00, .. parameters.Q.Y!]);
-
-        var value = Convert.ToBase64String([.. material]);
-
-        return $$"""
-            {"primaryKeyId":{{keyId}},"key":[{"keyData":{"typeUrl":"type.googleapis.com/google.crypto.tink.EcdsaPublicKey","value":"{{value}}","keyMaterialType":"ASYMMETRIC_PUBLIC"},"status":"ENABLED","keyId":{{keyId}},"outputPrefixType":"TINK"}]}
-            """;
-
-        static void AppendBytes(List<byte> target, int field, byte[] value)
-        {
-            target.Add((byte)((field << 3) | 2));
-            target.Add((byte)value.Length);
-            target.AddRange(value);
-        }
-    }
-
-    public string Sign(byte[] payload)
-    {
-        var signature = _ecdsa.SignData(
-            payload,
-            System.Security.Cryptography.HashAlgorithmName.SHA256,
-            System.Security.Cryptography.DSASignatureFormat.Rfc3279DerSequence);
-
-        var prefixed = new byte[5 + signature.Length];
-        prefixed[0] = 0x01;
-        System.Buffers.Binary.BinaryPrimitives.WriteUInt32BigEndian(prefixed.AsSpan(1), keyId);
-        signature.CopyTo(prefixed, 5);
-
-        return Convert.ToBase64String(prefixed);
-    }
-
-    public void Dispose() => _ecdsa.Dispose();
-}
-
-internal sealed class StubHandler : HttpMessageHandler
-{
-    public string? LastUrl { get; private set; }
-
-    public string? LastOperationId { get; private set; }
-
-    protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
-    {
-        LastUrl = request.RequestUri?.PathAndQuery;
-        LastOperationId = request.GetHealthDataOperation()?.Id;
-
-        return Task.FromResult(new HttpResponseMessage(System.Net.HttpStatusCode.OK)
-        {
-            Content = new StringContent(
-                """{"dataPoints":[{"name":"users/me/dataTypes/heart-rate/dataPoints/1"}]}""",
-                System.Text.Encoding.UTF8,
-                "application/json"),
-        });
-    }
-}

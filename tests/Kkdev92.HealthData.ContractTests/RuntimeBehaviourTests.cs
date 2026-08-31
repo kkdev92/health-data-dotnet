@@ -6,6 +6,8 @@ using Kkdev92.HealthData.Models;
 using Kkdev92.HealthData.Names;
 using Kkdev92.HealthData.Requests;
 
+using Kkdev92.HealthData.TestSupport;
+
 namespace Kkdev92.HealthData.ContractTests;
 
 /// <summary>
@@ -102,7 +104,7 @@ public sealed class RuntimeBehaviourTests
 
             return new HttpResponseMessage(HttpStatusCode.OK)
             {
-                Content = new StringContent(body, System.Text.Encoding.UTF8, "application/json"),
+                Content = JsonContent.Of(body),
             };
         }
     }
@@ -358,18 +360,15 @@ public sealed class RuntimeBehaviourTests
     [Fact]
     public async Task RateLimitExposesRetryAfterFromTheHeader()
     {
-        using var handler = new FakeHttpMessageHandler((_, _) =>
+        using var handler = FakeHttpMessageHandler.Responding(_ =>
         {
             var response = new HttpResponseMessage(HttpStatusCode.TooManyRequests)
             {
-                Content = new StringContent(
-                    """{"error":{"code":429,"status":"RESOURCE_EXHAUSTED"}}""",
-                    System.Text.Encoding.UTF8,
-                    "application/json"),
+                Content = JsonContent.Of("""{"error":{"code":429,"status":"RESOURCE_EXHAUSTED"}}"""),
             };
 
             response.Headers.RetryAfter = new System.Net.Http.Headers.RetryConditionHeaderValue(TimeSpan.FromSeconds(42));
-            return Task.FromResult(response);
+            return response;
         });
 
         var client = CreateClient(handler);
@@ -410,7 +409,7 @@ public sealed class RuntimeBehaviourTests
         // token has to.
         using var cts = new CancellationTokenSource();
 
-        using var handler = new FakeHttpMessageHandler((_, _) =>
+        using var handler = FakeHttpMessageHandler.Responding(_ =>
         {
             var response = new HttpResponseMessage(HttpStatusCode.OK)
             {
@@ -418,7 +417,7 @@ public sealed class RuntimeBehaviourTests
             };
 
             response.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
-            return Task.FromResult(response);
+            return response;
         });
 
         var client = CreateClient(handler);
