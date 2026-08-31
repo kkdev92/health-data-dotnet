@@ -12,8 +12,11 @@ name: spec-check
 
 on:
   schedule:
-    # Weekly. Discovery revisions do not move daily, and a noisy check gets muted.
-    - cron: "0 6 * * 1"
+    # Daily. Weekly meant a report could be a whole revision behind by the time anyone read it:
+    # the run on one Monday reported a revision Google had already superseded before the next.
+    # Repetition is handled by not saying the same thing twice — see the report step — so a daily
+    # cadence costs a comment only when the contract actually moved again.
+    - cron: "0 6 * * *"
   workflow_dispatch:
 
 permissions:
@@ -112,10 +115,30 @@ jobs:
             ].join('\n');
 
             if (existing.data.length > 0) {
+              const issue = existing.data[0];
+
+              // Say it once. This runs daily, and drift lasts until somebody acts on it, so
+              // repeating an identical report every morning is how a useful check becomes one
+              // people filter out. Compare against what was last said on this thread and stay
+              // quiet unless the contract moved again.
+              const comments = await github.paginate(github.rest.issues.listComments, {
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                per_page: 100,
+              });
+
+              const lastSaid = comments.length > 0 ? comments[comments.length - 1].body : issue.body;
+
+              if ((lastSaid ?? '').trim() === body.trim()) {
+                core.info(`Already reported on #${issue.number}; nothing new to say.`);
+                return;
+              }
+
               await github.rest.issues.createComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                issue_number: existing.data[0].number,
+                issue_number: issue.number,
                 body,
               });
             } else {
@@ -200,10 +223,30 @@ jobs:
             ].join('\n');
 
             if (existing.data.length > 0) {
+              const issue = existing.data[0];
+
+              // Say it once. This runs daily, and drift lasts until somebody acts on it, so
+              // repeating an identical report every morning is how a useful check becomes one
+              // people filter out. Compare against what was last said on this thread and stay
+              // quiet unless the contract moved again.
+              const comments = await github.paginate(github.rest.issues.listComments, {
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                per_page: 100,
+              });
+
+              const lastSaid = comments.length > 0 ? comments[comments.length - 1].body : issue.body;
+
+              if ((lastSaid ?? '').trim() === body.trim()) {
+                core.info(`Already reported on #${issue.number}; nothing new to say.`);
+                return;
+              }
+
               await github.rest.issues.createComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                issue_number: existing.data[0].number,
+                issue_number: issue.number,
                 body,
               });
             } else {
