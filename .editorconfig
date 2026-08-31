@@ -99,6 +99,27 @@ dotnet_diagnostic.CA1848.severity = none
 # CA1707 would fight generated wire-name constants such as ACCOUNT_NOT_LINKED.
 dotnet_diagnostic.CA1707.severity = none
 
+#### Shipped code ####
+# The three rules below are off at this analysis level and are turned on here deliberately. Each
+# was found by measuring what a stricter level would say, and each had real instances that are now
+# fixed; enabling them is what stops the next one being written.
+#
+# Scoped to src/ because all three are about code a consumer runs. The generator, the samples and
+# the benchmarks are console programs that ship to nobody: they have no synchronization context to
+# resume onto, which is the situation CA2007 documents as not applicable.
+
+[src/**.cs]
+# CA2007: a library must not resume on a caller's context. Every explicit await already said so,
+# but `await using var` hides a DisposeAsync that did not — one asymmetry per file, invisible.
+dotnet_diagnostic.CA2007.severity = warning
+
+# CA1849: a synchronous call inside an async method blocks a pooled thread.
+dotnet_diagnostic.CA1849.severity = warning
+
+# CA1859: an interface return type on a private method costs a virtual call for an abstraction
+# nobody outside the type can use.
+dotnet_diagnostic.CA1859.severity = warning
+
 #### Generated code ####
 # Generated sources carry their own guarantees and are verified byte-for-byte by
 # `codegen verify`. Style rules must not rewrite them.

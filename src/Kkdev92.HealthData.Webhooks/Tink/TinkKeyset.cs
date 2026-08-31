@@ -54,7 +54,9 @@ internal static class TinkKeysetParser
     /// <exception cref="InvalidOperationException">The keyset is malformed or uses an unsupported key.</exception>
     public static IReadOnlyList<TinkEcdsaPublicKey> Parse(ReadOnlySpan<byte> utf8Json)
     {
-        using var document = JsonDocument.Parse(utf8Json.ToArray());
+        // Read straight from the span, so the keyset is not copied a second time on the way in.
+        var reader = new Utf8JsonReader(utf8Json);
+        using var document = JsonDocument.ParseValue(ref reader);
 
         if (!document.RootElement.TryGetProperty("key", out var keys) || keys.ValueKind != JsonValueKind.Array)
         {

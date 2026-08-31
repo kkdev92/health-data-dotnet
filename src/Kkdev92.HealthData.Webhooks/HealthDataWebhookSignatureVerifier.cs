@@ -158,7 +158,11 @@ public sealed class HealthDataWebhookSignatureVerifier(HealthDataWebhookKeyProvi
         keyId = 0;
         derSignature = [];
 
-        Span<byte> buffer = new byte[((signatureHeader.Length * 3) / 4) + 4];
+        // On the stack: the header length is already bounded above, so the largest this can be
+        // is a few hundred bytes. This runs on an endpoint anyone can post to, before anything has
+        // been authenticated, so an allocation per attempt is one an unauthenticated caller gets
+        // to ask for.
+        Span<byte> buffer = stackalloc byte[((MaximumSignatureHeaderLength * 3) / 4) + 4];
 
         if (!Convert.TryFromBase64String(signatureHeader.Trim(), buffer, out var written))
         {

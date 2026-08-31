@@ -80,6 +80,7 @@ class Kkdev92.HealthData.HealthDataClientOptions
     .ctor()
     System.Boolean PrettyPrintResponses { get; set; }
     System.Int32 MaxErrorResponseBytes { get; set; }
+    System.TimeProvider TimeProvider { get; set; }
     System.Uri BaseAddress { get; set; }
 class Kkdev92.HealthData.HealthDataDataTypeDescriptor
     .ctor()

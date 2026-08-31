@@ -7,6 +7,7 @@ using Kkdev92.HealthData.Names;
 using Kkdev92.HealthData.Requests;
 
 using Kkdev92.HealthData.TestSupport;
+using Microsoft.Extensions.Time.Testing;
 
 namespace Kkdev92.HealthData.ContractTests;
 
@@ -355,6 +356,74 @@ public sealed class RuntimeBehaviourTests
         {
             Assert.DoesNotContain("1234", value ?? string.Empty, StringComparison.Ordinal);
         }
+    }
+
+    /// <summary>
+    /// A <c>Retry-After</c> sent as an HTTP-date becomes a duration measured from now.
+    /// </summary>
+    /// <remarks>
+    /// RFC 9110 allows either form and they land in different properties, so a client that reads
+    /// only the delta silently ignores the date. The subtraction used to run against
+    /// DateTimeOffset.UtcNow, which is why this test could not be written before: there was no
+    /// now to fix.
+    /// </remarks>
+    [Fact]
+    public async Task RateLimitExposesRetryAfterSentAsAnHttpDate()
+    {
+        var now = new DateTimeOffset(2026, 8, 31, 12, 0, 0, TimeSpan.Zero);
+        var time = new FakeTimeProvider(now);
+
+        using var handler = FakeHttpMessageHandler.Responding(_ =>
+        {
+            var response = new HttpResponseMessage(HttpStatusCode.TooManyRequests)
+            {
+                Content = JsonContent.Of("""{"error":{"code":429,"status":"RESOURCE_EXHAUSTED"}}"""),
+            };
+
+            response.Headers.RetryAfter =
+                new System.Net.Http.Headers.RetryConditionHeaderValue(now.AddSeconds(90));
+
+            return response;
+        });
+
+        using var httpClient = new HttpClient(handler) { BaseAddress = HealthDataApiMetadata.DefaultBaseAddress };
+        var client = new HealthDataClient(httpClient, new HealthDataClientOptions { TimeProvider = time });
+
+        var exception = await Assert.ThrowsAsync<HealthDataApiException>(() => client.Users.GetProfileAsync(
+            new GetProfileRequest { Name = UserName.Me.Profile },
+            TestContext.Current.CancellationToken));
+
+        Assert.Equal(TimeSpan.FromSeconds(90), exception.RetryAfter);
+    }
+
+    /// <summary>A date already in the past means "now", not a negative wait.</summary>
+    [Fact]
+    public async Task ARetryAfterDateInThePastIsZeroRatherThanNegative()
+    {
+        var now = new DateTimeOffset(2026, 8, 31, 12, 0, 0, TimeSpan.Zero);
+        var time = new FakeTimeProvider(now);
+
+        using var handler = FakeHttpMessageHandler.Responding(_ =>
+        {
+            var response = new HttpResponseMessage(HttpStatusCode.TooManyRequests)
+            {
+                Content = JsonContent.Of("""{"error":{"code":429,"status":"RESOURCE_EXHAUSTED"}}"""),
+            };
+
+            response.Headers.RetryAfter =
+                new System.Net.Http.Headers.RetryConditionHeaderValue(now.AddMinutes(-5));
+
+            return response;
+        });
+
+        using var httpClient = new HttpClient(handler) { BaseAddress = HealthDataApiMetadata.DefaultBaseAddress };
+        var client = new HealthDataClient(httpClient, new HealthDataClientOptions { TimeProvider = time });
+
+        var exception = await Assert.ThrowsAsync<HealthDataApiException>(() => client.Users.GetProfileAsync(
+            new GetProfileRequest { Name = UserName.Me.Profile },
+            TestContext.Current.CancellationToken));
+
+        Assert.Equal(TimeSpan.Zero, exception.RetryAfter);
     }
 
     [Fact]
