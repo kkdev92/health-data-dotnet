@@ -1,3 +1,4 @@
+using System.Buffers.Text;
 using System.Globalization;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -112,8 +113,10 @@ internal sealed class Base64UrlBytesConverter : JsonConverter<byte[]>
             throw new JsonException("Expected base64url-encoded bytes as a JSON string.");
         }
 
-        var text = reader.GetString()!;
-        return Convert.FromBase64String(text.Replace('-', '+').Replace('_', '/'));
+        // Base64Url reads the padded and unpadded forms alike, so the alphabet substitution this
+        // used to do by hand is not needed. Writing still spells it out: Google's format specifies
+        // padding and Base64Url.EncodeToString omits it.
+        return Base64Url.DecodeFromChars(reader.GetString()!);
     }
 
     /// <inheritdoc />

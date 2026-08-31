@@ -63,6 +63,25 @@ public sealed class HealthDataClientOptions
     public int MaxErrorResponseBytes { get; init; } = 64 * 1024;
 
     /// <summary>
+    /// The clock. Defaults to <see cref="System.TimeProvider.System"/>.
+    /// </summary>
+    /// <remarks>
+    /// Only one thing reads it: a <c>Retry-After</c> sent as an HTTP-date has to be turned into a
+    /// duration, and that subtraction needs a now. It was <see cref="DateTimeOffset.UtcNow"/>,
+    /// which left the arithmetic with no way to be tested — the same defect the retry handler had
+    /// and already fixed by taking a <see cref="System.TimeProvider"/>.
+    /// </remarks>
+    public TimeProvider TimeProvider
+    {
+        get;
+        init
+        {
+            ArgumentNullException.ThrowIfNull(value);
+            field = value;
+        }
+    } = TimeProvider.System;
+
+    /// <summary>
     /// Whether to let the service pretty-print response JSON. Defaults to <see langword="false"/>.
     /// </summary>
     /// <remarks>

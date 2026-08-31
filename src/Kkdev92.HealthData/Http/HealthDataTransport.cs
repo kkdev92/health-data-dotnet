@@ -43,11 +43,16 @@ public sealed class HealthDataTransport(HttpClient httpClient, HealthDataClientO
         using var response = await SendCoreAsync(descriptor, relativeUri, content, cancellationToken)
             .ConfigureAwait(false);
 
-        await using var stream = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
+        var stream = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
 
-        var value = await JsonSerializer
-            .DeserializeAsync(stream, responseTypeInfo, cancellationToken)
-            .ConfigureAwait(false);
+        TResponse? value;
+
+        await using (stream.ConfigureAwait(false))
+        {
+            value = await JsonSerializer
+                .DeserializeAsync(stream, responseTypeInfo, cancellationToken)
+                .ConfigureAwait(false);
+        }
 
         // A success status with a null body means the service sent literal `null`, which no
         // operation in this contract does. Surfacing it as an API exception is more useful than
@@ -82,8 +87,12 @@ public sealed class HealthDataTransport(HttpClient httpClient, HealthDataClientO
         using var response = await SendCoreAsync(descriptor, relativeUri, content: null, cancellationToken)
             .ConfigureAwait(false);
 
-        await using var stream = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
-        await stream.CopyToAsync(destination, cancellationToken).ConfigureAwait(false);
+        var stream = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
+
+        await using (stream.ConfigureAwait(false))
+        {
+            await stream.CopyToAsync(destination, cancellationToken).ConfigureAwait(false);
+        }
     }
 
     /// <summary>Serializes a request body using the write contract, which omits output-only fields.</summary>
@@ -141,11 +150,15 @@ public sealed class HealthDataTransport(HttpClient httpClient, HealthDataClientO
 
         try
         {
-            await using var stream = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
+            var stream = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
+            HealthDataError? error;
 
-            var error = await HealthDataErrorParser
-                .ParseAsync(stream, _options.MaxErrorResponseBytes, cancellationToken)
-                .ConfigureAwait(false);
+            await using (stream.ConfigureAwait(false))
+            {
+                error = await HealthDataErrorParser
+                    .ParseAsync(stream, _options.MaxErrorResponseBytes, cancellationToken)
+                    .ConfigureAwait(false);
+            }
 
             throw new HealthDataApiException(
                 response.StatusCode,
@@ -186,7 +199,7 @@ public sealed class HealthDataTransport(HttpClient httpClient, HealthDataClientO
     /// The Google Health rate-limit documentation describes 429 responses but never promises a
     /// <c>Retry-After</c> header, so this is often null.
     /// </remarks>
-    private static TimeSpan? ResolveRetryAfter(HttpResponseMessage response, HealthDataError? error)
+    private TimeSpan? ResolveRetryAfter(HttpResponseMessage response, HealthDataError? error)
     {
         var header = response.Headers.RetryAfter;
 
@@ -197,7 +210,7 @@ public sealed class HealthDataTransport(HttpClient httpClient, HealthDataClientO
 
         if (header?.Date is { } date)
         {
-            var wait = date - DateTimeOffset.UtcNow;
+            var wait = date - _options.TimeProvider.GetUtcNow();
             return wait > TimeSpan.Zero ? wait : TimeSpan.Zero;
         }
 

@@ -17,6 +17,12 @@ Dates are UTC, taken from when the packages went to nuget.org.
 
 ## [Unreleased]
 
+### Added
+
+- `HealthDataClientOptions.TimeProvider`. One thing reads it: a `Retry-After` sent as an HTTP-date
+  has to be turned into a duration, and that subtraction needs a now. It used to be
+  `DateTimeOffset.UtcNow`, which left the arithmetic with no way to be tested.
+
 ## [0.3.0-alpha] - 2026-08-31
 
 Regenerated from Google Health API `v4`, Discovery revision `20260826`.

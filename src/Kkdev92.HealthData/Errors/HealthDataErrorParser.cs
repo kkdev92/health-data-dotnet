@@ -47,7 +47,11 @@ public static class HealthDataErrorParser
     {
         try
         {
-            using var document = JsonDocument.Parse(utf8Json.ToArray());
+            // Read straight from the span. JsonDocument.Parse has no span overload, so this used
+            // to copy the whole body — up to the byte bound, on every error — and the details that
+            // outlive the document are cloned anyway.
+            var reader = new Utf8JsonReader(utf8Json);
+            using var document = JsonDocument.ParseValue(ref reader);
 
             if (!document.RootElement.TryGetProperty("error", out var error))
             {
@@ -69,7 +73,7 @@ public static class HealthDataErrorParser
         }
     }
 
-    private static IReadOnlyList<HealthDataErrorDetail> ReadDetails(JsonElement error)
+    private static List<HealthDataErrorDetail> ReadDetails(JsonElement error)
     {
         if (!error.TryGetProperty("details", out var details) || details.ValueKind != JsonValueKind.Array)
         {
@@ -112,7 +116,7 @@ public static class HealthDataErrorParser
     /// shape cannot hold, and inventing a rendering for it would put a guess in a dictionary a
     /// caller is about to branch on.
     /// </remarks>
-    private static IReadOnlyDictionary<string, string>? ReadMetadata(JsonElement detail)
+    private static Dictionary<string, string>? ReadMetadata(JsonElement detail)
     {
         if (!detail.TryGetProperty("metadata", out var metadata) || metadata.ValueKind != JsonValueKind.Object)
         {
