@@ -1,3 +1,5 @@
+using Kkdev92.HealthData.Http;
+
 namespace Kkdev92.HealthData.Authentication.OAuth;
 
 /// <summary>
@@ -86,18 +88,13 @@ public sealed class GoogleOAuthOptions
 
         static void Require(Uri endpoint, string expected, string name)
         {
-            var google = new Uri(expected);
-
-            if (endpoint.IsLoopback
-                || (string.Equals(endpoint.Scheme, google.Scheme, StringComparison.OrdinalIgnoreCase)
-                    && string.Equals(endpoint.IdnHost, google.IdnHost, StringComparison.OrdinalIgnoreCase)
-                    && endpoint.Port == google.Port))
+            if (endpoint.IsLoopback || SecureUri.IsSameOrigin(endpoint, new Uri(expected)))
             {
                 return;
             }
 
             throw new ArgumentException(
-                $"'{Describe(endpoint)}' is not {expected} or a loopback address, and Google "
+                $"'{SecureUri.Describe(endpoint)}' is not {expected} or a loopback address, and Google "
                 + "credentials are sent to it. Set AllowCustomCredentialEndpoints to true if this "
                 + "endpoint is deliberate, such as an emulator or a gateway you operate.",
                 name);
@@ -112,16 +109,13 @@ public sealed class GoogleOAuthOptions
             throw new ArgumentException("The endpoint must be absolute.", name);
         }
 
-        // Plain HTTP only to loopback. IsLoopback on its own would accept javascript://localhost
-        // and file://localhost, neither of which is a token endpoint.
-        if (endpoint.Scheme == Uri.UriSchemeHttps
-            || (endpoint.Scheme == Uri.UriSchemeHttp && endpoint.IsLoopback))
+        if (SecureUri.IsHttpsOrLoopback(endpoint))
         {
             return;
         }
 
         throw new ArgumentException(
-            $"'{Describe(endpoint)}' is not HTTPS. Credentials are sent to this endpoint; use "
+            $"'{SecureUri.Describe(endpoint)}' is not HTTPS. Credentials are sent to this endpoint; use "
             + "HTTPS, or a loopback address for a local test server.",
             name);
     }
@@ -176,25 +170,5 @@ public sealed class GoogleOAuthOptions
 
             field = value;
         }
-    }
-
-    /// <summary>
-    /// Names an address well enough to fix it, without repeating a credential put inside it.
-    /// </summary>
-    /// <remarks>
-    /// A URI can carry a secret in its userinfo or its query, and the misconfiguration these
-    /// messages complain about is precisely the one where somebody has done that. Printing the
-    /// whole thing would write the credential to a log as the price of objecting to it.
-    /// </remarks>
-    private static string Describe(Uri? uri)
-    {
-        if (uri is not { IsAbsoluteUri: true })
-        {
-            return "(not an absolute address)";
-        }
-
-        var port = uri.IsDefaultPort ? string.Empty : $":{uri.Port}";
-
-        return $"{uri.Scheme}://{uri.IdnHost}{port}";
     }
 }

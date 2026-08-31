@@ -1,5 +1,6 @@
 using System.Security.Cryptography;
 using System.Text.Json;
+using Kkdev92.HealthData.Http;
 using Kkdev92.HealthData.Webhooks.Tink;
 
 namespace Kkdev92.HealthData.Webhooks;
@@ -101,13 +102,10 @@ public sealed class HealthDataWebhookKeyProvider : IDisposable
             throw new ArgumentException("The keyset URI must be absolute.", nameof(keysetUri));
         }
 
-        // Plain HTTP only to loopback: IsLoopback is true for ftp://localhost as well, and a
-        // scheme nobody vetted deciding which key verifies a signature is the whole problem.
-        if (_keysetUri.Scheme != Uri.UriSchemeHttps
-            && !(_keysetUri.Scheme == Uri.UriSchemeHttp && _keysetUri.IsLoopback))
+        if (!SecureUri.IsHttpsOrLoopback(_keysetUri))
         {
             throw new ArgumentException(
-                $"'{Describe(_keysetUri)}' is not HTTPS. This URI decides which key verifies a "
+                $"'{SecureUri.Describe(_keysetUri)}' is not HTTPS. This URI decides which key verifies a "
                 + "signature; use HTTPS, or a loopback address for a local test server.",
                 nameof(keysetUri));
         }
@@ -274,54 +272,26 @@ public sealed class HealthDataWebhookKeyProvider : IDisposable
 
         response.EnsureSuccessStatusCode();
 
-        if (response.Content.Headers.ContentLength is > MaximumKeysetBytes)
-        {
-            throw new InvalidOperationException(
-                $"The keyset at {Describe(_keysetUri)} declares more than {MaximumKeysetBytes} bytes.");
-        }
+        // Read before the body is. Content-Length is what the server declared, but once the body
+        // has been buffered the property answers with its real size instead — so asking afterwards
+        // would report every oversized keyset as one that declared itself.
+        var declared = response.Content.Headers.ContentLength;
 
-        await using var stream = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
-        using var buffer = new MemoryStream();
+        var body = await BoundedBody
+            .ReadAsync(response.Content, MaximumKeysetBytes, cancellationToken)
+            .ConfigureAwait(false);
 
-        var chunk = new byte[8192];
-        int read;
-
-        while ((read = await stream.ReadAsync(chunk, cancellationToken).ConfigureAwait(false)) > 0)
-        {
-            if (buffer.Length + read > MaximumKeysetBytes)
-            {
-                throw new InvalidOperationException(
-                    $"The keyset at {Describe(_keysetUri)} exceeded {MaximumKeysetBytes} bytes.");
-            }
-
-            buffer.Write(chunk, 0, read);
-        }
-
-        return buffer.ToArray();
+        // Which of the two limits was hit is worth saying. A keyset that declares more than this
+        // was refused before a byte of it arrived; one that merely turned out to be larger came
+        // from a server that declared nothing, or declared something untrue.
+        return body ?? throw new InvalidOperationException(
+            declared > MaximumKeysetBytes
+                ? $"The keyset at {SecureUri.Describe(_keysetUri)} declares more than {MaximumKeysetBytes} bytes."
+                : $"The keyset at {SecureUri.Describe(_keysetUri)} exceeded {MaximumKeysetBytes} bytes.");
     }
 
     /// <inheritdoc />
     public void Dispose() => _gate.Dispose();
 
     private sealed record Snapshot(IReadOnlyList<TinkEcdsaPublicKey> Keys, DateTimeOffset FetchedAt);
-
-    /// <summary>
-    /// Names an address well enough to fix it, without repeating a credential put inside it.
-    /// </summary>
-    /// <remarks>
-    /// A URI can carry a secret in its userinfo or its query, and the misconfiguration these
-    /// messages complain about is precisely the one where somebody has done that. Printing the
-    /// whole thing would write the credential to a log as the price of objecting to it.
-    /// </remarks>
-    private static string Describe(Uri? uri)
-    {
-        if (uri is not { IsAbsoluteUri: true })
-        {
-            return "(not an absolute address)";
-        }
-
-        var port = uri.IsDefaultPort ? string.Empty : $":{uri.Port}";
-
-        return $"{uri.Scheme}://{uri.IdnHost}{port}";
-    }
 }

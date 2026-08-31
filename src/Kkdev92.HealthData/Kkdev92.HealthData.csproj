@@ -6,4 +6,18 @@
     <VerifyReferenceAotCompatibility>true</VerifyReferenceAotCompatibility>
   </PropertyGroup>
 
+
+  <!--
+    The satellite packages apply the same rules about where a credential may be sent and how much
+    of a response may be read. They ship from this repository, in lockstep, at one version — so the
+    rules live in one place rather than being copied into each, and are internal because they are
+    something this SDK holds itself to rather than something it offers callers.
+  -->
+  <ItemGroup>
+    <InternalsVisibleTo Include="Kkdev92.HealthData.Authentication" />
+    <InternalsVisibleTo Include="Kkdev92.HealthData.Webhooks" />
+    <InternalsVisibleTo Include="Kkdev92.HealthData.Tests" />
+    <InternalsVisibleTo Include="Kkdev92.HealthData.ContractTests" />
+  </ItemGroup>
+
 </Project>
