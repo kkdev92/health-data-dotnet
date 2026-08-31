@@ -17,11 +17,34 @@ Dates are UTC, taken from when the packages went to nuget.org.
 
 ## [Unreleased]
 
+## [0.4.0-alpha] - 2026-08-31
+
+Generated from Google Health API `v4`, Discovery revision `20260826` — the same contract and the
+same generated surface as 0.3.0-alpha. What changed is inside.
+
 ### Added
 
 - `HealthDataClientOptions.TimeProvider`. One thing reads it: a `Retry-After` sent as an HTTP-date
   has to be turned into a duration, and that subtraction needs a now. It used to be
-  `DateTimeOffset.UtcNow`, which left the arithmetic with no way to be tested.
+  `DateTimeOffset.UtcNow`, which left the arithmetic with no way to be tested — the same defect the
+  retry handler fixed long ago.
+
+### Changed
+
+- Reading a response no longer resumes on the caller's synchronization context. Every explicit
+  `await` in the transport already declined to, but the disposal at the end of an `await using`
+  declaration did not, so one step of each read came back to a UI or classic ASP.NET context that a
+  library has no business returning to.
+- An access token refused for an address that is not absolute now says `(not an absolute address)`
+  where it said `(no address)`. The four places that describe an address to complain about it share
+  one implementation, and this was the wording the other three used. Every other message is
+  unchanged, character for character.
+
+### Fixed
+
+- An error response and a fetched keyset were each copied a second time on the way in, because the
+  JSON reader has no overload for the form they already had. The error path did it on every failed
+  request, up to its size limit.
 
 ## [0.3.0-alpha] - 2026-08-31
 
@@ -332,7 +355,8 @@ First public build. Generated from Google Health API `v4`, Discovery revision `2
   reported as a bare status with the RFC 6749 reason discarded, which made the seven-day refresh
   expiry indistinguishable from a malformed request. Both were invisible to fixtures.
 
-[Unreleased]: https://github.com/kkdev92/health-data-dotnet/compare/v0.3.0-alpha...HEAD
+[Unreleased]: https://github.com/kkdev92/health-data-dotnet/compare/v0.4.0-alpha...HEAD
+[0.4.0-alpha]: https://github.com/kkdev92/health-data-dotnet/releases/tag/v0.4.0-alpha
 [0.3.0-alpha]: https://github.com/kkdev92/health-data-dotnet/releases/tag/v0.3.0-alpha
 [0.2.3-alpha]: https://github.com/kkdev92/health-data-dotnet/releases/tag/v0.2.3-alpha
 [0.2.2-alpha]: https://github.com/kkdev92/health-data-dotnet/releases/tag/v0.2.2-alpha
