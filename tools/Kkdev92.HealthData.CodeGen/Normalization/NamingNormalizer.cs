@@ -65,7 +65,7 @@ internal static class NamingNormalizer
             throw new InvalidOperationException($"Wire name '{wireName}' contains no identifier characters.");
         }
 
-        // An identifier may not start with a digit. Discovery revision 20260805 has no such case,
+        // An identifier may not start with a digit. Discovery revision 20260826 has no such case,
         // but the rule must be total rather than lucky.
         if (char.IsDigit(builder[0]))
         {
@@ -80,7 +80,7 @@ internal static class NamingNormalizer
     /// would have the same name as its enclosing type.
     /// </summary>
     /// <remarks>
-    /// Discovery revision 20260805 hits this exactly three times:
+    /// Discovery revision 20260826 hits this exactly three times:
     /// <c>ActiveZoneMinutes.activeZoneMinutes</c>, <c>Moods.moods</c> and <c>Symptoms.symptoms</c>.
     /// </remarks>
     public static string ToMemberName(string wireName, string declaringTypeName)

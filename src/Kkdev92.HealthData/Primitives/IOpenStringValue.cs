@@ -5,7 +5,7 @@ namespace Kkdev92.HealthData;
 /// </summary>
 /// <typeparam name="TSelf">The implementing type.</typeparam>
 /// <remarks>
-/// Wire enums are never closed C# enums (ADR-0005). Discovery revision 20260805 declares 58
+/// Wire enums are never closed C# enums (ADR-0005). Discovery revision 20260826 declares 58
 /// enum-typed properties, and <c>Exercise.exerciseType</c> alone has roughly 180 values, all
 /// protobuf-derived and all additive over time. A closed enum would turn a new server-side value
 /// into a deserialization failure.

@@ -188,7 +188,7 @@ internal static class ContractValidator
     /// <remarks>
     /// A <c>[JsonConverter]</c> attribute on a collection property applies to the collection, not
     /// its elements, so an array whose elements need a converter would serialize silently wrongly.
-    /// Discovery revision 20260805 has no such case: the only formatted array element is
+    /// Discovery revision 20260826 has no such case: the only formatted array element is
     /// <c>Electrocardiogram.waveformSamples</c> with <c>int32</c>, which needs no converter. This
     /// check exists so that stays true rather than being assumed.
     /// </remarks>
@@ -227,7 +227,7 @@ internal static class ContractValidator
     /// a wire value whose normalized name equals the struct's own name (CS0542), a property whose
     /// name is one the struct already spends on its machinery (<c>Value</c>, <c>FromValue</c>,
     /// <c>ToString</c>), and a property literally called <c>types</c>, which would collide with
-    /// the container itself. Discovery revision 20260805 has none of these; a later revision that
+    /// the container itself. Discovery revision 20260826 has none of these; a later revision that
     /// introduces one must stop generation with the culprit named, not emit code that cannot
     /// compile.
     /// </remarks>

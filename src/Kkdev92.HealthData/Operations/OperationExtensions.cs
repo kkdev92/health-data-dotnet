@@ -10,7 +10,7 @@ namespace Kkdev92.HealthData;
 /// </summary>
 /// <remarks>
 /// <para>
-/// Discovery revision 20260805 exposes no operations-polling resource, so this SDK does not
+/// Discovery revision 20260826 exposes no operations-polling resource, so this SDK does not
 /// invent one. There is no <c>GetOperationAsync</c> and no <c>WaitAsync</c>: guessing a URL for
 /// them would produce an SDK that appears to work and then 404s.
 /// </para>

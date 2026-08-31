@@ -28,7 +28,7 @@ specification file was derived from them:
 
 | Spec file | Derived from | Verified |
 |---|---|---|
-| `spec/v4/discovery.json` | The Discovery endpoint | Revision `20260805`, SHA-256 recorded in `metadata.json` |
+| `spec/v4/discovery.json` | The Discovery endpoint | Revision `20260826`, SHA-256 recorded in `metadata.json` |
 | `spec/v4/data-types.json` | The Data types page | 2026-08-09 |
 | `spec/v4/errors.json` | The error catalogue | 2026-08-09 |
 

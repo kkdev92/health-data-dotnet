@@ -5,7 +5,7 @@
 
 ## Context
 
-Discovery revision 20260805 uses `google-datetime` in 29 places, `google-duration` in 28, and
+Discovery revision 20260826 uses `google-datetime` in 29 places, `google-duration` in 28, and
 `int64` in 36 (always transmitted as a JSON string). Civil time appears as a `CivilDateTime`
 message, and `Date` as a year/month/day message.
 

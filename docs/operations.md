@@ -1,6 +1,6 @@
 # Operations
 
-The 25 operations this SDK exposes from Google Health API `v4`, Discovery revision `20260805`.
+The 25 operations this SDK exposes from Google Health API `v4`, Discovery revision `20260826`.
 
 This table is maintained by hand from the committed snapshot. The descriptors it describes are
 generated — they are available at runtime on `HealthDataGeneratedOperations`, and those cannot

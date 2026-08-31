@@ -2350,37 +2350,73 @@ static class Kkdev92.HealthData.Models.Symptoms+Types
     struct Kkdev92.HealthData.Models.Symptoms+Types+Symptoms
 struct Kkdev92.HealthData.Models.Symptoms+Types+Symptoms
     .ctor(System.String Value)
+    Kkdev92.HealthData.Models.Symptoms+Types+Symptoms AbdominalPain { get; }
     Kkdev92.HealthData.Models.Symptoms+Types+Symptoms Acne { get; }
     Kkdev92.HealthData.Models.Symptoms+Types+Symptoms Anxiety { get; }
     Kkdev92.HealthData.Models.Symptoms+Types+Symptoms BackPain { get; }
+    Kkdev92.HealthData.Models.Symptoms+Types+Symptoms BladderLeaks { get; }
+    Kkdev92.HealthData.Models.Symptoms+Types+Symptoms BleedingGums { get; }
     Kkdev92.HealthData.Models.Symptoms+Types+Symptoms Bloated { get; }
     Kkdev92.HealthData.Models.Symptoms+Types+Symptoms BlurredVision { get; }
+    Kkdev92.HealthData.Models.Symptoms+Types+Symptoms BrainFog { get; }
+    Kkdev92.HealthData.Models.Symptoms+Types+Symptoms BurningMouth { get; }
     Kkdev92.HealthData.Models.Symptoms+Types+Symptoms ChestPain { get; }
     Kkdev92.HealthData.Models.Symptoms+Types+Symptoms Confusion { get; }
+    Kkdev92.HealthData.Models.Symptoms+Types+Symptoms Constipation { get; }
     Kkdev92.HealthData.Models.Symptoms+Types+Symptoms Cough { get; }
     Kkdev92.HealthData.Models.Symptoms+Types+Symptoms Cramps { get; }
+    Kkdev92.HealthData.Models.Symptoms+Types+Symptoms Cravings { get; }
+    Kkdev92.HealthData.Models.Symptoms+Types+Symptoms DecreasedAppetite { get; }
+    Kkdev92.HealthData.Models.Symptoms+Types+Symptoms Diarrhea { get; }
     Kkdev92.HealthData.Models.Symptoms+Types+Symptoms DifficultyBreathing { get; }
     Kkdev92.HealthData.Models.Symptoms+Types+Symptoms Dizziness { get; }
+    Kkdev92.HealthData.Models.Symptoms+Types+Symptoms DrawingPain { get; }
+    Kkdev92.HealthData.Models.Symptoms+Types+Symptoms DryEyes { get; }
+    Kkdev92.HealthData.Models.Symptoms+Types+Symptoms DryHair { get; }
+    Kkdev92.HealthData.Models.Symptoms+Types+Symptoms DrySkin { get; }
+    Kkdev92.HealthData.Models.Symptoms+Types+Symptoms Exhaustion { get; }
     Kkdev92.HealthData.Models.Symptoms+Types+Symptoms Fainting { get; }
     Kkdev92.HealthData.Models.Symptoms+Types+Symptoms Fatigue { get; }
+    Kkdev92.HealthData.Models.Symptoms+Types+Symptoms FeelGood { get; }
     Kkdev92.HealthData.Models.Symptoms+Types+Symptoms Fever { get; }
+    Kkdev92.HealthData.Models.Symptoms+Types+Symptoms FoodAversions { get; }
     Kkdev92.HealthData.Models.Symptoms+Types+Symptoms FrequentUrination { get; }
     Kkdev92.HealthData.Models.Symptoms+Types+Symptoms FromValue(System.String value)
+    Kkdev92.HealthData.Models.Symptoms+Types+Symptoms HairLoss { get; }
     Kkdev92.HealthData.Models.Symptoms+Types+Symptoms Headache { get; }
     Kkdev92.HealthData.Models.Symptoms+Types+Symptoms HeartPalpitations { get; }
+    Kkdev92.HealthData.Models.Symptoms+Types+Symptoms Heartburn { get; }
     Kkdev92.HealthData.Models.Symptoms+Types+Symptoms HotFlashes { get; }
     Kkdev92.HealthData.Models.Symptoms+Types+Symptoms Hunger { get; }
+    Kkdev92.HealthData.Models.Symptoms+Types+Symptoms Hyperpigmentation { get; }
+    Kkdev92.HealthData.Models.Symptoms+Types+Symptoms IncreasedAppetite { get; }
+    Kkdev92.HealthData.Models.Symptoms+Types+Symptoms IncreasedAppetiteV2 { get; }
+    Kkdev92.HealthData.Models.Symptoms+Types+Symptoms Insomnia { get; }
+    Kkdev92.HealthData.Models.Symptoms+Types+Symptoms JointPain { get; }
+    Kkdev92.HealthData.Models.Symptoms+Types+Symptoms LegCramps { get; }
+    Kkdev92.HealthData.Models.Symptoms+Types+Symptoms MilkyNippleDischarge { get; }
+    Kkdev92.HealthData.Models.Symptoms+Types+Symptoms Nausea { get; }
+    Kkdev92.HealthData.Models.Symptoms+Types+Symptoms NightSweats { get; }
+    Kkdev92.HealthData.Models.Symptoms+Types+Symptoms NormalDigestion { get; }
+    Kkdev92.HealthData.Models.Symptoms+Types+Symptoms NormalStool { get; }
     Kkdev92.HealthData.Models.Symptoms+Types+Symptoms Other { get; }
+    Kkdev92.HealthData.Models.Symptoms+Types+Symptoms PerineumPain { get; }
     Kkdev92.HealthData.Models.Symptoms+Types+Symptoms Pms { get; }
     Kkdev92.HealthData.Models.Symptoms+Types+Symptoms SexDriveHigh { get; }
     Kkdev92.HealthData.Models.Symptoms+Types+Symptoms SexDriveLow { get; }
     Kkdev92.HealthData.Models.Symptoms+Types+Symptoms SexDriveMedium { get; }
     Kkdev92.HealthData.Models.Symptoms+Types+Symptoms Shakiness { get; }
     Kkdev92.HealthData.Models.Symptoms+Types+Symptoms Sick { get; }
+    Kkdev92.HealthData.Models.Symptoms+Types+Symptoms Sleepiness { get; }
+    Kkdev92.HealthData.Models.Symptoms+Types+Symptoms StretchMarks { get; }
     Kkdev92.HealthData.Models.Symptoms+Types+Symptoms Sweating { get; }
+    Kkdev92.HealthData.Models.Symptoms+Types+Symptoms Swelling { get; }
     Kkdev92.HealthData.Models.Symptoms+Types+Symptoms SymptomValueUnspecified { get; }
     Kkdev92.HealthData.Models.Symptoms+Types+Symptoms TenderBreasts { get; }
     Kkdev92.HealthData.Models.Symptoms+Types+Symptoms Thirst { get; }
+    Kkdev92.HealthData.Models.Symptoms+Types+Symptoms VaginalDryness { get; }
+    Kkdev92.HealthData.Models.Symptoms+Types+Symptoms VaginalItching { get; }
+    Kkdev92.HealthData.Models.Symptoms+Types+Symptoms Vomiting { get; }
     System.Boolean Equals(Kkdev92.HealthData.Models.Symptoms+Types+Symptoms other)
     System.Boolean Equals(System.Object obj)
     System.Int32 GetHashCode()

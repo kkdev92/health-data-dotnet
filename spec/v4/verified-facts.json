@@ -15,7 +15,7 @@
     "all is reported as unreadable rather than as a change, since 'no scopes found' is much more",
     "likely to mean the check broke than that Google removed authorization."
   ],
-  "verifiedOn": "2026-08-12",
+  "verifiedOn": "2026-08-31",
   "methods": [
     {
       "operation": "health.users.dataTypes.dataPoints.exportExerciseTcx",
@@ -101,6 +101,51 @@
         "https://www.googleapis.com/auth/googlehealth.sleep.readonly"
       ],
       "note": "This entry was first written by assuming the pattern of the data-point operations and was wrong in both directions — it listed location.readonly, which this page does not, and omitted settings.readonly, which it does. The check caught it before release, which is the argument for the check."
+    },
+    {
+      "operation": "health.users.dataTypes.dataPoints.create",
+      "url": "https://developers.google.com/health/reference/rest/v4/users.dataTypes.dataPoints/create",
+      "scopes": [
+        "https://www.googleapis.com/auth/googlehealth.activity_and_fitness.writeonly",
+        "https://www.googleapis.com/auth/googlehealth.health_metrics_and_measurements.writeonly",
+        "https://www.googleapis.com/auth/googlehealth.location.writeonly",
+        "https://www.googleapis.com/auth/googlehealth.logged_symptoms.writeonly",
+        "https://www.googleapis.com/auth/googlehealth.mindfulness.writeonly",
+        "https://www.googleapis.com/auth/googlehealth.nutrition.writeonly",
+        "https://www.googleapis.com/auth/googlehealth.reproductive_health.writeonly",
+        "https://www.googleapis.com/auth/googlehealth.sleep.writeonly"
+      ],
+      "note": "Watched because location.writeonly now rests on this page alone. Discovery revision 20260826 withdrew the scope; this page still lists it, and the SDK keeps the constant on that basis. If the page stops listing it, the constant has no source left and the decision has to be revisited."
+    },
+    {
+      "operation": "health.users.dataTypes.dataPoints.patch",
+      "url": "https://developers.google.com/health/reference/rest/v4/users.dataTypes.dataPoints/patch",
+      "scopes": [
+        "https://www.googleapis.com/auth/googlehealth.activity_and_fitness.writeonly",
+        "https://www.googleapis.com/auth/googlehealth.health_metrics_and_measurements.writeonly",
+        "https://www.googleapis.com/auth/googlehealth.location.writeonly",
+        "https://www.googleapis.com/auth/googlehealth.logged_symptoms.writeonly",
+        "https://www.googleapis.com/auth/googlehealth.mindfulness.writeonly",
+        "https://www.googleapis.com/auth/googlehealth.nutrition.writeonly",
+        "https://www.googleapis.com/auth/googlehealth.reproductive_health.writeonly",
+        "https://www.googleapis.com/auth/googlehealth.sleep.writeonly"
+      ],
+      "note": "Watched because location.writeonly now rests on this page alone. Discovery revision 20260826 withdrew the scope; this page still lists it, and the SDK keeps the constant on that basis. If the page stops listing it, the constant has no source left and the decision has to be revisited."
+    },
+    {
+      "operation": "health.users.dataTypes.dataPoints.batchDelete",
+      "url": "https://developers.google.com/health/reference/rest/v4/users.dataTypes.dataPoints/batchDelete",
+      "scopes": [
+        "https://www.googleapis.com/auth/googlehealth.activity_and_fitness.writeonly",
+        "https://www.googleapis.com/auth/googlehealth.health_metrics_and_measurements.writeonly",
+        "https://www.googleapis.com/auth/googlehealth.location.writeonly",
+        "https://www.googleapis.com/auth/googlehealth.logged_symptoms.writeonly",
+        "https://www.googleapis.com/auth/googlehealth.mindfulness.writeonly",
+        "https://www.googleapis.com/auth/googlehealth.nutrition.writeonly",
+        "https://www.googleapis.com/auth/googlehealth.reproductive_health.writeonly",
+        "https://www.googleapis.com/auth/googlehealth.sleep.writeonly"
+      ],
+      "note": "Watched because location.writeonly now rests on this page alone. Discovery revision 20260826 withdrew the scope; this page still lists it, and the SDK keeps the constant on that basis. If the page stops listing it, the constant has no source left and the decision has to be revisited."
     }
   ],
   "guides": [
