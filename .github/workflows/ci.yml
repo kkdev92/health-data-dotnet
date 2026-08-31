@@ -91,6 +91,49 @@ jobs:
       - name: Test
         run: dotnet test --solution HealthData.slnx -c Release --no-build -- --filter-not-trait Category=Package
 
+      # Reported, never enforced. A threshold turns coverage into a number people write tests to
+      # satisfy; an artefact turns it into something a reviewer can look at when a change claims to
+      # cover something. It runs on one operating system because the figure does not differ by
+      # platform, and it re-runs the suite rather than reusing the run above, because collection
+      # has to wrap the process that executes the tests.
+      #
+      # Out of process, not the test platform's own --coverage: that produced an empty report for
+      # four of the five suites when this was measured.
+      - name: Collect coverage
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          dotnet tool restore
+          dotnet tool run dotnet-coverage collect -f cobertura -o coverage.cobertura.xml             -- dotnet test --solution HealthData.slnx -c Release --no-build -- --filter-not-trait Category=Package
+
+      - name: Summarise coverage
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          python3 - <<'PYTHON' >> "$GITHUB_STEP_SUMMARY"
+          import xml.etree.ElementTree as ET
+
+          root = ET.parse("coverage.cobertura.xml").getroot()
+          shipped = ("Kkdev92.HealthData", "Kkdev92.HealthData.Authentication",
+                     "Kkdev92.HealthData.DependencyInjection", "Kkdev92.HealthData.Webhooks")
+
+          print("### Line coverage")
+          print()
+          print("| Assembly | Lines |")
+          print("|---|---:|")
+          for package in sorted(root.iter("package"), key=lambda p: p.get("name")):
+              if package.get("name") in shipped:
+                  print(f"| `{package.get('name')}` | {float(package.get('line-rate')) * 100:.1f}% |")
+          print()
+          print("Reported, not enforced. The full report is attached to this run.")
+          PYTHON
+
+      - name: Upload coverage
+        if: matrix.os == 'ubuntu-latest'
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: coverage
+          path: coverage.cobertura.xml
+          retention-days: 14
+
       # Regenerating from the committed snapshot must reproduce the checked-in sources byte for
       # byte. Running it on both operating systems is deliberate: it is the canary for
       # line-ending and path-separator drift, which only ever shows up cross-platform.
