@@ -114,7 +114,10 @@ flowchart TB
         SPEC --> CODEGEN
         CODEGEN -->|"generated C#, committed"| CORE
         AUTH -.->|optional| CORE
+        WEBHOOK -.->|optional| CORE
         DI -.->|optional| CORE
+        DI -.-> AUTH
+        DI -.-> WEBHOOK
     end
 
     GOOGLE["Google Health API"]

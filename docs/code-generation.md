@@ -72,8 +72,10 @@ flowchart TB
     EMIT -.- EN["never reads Discovery directly"]
 ```
 
-Current output for `v4`: **237 committed files** covering 25 operations of 27, all 138 reachable
-schemas of 147, 58 open enums, 19 scopes and 58 error reasons.
+Current output for `v4`: **235 committed files** covering 25 operations of 27, all 138 reachable
+schemas of 147, 58 open enums, 20 scopes and 58 error reasons.
+
+`codegen verify` prints these, so they are checkable rather than remembered.
 
 ## Commands
 
