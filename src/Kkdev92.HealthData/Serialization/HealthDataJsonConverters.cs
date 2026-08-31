@@ -10,7 +10,7 @@ namespace Kkdev92.HealthData.Serialization;
 /// <remarks>
 /// Google's Discovery type reference declares 64-bit integers as <c>"type": "string"</c> with
 /// <c>"format": "int64"</c>, because JSON numbers cannot carry the full 64-bit range safely.
-/// Discovery revision 20260805 uses this in 36 places, including <c>HeartRate.beatsPerMinute</c>
+/// Discovery revision 20260826 uses this in 36 places, including <c>HeartRate.beatsPerMinute</c>
 /// and <c>Steps.count</c>.
 /// </remarks>
 public sealed class Int64StringConverter : JsonConverter<long>

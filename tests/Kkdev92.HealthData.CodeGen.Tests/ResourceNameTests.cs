@@ -31,7 +31,7 @@ public sealed class ResourceNameTests
             .Distinct(StringComparer.Ordinal)
             .ToArray();
 
-        // 11 distinct patterns over 25 uses, in revision 20260805. The count is asserted rather
+        // 11 distinct patterns over 25 uses, in revision 20260826. The count is asserted rather
         // than derived so that a pattern arriving with a new revision is a failure to look at
         // rather than a silent extra type.
         Assert.Equal(11, patterns.Length);

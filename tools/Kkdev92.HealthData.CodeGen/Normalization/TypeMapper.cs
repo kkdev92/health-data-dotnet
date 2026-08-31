@@ -50,7 +50,7 @@ internal static class TypeMapper
 
         if (wireType == "object")
         {
-            // Discovery revision 20260805 uses additionalProperties in only four places, all
+            // Discovery revision 20260826 uses additionalProperties in only four places, all
             // "type": "any": Operation.metadata, Operation.response, Status.details[] and
             // HttpBody.extensions[]. JsonElement keeps them lossless.
             return new TypeContract

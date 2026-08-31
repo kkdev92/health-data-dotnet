@@ -6,7 +6,7 @@ namespace Kkdev92.HealthData.CodeGen.Tests;
 /// Golden tests for identifier normalization.
 /// </summary>
 /// <remarks>
-/// The real specification exercises almost none of these rules: Discovery revision 20260805 has
+/// The real specification exercises almost none of these rules: Discovery revision 20260826 has
 /// no reserved-keyword property names, no digit-leading names and no PascalCase collisions. It
 /// hits the member/type collision exactly three times. Synthetic cases are therefore the only way
 /// to know the rules work before Google produces one.
@@ -30,7 +30,7 @@ public sealed class NamingNormalizerTests
         => Assert.Equal("_2faEnabled", NamingNormalizer.ToPascalCase("2faEnabled"));
 
     [Theory]
-    // The three real collisions in Discovery revision 20260805.
+    // The three real collisions in Discovery revision 20260826.
     [InlineData("activeZoneMinutes", "ActiveZoneMinutes", "ActiveZoneMinutesValue")]
     [InlineData("moods", "Moods", "MoodsValue")]
     [InlineData("symptoms", "Symptoms", "SymptomsValue")]

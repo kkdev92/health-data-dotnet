@@ -26,15 +26,22 @@
         "combination": "anyOf",
         "scopes": [
           "https://www.googleapis.com/auth/googlehealth.activity_and_fitness.readonly",
+          "https://www.googleapis.com/auth/googlehealth.activity_and_fitness.writeonly",
           "https://www.googleapis.com/auth/googlehealth.ecg.readonly",
           "https://www.googleapis.com/auth/googlehealth.health_metrics_and_measurements.readonly",
+          "https://www.googleapis.com/auth/googlehealth.health_metrics_and_measurements.writeonly",
           "https://www.googleapis.com/auth/googlehealth.irn.readonly",
           "https://www.googleapis.com/auth/googlehealth.location.readonly",
+          "https://www.googleapis.com/auth/googlehealth.logged_symptoms.writeonly",
+          "https://www.googleapis.com/auth/googlehealth.mindfulness.writeonly",
           "https://www.googleapis.com/auth/googlehealth.nutrition.readonly",
-          "https://www.googleapis.com/auth/googlehealth.sleep.readonly"
+          "https://www.googleapis.com/auth/googlehealth.nutrition.writeonly",
+          "https://www.googleapis.com/auth/googlehealth.reproductive_health.writeonly",
+          "https://www.googleapis.com/auth/googlehealth.sleep.readonly",
+          "https://www.googleapis.com/auth/googlehealth.sleep.writeonly"
         ]
       },
-      "scopeNote": "Discovery omits ecg.readonly, irn.readonly, nutrition.readonly for this operation; the per-method reference lists 7 scopes in total. The union is recorded because the two Google sources each omit scopes the other lists, and an accepted-scope list only causes harm when it is too small: a provider cannot select a token it is not told about. Verified against the per-method page on 2026-08-12."
+      "scopeNote": "Discovery revision 20260826 added the seven writeonly scopes to this read operation; the per-method reference still lists the readonly ones only, and omits none that Discovery has. The union is recorded because the two Google sources each omit scopes the other lists, and an accepted-scope list only causes harm when it is too small: a provider cannot select a token it is not told about. Verified against the per-method page on 2026-08-31."
     },
     "health.users.dataTypes.dataPoints.reconcile": {
       "pagination": {
@@ -52,7 +59,6 @@
           "https://www.googleapis.com/auth/googlehealth.health_metrics_and_measurements.readonly",
           "https://www.googleapis.com/auth/googlehealth.health_metrics_and_measurements.writeonly",
           "https://www.googleapis.com/auth/googlehealth.location.readonly",
-          "https://www.googleapis.com/auth/googlehealth.location.writeonly",
           "https://www.googleapis.com/auth/googlehealth.logged_symptoms.writeonly",
           "https://www.googleapis.com/auth/googlehealth.mindfulness.writeonly",
           "https://www.googleapis.com/auth/googlehealth.nutrition.readonly",
@@ -62,7 +68,7 @@
           "https://www.googleapis.com/auth/googlehealth.sleep.writeonly"
         ]
       },
-      "scopeNote": "Discovery omits nutrition.readonly for this operation; the per-method reference lists 13 scopes in total. The union is recorded because the two Google sources each omit scopes the other lists, and an accepted-scope list only causes harm when it is too small: a provider cannot select a token it is not told about. Verified against the per-method page on 2026-08-12.",
+      "scopeNote": "Discovery revision 20260826 withdrew location.writeonly, and the per-method reference does not list it for this operation either — unlike create, patch and batchDelete, where the reference still does. With no source left, it is dropped here. nutrition.readonly comes from the per-method page, which Discovery omits. Verified on 2026-08-31.",
       "retryClassification": "safe",
       "rationale": "reconcile is a GET that returns a merged view; it has no server-side side effects."
     },
@@ -78,13 +84,20 @@
         "combination": "anyOf",
         "scopes": [
           "https://www.googleapis.com/auth/googlehealth.activity_and_fitness.readonly",
+          "https://www.googleapis.com/auth/googlehealth.activity_and_fitness.writeonly",
           "https://www.googleapis.com/auth/googlehealth.health_metrics_and_measurements.readonly",
+          "https://www.googleapis.com/auth/googlehealth.health_metrics_and_measurements.writeonly",
           "https://www.googleapis.com/auth/googlehealth.location.readonly",
+          "https://www.googleapis.com/auth/googlehealth.logged_symptoms.writeonly",
+          "https://www.googleapis.com/auth/googlehealth.mindfulness.writeonly",
           "https://www.googleapis.com/auth/googlehealth.nutrition.readonly",
-          "https://www.googleapis.com/auth/googlehealth.sleep.readonly"
+          "https://www.googleapis.com/auth/googlehealth.nutrition.writeonly",
+          "https://www.googleapis.com/auth/googlehealth.reproductive_health.writeonly",
+          "https://www.googleapis.com/auth/googlehealth.sleep.readonly",
+          "https://www.googleapis.com/auth/googlehealth.sleep.writeonly"
         ]
       },
-      "scopeNote": "Discovery omits nutrition.readonly for this operation; the per-method reference lists 5 scopes in total. The union is recorded because the two Google sources each omit scopes the other lists, and an accepted-scope list only causes harm when it is too small: a provider cannot select a token it is not told about. Verified against the per-method page on 2026-08-12.",
+      "scopeNote": "Discovery revision 20260826 added the seven writeonly scopes to this read operation; the per-method reference still lists the readonly ones only, and omits none that Discovery has. The union is recorded because the two Google sources each omit scopes the other lists, and an accepted-scope list only causes harm when it is too small: a provider cannot select a token it is not told about. Verified against the per-method page on 2026-08-31.",
       "retryClassification": "semanticallySafe",
       "rationale": "POST is used to carry a request body, but the operation only aggregates existing data. Page size and page token live in the request body, not the query string.",
       "sources": [
@@ -111,13 +124,20 @@
         "combination": "anyOf",
         "scopes": [
           "https://www.googleapis.com/auth/googlehealth.activity_and_fitness.readonly",
+          "https://www.googleapis.com/auth/googlehealth.activity_and_fitness.writeonly",
           "https://www.googleapis.com/auth/googlehealth.health_metrics_and_measurements.readonly",
+          "https://www.googleapis.com/auth/googlehealth.health_metrics_and_measurements.writeonly",
           "https://www.googleapis.com/auth/googlehealth.location.readonly",
+          "https://www.googleapis.com/auth/googlehealth.logged_symptoms.writeonly",
+          "https://www.googleapis.com/auth/googlehealth.mindfulness.writeonly",
           "https://www.googleapis.com/auth/googlehealth.nutrition.readonly",
-          "https://www.googleapis.com/auth/googlehealth.sleep.readonly"
+          "https://www.googleapis.com/auth/googlehealth.nutrition.writeonly",
+          "https://www.googleapis.com/auth/googlehealth.reproductive_health.writeonly",
+          "https://www.googleapis.com/auth/googlehealth.sleep.readonly",
+          "https://www.googleapis.com/auth/googlehealth.sleep.writeonly"
         ]
       },
-      "scopeNote": "Discovery omits nutrition.readonly for this operation; the per-method reference lists 5 scopes in total. The union is recorded because the two Google sources each omit scopes the other lists, and an accepted-scope list only causes harm when it is too small: a provider cannot select a token it is not told about. Verified against the per-method page on 2026-08-12.",
+      "scopeNote": "Discovery revision 20260826 added the seven writeonly scopes to this read operation; the per-method reference still lists the readonly ones only, and omits none that Discovery has. The union is recorded because the two Google sources each omit scopes the other lists, and an accepted-scope list only causes harm when it is too small: a provider cannot select a token it is not told about. Verified against the per-method page on 2026-08-31.",
       "retryClassification": "semanticallySafe",
       "rationale": "DailyRollUpDataPointsRequest declares pageSize and pageToken, but DailyRollUpDataPointsResponse has no nextPageToken. The generator must therefore NOT emit an EnumerateAsync overload for this operation.",
       "knownDocumentationConflict": true,
@@ -186,11 +206,25 @@
           "kind": "errors",
           "verifiedOn": "2026-08-09"
         }
-      ]
+      ],
+      "scopeRequirement": {
+        "combination": "anyOf",
+        "scopes": [
+          "https://www.googleapis.com/auth/googlehealth.activity_and_fitness.writeonly",
+          "https://www.googleapis.com/auth/googlehealth.health_metrics_and_measurements.writeonly",
+          "https://www.googleapis.com/auth/googlehealth.location.writeonly",
+          "https://www.googleapis.com/auth/googlehealth.logged_symptoms.writeonly",
+          "https://www.googleapis.com/auth/googlehealth.mindfulness.writeonly",
+          "https://www.googleapis.com/auth/googlehealth.nutrition.writeonly",
+          "https://www.googleapis.com/auth/googlehealth.reproductive_health.writeonly",
+          "https://www.googleapis.com/auth/googlehealth.sleep.writeonly"
+        ]
+      },
+      "scopeNote": "Discovery revision 20260826 withdrew location.writeonly from this operation while the per-method reference still lists it (2026-08-31). architecture.md gives the per-method reference precedence over Discovery, and shortening an accepted-scope list is the one direction that stops a token provider selecting a token that would work, so the union keeps it. Recorded here because this operation previously took its scopes from Discovery alone."
     },
     "health.projects.subscribers.create": {
       "responseKind": "operation",
-      "rationale": "The Webhooks guide's example reads as if a Subscriber is returned directly. The per-method REST reference and Discovery revision 20260805 both declare Operation.",
+      "rationale": "The Webhooks guide's example reads as if a Subscriber is returned directly. The per-method REST reference and Discovery revision 20260826 both declare Operation.",
       "knownDocumentationConflict": true,
       "sources": [
         {
@@ -253,13 +287,20 @@
         "combination": "anyOf",
         "scopes": [
           "https://www.googleapis.com/auth/googlehealth.activity_and_fitness.readonly",
+          "https://www.googleapis.com/auth/googlehealth.activity_and_fitness.writeonly",
           "https://www.googleapis.com/auth/googlehealth.health_metrics_and_measurements.readonly",
+          "https://www.googleapis.com/auth/googlehealth.health_metrics_and_measurements.writeonly",
           "https://www.googleapis.com/auth/googlehealth.location.readonly",
+          "https://www.googleapis.com/auth/googlehealth.logged_symptoms.writeonly",
+          "https://www.googleapis.com/auth/googlehealth.mindfulness.writeonly",
           "https://www.googleapis.com/auth/googlehealth.nutrition.readonly",
-          "https://www.googleapis.com/auth/googlehealth.sleep.readonly"
+          "https://www.googleapis.com/auth/googlehealth.nutrition.writeonly",
+          "https://www.googleapis.com/auth/googlehealth.reproductive_health.writeonly",
+          "https://www.googleapis.com/auth/googlehealth.sleep.readonly",
+          "https://www.googleapis.com/auth/googlehealth.sleep.writeonly"
         ]
       },
-      "scopeNote": "Discovery omits nutrition.readonly for this operation; the per-method reference lists 5 scopes in total. The union is recorded because the two Google sources each omit scopes the other lists, and an accepted-scope list only causes harm when it is too small: a provider cannot select a token it is not told about. Verified against the per-method page on 2026-08-12."
+      "scopeNote": "Discovery revision 20260826 added the seven writeonly scopes to this read operation; the per-method reference still lists the readonly ones only, and omits none that Discovery has. The union is recorded because the two Google sources each omit scopes the other lists, and an accepted-scope list only causes harm when it is too small: a provider cannot select a token it is not told about. Verified against the per-method page on 2026-08-31."
     },
     "health.users.getIdentity": {
       "scopeRequirement": {
@@ -276,6 +317,38 @@
         ]
       },
       "scopeNote": "Discovery omits nutrition.readonly for this operation; the per-method reference lists 8 scopes in total. The union is recorded because the two Google sources each omit scopes the other lists, and an accepted-scope list only causes harm when it is too small: a provider cannot select a token it is not told about. Verified against the per-method page on 2026-08-12."
+    },
+    "health.users.dataTypes.dataPoints.create": {
+      "scopeRequirement": {
+        "combination": "anyOf",
+        "scopes": [
+          "https://www.googleapis.com/auth/googlehealth.activity_and_fitness.writeonly",
+          "https://www.googleapis.com/auth/googlehealth.health_metrics_and_measurements.writeonly",
+          "https://www.googleapis.com/auth/googlehealth.location.writeonly",
+          "https://www.googleapis.com/auth/googlehealth.logged_symptoms.writeonly",
+          "https://www.googleapis.com/auth/googlehealth.mindfulness.writeonly",
+          "https://www.googleapis.com/auth/googlehealth.nutrition.writeonly",
+          "https://www.googleapis.com/auth/googlehealth.reproductive_health.writeonly",
+          "https://www.googleapis.com/auth/googlehealth.sleep.writeonly"
+        ]
+      },
+      "scopeNote": "Discovery revision 20260826 withdrew location.writeonly from this operation while the per-method reference still lists it (2026-08-31). architecture.md gives the per-method reference precedence over Discovery, and shortening an accepted-scope list is the one direction that stops a token provider selecting a token that would work, so the union keeps it. Recorded here because this operation previously took its scopes from Discovery alone."
+    },
+    "health.users.dataTypes.dataPoints.batchDelete": {
+      "scopeRequirement": {
+        "combination": "anyOf",
+        "scopes": [
+          "https://www.googleapis.com/auth/googlehealth.activity_and_fitness.writeonly",
+          "https://www.googleapis.com/auth/googlehealth.health_metrics_and_measurements.writeonly",
+          "https://www.googleapis.com/auth/googlehealth.location.writeonly",
+          "https://www.googleapis.com/auth/googlehealth.logged_symptoms.writeonly",
+          "https://www.googleapis.com/auth/googlehealth.mindfulness.writeonly",
+          "https://www.googleapis.com/auth/googlehealth.nutrition.writeonly",
+          "https://www.googleapis.com/auth/googlehealth.reproductive_health.writeonly",
+          "https://www.googleapis.com/auth/googlehealth.sleep.writeonly"
+        ]
+      },
+      "scopeNote": "Discovery revision 20260826 withdrew location.writeonly from this operation while the per-method reference still lists it (2026-08-31). architecture.md gives the per-method reference precedence over Discovery, and shortening an accepted-scope list is the one direction that stops a token provider selecting a token that would work, so the union keeps it. Recorded here because this operation previously took its scopes from Discovery alone."
     }
   },
   "resourceNaming": {
@@ -294,7 +367,7 @@
   "generation": {
     "pruneUnreachableSchemas": true,
     "$comment": [
-      "Discovery revision 20260805 contains 147 schemas; 138 are reachable from the allowlisted",
+      "Discovery revision 20260826 contains 147 schemas; 138 are reachable from the allowlisted",
       "operations. Without pruning the generator would emit dead types such as HttpBody,",
       "ManifestParams, DateTime, TimeZone, HttpHeader and HttpResponse."
     ]
@@ -311,21 +384,17 @@
       "allOf; every other operation is anyOf. Re-read the per-method pages on a revision bump, not",
       "just Discovery: this exception is invisible from Discovery alone."
     ],
-    "comparedOn": "2026-08-10",
+    "comparedOn": "2026-08-31",
     "inDiscoveryOnly": [
       {
         "scope": "https://www.googleapis.com/auth/cloud-platform",
         "note": "Project credentials for projects.subscribers.*. Not an end-user scope, so its absence from the Scopes guide is expected."
-      },
-      {
-        "scope": "https://www.googleapis.com/auth/googlehealth.location.writeonly",
-        "note": "Accepted by dataPoints batchDelete, create, patch and reconcile, but absent from the Scopes guide. Generated from Discovery."
       }
     ],
     "inScopesGuideOnly": [
       {
         "scope": "https://www.googleapis.com/auth/googlehealth.nutrition.readonly",
-        "note": "Declared by no operation in Discovery revision 20260805, but listed by the Scopes guide AND by the per-method reference of every read operation that returns data points. It was previously not generated, on the grounds that no operation accepted it; that conclusion came from reading Discovery alone. It is now generated from additionalScopes below.",
+        "note": "Declared by no operation in Discovery revision 20260826, but listed by the Scopes guide AND by the per-method reference of every read operation that returns data points. It was previously not generated, on the grounds that no operation accepted it; that conclusion came from reading Discovery alone. It is now generated from additionalScopes below.",
         "generated": true
       }
     ],
@@ -351,6 +420,39 @@
             "verifiedOn": "2026-08-12"
           }
         ]
+      },
+      {
+        "url": "https://www.googleapis.com/auth/googlehealth.location.writeonly",
+        "description": "Add exercise GPS location data to Google Health, and edit or delete the data it adds.",
+        "$comment": [
+          "Carried here since Discovery revision 20260826 stopped declaring it. The description is",
+          "Google's own wording, copied verbatim from revision 20260805 before the withdrawal.",
+          "The snapshot is a hash-checked verbatim copy and must not be edited to re-add it."
+        ],
+        "sources": [
+          {
+            "url": "https://developers.google.com/health/api/reference/rest/v4/users.dataTypes.dataPoints/create",
+            "kind": "per-method-reference",
+            "verifiedOn": "2026-08-31"
+          },
+          {
+            "url": "https://developers.google.com/health/api/reference/rest/v4/users.dataTypes.dataPoints/patch",
+            "kind": "per-method-reference",
+            "verifiedOn": "2026-08-31"
+          },
+          {
+            "url": "https://developers.google.com/health/api/reference/rest/v4/users.dataTypes.dataPoints/batchDelete",
+            "kind": "per-method-reference",
+            "verifiedOn": "2026-08-31"
+          }
+        ]
+      }
+    ],
+    "inPerMethodReferenceOnly": [
+      {
+        "scope": "https://www.googleapis.com/auth/googlehealth.location.writeonly",
+        "note": "Discovery revision 20260826 withdrew this scope from auth.oauth2.scopes and from every operation that declared it. The per-method reference for dataPoints create, patch and batchDelete still lists it on 2026-08-31, and architecture.md gives that reference precedence. It was previously in inDiscoveryOnly, generated from the snapshot; it is now generated from additionalScopes below, the same way nutrition.readonly is. Withdrawing the constant would be a breaking change made on one source of two while the other still documents the scope as accepted.",
+        "generated": true
       }
     ]
   },

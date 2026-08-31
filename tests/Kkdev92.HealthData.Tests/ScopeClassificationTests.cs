@@ -20,10 +20,11 @@ public sealed class ScopeClassificationTests
     [Fact]
     public void EveryScopeIsInExactlyOneList()
     {
-        // 20: nine read, ten write, and cloud-platform. Discovery declares 19 of them and
-        // semantics.json adds nutrition.readonly, which the REST reference documents and Discovery
-        // revision 20260805 does not. Asserted rather than derived, so a scope Google adds is a
-        // failure to look at rather than one silently missing from every list.
+        // 20: nine read, ten write, and cloud-platform. Discovery revision 20260826 declares 18 of
+        // them; semantics.json adds nutrition.readonly, which Discovery has never carried, and
+        // location.writeonly, which it carried until this revision withdrew it while three method
+        // reference pages went on documenting it. Asserted rather than derived, so a scope Google
+        // adds or removes is a failure to look at rather than one silently missing from every list.
         var all = HealthDataScopes.All;
 
         Assert.Equal(20, all.Count);

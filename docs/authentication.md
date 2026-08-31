@@ -293,11 +293,12 @@ var tokens = await oauth.ExchangeCodeAsync(code, pkce, cancellationToken);
 ## Scopes
 
 Scopes come from the Discovery document plus the per-method reference pages, because **no single
-Google source lists them all.** All three were compared on 2026-08-12:
+Google source lists them all.** All three were compared on 2026-08-12, and the `location.writeonly`
+row again on 2026-08-31:
 
 | Scope | Discovery | Per-method pages | Scopes guide |
 |---|---|---|---|
-| `googlehealth.location.writeonly` | ✅ 4 operations | ❌ omitted by `reconcile` | ❌ not listed |
+| `googlehealth.location.writeonly` | ❌ withdrawn at revision `20260826` | ✅ `create`, `patch`, `batchDelete`; never `reconcile` | ❌ not listed |
 | `googlehealth.nutrition.readonly` | ❌ no operation declares it | ✅ 6 read operations | ✅ listed |
 | `googlehealth.ecg.readonly` · `irn.readonly` | ✅ but not on `dataPoints.list` | ✅ on `dataPoints.list` | ✅ listed |
 | `cloud-platform` | ✅ project administration | ✅ | ❌ (not an end-user scope) |
@@ -310,7 +311,9 @@ would have worked. Only one of those can silently prevent a valid request.
 
 `nutrition.readonly` is generated even though Discovery declares it nowhere. It is accepted by
 every read operation according to their own reference pages, and a scope with no constant is a
-scope callers cannot name. Because the Discovery snapshot is a verbatim, hash-checked copy, the
+scope callers cannot name. `location.writeonly` is now generated the same way, for the same reason:
+Discovery withdrew it at revision `20260826` while three method pages still document it, and
+dropping the constant would remove a scope Google still says it accepts. Because the Discovery snapshot is a verbatim, hash-checked copy, the
 addition is declared in `spec/v4/semantics.json` rather than edited into the snapshot. These are
 recorded [documentation conflicts](architecture.md#known-documentation-conflicts).
 

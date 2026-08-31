@@ -9,7 +9,7 @@ namespace Kkdev92.HealthData;
 /// "lower-camel naming conventions", for example <c>"age,userConfiguredRunningStrideLengthMm"</c>.
 /// </para>
 /// <para>
-/// In Discovery revision 20260805 this format appears <em>only</em> as the <c>updateMask</c>
+/// In Discovery revision 20260826 this format appears <em>only</em> as the <c>updateMask</c>
 /// query parameter, on four operations, and never inside a schema. It is therefore a query
 /// serialization concern and needs no JSON converter (ADR-0008).
 /// </para>

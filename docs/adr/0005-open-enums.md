@@ -5,7 +5,7 @@
 
 ## Context
 
-Discovery revision 20260805 declares 58 enum-typed properties. `Exercise.exerciseType` alone
+Discovery revision 20260826 declares 58 enum-typed properties. `Exercise.exerciseType` alone
 has roughly 180 values, and every enum is protobuf-derived with an `*_UNSPECIFIED` member.
 Google adds values additively.
 

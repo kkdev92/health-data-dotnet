@@ -9,7 +9,7 @@ flowchart LR
         N1["1.0.0"] --> N2["1.1.0"] --> N3["2.0.0"]
     end
     subgraph GOOGLE["Google API version axis"]
-        G1["v4 rev 20260805"] --> G2["v4 rev …"] --> G3["v5"]
+        G1["v4 rev 20260826"] --> G2["v4 rev …"] --> G3["v5"]
     end
     NUGET -.->|"independent"| GOOGLE
 ```

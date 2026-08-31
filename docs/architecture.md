@@ -45,13 +45,14 @@ enforced by tests:
 ### Known documentation conflicts
 
 This table is canonical; other documents point here rather than restating it. Verified
-2026-08-10 against Discovery revision `20260805`.
+2026-08-10 against Discovery revision `20260805`; the scopes row re-verified 2026-08-31 against
+revision `20260826`.
 
 | Topic | Google's sources disagree | Resolution | Detail |
 |---|---|---|---|
 | Subscriber `create` / `patch` response | Webhooks guide shows a `Subscriber`; Discovery and the method reference say `Operation` | `Operation` | [operations.md](operations.md#clientprojectssubscribers) |
 | Endpoint verification success status | Guide allows `200` or `201`; method reference requires `201` | `201`, the stricter | [webhooks.md](webhooks.md#endpoint-verification) |
-| Scopes guide vs Discovery | `location.writeonly` only in Discovery; `nutrition.readonly` only in the guide | Discovery wins; `nutrition.readonly` is not generated | [authentication.md](authentication.md#scopes) |
+| Which scopes an operation accepts | No Google source lists them all: `location.writeonly` left Discovery at revision `20260826` but `create`, `patch` and `batchDelete` still document it; `nutrition.readonly` has never been in Discovery | The union of Discovery and the per-method reference; both scopes are generated | [authentication.md](authentication.md#scopes) |
 | `dataPoints.dailyRollUp` pagination | Request accepts a page token; the response returns none | No enumeration helper is generated | [operations.md](operations.md#clientusersdatapoints) |
 
 Each is pinned by a test, so a future contract refresh that silently changes one of them fails the

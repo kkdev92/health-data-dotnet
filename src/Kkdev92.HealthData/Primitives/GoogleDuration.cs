@@ -17,7 +17,7 @@ namespace Kkdev92.HealthData;
 /// digits of a nanosecond-precision value (ADR-0008).
 /// </para>
 /// <para>
-/// Discovery revision 20260805 uses this format in 28 places, including every <c>utcOffset</c>
+/// Discovery revision 20260826 uses this format in 28 places, including every <c>utcOffset</c>
 /// on a health record.
 /// </para>
 /// </remarks>

@@ -17,6 +17,32 @@ Dates are UTC, taken from when the packages went to nuget.org.
 
 ## [Unreleased]
 
+Regenerated from Google Health API `v4`, Discovery revision `20260826`.
+
+### Added
+
+- 36 values on `Symptoms.Types.Symptoms`, from `ABDOMINAL_PAIN` to `VOMITING`. Additive: the type
+  is an open enum, so a value Google adds is already readable without them — the constants only
+  save callers from writing the wire string themselves.
+- The read operations on `dataPoints` — `list`, `get`, `rollUp` and `dailyRollUp` — now list the
+  seven writeonly scopes Google added to them, so a token provider is told about a scope that
+  would work rather than being left to discover it.
+
+### Changed
+
+- `dataPoints.reconcile` no longer lists `googlehealth.location.writeonly`. Google withdrew it from
+  Discovery and the method's reference page has never carried it, so no source documents it as
+  accepted there.
+
+### Notes
+
+`HealthDataScopes.LocationWriteonly` stays. Discovery withdrew the scope, but the reference pages
+for `dataPoints.create`, `patch` and `batchDelete` still document it as accepted, and this SDK gives
+the per-method reference precedence over Discovery — removing the constant would be a breaking
+change made on one source of two. Those three pages are now watched by the scheduled check, so if
+they stop listing it the decision gets revisited rather than quietly outliving its evidence.
+
+
 ## [0.2.3-alpha] - 2026-08-20
 
 Generated from Google Health API `v4`, Discovery revision `20260805` — the same contract and the

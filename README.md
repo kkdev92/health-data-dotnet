@@ -330,7 +330,7 @@ Full detail is in [`docs/code-generation.md`](docs/code-generation.md).
 | Native AOT | supported and exercised in CI on a real consumer application |
 | Trimming | `IsAotCompatible`; the trim and AOT analyzers report no IL warnings |
 | SDK (to build) | the floor in `global.json`; `rollForward: latestFeature` takes a newer one |
-| Google Health API | `v4`, Discovery revision `20260805`, snapshot verified 2026-08-09 |
+| Google Health API | `v4`, Discovery revision `20260826`, snapshot verified 2026-08-31 |
 
 The Google Health API version and this package's version are **independent axes**. A new Google
 API version does not by itself cause a major bump.
