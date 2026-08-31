@@ -53,12 +53,12 @@ public static class HealthDataJson
     };
 
     /// <summary>Returns the read contract for <typeparamref name="T"/>.</summary>
-    /// <exception cref="InvalidOperationException">The type is not part of the generated contract.</exception>
+    /// <exception cref="NotSupportedException">The type is not part of the generated contract.</exception>
     public static JsonTypeInfo<T> ReadInfo<T>()
         => (JsonTypeInfo<T>)ReadOptions.GetTypeInfo(typeof(T));
 
     /// <summary>Returns the write contract for <typeparamref name="T"/>.</summary>
-    /// <exception cref="InvalidOperationException">The type is not part of the generated contract.</exception>
+    /// <exception cref="NotSupportedException">The type is not part of the generated contract.</exception>
     public static JsonTypeInfo<T> WriteInfo<T>()
         => (JsonTypeInfo<T>)WriteOptions.GetTypeInfo(typeof(T));
 
