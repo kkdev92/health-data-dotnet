@@ -228,12 +228,15 @@ static class Kkdev92.HealthData.HealthDataScopes
     const System.String IrnReadonly
     const System.String LocationReadonly
     const System.String LocationWriteonly
+    const System.String LoggedSymptomsReadonly
     const System.String LoggedSymptomsWriteonly
+    const System.String MindfulnessReadonly
     const System.String MindfulnessWriteonly
     const System.String NutritionReadonly
     const System.String NutritionWriteonly
     const System.String ProfileReadonly
     const System.String ProfileWriteonly
+    const System.String ReproductiveHealthReadonly
     const System.String ReproductiveHealthWriteonly
     const System.String SettingsReadonly
     const System.String SettingsWriteonly
@@ -1387,9 +1390,14 @@ class Kkdev92.HealthData.Models.HeartRateRollupValue
     Nullable<System.Double> BeatsPerMinuteMin { get; set; }
 class Kkdev92.HealthData.Models.HeartRateVariability
     .ctor()
+    Kkdev92.HealthData.Models.HeartRateVariabilityMetadata Metadata { get; set; }
     Kkdev92.HealthData.Models.ObservationSampleTime SampleTime { get; set; }
     Nullable<System.Double> RootMeanSquareOfSuccessiveDifferencesMilliseconds { get; set; }
     Nullable<System.Double> StandardDeviationMilliseconds { get; set; }
+class Kkdev92.HealthData.Models.HeartRateVariabilityMetadata
+    .ctor()
+    Nullable<System.Double> HighFrequencyPower { get; set; }
+    Nullable<System.Double> LowFrequencyPower { get; set; }
 class Kkdev92.HealthData.Models.HeartRateVariabilityPersonalRangeRollupValue
     .ctor()
     Nullable<System.Double> AverageHeartRateVariabilityMillisecondsMax { get; set; }
@@ -3160,6 +3168,7 @@ class Kkdev92.HealthData.Serialization.HealthDataJsonContext
     JsonTypeInfo<Kkdev92.HealthData.Models.HeartRateMetadata> HeartRateMetadata { get; }
     JsonTypeInfo<Kkdev92.HealthData.Models.HeartRateRollupValue> HeartRateRollupValue { get; }
     JsonTypeInfo<Kkdev92.HealthData.Models.HeartRateVariability> HeartRateVariability { get; }
+    JsonTypeInfo<Kkdev92.HealthData.Models.HeartRateVariabilityMetadata> HeartRateVariabilityMetadata { get; }
     JsonTypeInfo<Kkdev92.HealthData.Models.HeartRateVariabilityPersonalRangeRollupValue> HeartRateVariabilityPersonalRangeRollupValue { get; }
     JsonTypeInfo<Kkdev92.HealthData.Models.HeartRateZone+Types+HeartRateZoneType> HeartRateZoneHeartRateZoneType { get; }
     JsonTypeInfo<Kkdev92.HealthData.Models.HeartRateZone> HeartRateZone { get; }

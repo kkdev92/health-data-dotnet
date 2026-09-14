@@ -152,7 +152,7 @@ public sealed class GeneratedModelTests
 
         var registered = candidates.Where(IsRegistered).ToArray();
 
-        Assert.Equal(138, registered.Length);
+        Assert.Equal(139, registered.Length);
 
         foreach (var type in candidates.Where(HasWireMappedProperties))
         {

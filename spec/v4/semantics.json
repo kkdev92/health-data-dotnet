@@ -32,16 +32,19 @@
           "https://www.googleapis.com/auth/googlehealth.health_metrics_and_measurements.writeonly",
           "https://www.googleapis.com/auth/googlehealth.irn.readonly",
           "https://www.googleapis.com/auth/googlehealth.location.readonly",
+          "https://www.googleapis.com/auth/googlehealth.logged_symptoms.readonly",
           "https://www.googleapis.com/auth/googlehealth.logged_symptoms.writeonly",
+          "https://www.googleapis.com/auth/googlehealth.mindfulness.readonly",
           "https://www.googleapis.com/auth/googlehealth.mindfulness.writeonly",
           "https://www.googleapis.com/auth/googlehealth.nutrition.readonly",
           "https://www.googleapis.com/auth/googlehealth.nutrition.writeonly",
+          "https://www.googleapis.com/auth/googlehealth.reproductive_health.readonly",
           "https://www.googleapis.com/auth/googlehealth.reproductive_health.writeonly",
           "https://www.googleapis.com/auth/googlehealth.sleep.readonly",
           "https://www.googleapis.com/auth/googlehealth.sleep.writeonly"
         ]
       },
-      "scopeNote": "Discovery revision 20260826 added the seven writeonly scopes to this read operation; the per-method reference still lists the readonly ones only, and omits none that Discovery has. The union is recorded because the two Google sources each omit scopes the other lists, and an accepted-scope list only causes harm when it is too small: a provider cannot select a token it is not told about. Verified against the per-method page on 2026-08-31."
+      "scopeNote": "Discovery revision 20260826 added the seven writeonly scopes to this read operation, and revision 20260909 added logged_symptoms.readonly, mindfulness.readonly and reproductive_health.readonly. The per-method reference lists neither group: it still shows the older readonly scopes only, and contributes nutrition.readonly, which Discovery omits. The union is recorded because the two Google sources each omit scopes the other lists, and an accepted-scope list only causes harm when it is too small: a provider cannot select a token it is not told about. Verified against the per-method page on 2026-09-14."
     },
     "health.users.dataTypes.dataPoints.reconcile": {
       "pagination": {
@@ -59,16 +62,19 @@
           "https://www.googleapis.com/auth/googlehealth.health_metrics_and_measurements.readonly",
           "https://www.googleapis.com/auth/googlehealth.health_metrics_and_measurements.writeonly",
           "https://www.googleapis.com/auth/googlehealth.location.readonly",
+          "https://www.googleapis.com/auth/googlehealth.logged_symptoms.readonly",
           "https://www.googleapis.com/auth/googlehealth.logged_symptoms.writeonly",
+          "https://www.googleapis.com/auth/googlehealth.mindfulness.readonly",
           "https://www.googleapis.com/auth/googlehealth.mindfulness.writeonly",
           "https://www.googleapis.com/auth/googlehealth.nutrition.readonly",
           "https://www.googleapis.com/auth/googlehealth.nutrition.writeonly",
+          "https://www.googleapis.com/auth/googlehealth.reproductive_health.readonly",
           "https://www.googleapis.com/auth/googlehealth.reproductive_health.writeonly",
           "https://www.googleapis.com/auth/googlehealth.sleep.readonly",
           "https://www.googleapis.com/auth/googlehealth.sleep.writeonly"
         ]
       },
-      "scopeNote": "Discovery revision 20260826 withdrew location.writeonly, and the per-method reference does not list it for this operation either — unlike create, patch and batchDelete, where the reference still does. With no source left, it is dropped here. nutrition.readonly comes from the per-method page, which Discovery omits. Verified on 2026-08-31.",
+      "scopeNote": "Discovery revision 20260826 withdrew location.writeonly, and the per-method reference does not list it for this operation either — unlike create, patch and batchDelete, where the reference still does. With no source left, it is dropped here. nutrition.readonly comes from the per-method page, which Discovery omits. Revision 20260909 added logged_symptoms.readonly, mindfulness.readonly and reproductive_health.readonly, which the per-method reference does not list. Verified on 2026-09-14.",
       "retryClassification": "safe",
       "rationale": "reconcile is a GET that returns a merged view; it has no server-side side effects."
     },
@@ -88,16 +94,19 @@
           "https://www.googleapis.com/auth/googlehealth.health_metrics_and_measurements.readonly",
           "https://www.googleapis.com/auth/googlehealth.health_metrics_and_measurements.writeonly",
           "https://www.googleapis.com/auth/googlehealth.location.readonly",
+          "https://www.googleapis.com/auth/googlehealth.logged_symptoms.readonly",
           "https://www.googleapis.com/auth/googlehealth.logged_symptoms.writeonly",
+          "https://www.googleapis.com/auth/googlehealth.mindfulness.readonly",
           "https://www.googleapis.com/auth/googlehealth.mindfulness.writeonly",
           "https://www.googleapis.com/auth/googlehealth.nutrition.readonly",
           "https://www.googleapis.com/auth/googlehealth.nutrition.writeonly",
+          "https://www.googleapis.com/auth/googlehealth.reproductive_health.readonly",
           "https://www.googleapis.com/auth/googlehealth.reproductive_health.writeonly",
           "https://www.googleapis.com/auth/googlehealth.sleep.readonly",
           "https://www.googleapis.com/auth/googlehealth.sleep.writeonly"
         ]
       },
-      "scopeNote": "Discovery revision 20260826 added the seven writeonly scopes to this read operation; the per-method reference still lists the readonly ones only, and omits none that Discovery has. The union is recorded because the two Google sources each omit scopes the other lists, and an accepted-scope list only causes harm when it is too small: a provider cannot select a token it is not told about. Verified against the per-method page on 2026-08-31.",
+      "scopeNote": "Discovery revision 20260826 added the seven writeonly scopes to this read operation, and revision 20260909 added logged_symptoms.readonly, mindfulness.readonly and reproductive_health.readonly. The per-method reference lists neither group: it still shows the older readonly scopes only, and contributes nutrition.readonly, which Discovery omits. The union is recorded because the two Google sources each omit scopes the other lists, and an accepted-scope list only causes harm when it is too small: a provider cannot select a token it is not told about. Verified against the per-method page on 2026-09-14.",
       "retryClassification": "semanticallySafe",
       "rationale": "POST is used to carry a request body, but the operation only aggregates existing data. Page size and page token live in the request body, not the query string.",
       "sources": [
@@ -128,16 +137,19 @@
           "https://www.googleapis.com/auth/googlehealth.health_metrics_and_measurements.readonly",
           "https://www.googleapis.com/auth/googlehealth.health_metrics_and_measurements.writeonly",
           "https://www.googleapis.com/auth/googlehealth.location.readonly",
+          "https://www.googleapis.com/auth/googlehealth.logged_symptoms.readonly",
           "https://www.googleapis.com/auth/googlehealth.logged_symptoms.writeonly",
+          "https://www.googleapis.com/auth/googlehealth.mindfulness.readonly",
           "https://www.googleapis.com/auth/googlehealth.mindfulness.writeonly",
           "https://www.googleapis.com/auth/googlehealth.nutrition.readonly",
           "https://www.googleapis.com/auth/googlehealth.nutrition.writeonly",
+          "https://www.googleapis.com/auth/googlehealth.reproductive_health.readonly",
           "https://www.googleapis.com/auth/googlehealth.reproductive_health.writeonly",
           "https://www.googleapis.com/auth/googlehealth.sleep.readonly",
           "https://www.googleapis.com/auth/googlehealth.sleep.writeonly"
         ]
       },
-      "scopeNote": "Discovery revision 20260826 added the seven writeonly scopes to this read operation; the per-method reference still lists the readonly ones only, and omits none that Discovery has. The union is recorded because the two Google sources each omit scopes the other lists, and an accepted-scope list only causes harm when it is too small: a provider cannot select a token it is not told about. Verified against the per-method page on 2026-08-31.",
+      "scopeNote": "Discovery revision 20260826 added the seven writeonly scopes to this read operation, and revision 20260909 added logged_symptoms.readonly, mindfulness.readonly and reproductive_health.readonly. The per-method reference lists neither group: it still shows the older readonly scopes only, and contributes nutrition.readonly, which Discovery omits. The union is recorded because the two Google sources each omit scopes the other lists, and an accepted-scope list only causes harm when it is too small: a provider cannot select a token it is not told about. Verified against the per-method page on 2026-09-14.",
       "retryClassification": "semanticallySafe",
       "rationale": "DailyRollUpDataPointsRequest declares pageSize and pageToken, but DailyRollUpDataPointsResponse has no nextPageToken. The generator must therefore NOT emit an EnumerateAsync overload for this operation.",
       "knownDocumentationConflict": true,
@@ -291,16 +303,19 @@
           "https://www.googleapis.com/auth/googlehealth.health_metrics_and_measurements.readonly",
           "https://www.googleapis.com/auth/googlehealth.health_metrics_and_measurements.writeonly",
           "https://www.googleapis.com/auth/googlehealth.location.readonly",
+          "https://www.googleapis.com/auth/googlehealth.logged_symptoms.readonly",
           "https://www.googleapis.com/auth/googlehealth.logged_symptoms.writeonly",
+          "https://www.googleapis.com/auth/googlehealth.mindfulness.readonly",
           "https://www.googleapis.com/auth/googlehealth.mindfulness.writeonly",
           "https://www.googleapis.com/auth/googlehealth.nutrition.readonly",
           "https://www.googleapis.com/auth/googlehealth.nutrition.writeonly",
+          "https://www.googleapis.com/auth/googlehealth.reproductive_health.readonly",
           "https://www.googleapis.com/auth/googlehealth.reproductive_health.writeonly",
           "https://www.googleapis.com/auth/googlehealth.sleep.readonly",
           "https://www.googleapis.com/auth/googlehealth.sleep.writeonly"
         ]
       },
-      "scopeNote": "Discovery revision 20260826 added the seven writeonly scopes to this read operation; the per-method reference still lists the readonly ones only, and omits none that Discovery has. The union is recorded because the two Google sources each omit scopes the other lists, and an accepted-scope list only causes harm when it is too small: a provider cannot select a token it is not told about. Verified against the per-method page on 2026-08-31."
+      "scopeNote": "Discovery revision 20260826 added the seven writeonly scopes to this read operation, and revision 20260909 added logged_symptoms.readonly, mindfulness.readonly and reproductive_health.readonly. The per-method reference lists neither group: it still shows the older readonly scopes only, and contributes nutrition.readonly, which Discovery omits. The union is recorded because the two Google sources each omit scopes the other lists, and an accepted-scope list only causes harm when it is too small: a provider cannot select a token it is not told about. Verified against the per-method page on 2026-09-14."
     },
     "health.users.getIdentity": {
       "scopeRequirement": {
@@ -310,13 +325,16 @@
           "https://www.googleapis.com/auth/googlehealth.ecg.readonly",
           "https://www.googleapis.com/auth/googlehealth.health_metrics_and_measurements.readonly",
           "https://www.googleapis.com/auth/googlehealth.irn.readonly",
+          "https://www.googleapis.com/auth/googlehealth.logged_symptoms.readonly",
+          "https://www.googleapis.com/auth/googlehealth.mindfulness.readonly",
           "https://www.googleapis.com/auth/googlehealth.nutrition.readonly",
           "https://www.googleapis.com/auth/googlehealth.profile.readonly",
+          "https://www.googleapis.com/auth/googlehealth.reproductive_health.readonly",
           "https://www.googleapis.com/auth/googlehealth.settings.readonly",
           "https://www.googleapis.com/auth/googlehealth.sleep.readonly"
         ]
       },
-      "scopeNote": "Discovery omits nutrition.readonly for this operation; the per-method reference lists 8 scopes in total. The union is recorded because the two Google sources each omit scopes the other lists, and an accepted-scope list only causes harm when it is too small: a provider cannot select a token it is not told about. Verified against the per-method page on 2026-08-12."
+      "scopeNote": "Discovery omits nutrition.readonly for this operation; the per-method reference lists 8 scopes in total. Discovery revision 20260909 added logged_symptoms.readonly, mindfulness.readonly and reproductive_health.readonly, which the per-method reference does not list. The union is recorded because the two Google sources each omit scopes the other lists, and an accepted-scope list only causes harm when it is too small: a provider cannot select a token it is not told about. Verified against the per-method page on 2026-09-14."
     },
     "health.users.dataTypes.dataPoints.create": {
       "scopeRequirement": {
@@ -384,11 +402,23 @@
       "allOf; every other operation is anyOf. Re-read the per-method pages on a revision bump, not",
       "just Discovery: this exception is invisible from Discovery alone."
     ],
-    "comparedOn": "2026-08-31",
+    "comparedOn": "2026-09-14",
     "inDiscoveryOnly": [
       {
         "scope": "https://www.googleapis.com/auth/cloud-platform",
         "note": "Project credentials for projects.subscribers.*. Not an end-user scope, so its absence from the Scopes guide is expected."
+      },
+      {
+        "scope": "https://www.googleapis.com/auth/googlehealth.logged_symptoms.readonly",
+        "note": "Added by Discovery revision 20260909 and accepted on every read operation that returns data points, but listed by neither the Scopes guide nor any per-method reference page on 2026-09-14. These are the read half of the Women's Health scopes whose writeonly counterparts shipped on 2026-08-17; the data type page still documents create, update and batchDelete only. Recorded as Discovery-only rather than withheld, because an accepted-scope list only causes harm when it is too small."
+      },
+      {
+        "scope": "https://www.googleapis.com/auth/googlehealth.mindfulness.readonly",
+        "note": "Added by Discovery revision 20260909 and accepted on every read operation that returns data points, but listed by neither the Scopes guide nor any per-method reference page on 2026-09-14. These are the read half of the Women's Health scopes whose writeonly counterparts shipped on 2026-08-17; the data type page still documents create, update and batchDelete only. Recorded as Discovery-only rather than withheld, because an accepted-scope list only causes harm when it is too small."
+      },
+      {
+        "scope": "https://www.googleapis.com/auth/googlehealth.reproductive_health.readonly",
+        "note": "Added by Discovery revision 20260909 and accepted on every read operation that returns data points, but listed by neither the Scopes guide nor any per-method reference page on 2026-09-14. These are the read half of the Women's Health scopes whose writeonly counterparts shipped on 2026-08-17; the data type page still documents create, update and batchDelete only. Recorded as Discovery-only rather than withheld, because an accepted-scope list only causes harm when it is too small."
       }
     ],
     "inScopesGuideOnly": [
@@ -483,15 +513,18 @@
         "adds is a build failure rather than a scope that silently belongs to no kind.",
         "Includes the scopes semantics.json adds under scopeCrossCheck.additionalScopes, which are generated alongside Discovery's own and would otherwise be unclassified."
       ],
-      "verifiedOn": "2026-08-15",
+      "verifiedOn": "2026-09-14",
       "read": [
         "https://www.googleapis.com/auth/googlehealth.activity_and_fitness.readonly",
         "https://www.googleapis.com/auth/googlehealth.ecg.readonly",
         "https://www.googleapis.com/auth/googlehealth.health_metrics_and_measurements.readonly",
         "https://www.googleapis.com/auth/googlehealth.irn.readonly",
         "https://www.googleapis.com/auth/googlehealth.location.readonly",
+        "https://www.googleapis.com/auth/googlehealth.logged_symptoms.readonly",
+        "https://www.googleapis.com/auth/googlehealth.mindfulness.readonly",
         "https://www.googleapis.com/auth/googlehealth.nutrition.readonly",
         "https://www.googleapis.com/auth/googlehealth.profile.readonly",
+        "https://www.googleapis.com/auth/googlehealth.reproductive_health.readonly",
         "https://www.googleapis.com/auth/googlehealth.settings.readonly",
         "https://www.googleapis.com/auth/googlehealth.sleep.readonly"
       ],

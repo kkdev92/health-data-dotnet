@@ -17,6 +17,34 @@ Dates are UTC, taken from when the packages went to nuget.org.
 
 ## [Unreleased]
 
+### Added
+
+- `HealthDataScopes.LoggedSymptomsReadonly`, `MindfulnessReadonly` and
+  `ReproductiveHealthReadonly`. Discovery revision `20260909` declares these three and accepts them
+  on every operation that reads data points, plus `users.getIdentity`. They are the read half of the
+  Women's Health scopes whose write-only counterparts shipped on 2026-08-17. No Google documentation
+  page lists them yet — not the Scopes guide, not any per-method reference — so they are recorded as
+  Discovery-only, on the same rule the package already applies: an accepted-scope list only causes
+  harm when it is too small, because a provider cannot select a token it is not told about.
+- `HeartRateVariabilityMetadata`, carrying `HighFrequencyPower` and `LowFrequencyPower`, reachable
+  through the new `HeartRateVariability.Metadata` property. Google describes the property as
+  metadata used in first-party surfaces, so a third-party token is not expected to populate it; it
+  is generated because it is reachable, and omitting a reachable schema would make the model
+  incomplete against the wire.
+
+### Changed
+
+- Generated from Google Health API `v4`, Discovery revision `20260909`, up from `20260826`. The
+  change is additive throughout: no operation, schema, property or scope was removed or altered.
+- `RollUpDataPointsRequest.WindowSize` and `DailyRollUpDataPointsRequest.WindowSizeDays` now
+  document what happens when the requested range is not an exact multiple of the window: the final
+  bucket is truncated at the upper endpoint of the range and covers a shorter duration. This is a
+  clarification Google added to the contract, not a behaviour change in this package — but it is
+  the kind of thing a caller bucketing results needs to know.
+- `Profile` no longer lists `googlehealth.activity_and_fitness` alongside its `.readonly` form in
+  the per-property scope notes. Google dropped the bare form from the descriptions; it was never a
+  declared scope.
+
 ## [0.4.0-alpha] - 2026-08-31
 
 Generated from Google Health API `v4`, Discovery revision `20260826` — the same contract and the

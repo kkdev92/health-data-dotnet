@@ -20,14 +20,15 @@ public sealed class ScopeClassificationTests
     [Fact]
     public void EveryScopeIsInExactlyOneList()
     {
-        // 20: nine read, ten write, and cloud-platform. Discovery revision 20260826 declares 18 of
+        // 23: twelve read, ten write, and cloud-platform. Discovery revision 20260909 declares 21 of
         // them; semantics.json adds nutrition.readonly, which Discovery has never carried, and
-        // location.writeonly, which it carried until this revision withdrew it while three method
-        // reference pages went on documenting it. Asserted rather than derived, so a scope Google
-        // adds or removes is a failure to look at rather than one silently missing from every list.
+        // location.writeonly, which it carried until revision 20260826 withdrew it while three
+        // method reference pages went on documenting it. Asserted rather than derived, so a scope
+        // Google adds or removes is a failure to look at rather than one silently missing from
+        // every list.
         var all = HealthDataScopes.All;
 
-        Assert.Equal(20, all.Count);
+        Assert.Equal(23, all.Count);
 
         var classified = HealthDataScopes.ReadOnly
             .Concat(HealthDataScopes.WriteOnly)
@@ -42,7 +43,7 @@ public sealed class ScopeClassificationTests
     [Fact]
     public void TheCountsAreTheOnesTheContractStates()
     {
-        Assert.Equal(9, HealthDataScopes.ReadOnly.Count);
+        Assert.Equal(12, HealthDataScopes.ReadOnly.Count);
         Assert.Equal(10, HealthDataScopes.WriteOnly.Count);
         Assert.Equal(HealthDataScopes.CloudPlatform, Assert.Single(HealthDataScopes.Project));
     }
