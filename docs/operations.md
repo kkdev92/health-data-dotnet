@@ -1,6 +1,6 @@
 # Operations
 
-The 25 operations this SDK exposes from Google Health API `v4`, Discovery revision `20260826`.
+The 25 operations this SDK exposes from Google Health API `v4`, Discovery revision `20260909`.
 
 This table is maintained by hand from the committed snapshot. The descriptors it describes are
 generated — they are available at runtime on `HealthDataGeneratedOperations`, and those cannot
@@ -76,11 +76,13 @@ Scope groups:
 
 | Group | Scopes | Used by |
 |---|---|---|
-| read | `activity_and_fitness` · `health_metrics_and_measurements` · `location` · `nutrition` · `sleep`, all `.readonly` | `Get`, `RollUp`, `DailyRollUp` |
-| read, wider | the five above plus `ecg.readonly` and `irn.readonly` | `List` |
+| read | the eight `.readonly` scopes — `activity_and_fitness` · `health_metrics_and_measurements` · `location` · `logged_symptoms` · `mindfulness` · `nutrition` · `reproductive_health` · `sleep` — and every `.writeonly` one except `location.writeonly`; fifteen in all | `Get`, `RollUp`, `DailyRollUp`, `Reconcile` |
+| read, wider | the fifteen above plus `ecg.readonly` and `irn.readonly` | `List` |
 | write | `activity_and_fitness` · `health_metrics_and_measurements` · `location` · `logged_symptoms` · `mindfulness` · `nutrition` · `reproductive_health` · `sleep`, all `.writeonly` | `Create`, `Patch`, `BatchDelete` |
 | TCX | `activity_and_fitness.readonly` **and** `location.readonly` | `ExportExerciseTcx` |
-| reconcile | all thirteen read and write scopes | `Reconcile` |
+
+Read operations accept the `.writeonly` scopes as well — Discovery added them at revision
+`20260826` — and the three Women's Health `.readonly` scopes arrived at revision `20260909`.
 
 A Discovery `scopes` array means **any one** of the listed scopes is accepted, not all of them —
 with a single documented exception. `ExportExerciseTcx` needs both of its scopes together, which
