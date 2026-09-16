@@ -293,14 +293,15 @@ var tokens = await oauth.ExchangeCodeAsync(code, pkce, cancellationToken);
 ## Scopes
 
 Scopes come from the Discovery document plus the per-method reference pages, because **no single
-Google source lists them all.** All three were compared on 2026-08-12, and the `location.writeonly`
-row again on 2026-08-31:
+Google source lists them all.** All three were compared on 2026-08-12, the `location.writeonly`
+row again on 2026-08-31, and every row on 2026-09-14 against revision `20260909`:
 
 | Scope | Discovery | Per-method pages | Scopes guide |
 |---|---|---|---|
 | `googlehealth.location.writeonly` | ❌ withdrawn at revision `20260826` | ✅ `create`, `patch`, `batchDelete`; never `reconcile` | ❌ not listed |
 | `googlehealth.nutrition.readonly` | ❌ no operation declares it | ✅ 6 read operations | ✅ listed |
 | `googlehealth.ecg.readonly` · `irn.readonly` | ✅ but not on `dataPoints.list` | ✅ on `dataPoints.list` | ✅ listed |
+| `googlehealth.logged_symptoms.readonly` · `mindfulness.readonly` · `reproductive_health.readonly` | ✅ added at revision `20260909`, on every data point read and `users.getIdentity` | ❌ not listed | ❌ not listed |
 | `cloud-platform` | ✅ project administration | ✅ | ❌ (not an end-user scope) |
 
 The two sources omit each other's scopes in both directions, so an operation's accepted list is
@@ -324,7 +325,7 @@ scope is which from its name:
 
 ```csharp
 HealthDataScopes.All         // every scope this contract declares
-HealthDataScopes.ReadOnly    // 9 - reads a person's data
+HealthDataScopes.ReadOnly    // 12 - reads a person's data
 HealthDataScopes.WriteOnly   // 10 - adds, edits or deletes it
 HealthDataScopes.Project     // cloud-platform, for the subscriber operations
 ```
@@ -335,9 +336,9 @@ and both are wrong:
 
 - **By name** (`.writeonly`) — a rule about Google's naming that nothing here promises to keep,
   and the one an application built on this SDK had resorted to writing for itself.
-- **By HTTP method** — measured 2026-08-15: five `.readonly` scopes are declared by POST
-  operations, because `rollUp`, `dailyRollUp` and `reconcile` are POSTs that read. The method
-  disagrees with the scope in 5 of 19 cases.
+- **By HTTP method** — measured 2026-09-16 against revision `20260909`: seven `.readonly` scopes
+  are declared by operations that are not `GET`s, because `rollUp`, `dailyRollUp` and `reconcile`
+  are POSTs that read. The method disagrees with the scope in 7 of 23 cases.
 
 What Discovery *does* say is in the description of each scope — "See your Google Health sleep
 data" against "Add sleep data to Google Health, and edit or delete the data it adds" — which is
