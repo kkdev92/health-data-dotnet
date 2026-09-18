@@ -17,6 +17,8 @@ Dates are UTC, taken from when the packages went to nuget.org.
 
 ## [Unreleased]
 
+## [0.5.0-alpha] - 2026-09-18
+
 ### Added
 
 - `HealthDataScopes.LoggedSymptomsReadonly`, `MindfulnessReadonly` and
@@ -383,7 +385,8 @@ First public build. Generated from Google Health API `v4`, Discovery revision `2
   reported as a bare status with the RFC 6749 reason discarded, which made the seven-day refresh
   expiry indistinguishable from a malformed request. Both were invisible to fixtures.
 
-[Unreleased]: https://github.com/kkdev92/health-data-dotnet/compare/v0.4.0-alpha...HEAD
+[Unreleased]: https://github.com/kkdev92/health-data-dotnet/compare/v0.5.0-alpha...HEAD
+[0.5.0-alpha]: https://github.com/kkdev92/health-data-dotnet/releases/tag/v0.5.0-alpha
 [0.4.0-alpha]: https://github.com/kkdev92/health-data-dotnet/releases/tag/v0.4.0-alpha
 [0.3.0-alpha]: https://github.com/kkdev92/health-data-dotnet/releases/tag/v0.3.0-alpha
 [0.2.3-alpha]: https://github.com/kkdev92/health-data-dotnet/releases/tag/v0.2.3-alpha
