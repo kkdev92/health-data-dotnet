@@ -1,5 +1,14 @@
 # Security Policy
 
+## Supported versions
+
+Only the most recent release is supported. The `0.x` line is pre-release: breaking changes
+are expected before `1.0.0`, and a fix ships in a new release rather than as a patch to an
+earlier one. All four packages carry the same version and move together.
+
+Deliberately not a list of version numbers — one written here is correct on the day it is
+written and wrong on the day the next release goes out, with nothing failing in between.
+
 ## Reporting a vulnerability
 
 Please report security issues privately through
