@@ -93,27 +93,27 @@ public sealed class HealthDataAuthorizationHandler(IHealthDataAccessTokenProvide
     /// </remarks>
     private void RequireSecureDestination(Uri? destination)
     {
-        if (!SecureUri.IsHttpsOrLoopback(destination))
+        if (!destination.IsHttpsOrLoopback())
         {
             throw new InvalidOperationException(
-                $"Refusing to send an access token to '{SecureUri.Describe(destination)}'. Requests carrying a token "
+                $"Refusing to send an access token to '{destination.Describe()}'. Requests carrying a token "
                 + "must be HTTPS, or plain HTTP to a loopback address for a local test server. Check "
                 + "HttpClient.BaseAddress, and any ConfigureHttpClient that sets it.");
         }
 
         // Loopback stays allowed without configuration: a token sent to this machine has not left
         // it, and every local test server would otherwise need registering.
-        if (destination!.IsLoopback ||
-            SecureUri.IsSameOrigin(destination, HealthDataApiMetadata.DefaultBaseAddress) ||
-            AdditionalTrustedOrigins.Any(origin => SecureUri.IsSameOrigin(destination, origin)))
+        if (destination.IsLoopback ||
+            destination.IsSameOriginAs(HealthDataApiMetadata.DefaultBaseAddress) ||
+            AdditionalTrustedOrigins.Any(destination.IsSameOriginAs))
         {
             return;
         }
 
         throw new InvalidOperationException(
-            $"Refusing to send an access token to '{SecureUri.Describe(destination)}'. It is a valid HTTPS "
+            $"Refusing to send an access token to '{destination.Describe()}'. It is a valid HTTPS "
             + $"address but not one this handler trusts with a credential: only "
-            + $"{SecureUri.Describe(HealthDataApiMetadata.DefaultBaseAddress)}, a loopback address, and "
+            + $"{HealthDataApiMetadata.DefaultBaseAddress.Describe()}, a loopback address, and "
             + "anything listed in AdditionalTrustedOrigins. If the address is deliberate — a "
             + "proxy, or a service emulator — add its origin to AdditionalTrustedOrigins.");
     }

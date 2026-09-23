@@ -102,10 +102,10 @@ public sealed class HealthDataWebhookKeyProvider : IDisposable
             throw new ArgumentException("The keyset URI must be absolute.", nameof(keysetUri));
         }
 
-        if (!SecureUri.IsHttpsOrLoopback(_keysetUri))
+        if (!_keysetUri.IsHttpsOrLoopback())
         {
             throw new ArgumentException(
-                $"'{SecureUri.Describe(_keysetUri)}' is not HTTPS. This URI decides which key verifies a "
+                $"'{_keysetUri.Describe()}' is not HTTPS. This URI decides which key verifies a "
                 + "signature; use HTTPS, or a loopback address for a local test server.",
                 nameof(keysetUri));
         }
@@ -295,8 +295,8 @@ public sealed class HealthDataWebhookKeyProvider : IDisposable
         // from a server that declared nothing, or declared something untrue.
         return body ?? throw new InvalidOperationException(
             declared > MaximumKeysetBytes
-                ? $"The keyset at {SecureUri.Describe(_keysetUri)} declares more than {MaximumKeysetBytes} bytes."
-                : $"The keyset at {SecureUri.Describe(_keysetUri)} exceeded {MaximumKeysetBytes} bytes.");
+                ? $"The keyset at {_keysetUri.Describe()} declares more than {MaximumKeysetBytes} bytes."
+                : $"The keyset at {_keysetUri.Describe()} exceeded {MaximumKeysetBytes} bytes.");
     }
 
     /// <inheritdoc />

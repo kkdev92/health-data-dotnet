@@ -113,7 +113,7 @@ public static class HealthDataWebhookServiceCollectionExtensions
 
         if (options.EndpointSecrets.Count > 0)
         {
-            var secrets = options.EndpointSecrets.ToArray();
+            string[] secrets = [.. options.EndpointSecrets];
 
             services.AddSingleton(provider => new HealthDataWebhookReceiver(
                 provider.GetRequiredService<HealthDataWebhookSignatureVerifier>(),

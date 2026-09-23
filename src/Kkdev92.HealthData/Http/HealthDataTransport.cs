@@ -199,23 +199,8 @@ public sealed class HealthDataTransport(HttpClient httpClient, HealthDataClientO
     /// <c>Retry-After</c> header, so this is often null.
     /// </remarks>
     private TimeSpan? ResolveRetryAfter(HttpResponseMessage response, HealthDataError? error)
-    {
-        var header = response.Headers.RetryAfter;
-
-        if (header?.Delta is { } delta)
-        {
-            return delta;
-        }
-
-        if (header?.Date is { } date)
-        {
-            var wait = date - _options.TimeProvider.GetUtcNow();
-            return wait > TimeSpan.Zero ? wait : TimeSpan.Zero;
-        }
-
-        var retryInfo = error?.Details.FirstOrDefault(d => d.IsRetryInfo)?.RetryDelay;
-        return retryInfo?.ToTimeSpan();
-    }
+        => response.Headers.RetryAfter.ToDelay(_options.TimeProvider)
+           ?? error?.Details.FirstOrDefault(d => d.IsRetryInfo)?.RetryDelay?.ToTimeSpan();
 
     /// <summary>Returns the read contract for a generated type.</summary>
     public static JsonTypeInfo<T> ReadInfo<T>() => HealthDataJson.ReadInfo<T>();

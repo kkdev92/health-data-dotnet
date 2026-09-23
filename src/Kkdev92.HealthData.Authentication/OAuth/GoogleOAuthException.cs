@@ -32,20 +32,17 @@ namespace Kkdev92.HealthData.Authentication.OAuth;
 /// makes, for the same reason.
 /// </para>
 /// </remarks>
-public sealed class GoogleOAuthException : HttpRequestException
+/// <param name="statusCode">The HTTP status the token endpoint answered with.</param>
+/// <param name="error">The parsed RFC 6749 error response, when the server sent one.</param>
+/// <param name="innerException">The exception that caused this one, if any.</param>
+public sealed class GoogleOAuthException(
+    HttpStatusCode statusCode,
+    GoogleOAuthError? error = null,
+    Exception? innerException = null)
+    : HttpRequestException(BuildMessage(statusCode, error), innerException, statusCode)
 {
-    /// <summary>Creates an exception for a rejected token request.</summary>
-    public GoogleOAuthException(
-        HttpStatusCode statusCode,
-        GoogleOAuthError? error = null,
-        Exception? innerException = null)
-        : base(BuildMessage(statusCode, error), innerException, statusCode)
-    {
-        Error = error;
-    }
-
     /// <summary>The parsed RFC 6749 error response, when the server sent one.</summary>
-    public GoogleOAuthError? Error { get; }
+    public GoogleOAuthError? Error { get; } = error;
 
     /// <summary>
     /// The error code, for example <c>invalid_grant</c>.

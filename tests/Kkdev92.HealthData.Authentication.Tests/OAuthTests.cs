@@ -419,6 +419,53 @@ public sealed class OAuthTests
     }
 
     /// <summary>
+    /// A confidential client authenticates on both grants, and a client without a secret on
+    /// neither.
+    /// </summary>
+    /// <remarks>
+    /// Pinned in both directions because the secret is a credential. A grant that dropped it fails
+    /// at Google with <c>invalid_client</c>, and a client that sent an empty one would be offering
+    /// a credential it does not have.
+    /// </remarks>
+    [Theory]
+    [InlineData(false, null)]
+    [InlineData(false, "")]
+    [InlineData(false, "not-a-real-secret")]
+    [InlineData(true, null)]
+    [InlineData(true, "")]
+    [InlineData(true, "not-a-real-secret")]
+    public async Task TheClientSecretGoesOnEveryGrantWhenThereIsOne(bool refresh, string? secret)
+    {
+        var handler = new StubTokenHandler();
+        var client = new GoogleOAuthClient(
+            new HttpClient(handler),
+            new GoogleOAuthOptions
+            {
+                ClientId = "client-123.apps.googleusercontent.com",
+                RedirectUri = new Uri("https://example.test/callback"),
+                ClientSecret = secret,
+            });
+
+        if (refresh)
+        {
+            await client.RefreshAsync("1//refresh", TestContext.Current.CancellationToken);
+        }
+        else
+        {
+            await client.ExchangeCodeAsync("auth-code", cancellationToken: TestContext.Current.CancellationToken);
+        }
+
+        if (string.IsNullOrEmpty(secret))
+        {
+            Assert.False(handler.LastForm!.ContainsKey("client_secret"));
+        }
+        else
+        {
+            Assert.Equal(secret, handler.LastForm!["client_secret"]);
+        }
+    }
+
+    /// <summary>
     /// The server's explanation is the point of RFC 6749 section 5.2 — it exists to tell the
     /// client developer what is wrong with their own configuration, and there is no health data
     /// in it.

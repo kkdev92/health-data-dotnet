@@ -43,10 +43,10 @@ public sealed class HealthDataClientOptions
             //
             // The floor that matters is enforced again in HealthDataAuthorizationHandler, because
             // this property is not what a request is necessarily sent to.
-            if (!SecureUri.IsHttpsOrLoopback(value))
+            if (!value.IsHttpsOrLoopback())
             {
                 throw new ArgumentException(
-                    $"'{SecureUri.Describe(value)}' is not HTTPS. Requests to this address carry an "
+                    $"'{value.Describe()}' is not HTTPS. Requests to this address carry an "
                     + "access token; use HTTPS, or a loopback address for a local test server.",
                     nameof(BaseAddress));
             }

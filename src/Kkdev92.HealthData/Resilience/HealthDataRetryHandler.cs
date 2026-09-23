@@ -184,7 +184,7 @@ public sealed class HealthDataRetryHandler : DelegatingHandler
         // Both forms of the header, because RFC 9110 allows either and only one of them lands in
         // Delta. Reading just that one meant an HTTP-date was ignored and the exponential guess
         // used instead.
-        if (ServerRequestedDelay(response) is { } requested)
+        if (response.Headers.RetryAfter.ToDelay(_timeProvider) is { } requested)
         {
             return requested > _options.MaxDelay ? null : requested;
         }
@@ -201,40 +201,6 @@ public sealed class HealthDataRetryHandler : DelegatingHandler
         // Full jitter: a uniform draw over the whole interval, which spreads a thundering herd
         // better than jittering around the target.
         return TimeSpan.FromMilliseconds(Random.Shared.NextDouble() * capped.TotalMilliseconds);
-    }
-
-    /// <summary>
-    /// The wait the server asked for, in whichever form it sent it.
-    /// </summary>
-    /// <remarks>
-    /// <para>
-    /// <c>Retry-After</c> is either a delay in seconds or an HTTP-date; <c>RetryConditionHeaderValue</c>
-    /// puts them in different properties, so a handler that reads one silently ignores the other.
-    /// A date already in the past means "now" rather than a negative delay.
-    /// </para>
-    /// <para>
-    /// An instance method for the clock. It was static and read <c>DateTimeOffset.UtcNow</c>, which
-    /// made the class remark about delays going through <see cref="TimeProvider"/> true of the
-    /// delay-seconds form and not of this one — and left the HTTP-date arithmetic with no way to be
-    /// tested at all.
-    /// </para>
-    /// </remarks>
-    private TimeSpan? ServerRequestedDelay(HttpResponseMessage response)
-    {
-        var header = response.Headers.RetryAfter;
-
-        if (header?.Delta is { } delta)
-        {
-            return delta;
-        }
-
-        if (header?.Date is { } date)
-        {
-            var wait = date - _timeProvider.GetUtcNow();
-            return wait > TimeSpan.Zero ? wait : TimeSpan.Zero;
-        }
-
-        return null;
     }
 
     private TimeSpan Clamp(TimeSpan delay)
