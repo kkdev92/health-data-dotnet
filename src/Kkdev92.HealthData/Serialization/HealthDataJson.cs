@@ -29,14 +29,16 @@ namespace Kkdev92.HealthData.Serialization;
 public static class HealthDataJson
 {
     /// <summary>Options for deserializing service responses.</summary>
-    public static JsonSerializerOptions ReadOptions { get; } = new()
+    /// <remarks>Read-only: a change here would change how every response in the process is read.</remarks>
+    public static JsonSerializerOptions ReadOptions { get; } = Locked(new()
     {
         TypeInfoResolver = HealthDataJsonContext.Default,
         NumberHandling = JsonNumberHandling.AllowNamedFloatingPointLiterals,
-    };
+    });
 
     /// <summary>Options for serializing request payloads, excluding output-only properties.</summary>
-    public static JsonSerializerOptions WriteOptions { get; } = new()
+    /// <remarks>Read-only: a change here would change every request the process sends.</remarks>
+    public static JsonSerializerOptions WriteOptions { get; } = Locked(new()
     {
         TypeInfoResolver = HealthDataJsonContext.Default
             .WithAddedModifier(RemoveOutputOnlyProperties)
@@ -50,7 +52,22 @@ public static class HealthDataJson
         // read, a change and a send of the whole point. A point that came back carrying NaN
         // would otherwise be readable and then unsendable.
         NumberHandling = JsonNumberHandling.AllowNamedFloatingPointLiterals,
-    };
+    });
+
+    /// <summary>
+    /// Makes options read-only before anything outside this type can reach them.
+    /// </summary>
+    /// <remarks>
+    /// Options lock themselves the first time they serialize, which left a window: code that
+    /// reached them before the SDK had used them could change, say, how nulls are written, and
+    /// every request from the process would change with it. A patch that sends nulls asks the
+    /// service to clear fields.
+    /// </remarks>
+    private static JsonSerializerOptions Locked(JsonSerializerOptions options)
+    {
+        options.MakeReadOnly();
+        return options;
+    }
 
     /// <summary>Returns the read contract for <typeparamref name="T"/>.</summary>
     /// <exception cref="NotSupportedException">The type is not part of the generated contract.</exception>

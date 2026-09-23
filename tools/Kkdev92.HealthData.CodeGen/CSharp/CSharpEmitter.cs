@@ -713,7 +713,7 @@ internal sealed class CSharpEmitter(
     /// </remarks>
     private GeneratedFile EmitOutputOnlyProperties()
     {
-        var writer = Header(RootNamespace + ".Serialization", ModelsNamespace);
+        var writer = Header(RootNamespace + ".Serialization", "System.Collections.Frozen", ModelsNamespace);
 
         var withReadOnly = contract.Schemas
             .Where(s => s.Properties.Any(p => p.IsReadOnly))
@@ -728,10 +728,14 @@ internal sealed class CSharpEmitter(
         using (writer.Block("public static class HealthDataOutputOnlyProperties"))
         {
             writer.XmlDoc("summary", "Wire property names that are output only, keyed by model type.");
+            writer.XmlDoc(
+                "remarks",
+                "Frozen. The write contract is built from this table, so a table that could be changed " +
+                "would be a way to switch the rule off.");
 
             using (writer.Block(
                 "public static readonly IReadOnlyDictionary<Type, string[]> ByType = new Dictionary<Type, string[]>",
-                closing: "};"))
+                closing: "}.ToFrozenDictionary();"))
             {
                 foreach (var schema in withReadOnly)
                 {
@@ -867,7 +871,7 @@ internal sealed class CSharpEmitter(
     /// </remarks>
     private GeneratedFile EmitUnionMembers()
     {
-        var writer = Header(RootNamespace + ".Serialization", ModelsNamespace);
+        var writer = Header(RootNamespace + ".Serialization", "System.Collections.Frozen", ModelsNamespace);
 
         writer.XmlDoc("summary", "The mutually exclusive members of each union schema, keyed by model type.");
         writer.XmlDoc(
@@ -879,10 +883,14 @@ internal sealed class CSharpEmitter(
         using (writer.Block("public static class HealthDataUnionMembers"))
         {
             writer.XmlDoc("summary", "Wire property names that are alternatives, keyed by model type.");
+            writer.XmlDoc(
+                "remarks",
+                "Frozen. The write contract is built from this table, so a table that could be changed " +
+                "would be a way to switch the rule off.");
 
             using (writer.Block(
                 "public static readonly IReadOnlyDictionary<Type, string[]> ByType = new Dictionary<Type, string[]>",
-                closing: "};"))
+                closing: "}.ToFrozenDictionary();"))
             {
                 foreach (var (unionSchema, declared) in _unions.OrderBy(u => u.Key, StringComparer.Ordinal))
                 {

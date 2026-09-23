@@ -11,6 +11,7 @@
 
 #nullable enable
 
+using System.Collections.Frozen;
 using Kkdev92.HealthData.Models;
 
 namespace Kkdev92.HealthData.Serialization;
@@ -23,6 +24,10 @@ namespace Kkdev92.HealthData.Serialization;
 public static class HealthDataOutputOnlyProperties
 {
     /// <summary>Wire property names that are output only, keyed by model type.</summary>
+    /// <remarks>
+    /// Frozen. The write contract is built from this table, so a table that could be changed would be a way
+    /// to switch the rule off.
+    /// </remarks>
     public static readonly IReadOnlyDictionary<Type, string[]> ByType = new Dictionary<Type, string[]>
     {
         [typeof(ActiveEnergyBurnedRollupValue)] = ["kcalSum"],
@@ -52,5 +57,5 @@ public static class HealthDataOutputOnlyProperties
         [typeof(SplitSummary)] = ["activeDuration"],
         [typeof(StageSummary)] = ["count", "minutes", "type"],
         [typeof(Subscriber)] = ["createTime", "state", "updateTime"],
-    };
+    }.ToFrozenDictionary();
 }
