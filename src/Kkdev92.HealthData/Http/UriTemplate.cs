@@ -1,3 +1,4 @@
+using System.Buffers;
 using System.Text;
 
 namespace Kkdev92.HealthData.Http;
@@ -39,6 +40,12 @@ namespace Kkdev92.HealthData.Http;
 /// </remarks>
 public static class UriTemplate
 {
+    /// <summary>
+    /// What a multi-segment value carries through unescaped: the unreserved characters, and <c>/</c>.
+    /// </summary>
+    private static readonly SearchValues<char> PassesThroughMultiSegment =
+        SearchValues.Create("-._~0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz/");
+
     /// <summary>
     /// Expands a template such as <c>v4/{+name}:exportExerciseTcx</c>.
     /// </summary>
@@ -104,11 +111,16 @@ public static class UriTemplate
     /// Escapes a multi-segment value, preserving <c>/</c> and encoding everything else that is
     /// not unreserved.
     /// </summary>
+    /// <remarks>
+    /// A resource name is ids and slashes, which need nothing escaped, so that is checked first and
+    /// answered with the value itself — rather than splitting it into segments, escaping each one to
+    /// an unchanged copy, and joining them back into the string it started as.
+    /// </remarks>
     public static string EscapeMultiSegment(string value)
     {
         ArgumentNullException.ThrowIfNull(value);
 
-        if (value.Length == 0)
+        if (!value.AsSpan().ContainsAnyExcept(PassesThroughMultiSegment))
         {
             return value;
         }

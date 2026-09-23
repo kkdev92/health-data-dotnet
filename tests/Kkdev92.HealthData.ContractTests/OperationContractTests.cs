@@ -93,6 +93,47 @@ public sealed class OperationContractTests
     }
 
     /// <summary>
+    /// A request body is UTF-8 JSON, says so, and says how long it is.
+    /// </summary>
+    /// <remarks>
+    /// The body string the other tests compare is decoded before they see it, so it cannot show
+    /// the bytes, the declared media type or the length. Those are what the service reads first.
+    /// A non-ASCII value is in the body so the bytes are not the same in every encoding.
+    /// </remarks>
+    [Fact]
+    public async Task ARequestBodyIsUtf8JsonAndDeclaresItsLength()
+    {
+        string? contentType = null;
+        long? contentLength = null;
+        byte[]? bytes = null;
+
+        var handler = new FakeHttpMessageHandler(async (request, cancellationToken) =>
+        {
+            contentType = request.Content!.Headers.ContentType?.ToString();
+            contentLength = request.Content.Headers.ContentLength;
+            bytes = await request.Content.ReadAsByteArrayAsync(cancellationToken);
+
+            return new HttpResponseMessage(HttpStatusCode.OK) { Content = JsonContent.Of("{}") };
+        });
+
+        using var httpClient = new HttpClient(handler) { BaseAddress = HealthDataApiMetadata.DefaultBaseAddress };
+
+        await new HealthDataClient(httpClient).Users.UpdateSettingsAsync(
+            new UpdateSettingsRequest
+            {
+                Name = UserName.Me.Settings,
+                Body = new Settings { TimeZone = "Asia/Tōkyō" },
+            },
+            TestContext.Current.CancellationToken);
+
+        var expected = "{\"timeZone\":\"Asia/T\\u014Dky\\u014D\"}"u8.ToArray();
+
+        Assert.Equal("application/json; charset=utf-8", contentType);
+        Assert.Equal(expected, bytes);
+        Assert.Equal(expected.Length, contentLength);
+    }
+
+    /// <summary>
     /// A mask that names nothing is refused rather than sent as no mask at all.
     /// </summary>
     /// <remarks>

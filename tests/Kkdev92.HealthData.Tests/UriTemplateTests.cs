@@ -115,4 +115,34 @@ public sealed class UriTemplateTests
         Assert.Equal("a/b%20c%3Fd", UriTemplate.EscapeMultiSegment(sample));
         Assert.Equal("a%2Fb%20c%3Fd", UriTemplate.EscapeSingleSegment(sample));
     }
+
+    /// <summary>
+    /// Every character, alone and inside a resource name, escapes by the documented rule.
+    /// </summary>
+    /// <remarks>
+    /// The rule, spelled out as its definition: split on <c>/</c>, escape each segment as a single
+    /// segment, join. Checked for every character outside the surrogate range, so a character the
+    /// escaper lets through that the rule does not — or the reverse — cannot hide between the
+    /// examples above. The long form reaches the vectorised search a single character does not.
+    /// </remarks>
+    [Fact]
+    public void EveryCharacterEscapesByTheDocumentedRule()
+    {
+        for (var code = 0; code <= char.MaxValue; code++)
+        {
+            var character = (char)code;
+
+            if (char.IsSurrogate(character))
+            {
+                continue;
+            }
+
+            foreach (var value in new[] { character.ToString(), $"users/me/dataTypes/{character}/dataPoints/abc123" })
+            {
+                var byTheRule = string.Join('/', value.Split('/').Select(Uri.EscapeDataString));
+
+                Assert.Equal(byTheRule, UriTemplate.EscapeMultiSegment(value));
+            }
+        }
+    }
 }
