@@ -33,6 +33,13 @@ Dates are UTC, taken from when the packages went to nuget.org.
   throws `InvalidOperationException`. `HealthDataOutputOnlyProperties.ByType` and
   `HealthDataUnionMembers.ByType`, the tables the write contract is built from, are frozen for the
   same reason: declared read-only, they could still be changed through a cast to `Dictionary`.
+- `GoogleDuration` holds what a protobuf `Duration` can: seconds from -315,576,000,000 to
+  315,576,000,000, about ten thousand years either way. The constructor and `FromTimeSpan` throw
+  `ArgumentOutOfRangeException` past that, and `Parse` and `TryParse` refuse it, as protobuf's own
+  JSON parsers do — the service could never have accepted such a value. It used to hold any `long`,
+  and a value that large was not harmless: `ToTimeSpan` wrapped its tick count around into a wrong
+  answer, and `ToString` threw for `long.MinValue`. The constructor's range errors no longer quote
+  the value, which can be part of a health record.
 
 ### Changed
 

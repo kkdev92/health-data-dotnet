@@ -68,6 +68,72 @@ public sealed class GoogleDurationTests
     [Fact]
     public void RejectsOutOfRangeNanos()
         => Assert.Throws<ArgumentOutOfRangeException>(() => new GoogleDuration(0, 1_000_000_000));
+
+    /// <summary>
+    /// A duration holds what a protobuf Duration can, about ten thousand years either way, and
+    /// nothing more.
+    /// </summary>
+    /// <remarks>
+    /// <c>duration.proto</c> bounds the seconds to 315,576,000,000 either side of zero, and every
+    /// official JSON parser refuses a value past that, so the service cannot take one. Holding one
+    /// anyway was not harmless: converted to a <see cref="TimeSpan"/> the tick count wrapped around
+    /// into a wrong answer, and at <see cref="long.MinValue"/> the wire form could not be rendered.
+    /// </remarks>
+    [Theory]
+    [InlineData(315_576_000_001L)]
+    [InlineData(-315_576_000_001L)]
+    [InlineData(1_000_000_000_000L)]
+    [InlineData(long.MaxValue)]
+    [InlineData(long.MinValue)]
+    public void RefusesSecondsBeyondWhatAProtobufDurationCarries(long seconds)
+        => Assert.Throws<ArgumentOutOfRangeException>(() => new GoogleDuration(seconds, 0));
+
+    [Theory]
+    [InlineData("315576000001s")]
+    [InlineData("-315576000001s")]
+    [InlineData("1000000000000s")]
+    [InlineData("9223372036854775807s")]
+    public void RefusesAWireFormBeyondThatRange(string wire)
+    {
+        Assert.False(GoogleDuration.TryParse(wire, out _));
+        Assert.Throws<FormatException>(() => GoogleDuration.Parse(wire));
+    }
+
+    /// <summary>
+    /// Refusing a value does not repeat it: a duration can be part of a health record.
+    /// </summary>
+    [Fact]
+    public void AnOutOfRangeValueIsNotQuotedInTheMessage()
+    {
+        var seconds = Assert.Throws<ArgumentOutOfRangeException>(() => new GoogleDuration(987_654_321_098, 0));
+        var nanos = Assert.Throws<ArgumentOutOfRangeException>(() => new GoogleDuration(0, 1_234_567_890));
+
+        Assert.DoesNotContain("987654321098", seconds.Message, StringComparison.Ordinal);
+        Assert.DoesNotContain("1234567890", nanos.Message, StringComparison.Ordinal);
+    }
+
+    /// <summary>A span longer than a protobuf Duration carries cannot be made into one.</summary>
+    [Fact]
+    public void RefusesATimeSpanBeyondThatRange()
+    {
+        Assert.Throws<ArgumentOutOfRangeException>(() => GoogleDuration.FromTimeSpan(TimeSpan.MaxValue));
+        Assert.Throws<ArgumentOutOfRangeException>(() => GoogleDuration.FromTimeSpan(TimeSpan.MinValue));
+    }
+
+    /// <summary>
+    /// Both ends of the range are held, rendered, read back and converted exactly.
+    /// </summary>
+    [Theory]
+    [InlineData(315_576_000_000L, 999_999_999, "315576000000.999999999s")]
+    [InlineData(-315_576_000_000L, -999_999_999, "-315576000000.999999999s")]
+    public void TheEndsOfTheRangeRoundTrip(long seconds, int nanos, string wire)
+    {
+        var duration = new GoogleDuration(seconds, nanos);
+
+        Assert.Equal(wire, duration.ToString());
+        Assert.Equal(duration, GoogleDuration.Parse(wire));
+        Assert.Equal(TimeSpan.FromTicks((seconds * TimeSpan.TicksPerSecond) + (nanos / 100)), duration.ToTimeSpan());
+    }
 }
 
 public sealed class GoogleTimestampTests
