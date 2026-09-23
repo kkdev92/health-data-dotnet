@@ -17,6 +17,25 @@ Dates are UTC, taken from when the packages went to nuget.org.
 
 ## [Unreleased]
 
+### Breaking
+
+- `GoogleTimestamp.Parse` and `TryParse` read an RFC 3339 date-time and nothing wider: a date, `T`,
+  a time with seconds, an optional fraction, and an offset — `Z`, or `+hh:mm` / `-hh:mm` up to the
+  `23:59` the grammar allows. `t` and `z` are read in lower case too, as RFC 3339 permits. They used
+  to accept whatever `DateTimeOffset.TryParse` does, which reads a time of day on its own as that
+  time on the current date, a date as midnight, and a date-time without an offset as UTC. Code
+  relying on one of those now gets `false`, or a `FormatException`, instead of a guess. Timestamps
+  in responses and webhook notifications are read by the same rule; the service sends RFC 3339, so
+  those read as before.
+
+### Fixed
+
+- A timestamp with 100-nanosecond precision is written with nine fractional digits, the last two
+  zero. It was written with six, so the seventh digit was dropped from every request that carried
+  one — including a value that had just been read from the service. A fraction longer than seven
+  digits is now read when the digits past the seventh are zeros, so every timestamp reads back what
+  it wrote; a non-zero digit there is still refused rather than truncated.
+
 ## [0.5.0-alpha] - 2026-09-18
 
 ### Added
