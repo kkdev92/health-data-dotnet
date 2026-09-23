@@ -1,5 +1,6 @@
 using Kkdev92.HealthData.CodeGen.CSharp;
 using Kkdev92.HealthData.CodeGen.IntermediateModel;
+using Kkdev92.HealthData.CodeGen.Specifications;
 
 namespace Kkdev92.HealthData.CodeGen.Tests;
 
@@ -157,6 +158,79 @@ public sealed class EmitterRuleTests
     }
 
     /// <summary>
+    /// A paged request copies itself with a with-expression, replacing only the cursor.
+    /// </summary>
+    /// <remarks>
+    /// A copy that lists the request's properties drops any property the list leaves out, and a
+    /// request that loses its filter between pages returns a different result set without saying
+    /// so. A with-expression carries every property, including one the contract gains later.
+    /// </remarks>
+    [Fact]
+    public void APagedRequestCopiesItselfReplacingOnlyTheCursor()
+    {
+        var list = Operation(
+            "health.widgets.list",
+            "List",
+            "v4/widgets",
+            Parameter("filter", "Filter", pattern: null, location: ParameterLocation.Query),
+            Parameter("pageToken", "PageToken", pattern: null, location: ParameterLocation.Query)) with
+        {
+            Pagination = new PaginationContract { Kind = PaginationKind.Query, PageToken = "pageToken" },
+        };
+
+        var request = Single(EmitAll(Contract(operations: [list])), "Requests/");
+
+        Assert.Contains(
+            "WithPageToken(string? pageToken) => this with { PageToken = pageToken };",
+            request,
+            StringComparison.Ordinal);
+    }
+
+    /// <summary>
+    /// A union reports its members in the order they are declared, then an unknown one, then none.
+    /// </summary>
+    /// <remarks>
+    /// When a payload sets two members, which one <c>GetKind</c> reports is decided by the order of
+    /// its checks. So the order is the rule, and it is checked here with members declared out of
+    /// alphabetical order, where a generator that sorted them would be caught.
+    /// </remarks>
+    [Fact]
+    public void AUnionReportsItsMembersInDeclarationOrder()
+    {
+        var files = new CSharpEmitter(
+                Contract(schemas:
+                [
+                    new SchemaContract
+                    {
+                        WireName = "Widget",
+                        CSharpName = "Widget",
+                        Properties = [Reference("sweet", "Sweet", "Sugar"), Reference("salty", "Salty", "Salt")],
+                    },
+                    new SchemaContract { WireName = "Sugar", CSharpName = "Sugar", Properties = [] },
+                    new SchemaContract { WireName = "Salt", CSharpName = "Salt", Properties = [] },
+                ]),
+                unions: new Dictionary<string, UnionContract>(StringComparer.Ordinal)
+                {
+                    ["Widget"] = new(new HashSet<string>(StringComparer.Ordinal), RoundTripNote: null),
+                })
+            .Emit()
+            .ToDictionary(f => f.RelativePath, f => f.Content, StringComparer.Ordinal);
+
+        var helpers = Single(files, "Models/WidgetExtensions");
+
+        int At(string text)
+        {
+            var index = helpers.IndexOf(text, StringComparison.Ordinal);
+            Assert.True(index >= 0, $"'{text}' was not emitted.");
+            return index;
+        }
+
+        Assert.True(At("{ Sweet: not null } => WidgetKind.Sweet,") < At("{ Salty: not null } => WidgetKind.Salty,"));
+        Assert.True(At("{ Salty: not null } => WidgetKind.Salty,") < At("{ ExtensionData.Count: > 0 } => WidgetKind.Unknown,"));
+        Assert.True(At("{ ExtensionData.Count: > 0 } => WidgetKind.Unknown,") < At("_ => WidgetKind.None,"));
+    }
+
+    /// <summary>
     /// Every generated file carries its provenance and nothing about the machine that built it.
     /// </summary>
     /// <remarks>
@@ -211,6 +285,14 @@ public sealed class EmitterRuleTests
         CSharpName = csharp,
         IsReadOnly = readOnly,
         Type = new TypeContract { Kind = TypeKind.Primitive, CSharpType = "string?", WireType = "string" },
+    };
+
+    private static PropertyContract Reference(string wire, string csharp, string schema) => new()
+    {
+        WireName = wire,
+        CSharpName = csharp,
+        IsReadOnly = false,
+        Type = new TypeContract { Kind = TypeKind.Reference, CSharpType = $"{schema}?", WireType = "object", SchemaRef = schema },
     };
 
     private static ParameterContract Parameter(

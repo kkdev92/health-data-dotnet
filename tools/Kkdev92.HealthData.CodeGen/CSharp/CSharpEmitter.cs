@@ -967,29 +967,21 @@ internal sealed class CSharpEmitter(
                 writer.Line("ArgumentNullException.ThrowIfNull(value);");
                 writer.Line();
 
-                var first = true;
-
-                foreach (var member in members)
+                // A switch expression: its arms are tried in the order written, which is the order
+                // the members are declared in, so the first member set is the one reported.
+                using (writer.Block("return value switch", closing: "};"))
                 {
-                    using (writer.Block($"{(first ? "if" : "else if")} (value.{member.CSharpName} is not null)"))
+                    foreach (var member in members)
                     {
-                        writer.Line($"return {kindEnum}.{member.CSharpName};");
+                        writer.Line($"{{ {member.CSharpName}: not null }} => {kindEnum}.{member.CSharpName},");
                     }
 
-                    first = false;
+                    writer.Line();
+                    writer.Line("// Unknown rather than None when the payload carried a member this contract has");
+                    writer.Line("// never heard of: nothing typed to hand back, but not nothing there.");
+                    writer.Line($"{{ ExtensionData.Count: > 0 }} => {kindEnum}.Unknown,");
+                    writer.Line($"_ => {kindEnum}.None,");
                 }
-
-                writer.Line();
-                writer.Line("// Unknown rather than None when the payload carried a member this contract has");
-                writer.Line("// never heard of: nothing typed to hand back, but not nothing there.");
-
-                using (writer.Block("if (value.ExtensionData is { Count: > 0 })"))
-                {
-                    writer.Line($"return {kindEnum}.Unknown;");
-                }
-
-                writer.Line();
-                writer.Line($"return {kindEnum}.None;");
             }
 
             writer.Line();
@@ -1005,16 +997,16 @@ internal sealed class CSharpEmitter(
             {
                 writer.Line("ArgumentNullException.ThrowIfNull(value);");
                 writer.Line();
-                writer.Line("return");
-                var first = true;
 
-                foreach (var member in members)
+                // Each operand is cast, not only the first: ?? associates to the right, so without
+                // the casts the tail would be two member types with nothing in common.
+                for (var i = 0; i < members.Length; i++)
                 {
-                    writer.Line($"    {(first ? " " : "?? ")}(object?)value.{member.CSharpName}");
-                    first = false;
-                }
+                    var operand = $"(object?)value.{members[i].CSharpName}";
+                    var end = i == members.Length - 1 ? ";" : string.Empty;
 
-                writer.Line("    ;");
+                    writer.Line(i == 0 ? $"return {operand}{end}" : $"    ?? {operand}{end}");
+                }
             }
         }
 

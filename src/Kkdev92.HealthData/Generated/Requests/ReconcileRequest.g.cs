@@ -59,17 +59,7 @@ public sealed record ReconcileRequest
     /// The copy is exact but for the page token. Nothing is mutated, so the original request stays valid
     /// and re-sendable.
     /// </remarks>
-    public ReconcileRequest WithPageToken(string? pageToken)
-    {
-        return new()
-        {
-            DataSourceFamily = DataSourceFamily,
-            Filter = Filter,
-            PageSize = PageSize,
-            PageToken = pageToken,
-            Parent = Parent,
-        };
-    }
+    public ReconcileRequest WithPageToken(string? pageToken) => this with { PageToken = pageToken };
 
     /// <summary>Returns the type name.</summary>
     /// <remarks>

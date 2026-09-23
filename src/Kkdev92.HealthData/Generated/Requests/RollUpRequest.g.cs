@@ -32,14 +32,7 @@ public sealed record RollUpRequest
     /// This operation carries its cursor in the body, so the copy replaces the body's page token and leaves
     /// everything else as it was.
     /// </remarks>
-    public RollUpRequest WithPageToken(string? pageToken)
-    {
-        return new()
-        {
-            Parent = Parent,
-            Body = Body.WithPageToken(pageToken),
-        };
-    }
+    public RollUpRequest WithPageToken(string? pageToken) => this with { Body = Body.WithPageToken(pageToken) };
 
     /// <summary>The request body.</summary>
     public required RollUpDataPointsRequest Body { get; init; }

@@ -58,8 +58,7 @@ public sealed class SubscribersResource
 
         var builder = new HealthDataRequestBuilder("v4/{+parent}/subscribers")
             .SetPath("parent", request.Parent.ToString())
-            .AddQuery("subscriberId", request.SubscriberId)
-            ;
+            .AddQuery("subscriberId", request.SubscriberId);
 
         using var content = HealthDataTransport.CreateJsonContent(request.Body, HealthDataTransport.WriteInfo<CreateSubscriberPayload>());
         return await _transport.SendAsync(HealthDataGeneratedOperations.ProjectsSubscribersCreate, builder.Build(), content, HealthDataTransport.ReadInfo<Operation>(), cancellationToken).ConfigureAwait(false);
@@ -74,8 +73,7 @@ public sealed class SubscribersResource
 
         var builder = new HealthDataRequestBuilder("v4/{+name}")
             .SetPath("name", request.Name.ToString())
-            .AddQuery("force", request.Force)
-            ;
+            .AddQuery("force", request.Force);
 
         return await _transport.SendAsync(HealthDataGeneratedOperations.ProjectsSubscribersDelete, builder.Build(), null, HealthDataTransport.ReadInfo<Operation>(), cancellationToken).ConfigureAwait(false);
     }
@@ -90,8 +88,7 @@ public sealed class SubscribersResource
         var builder = new HealthDataRequestBuilder("v4/{+parent}/subscribers")
             .SetPath("parent", request.Parent.ToString())
             .AddQuery("pageSize", request.PageSize)
-            .AddQuery("pageToken", request.PageToken)
-            ;
+            .AddQuery("pageToken", request.PageToken);
 
         return await _transport.SendAsync(HealthDataGeneratedOperations.ProjectsSubscribersList, builder.Build(), null, HealthDataTransport.ReadInfo<ListSubscribersResponse>(), cancellationToken).ConfigureAwait(false);
     }
@@ -132,8 +129,7 @@ public sealed class SubscribersResource
 
         var builder = new HealthDataRequestBuilder("v4/{+name}")
             .SetPath("name", request.Name.ToString())
-            .AddQuery("updateMask", request.UpdateMask)
-            ;
+            .AddQuery("updateMask", request.UpdateMask);
 
         using var content = HealthDataTransport.CreateJsonContent(request.Body, HealthDataTransport.WriteInfo<Subscriber>());
         return await _transport.SendAsync(HealthDataGeneratedOperations.ProjectsSubscribersPatch, builder.Build(), content, HealthDataTransport.ReadInfo<Operation>(), cancellationToken).ConfigureAwait(false);

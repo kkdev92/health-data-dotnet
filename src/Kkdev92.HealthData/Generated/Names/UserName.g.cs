@@ -32,7 +32,7 @@ public sealed partial record UserName
     public const string Pattern = "^users/[^/]+$";
 
     [GeneratedRegex(Pattern)]
-    private static partial Regex Matcher();
+    private static partial Regex Matcher { get; }
 
     /// <summary>Parses the wire form of a UserName.</summary>
     /// <param name="value">A name of the form <c>users/{userId}</c>.</param>
@@ -41,7 +41,7 @@ public sealed partial record UserName
     {
         ArgumentNullException.ThrowIfNull(value);
 
-        if (!Matcher().IsMatch(value))
+        if (!Matcher.IsMatch(value))
         {
             throw new FormatException(
                 $"'{value}' is not a UserName. The service requires the form users/{{userId}}, matching {Pattern}.");
@@ -54,7 +54,7 @@ public sealed partial record UserName
     /// <remarks>For a name from somewhere unverified. A name this SDK built always parses.</remarks>
     public static bool TryParse([NotNullWhen(true)] string? value, [NotNullWhen(true)] out UserName? name)
     {
-        if (value is null || !Matcher().IsMatch(value))
+        if (value is null || !Matcher.IsMatch(value))
         {
             name = null;
             return false;
@@ -114,7 +114,6 @@ public sealed partial record UserName
 
         return PairedDeviceName.Parse($"{_value}/pairedDevices/{pairedDeviceId}");
     }
-
 
     /// <summary>Returns the wire form of the name.</summary>
     public override string ToString() => _value;

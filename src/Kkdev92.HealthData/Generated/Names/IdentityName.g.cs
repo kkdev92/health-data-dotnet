@@ -32,7 +32,7 @@ public sealed partial record IdentityName
     public const string Pattern = "^users/[^/]+/identity$";
 
     [GeneratedRegex(Pattern)]
-    private static partial Regex Matcher();
+    private static partial Regex Matcher { get; }
 
     /// <summary>Parses the wire form of a IdentityName.</summary>
     /// <param name="value">A name of the form <c>users/{userId}/identity</c>.</param>
@@ -41,7 +41,7 @@ public sealed partial record IdentityName
     {
         ArgumentNullException.ThrowIfNull(value);
 
-        if (!Matcher().IsMatch(value))
+        if (!Matcher.IsMatch(value))
         {
             throw new FormatException(
                 $"'{value}' is not a IdentityName. The service requires the form users/{{userId}}/identity, matching {Pattern}.");
@@ -54,7 +54,7 @@ public sealed partial record IdentityName
     /// <remarks>For a name from somewhere unverified. A name this SDK built always parses.</remarks>
     public static bool TryParse([NotNullWhen(true)] string? value, [NotNullWhen(true)] out IdentityName? name)
     {
-        if (value is null || !Matcher().IsMatch(value))
+        if (value is null || !Matcher.IsMatch(value))
         {
             name = null;
             return false;
@@ -72,7 +72,6 @@ public sealed partial record IdentityName
     /// <summary>The UserName this name belongs to.</summary>
     public UserName User => UserName.Parse(
         string.Join('/', _value.Split('/')[..2]));
-
 
     /// <summary>Returns the wire form of the name.</summary>
     public override string ToString() => _value;

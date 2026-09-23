@@ -105,107 +105,37 @@ public static class DailyRollupDataPointExtensions
     {
         ArgumentNullException.ThrowIfNull(value);
 
-        if (value.ActiveEnergyBurned is not null)
+        return value switch
         {
-            return DailyRollupDataPointKind.ActiveEnergyBurned;
-        }
-        else if (value.ActiveMinutes is not null)
-        {
-            return DailyRollupDataPointKind.ActiveMinutes;
-        }
-        else if (value.ActiveZoneMinutes is not null)
-        {
-            return DailyRollupDataPointKind.ActiveZoneMinutes;
-        }
-        else if (value.ActivityLevel is not null)
-        {
-            return DailyRollupDataPointKind.ActivityLevel;
-        }
-        else if (value.Altitude is not null)
-        {
-            return DailyRollupDataPointKind.Altitude;
-        }
-        else if (value.BloodGlucose is not null)
-        {
-            return DailyRollupDataPointKind.BloodGlucose;
-        }
-        else if (value.BodyFat is not null)
-        {
-            return DailyRollupDataPointKind.BodyFat;
-        }
-        else if (value.CaloriesInHeartRateZone is not null)
-        {
-            return DailyRollupDataPointKind.CaloriesInHeartRateZone;
-        }
-        else if (value.CoreBodyTemperature is not null)
-        {
-            return DailyRollupDataPointKind.CoreBodyTemperature;
-        }
-        else if (value.Distance is not null)
-        {
-            return DailyRollupDataPointKind.Distance;
-        }
-        else if (value.Floors is not null)
-        {
-            return DailyRollupDataPointKind.Floors;
-        }
-        else if (value.HeartRate is not null)
-        {
-            return DailyRollupDataPointKind.HeartRate;
-        }
-        else if (value.HeartRateVariabilityPersonalRange is not null)
-        {
-            return DailyRollupDataPointKind.HeartRateVariabilityPersonalRange;
-        }
-        else if (value.HydrationLog is not null)
-        {
-            return DailyRollupDataPointKind.HydrationLog;
-        }
-        else if (value.NutritionLog is not null)
-        {
-            return DailyRollupDataPointKind.NutritionLog;
-        }
-        else if (value.RestingHeartRatePersonalRange is not null)
-        {
-            return DailyRollupDataPointKind.RestingHeartRatePersonalRange;
-        }
-        else if (value.RunVo2Max is not null)
-        {
-            return DailyRollupDataPointKind.RunVo2Max;
-        }
-        else if (value.SedentaryPeriod is not null)
-        {
-            return DailyRollupDataPointKind.SedentaryPeriod;
-        }
-        else if (value.Steps is not null)
-        {
-            return DailyRollupDataPointKind.Steps;
-        }
-        else if (value.SwimLengthsData is not null)
-        {
-            return DailyRollupDataPointKind.SwimLengthsData;
-        }
-        else if (value.TimeInHeartRateZone is not null)
-        {
-            return DailyRollupDataPointKind.TimeInHeartRateZone;
-        }
-        else if (value.TotalCalories is not null)
-        {
-            return DailyRollupDataPointKind.TotalCalories;
-        }
-        else if (value.Weight is not null)
-        {
-            return DailyRollupDataPointKind.Weight;
-        }
+            { ActiveEnergyBurned: not null } => DailyRollupDataPointKind.ActiveEnergyBurned,
+            { ActiveMinutes: not null } => DailyRollupDataPointKind.ActiveMinutes,
+            { ActiveZoneMinutes: not null } => DailyRollupDataPointKind.ActiveZoneMinutes,
+            { ActivityLevel: not null } => DailyRollupDataPointKind.ActivityLevel,
+            { Altitude: not null } => DailyRollupDataPointKind.Altitude,
+            { BloodGlucose: not null } => DailyRollupDataPointKind.BloodGlucose,
+            { BodyFat: not null } => DailyRollupDataPointKind.BodyFat,
+            { CaloriesInHeartRateZone: not null } => DailyRollupDataPointKind.CaloriesInHeartRateZone,
+            { CoreBodyTemperature: not null } => DailyRollupDataPointKind.CoreBodyTemperature,
+            { Distance: not null } => DailyRollupDataPointKind.Distance,
+            { Floors: not null } => DailyRollupDataPointKind.Floors,
+            { HeartRate: not null } => DailyRollupDataPointKind.HeartRate,
+            { HeartRateVariabilityPersonalRange: not null } => DailyRollupDataPointKind.HeartRateVariabilityPersonalRange,
+            { HydrationLog: not null } => DailyRollupDataPointKind.HydrationLog,
+            { NutritionLog: not null } => DailyRollupDataPointKind.NutritionLog,
+            { RestingHeartRatePersonalRange: not null } => DailyRollupDataPointKind.RestingHeartRatePersonalRange,
+            { RunVo2Max: not null } => DailyRollupDataPointKind.RunVo2Max,
+            { SedentaryPeriod: not null } => DailyRollupDataPointKind.SedentaryPeriod,
+            { Steps: not null } => DailyRollupDataPointKind.Steps,
+            { SwimLengthsData: not null } => DailyRollupDataPointKind.SwimLengthsData,
+            { TimeInHeartRateZone: not null } => DailyRollupDataPointKind.TimeInHeartRateZone,
+            { TotalCalories: not null } => DailyRollupDataPointKind.TotalCalories,
+            { Weight: not null } => DailyRollupDataPointKind.Weight,
 
-        // Unknown rather than None when the payload carried a member this contract has
-        // never heard of: nothing typed to hand back, but not nothing there.
-        if (value.ExtensionData is { Count: > 0 })
-        {
-            return DailyRollupDataPointKind.Unknown;
-        }
-
-        return DailyRollupDataPointKind.None;
+            // Unknown rather than None when the payload carried a member this contract has
+            // never heard of: nothing typed to hand back, but not nothing there.
+            { ExtensionData.Count: > 0 } => DailyRollupDataPointKind.Unknown,
+            _ => DailyRollupDataPointKind.None,
+        };
     }
 
     /// <summary>Returns the populated member, or null when none is set.</summary>
@@ -218,8 +148,7 @@ public static class DailyRollupDataPointExtensions
     {
         ArgumentNullException.ThrowIfNull(value);
 
-        return
-             (object?)value.ActiveEnergyBurned
+        return (object?)value.ActiveEnergyBurned
             ?? (object?)value.ActiveMinutes
             ?? (object?)value.ActiveZoneMinutes
             ?? (object?)value.ActivityLevel
@@ -241,7 +170,6 @@ public static class DailyRollupDataPointExtensions
             ?? (object?)value.SwimLengthsData
             ?? (object?)value.TimeInHeartRateZone
             ?? (object?)value.TotalCalories
-            ?? (object?)value.Weight
-            ;
+            ?? (object?)value.Weight;
     }
 }

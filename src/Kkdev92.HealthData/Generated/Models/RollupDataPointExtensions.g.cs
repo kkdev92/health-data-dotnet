@@ -99,99 +99,35 @@ public static class RollupDataPointExtensions
     {
         ArgumentNullException.ThrowIfNull(value);
 
-        if (value.ActiveEnergyBurned is not null)
+        return value switch
         {
-            return RollupDataPointKind.ActiveEnergyBurned;
-        }
-        else if (value.ActiveMinutes is not null)
-        {
-            return RollupDataPointKind.ActiveMinutes;
-        }
-        else if (value.ActiveZoneMinutes is not null)
-        {
-            return RollupDataPointKind.ActiveZoneMinutes;
-        }
-        else if (value.ActivityLevel is not null)
-        {
-            return RollupDataPointKind.ActivityLevel;
-        }
-        else if (value.Altitude is not null)
-        {
-            return RollupDataPointKind.Altitude;
-        }
-        else if (value.BloodGlucose is not null)
-        {
-            return RollupDataPointKind.BloodGlucose;
-        }
-        else if (value.BodyFat is not null)
-        {
-            return RollupDataPointKind.BodyFat;
-        }
-        else if (value.CaloriesInHeartRateZone is not null)
-        {
-            return RollupDataPointKind.CaloriesInHeartRateZone;
-        }
-        else if (value.CoreBodyTemperature is not null)
-        {
-            return RollupDataPointKind.CoreBodyTemperature;
-        }
-        else if (value.Distance is not null)
-        {
-            return RollupDataPointKind.Distance;
-        }
-        else if (value.Floors is not null)
-        {
-            return RollupDataPointKind.Floors;
-        }
-        else if (value.HeartRate is not null)
-        {
-            return RollupDataPointKind.HeartRate;
-        }
-        else if (value.HydrationLog is not null)
-        {
-            return RollupDataPointKind.HydrationLog;
-        }
-        else if (value.NutritionLog is not null)
-        {
-            return RollupDataPointKind.NutritionLog;
-        }
-        else if (value.RunVo2Max is not null)
-        {
-            return RollupDataPointKind.RunVo2Max;
-        }
-        else if (value.SedentaryPeriod is not null)
-        {
-            return RollupDataPointKind.SedentaryPeriod;
-        }
-        else if (value.Steps is not null)
-        {
-            return RollupDataPointKind.Steps;
-        }
-        else if (value.SwimLengthsData is not null)
-        {
-            return RollupDataPointKind.SwimLengthsData;
-        }
-        else if (value.TimeInHeartRateZone is not null)
-        {
-            return RollupDataPointKind.TimeInHeartRateZone;
-        }
-        else if (value.TotalCalories is not null)
-        {
-            return RollupDataPointKind.TotalCalories;
-        }
-        else if (value.Weight is not null)
-        {
-            return RollupDataPointKind.Weight;
-        }
+            { ActiveEnergyBurned: not null } => RollupDataPointKind.ActiveEnergyBurned,
+            { ActiveMinutes: not null } => RollupDataPointKind.ActiveMinutes,
+            { ActiveZoneMinutes: not null } => RollupDataPointKind.ActiveZoneMinutes,
+            { ActivityLevel: not null } => RollupDataPointKind.ActivityLevel,
+            { Altitude: not null } => RollupDataPointKind.Altitude,
+            { BloodGlucose: not null } => RollupDataPointKind.BloodGlucose,
+            { BodyFat: not null } => RollupDataPointKind.BodyFat,
+            { CaloriesInHeartRateZone: not null } => RollupDataPointKind.CaloriesInHeartRateZone,
+            { CoreBodyTemperature: not null } => RollupDataPointKind.CoreBodyTemperature,
+            { Distance: not null } => RollupDataPointKind.Distance,
+            { Floors: not null } => RollupDataPointKind.Floors,
+            { HeartRate: not null } => RollupDataPointKind.HeartRate,
+            { HydrationLog: not null } => RollupDataPointKind.HydrationLog,
+            { NutritionLog: not null } => RollupDataPointKind.NutritionLog,
+            { RunVo2Max: not null } => RollupDataPointKind.RunVo2Max,
+            { SedentaryPeriod: not null } => RollupDataPointKind.SedentaryPeriod,
+            { Steps: not null } => RollupDataPointKind.Steps,
+            { SwimLengthsData: not null } => RollupDataPointKind.SwimLengthsData,
+            { TimeInHeartRateZone: not null } => RollupDataPointKind.TimeInHeartRateZone,
+            { TotalCalories: not null } => RollupDataPointKind.TotalCalories,
+            { Weight: not null } => RollupDataPointKind.Weight,
 
-        // Unknown rather than None when the payload carried a member this contract has
-        // never heard of: nothing typed to hand back, but not nothing there.
-        if (value.ExtensionData is { Count: > 0 })
-        {
-            return RollupDataPointKind.Unknown;
-        }
-
-        return RollupDataPointKind.None;
+            // Unknown rather than None when the payload carried a member this contract has
+            // never heard of: nothing typed to hand back, but not nothing there.
+            { ExtensionData.Count: > 0 } => RollupDataPointKind.Unknown,
+            _ => RollupDataPointKind.None,
+        };
     }
 
     /// <summary>Returns the populated member, or null when none is set.</summary>
@@ -204,8 +140,7 @@ public static class RollupDataPointExtensions
     {
         ArgumentNullException.ThrowIfNull(value);
 
-        return
-             (object?)value.ActiveEnergyBurned
+        return (object?)value.ActiveEnergyBurned
             ?? (object?)value.ActiveMinutes
             ?? (object?)value.ActiveZoneMinutes
             ?? (object?)value.ActivityLevel
@@ -225,7 +160,6 @@ public static class RollupDataPointExtensions
             ?? (object?)value.SwimLengthsData
             ?? (object?)value.TimeInHeartRateZone
             ?? (object?)value.TotalCalories
-            ?? (object?)value.Weight
-            ;
+            ?? (object?)value.Weight;
     }
 }

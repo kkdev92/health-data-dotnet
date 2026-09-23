@@ -48,8 +48,7 @@ public sealed class UsersResource
         ArgumentNullException.ThrowIfNull(request);
 
         var builder = new HealthDataRequestBuilder("v4/{+name}")
-            .SetPath("name", request.Name.ToString())
-            ;
+            .SetPath("name", request.Name.ToString());
 
         return await _transport.SendAsync(HealthDataGeneratedOperations.UsersGetIdentity, builder.Build(), null, HealthDataTransport.ReadInfo<Identity>(), cancellationToken).ConfigureAwait(false);
     }
@@ -62,8 +61,7 @@ public sealed class UsersResource
         ArgumentNullException.ThrowIfNull(request);
 
         var builder = new HealthDataRequestBuilder("v4/{+name}")
-            .SetPath("name", request.Name.ToString())
-            ;
+            .SetPath("name", request.Name.ToString());
 
         return await _transport.SendAsync(HealthDataGeneratedOperations.UsersGetIrnProfile, builder.Build(), null, HealthDataTransport.ReadInfo<IrnProfile>(), cancellationToken).ConfigureAwait(false);
     }
@@ -76,8 +74,7 @@ public sealed class UsersResource
         ArgumentNullException.ThrowIfNull(request);
 
         var builder = new HealthDataRequestBuilder("v4/{+name}")
-            .SetPath("name", request.Name.ToString())
-            ;
+            .SetPath("name", request.Name.ToString());
 
         return await _transport.SendAsync(HealthDataGeneratedOperations.UsersGetProfile, builder.Build(), null, HealthDataTransport.ReadInfo<Profile>(), cancellationToken).ConfigureAwait(false);
     }
@@ -90,8 +87,7 @@ public sealed class UsersResource
         ArgumentNullException.ThrowIfNull(request);
 
         var builder = new HealthDataRequestBuilder("v4/{+name}")
-            .SetPath("name", request.Name.ToString())
-            ;
+            .SetPath("name", request.Name.ToString());
 
         return await _transport.SendAsync(HealthDataGeneratedOperations.UsersGetSettings, builder.Build(), null, HealthDataTransport.ReadInfo<Settings>(), cancellationToken).ConfigureAwait(false);
     }
@@ -105,8 +101,7 @@ public sealed class UsersResource
 
         var builder = new HealthDataRequestBuilder("v4/{+name}")
             .SetPath("name", request.Name.ToString())
-            .AddQuery("updateMask", request.UpdateMask)
-            ;
+            .AddQuery("updateMask", request.UpdateMask);
 
         using var content = HealthDataTransport.CreateJsonContent(request.Body, HealthDataTransport.WriteInfo<Profile>());
         return await _transport.SendAsync(HealthDataGeneratedOperations.UsersUpdateProfile, builder.Build(), content, HealthDataTransport.ReadInfo<Profile>(), cancellationToken).ConfigureAwait(false);
@@ -121,8 +116,7 @@ public sealed class UsersResource
 
         var builder = new HealthDataRequestBuilder("v4/{+name}")
             .SetPath("name", request.Name.ToString())
-            .AddQuery("updateMask", request.UpdateMask)
-            ;
+            .AddQuery("updateMask", request.UpdateMask);
 
         using var content = HealthDataTransport.CreateJsonContent(request.Body, HealthDataTransport.WriteInfo<Settings>());
         return await _transport.SendAsync(HealthDataGeneratedOperations.UsersUpdateSettings, builder.Build(), content, HealthDataTransport.ReadInfo<Settings>(), cancellationToken).ConfigureAwait(false);
