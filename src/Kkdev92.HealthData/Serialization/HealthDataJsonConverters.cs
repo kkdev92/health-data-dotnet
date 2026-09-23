@@ -116,7 +116,7 @@ internal sealed class Base64UrlBytesConverter : JsonConverter<byte[]>
         // Base64Url reads the padded and unpadded forms alike, so the alphabet substitution this
         // used to do by hand is not needed. Writing still spells it out: Google's format specifies
         // padding and Base64Url.EncodeToString omits it.
-        return Base64Url.DecodeFromChars(reader.GetString()!);
+        return Base64Url.DecodeFromChars(reader.GetString());
     }
 
     /// <inheritdoc />

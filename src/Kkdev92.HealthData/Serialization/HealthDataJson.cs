@@ -119,11 +119,15 @@ public static class HealthDataJson
 
         // Resolved once, when the contract is built, rather than per serialization. The getters
         // are the source-generated ones: reflection is disabled for this assembly.
-        var members = typeInfo.Properties
-            .Where(property => Array.IndexOf(alternatives, property.Name) >= 0)
-            .Select(property => (property.Name, property.Get))
-            .Where(member => member.Get is not null)
-            .ToArray();
+        List<(string Name, Func<object, object?> Get)> members = [];
+
+        foreach (var property in typeInfo.Properties)
+        {
+            if (property.Get is { } get && Array.IndexOf(alternatives, property.Name) >= 0)
+            {
+                members.Add((property.Name, get));
+            }
+        }
 
         var typeName = typeInfo.Type.Name;
 
@@ -133,7 +137,7 @@ public static class HealthDataJson
 
             foreach (var (name, get) in members)
             {
-                if (get!(value) is not null)
+                if (get(value) is not null)
                 {
                     (set ??= []).Add(name);
                 }

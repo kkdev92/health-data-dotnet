@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text;
 
 namespace Kkdev92.HealthData.Http;
@@ -57,7 +58,7 @@ public sealed class HealthDataRequestBuilder
 
     /// <summary>Adds an integer query parameter, formatted invariantly.</summary>
     public HealthDataRequestBuilder AddQuery(string wireName, int? value)
-        => AddQuery(wireName, value?.ToString(System.Globalization.CultureInfo.InvariantCulture));
+        => AddQuery(wireName, value?.ToString(CultureInfo.InvariantCulture));
 
     /// <summary>
     /// Adds a field mask query parameter.

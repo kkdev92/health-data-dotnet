@@ -1,3 +1,5 @@
+using Kkdev92.HealthData.Http;
+
 namespace Kkdev92.HealthData;
 
 /// <summary>
@@ -41,10 +43,10 @@ public sealed class HealthDataClientOptions
             //
             // The floor that matters is enforced again in HealthDataAuthorizationHandler, because
             // this property is not what a request is necessarily sent to.
-            if (!Http.SecureUri.IsHttpsOrLoopback(value))
+            if (!SecureUri.IsHttpsOrLoopback(value))
             {
                 throw new ArgumentException(
-                    $"'{Http.SecureUri.Describe(value)}' is not HTTPS. Requests to this address carry an "
+                    $"'{SecureUri.Describe(value)}' is not HTTPS. Requests to this address carry an "
                     + "access token; use HTTPS, or a loopback address for a local test server.",
                     nameof(BaseAddress));
             }
