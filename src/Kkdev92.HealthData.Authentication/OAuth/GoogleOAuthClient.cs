@@ -74,15 +74,8 @@ public sealed class GoogleOAuthClient(HttpClient httpClient, GoogleOAuthOptions 
         ArgumentNullException.ThrowIfNull(options);
         ArgumentNullException.ThrowIfNull(options.Scopes);
 
-        var scopes = options.Scopes;
-        var state = options.State;
-        var pkce = options.Pkce;
-        var offlineAccess = options.OfflineAccess;
-        var forceConsent = options.ForceConsent;
-        var loginHint = options.LoginHint;
-
-        var parameters = new List<KeyValuePair<string, string>>
-        {
+        List<KeyValuePair<string, string>> parameters =
+        [
             new("client_id", _options.ClientId),
 
             // OriginalString, not ToString(): Uri normalises, and Google compares this to the
@@ -93,33 +86,33 @@ public sealed class GoogleOAuthClient(HttpClient httpClient, GoogleOAuthOptions 
             new("response_type", "code"),
 
             // Space-separated, as the setup guide's example shows.
-            new("scope", string.Join(' ', scopes)),
-        };
+            new("scope", string.Join(' ', options.Scopes)),
+        ];
 
-        if (offlineAccess)
+        if (options.OfflineAccess)
         {
-            parameters.Add(new KeyValuePair<string, string>("access_type", "offline"));
+            parameters.Add(new("access_type", "offline"));
         }
 
-        if (forceConsent)
+        if (options.ForceConsent)
         {
-            parameters.Add(new KeyValuePair<string, string>("prompt", "consent"));
+            parameters.Add(new("prompt", "consent"));
         }
 
-        if (!string.IsNullOrEmpty(state))
+        if (!string.IsNullOrEmpty(options.State))
         {
-            parameters.Add(new KeyValuePair<string, string>("state", state));
+            parameters.Add(new("state", options.State));
         }
 
-        if (pkce is not null)
+        if (options.Pkce is { } pkce)
         {
-            parameters.Add(new KeyValuePair<string, string>("code_challenge", pkce.CodeChallenge));
-            parameters.Add(new KeyValuePair<string, string>("code_challenge_method", PkceCodeChallenge.CodeChallengeMethod));
+            parameters.Add(new("code_challenge", pkce.CodeChallenge));
+            parameters.Add(new("code_challenge_method", PkceCodeChallenge.CodeChallengeMethod));
         }
 
-        if (!string.IsNullOrEmpty(loginHint))
+        if (!string.IsNullOrEmpty(options.LoginHint))
         {
-            parameters.Add(new KeyValuePair<string, string>("login_hint", loginHint));
+            parameters.Add(new("login_hint", options.LoginHint));
         }
 
         var query = string.Join('&', parameters.Select(p =>
@@ -139,27 +132,22 @@ public sealed class GoogleOAuthClient(HttpClient httpClient, GoogleOAuthOptions 
     {
         ArgumentException.ThrowIfNullOrEmpty(code);
 
-        var form = new List<KeyValuePair<string, string>>
-        {
+        List<KeyValuePair<string, string>> form =
+        [
             new("grant_type", "authorization_code"),
             new("code", code),
             new("client_id", _options.ClientId),
 
             // The same string that was sent on the authorization request, for the same reason.
             new("redirect_uri", _options.RedirectUri.OriginalString),
-        };
+        ];
 
         if (pkce is not null)
         {
-            form.Add(new KeyValuePair<string, string>("code_verifier", pkce.CodeVerifier));
+            form.Add(new("code_verifier", pkce.CodeVerifier));
         }
 
-        if (!string.IsNullOrEmpty(_options.ClientSecret))
-        {
-            form.Add(new KeyValuePair<string, string>("client_secret", _options.ClientSecret));
-        }
-
-        return PostAsync(form, cancellationToken);
+        return RequestTokenAsync(form, cancellationToken);
     }
 
     /// <summary>Exchanges a refresh token for a new access token.</summary>
@@ -172,19 +160,13 @@ public sealed class GoogleOAuthClient(HttpClient httpClient, GoogleOAuthOptions 
     {
         ArgumentException.ThrowIfNullOrEmpty(refreshToken);
 
-        var form = new List<KeyValuePair<string, string>>
-        {
-            new("grant_type", "refresh_token"),
-            new("refresh_token", refreshToken),
-            new("client_id", _options.ClientId),
-        };
-
-        if (!string.IsNullOrEmpty(_options.ClientSecret))
-        {
-            form.Add(new KeyValuePair<string, string>("client_secret", _options.ClientSecret));
-        }
-
-        return PostAsync(form, cancellationToken);
+        return RequestTokenAsync(
+            [
+                new("grant_type", "refresh_token"),
+                new("refresh_token", refreshToken),
+                new("client_id", _options.ClientId),
+            ],
+            cancellationToken);
     }
 
     /// <summary>Converts a token response into the type the SDK's pipeline consumes.</summary>
@@ -214,10 +196,23 @@ public sealed class GoogleOAuthClient(HttpClient httpClient, GoogleOAuthOptions 
     /// </remarks>
     private const int MaximumResponseBytes = 64 * 1024;
 
-    private async Task<GoogleTokenResponse> PostAsync(
-        IEnumerable<KeyValuePair<string, string>> form,
+    /// <summary>
+    /// Posts a token request, authenticating the client when it has a secret.
+    /// </summary>
+    /// <remarks>
+    /// Both grants authenticate a confidential client the same way, with the secret in the request
+    /// body as RFC 6749 section 2.3.1 describes, so it is added here once rather than by each of
+    /// them. A public client has no secret and sends none.
+    /// </remarks>
+    private async Task<GoogleTokenResponse> RequestTokenAsync(
+        List<KeyValuePair<string, string>> form,
         CancellationToken cancellationToken)
     {
+        if (!string.IsNullOrEmpty(_options.ClientSecret))
+        {
+            form.Add(new("client_secret", _options.ClientSecret));
+        }
+
         using var content = new FormUrlEncodedContent(form);
         using var request = new HttpRequestMessage(HttpMethod.Post, _options.TokenEndpoint) { Content = content };
 

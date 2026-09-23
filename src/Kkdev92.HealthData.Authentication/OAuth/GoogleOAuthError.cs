@@ -108,25 +108,26 @@ public sealed class GoogleOAuthError
     /// Taken from the RFC texts on 2026-08-12: RFC 6749 sections 4.1.2.1, 4.2.2.1 and 5.2, and
     /// RFC 8628 section 3.5 for the device flow.
     /// </remarks>
-    private static readonly FrozenSet<string> Defined = new[]
-    {
-        // RFC 6749, the token endpoint (5.2).
-        "invalid_request",
-        "invalid_client",
-        "invalid_grant",
-        "unauthorized_client",
-        "unsupported_grant_type",
-        "invalid_scope",
+    private static readonly FrozenSet<string> Defined = FrozenSet.Create(
+        StringComparer.Ordinal,
+        [
+            // RFC 6749, the token endpoint (5.2).
+            "invalid_request",
+            "invalid_client",
+            "invalid_grant",
+            "unauthorized_client",
+            "unsupported_grant_type",
+            "invalid_scope",
 
-        // RFC 6749, the authorization endpoint (4.1.2.1 and 4.2.2.1).
-        "access_denied",
-        "unsupported_response_type",
-        "server_error",
-        "temporarily_unavailable",
+            // RFC 6749, the authorization endpoint (4.1.2.1 and 4.2.2.1).
+            "access_denied",
+            "unsupported_response_type",
+            "server_error",
+            "temporarily_unavailable",
 
-        // RFC 8628, the device flow (3.5).
-        "authorization_pending",
-        "slow_down",
-        "expired_token",
-    }.ToFrozenSet(StringComparer.Ordinal);
+            // RFC 8628, the device flow (3.5).
+            "authorization_pending",
+            "slow_down",
+            "expired_token",
+        ]);
 }

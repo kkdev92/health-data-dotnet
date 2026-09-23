@@ -147,10 +147,7 @@ public sealed class HealthDataWebhookReceiver
 
         _verifier = verifier ?? throw new ArgumentNullException(nameof(verifier));
 
-        _endpointSecrets = endpointSecrets
-            .Where(s => !string.IsNullOrEmpty(s))
-            .Select(Encoding.UTF8.GetBytes)
-            .ToArray();
+        _endpointSecrets = [.. endpointSecrets.Where(s => !string.IsNullOrEmpty(s)).Select(Encoding.UTF8.GetBytes)];
     }
 
     /// <summary>The user agent Google sends verification challenges with.</summary>

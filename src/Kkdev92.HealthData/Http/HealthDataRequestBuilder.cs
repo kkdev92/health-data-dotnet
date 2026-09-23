@@ -46,7 +46,7 @@ public sealed class HealthDataRequestBuilder
 
         if (value is not null)
         {
-            _queryParameters.Add(new KeyValuePair<string, string>(wireName, value));
+            _queryParameters.Add(new(wireName, value));
         }
 
         return this;

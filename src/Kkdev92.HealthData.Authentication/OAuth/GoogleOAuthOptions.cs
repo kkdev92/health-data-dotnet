@@ -88,13 +88,13 @@ public sealed class GoogleOAuthOptions
 
         static void Require(Uri endpoint, string expected, string name)
         {
-            if (endpoint.IsLoopback || SecureUri.IsSameOrigin(endpoint, new Uri(expected)))
+            if (endpoint.IsLoopback || endpoint.IsSameOriginAs(new Uri(expected)))
             {
                 return;
             }
 
             throw new ArgumentException(
-                $"'{SecureUri.Describe(endpoint)}' is not {expected} or a loopback address, and Google "
+                $"'{endpoint.Describe()}' is not {expected} or a loopback address, and Google "
                 + "credentials are sent to it. Set AllowCustomCredentialEndpoints to true if this "
                 + "endpoint is deliberate, such as an emulator or a gateway you operate.",
                 name);
@@ -109,13 +109,13 @@ public sealed class GoogleOAuthOptions
             throw new ArgumentException("The endpoint must be absolute.", name);
         }
 
-        if (SecureUri.IsHttpsOrLoopback(endpoint))
+        if (endpoint.IsHttpsOrLoopback())
         {
             return;
         }
 
         throw new ArgumentException(
-            $"'{SecureUri.Describe(endpoint)}' is not HTTPS. Credentials are sent to this endpoint; use "
+            $"'{endpoint.Describe()}' is not HTTPS. Credentials are sent to this endpoint; use "
             + "HTTPS, or a loopback address for a local test server.",
             name);
     }

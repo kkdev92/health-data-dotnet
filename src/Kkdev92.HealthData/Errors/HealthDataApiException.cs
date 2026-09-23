@@ -18,27 +18,24 @@ namespace Kkdev92.HealthData;
 /// Known values are listed in <see cref="HealthDataErrorReasons"/>.
 /// </para>
 /// </remarks>
-public sealed class HealthDataApiException : HttpRequestException
+/// <param name="statusCode">The HTTP status the service answered with.</param>
+/// <param name="operationId">The Discovery operation id that failed, when known.</param>
+/// <param name="error">The parsed error envelope, when the service returned one.</param>
+/// <param name="retryAfter">How long the service asked the caller to wait, when it said.</param>
+/// <param name="innerException">The exception that caused this one, if any.</param>
+public sealed class HealthDataApiException(
+    HttpStatusCode statusCode,
+    string? operationId = null,
+    HealthDataError? error = null,
+    TimeSpan? retryAfter = null,
+    Exception? innerException = null)
+    : HttpRequestException(BuildMessage(statusCode, operationId, error?.Reason), innerException, statusCode)
 {
-    /// <summary>Creates an exception for a failed operation.</summary>
-    public HealthDataApiException(
-        HttpStatusCode statusCode,
-        string? operationId = null,
-        HealthDataError? error = null,
-        TimeSpan? retryAfter = null,
-        Exception? innerException = null)
-        : base(BuildMessage(statusCode, operationId, error?.Reason), innerException, statusCode)
-    {
-        OperationId = operationId;
-        Error = error;
-        RetryAfter = retryAfter;
-    }
-
     /// <summary>The Discovery operation id that failed, when known.</summary>
-    public string? OperationId { get; }
+    public string? OperationId { get; } = operationId;
 
     /// <summary>The parsed error envelope, when the service returned one.</summary>
-    public HealthDataError? Error { get; }
+    public HealthDataError? Error { get; } = error;
 
     /// <summary>
     /// The machine-readable reason, for example <c>MISSING_OAUTH_SCOPE</c>.
@@ -54,7 +51,7 @@ public sealed class HealthDataApiException : HttpRequestException
     /// a <c>Retry-After</c> header is sent, so this is frequently <see langword="null"/> and a
     /// caller must have its own backoff rather than depending on it.
     /// </remarks>
-    public TimeSpan? RetryAfter { get; }
+    public TimeSpan? RetryAfter { get; } = retryAfter;
 
     /// <summary>True when the failure was a rate limit.</summary>
     public bool IsRateLimited => StatusCode == HttpStatusCode.TooManyRequests;
