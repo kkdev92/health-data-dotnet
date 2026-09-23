@@ -27,6 +27,12 @@ Dates are UTC, taken from when the packages went to nuget.org.
   relying on one of those now gets `false`, or a `FormatException`, instead of a guess. Timestamps
   in responses and webhook notifications are read by the same rule; the service sends RFC 3339, so
   those read as before.
+- `HealthDataJson.ReadOptions` and `WriteOptions` are read-only from the start. The serializer
+  locks options on their first use, but code that reached these first could change them — how
+  nulls are written, for one — and so change every request the process sent. Such a change now
+  throws `InvalidOperationException`. `HealthDataOutputOnlyProperties.ByType` and
+  `HealthDataUnionMembers.ByType`, the tables the write contract is built from, are frozen for the
+  same reason: declared read-only, they could still be changed through a cast to `Dictionary`.
 
 ### Changed
 

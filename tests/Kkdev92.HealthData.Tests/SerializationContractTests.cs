@@ -1,3 +1,4 @@
+using System.Runtime.Loader;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Json.Serialization.Metadata;
@@ -115,6 +116,61 @@ public sealed class SerializationContractTests
           "createTime": "2026-08-01T00:00:00Z"
         }
         """;
+
+    /// <summary>
+    /// The SDK's shared serializer options cannot be changed, not even before their first use.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// Options lock themselves the first time they serialize, so this is about the window before
+    /// that. Code that reached <see cref="HealthDataJson.WriteOptions"/> first could change, say,
+    /// how nulls are written, and every request the process sent would change with it — a patch
+    /// that sends nulls asks the service to clear fields.
+    /// </para>
+    /// <para>
+    /// Checked in a load context of its own. Any other test in this process that serializes locks
+    /// the options as a side effect, which would let this pass without the change it pins.
+    /// </para>
+    /// </remarks>
+    [Fact]
+    public void TheSharedOptionsAreReadOnlyBeforeAnythingUsesThem()
+    {
+        var context = new AssemblyLoadContext(nameof(TheSharedOptionsAreReadOnlyBeforeAnythingUsesThem), isCollectible: true);
+
+        try
+        {
+            var json = context
+                .LoadFromAssemblyPath(typeof(HealthDataJson).Assembly.Location)
+                .GetType(typeof(HealthDataJson).FullName!, throwOnError: true)!;
+
+            foreach (var name in new[] { nameof(HealthDataJson.ReadOptions), nameof(HealthDataJson.WriteOptions) })
+            {
+                var options = (JsonSerializerOptions)json.GetProperty(name)!.GetValue(null)!;
+
+                Assert.True(options.IsReadOnly, $"{name} can be changed before it is first used.");
+            }
+        }
+        finally
+        {
+            context.Unload();
+        }
+    }
+
+    /// <summary>
+    /// The tables the write contract is built from cannot be changed through a cast.
+    /// </summary>
+    /// <remarks>
+    /// Both are declared read-only. A declaration is not a guarantee when the object behind it is a
+    /// writable dictionary: removing a type from the output-only table stops its read-only fields
+    /// being stripped from requests, and removing one from the union table stops two measurements
+    /// in one data point being refused.
+    /// </remarks>
+    [Fact]
+    public void TheWriteContractTablesCannotBeChanged()
+    {
+        Assert.False(HealthDataOutputOnlyProperties.ByType is IDictionary<Type, string[]> { IsReadOnly: false });
+        Assert.False(HealthDataUnionMembers.ByType is IDictionary<Type, string[]> { IsReadOnly: false });
+    }
 
     [Fact]
     public void ReflectionIsDisabled()

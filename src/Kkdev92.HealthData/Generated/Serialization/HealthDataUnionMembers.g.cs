@@ -11,6 +11,7 @@
 
 #nullable enable
 
+using System.Collections.Frozen;
 using Kkdev92.HealthData.Models;
 
 namespace Kkdev92.HealthData.Serialization;
@@ -23,10 +24,14 @@ namespace Kkdev92.HealthData.Serialization;
 public static class HealthDataUnionMembers
 {
     /// <summary>Wire property names that are alternatives, keyed by model type.</summary>
+    /// <remarks>
+    /// Frozen. The write contract is built from this table, so a table that could be changed would be a way
+    /// to switch the rule off.
+    /// </remarks>
     public static readonly IReadOnlyDictionary<Type, string[]> ByType = new Dictionary<Type, string[]>
     {
         [typeof(DailyRollupDataPoint)] = ["activeEnergyBurned", "activeMinutes", "activeZoneMinutes", "activityLevel", "altitude", "bloodGlucose", "bodyFat", "caloriesInHeartRateZone", "coreBodyTemperature", "distance", "floors", "heartRate", "heartRateVariabilityPersonalRange", "hydrationLog", "nutritionLog", "restingHeartRatePersonalRange", "runVo2Max", "sedentaryPeriod", "steps", "swimLengthsData", "timeInHeartRateZone", "totalCalories", "weight"],
         [typeof(DataPoint)] = ["activeEnergyBurned", "activeMinutes", "activeZoneMinutes", "activityLevel", "altitude", "basalEnergyBurned", "bloodGlucose", "bodyFat", "coreBodyTemperature", "dailyHeartRateVariability", "dailyHeartRateZones", "dailyOxygenSaturation", "dailyRespiratoryRate", "dailyRestingHeartRate", "dailySleepTemperatureDerivations", "dailyVo2Max", "distance", "electrocardiogram", "exercise", "floors", "food", "foodMeasurementUnit", "heartRate", "heartRateVariability", "height", "hydrationLog", "irregularRhythmNotification", "menstrualPeriod", "moods", "nutritionLog", "ovulationTest", "oxygenSaturation", "respiratoryRateSleepSummary", "runVo2Max", "sedentaryPeriod", "sleep", "steps", "swimLengthsData", "symptoms", "timeInHeartRateZone", "vo2Max", "weight"],
         [typeof(RollupDataPoint)] = ["activeEnergyBurned", "activeMinutes", "activeZoneMinutes", "activityLevel", "altitude", "bloodGlucose", "bodyFat", "caloriesInHeartRateZone", "coreBodyTemperature", "distance", "floors", "heartRate", "hydrationLog", "nutritionLog", "runVo2Max", "sedentaryPeriod", "steps", "swimLengthsData", "timeInHeartRateZone", "totalCalories", "weight"],
-    };
+    }.ToFrozenDictionary();
 }
