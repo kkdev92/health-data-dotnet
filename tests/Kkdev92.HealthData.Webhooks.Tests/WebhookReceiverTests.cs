@@ -264,6 +264,42 @@ public sealed class WebhookReceiverTests
         Assert.Equal(WebhookRequestKind.Notification, result.Kind);
     }
 
+    /// <summary>
+    /// A credential of any length or alphabet is compared, and compared exactly.
+    /// </summary>
+    /// <remarks>
+    /// The presented header is encoded on the stack up to a limit and on the heap beyond it, so the
+    /// lengths either side of that limit are the ones worth trying, along with one that is not
+    /// ASCII, where characters and bytes differ.
+    /// </remarks>
+    [Fact]
+    public async Task ACredentialOfAnyLengthIsComparedExactly()
+    {
+        string[] secrets = [.. new[] { 1, 85, 255, 256, 257, 1000 }.Select(length => new string('s', length)), "秘密の資格情報"];
+
+        foreach (var secret in secrets)
+        {
+            var (receiver, key, provider) = Create(secret);
+            using var _ = key;
+            using var __ = provider;
+
+            var body = Encoding.UTF8.GetBytes("""{"type": "verification"}""");
+            var cancellationToken = TestContext.Current.CancellationToken;
+
+            Assert.Equal(
+                WebhookRequestKind.AuthorizedChallenge,
+                (await receiver.HandleAsync(body, null, secret, cancellationToken)).Kind);
+
+            Assert.Equal(
+                WebhookRequestKind.UnauthorizedChallenge,
+                (await receiver.HandleAsync(body, null, secret[..^1] + "x", cancellationToken)).Kind);
+
+            Assert.Equal(
+                WebhookRequestKind.UnauthorizedChallenge,
+                (await receiver.HandleAsync(body, null, secret + "s", cancellationToken)).Kind);
+        }
+    }
+
     /// <summary>A secret that is on neither side of the rotation is still refused.</summary>
     [Fact]
     public async Task ARotationDoesNotWidenWhatIsAccepted()

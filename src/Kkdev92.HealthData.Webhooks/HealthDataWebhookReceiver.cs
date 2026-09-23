@@ -108,6 +108,9 @@ public sealed class WebhookRequestResult
 /// </remarks>
 public sealed class HealthDataWebhookReceiver
 {
+    /// <summary>The longest presented credential, in UTF-8 bytes, compared without allocating.</summary>
+    private const int StackBytes = 256;
+
     private readonly HealthDataWebhookSignatureVerifier _verifier;
     private readonly byte[][] _endpointSecrets;
 
@@ -236,7 +239,13 @@ public sealed class HealthDataWebhookReceiver
             return false;
         }
 
-        var presented = Encoding.UTF8.GetBytes(authorizationHeader);
+        // On the stack when it fits. This runs on every request before anything is authenticated,
+        // so an allocation here is one any caller can ask for; a header longer than any real
+        // credential is still compared, from the heap.
+        var length = Encoding.UTF8.GetByteCount(authorizationHeader);
+        Span<byte> presented = length <= StackBytes ? stackalloc byte[StackBytes] : new byte[length];
+        presented = presented[..Encoding.UTF8.GetBytes(authorizationHeader, presented)];
+
         var matched = false;
 
         foreach (var secret in _endpointSecrets)
