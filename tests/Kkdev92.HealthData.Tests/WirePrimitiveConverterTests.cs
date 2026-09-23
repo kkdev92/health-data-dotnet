@@ -106,6 +106,29 @@ public sealed class WirePrimitiveConverterTests
         Assert.True(reader.HasValueSequence);
     }
 
+    /// <summary>
+    /// A value longer than the converters read onto the stack is still read, and read the same way.
+    /// </summary>
+    /// <remarks>
+    /// Leading zeros make a valid int64 or duration as long as anyone likes, so the length of the
+    /// text says nothing about whether it parses.
+    /// </remarks>
+    [Fact]
+    public void AValueLongerThanAnyBufferStillReads()
+    {
+        var zeros = new string('0', 200);
+
+        foreach (var (form, json) in Forms(zeros + "72"))
+        {
+            Assert.True(Equals(72L, ReadOrRefuse(new Int64StringConverter(), json)), form);
+        }
+
+        foreach (var (form, json) in Forms(zeros + "3.5s"))
+        {
+            Assert.True(Equals(new GoogleDuration(3, 500_000_000), ReadOrRefuse(new GoogleDurationConverter(), json)), form);
+        }
+    }
+
     [Fact]
     public void AnInt64ReadsExactlyWhatLongTryParseReads()
     {

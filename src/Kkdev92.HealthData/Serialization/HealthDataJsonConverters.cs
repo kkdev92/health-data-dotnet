@@ -23,7 +23,7 @@ public sealed class Int64StringConverter : JsonConverter<long>
             // A bare number is accepted on read for robustness, even though Google sends a string.
             JsonTokenType.Number => reader.GetInt64(),
             JsonTokenType.String when long.TryParse(
-                reader.GetString(),
+                reader.ReadText(stackalloc char[JsonStrings.StackLength]),
                 NumberStyles.AllowLeadingSign,
                 CultureInfo.InvariantCulture,
                 out var value) => value,
@@ -49,7 +49,7 @@ public sealed class GoogleTimestampConverter : JsonConverter<GoogleTimestamp>
             throw new JsonException("Expected an RFC 3339 timestamp encoded as a JSON string.");
         }
 
-        return GoogleTimestamp.TryParse(reader.GetString(), out var value)
+        return GoogleTimestamp.TryParse(reader.ReadText(stackalloc char[JsonStrings.StackLength]), out var value)
             ? value
             : throw new JsonException("Value is not a valid RFC 3339 timestamp.");
     }
@@ -73,7 +73,7 @@ public sealed class GoogleDurationConverter : JsonConverter<GoogleDuration>
             throw new JsonException("Expected a duration encoded as a JSON string.");
         }
 
-        return GoogleDuration.TryParse(reader.GetString(), out var value)
+        return GoogleDuration.TryParse(reader.ReadText(stackalloc char[JsonStrings.StackLength]), out var value)
             ? value
             : throw new JsonException("Value is not a valid Google API duration.");
     }
@@ -125,5 +125,36 @@ internal sealed class Base64UrlBytesConverter : JsonConverter<byte[]>
         ArgumentNullException.ThrowIfNull(writer);
         ArgumentNullException.ThrowIfNull(value);
         writer.WriteStringValue(Convert.ToBase64String(value).Replace('+', '-').Replace('/', '_'));
+    }
+}
+
+/// <summary>
+/// Reads the current JSON string into a buffer rather than into a new string.
+/// </summary>
+/// <remarks>
+/// Every int64, timestamp and duration in a response arrives as a JSON string, and reading it with
+/// <see cref="Utf8JsonReader.GetString"/> allocated a string per value only to parse it and drop it.
+/// <see cref="Utf8JsonReader.CopyString(Span{char})"/> writes the same characters — unescaped, and
+/// joined when the value spans two buffers — into memory the caller already has, so the parser sees
+/// exactly the text it saw before.
+/// </remarks>
+file static class JsonStrings
+{
+    /// <summary>
+    /// The most characters read into the caller's buffer. Every value the converters accept is far
+    /// shorter; a longer one is read as a string, exactly as before.
+    /// </summary>
+    public const int StackLength = 128;
+
+    extension(in Utf8JsonReader reader)
+    {
+        public ReadOnlySpan<char> ReadText(Span<char> buffer)
+        {
+            var encodedLength = reader.HasValueSequence ? reader.ValueSequence.Length : reader.ValueSpan.Length;
+
+            // Unescaping never lengthens a string, and no UTF-8 sequence becomes more UTF-16 code
+            // units than it has bytes, so the encoded length bounds what CopyString writes.
+            return encodedLength <= buffer.Length ? buffer[..reader.CopyString(buffer)] : reader.GetString();
+        }
     }
 }

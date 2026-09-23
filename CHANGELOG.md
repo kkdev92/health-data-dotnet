@@ -28,6 +28,13 @@ Dates are UTC, taken from when the packages went to nuget.org.
   in responses and webhook notifications are read by the same rule; the service sends RFC 3339, so
   those read as before.
 
+### Changed
+
+- Reading a response no longer allocates a string for each int64, timestamp and duration value in
+  it. Each value was turned into a string only to be parsed and dropped; its characters are now
+  unescaped into a buffer on the stack instead, and the parser reads them exactly as it read the
+  string.
+
 ### Fixed
 
 - A timestamp with 100-nanosecond precision is written with nine fractional digits, the last two
