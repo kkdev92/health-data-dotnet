@@ -11,6 +11,13 @@ updates:
         patterns:
           - "xunit*"
           - "Microsoft.NET.Test.Sdk"
+      # Microsoft.Extensions.Http requires Microsoft.Extensions.Options at no lower than its own
+      # version, and both are pinned in Directory.Packages.props. One pull request for the pair
+      # keeps an Options-only bump from competing with the Http bump that raises it anyway.
+      microsoft-extensions-http:
+        patterns:
+          - "Microsoft.Extensions.Http"
+          - "Microsoft.Extensions.Options"
     # Core must keep zero third-party runtime dependencies.
     # Any bot PR that adds a package reference to src/Kkdev92.HealthData is wrong by
     # construction and must be closed rather than merged.

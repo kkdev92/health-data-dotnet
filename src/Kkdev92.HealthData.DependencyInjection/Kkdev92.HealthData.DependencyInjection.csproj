@@ -6,6 +6,13 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Http" />
+    <!--
+      Used directly (IOptionsMonitor<HttpClientFactoryOptions>). Referencing it rather than
+      relying on Microsoft.Extensions.Http to bring it in keeps it a top-level dependency, so an
+      update to Http raises it in the same change. Left transitive, the central version holds it
+      below what a newer Http requires, and restore fails with NU1109.
+    -->
+    <PackageReference Include="Microsoft.Extensions.Options" />
   </ItemGroup>
 
   <ItemGroup>
