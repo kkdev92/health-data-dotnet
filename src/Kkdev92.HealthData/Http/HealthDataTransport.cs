@@ -1,5 +1,4 @@
 using System.Net.Http.Headers;
-using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization.Metadata;
 using Kkdev92.HealthData.Diagnostics;
@@ -95,12 +94,22 @@ public sealed class HealthDataTransport(HttpClient httpClient, HealthDataClientO
     }
 
     /// <summary>Serializes a request body using the write contract, which omits output-only fields.</summary>
+    /// <remarks>
+    /// <para>
+    /// Straight to UTF-8. The serializer writes UTF-8 internally, so producing a string first and
+    /// encoding it back was a round trip through UTF-16 that the wire never sees.
+    /// </para>
+    /// <para>
+    /// Buffered rather than streamed, deliberately: the length is known up front and sent as
+    /// <c>Content-Length</c>. <c>JsonContent</c> would serialize while sending instead, which
+    /// leaves the length unknown and switches the request to chunked transfer.
+    /// </para>
+    /// </remarks>
     public static HttpContent CreateJsonContent<TRequest>(TRequest value, JsonTypeInfo<TRequest> typeInfo)
     {
         ArgumentNullException.ThrowIfNull(typeInfo);
 
-        var json = JsonSerializer.Serialize(value, typeInfo);
-        var content = new StringContent(json, Encoding.UTF8);
+        var content = new ByteArrayContent(JsonSerializer.SerializeToUtf8Bytes(value, typeInfo));
         content.Headers.ContentType = new MediaTypeHeaderValue("application/json") { CharSet = "utf-8" };
         return content;
     }

@@ -34,6 +34,11 @@ Dates are UTC, taken from when the packages went to nuget.org.
   it. Each value was turned into a string only to be parsed and dropped; its characters are now
   unescaped into a buffer on the stack instead, and the parser reads them exactly as it read the
   string.
+- A request body is serialized straight to UTF-8. It was serialized to a string and then encoded,
+  a second copy of the whole body that the wire never saw. The bytes sent, the `Content-Type` and
+  the `Content-Length` are unchanged.
+- Building a request URL no longer splits a resource name into segments and joins them back when
+  nothing in it needs escaping, which is the usual case.
 
 ### Fixed
 
