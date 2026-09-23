@@ -92,17 +92,101 @@ public sealed class GoogleTimestampTests
     [InlineData("2026-08-09T12:34:56.789Z", "2026-08-09T12:34:56.789Z")]
     [InlineData("2026-08-09T12:34:56.000Z", "2026-08-09T12:34:56Z")]
     [InlineData("2026-08-09T12:34:56.123456Z", "2026-08-09T12:34:56.123456Z")]
+    [InlineData("2026-08-09T12:34:56.1234567Z", "2026-08-09T12:34:56.123456700Z")]
+    [InlineData("2026-08-09T12:34:56.0000001Z", "2026-08-09T12:34:56.000000100Z")]
     public void RendersCanonicalWireForm(string input, string expected)
     {
         Assert.True(GoogleTimestamp.TryParse(input, out var timestamp));
         Assert.Equal(expected, timestamp.ToString());
     }
 
+    /// <summary>
+    /// Whatever the type holds, its wire form gives back exactly.
+    /// </summary>
+    /// <remarks>
+    /// Parsing refuses a fraction finer than it can hold rather than drop digits. Writing has to
+    /// keep the same promise, or a value read from the service and sent back loses its last digit
+    /// on the way out.
+    /// </remarks>
+    [Fact]
+    public void EveryValueSurvivesARoundTripThroughItsWireForm()
+    {
+        var random = new Random(3339);
+
+        for (var i = 0; i < 2000; i++)
+        {
+            var ticks = random.NextInt64(DateTimeOffset.MinValue.UtcTicks, DateTimeOffset.MaxValue.UtcTicks);
+            var timestamp = new GoogleTimestamp(new DateTimeOffset(ticks, TimeSpan.Zero));
+
+            Assert.Equal(timestamp, GoogleTimestamp.Parse(timestamp.ToString()));
+        }
+    }
+
+    /// <summary>
+    /// What RFC 3339 does not allow is refused, rather than read as something else.
+    /// </summary>
+    /// <remarks>
+    /// A parser that takes whatever the framework's own date parsing takes reads a time of day on
+    /// its own as that time today, a date as midnight, and a date-time without an offset as UTC.
+    /// Each is a guess the caller did not make, and the first gives a different answer on every day
+    /// it runs. The rest are what the grammar has no room for: a field missing or out of range, a
+    /// leap second, whitespace, digits that are not ASCII.
+    /// </remarks>
+    [Theory]
+    [InlineData("12:34")]
+    [InlineData("12:34:56Z")]
+    [InlineData("2026-08-09")]
+    [InlineData("08/09/2026")]
+    [InlineData("Sun, 09 Aug 2026 12:34:56 GMT")]
+    [InlineData("2026-08-09T12:34:56")]
+    [InlineData("2026-08-09 12:34:56Z")]
+    [InlineData("2026-08-09T12:34Z")]
+    [InlineData("2026-8-9T12:34:56Z")]
+    [InlineData("2026-08-09T12:34:56.Z")]
+    [InlineData("2026-08-09T12:34:56+0900")]
+    [InlineData("2026-08-09T12:34:56+09")]
+    [InlineData(" 2026-08-09T12:34:56Z")]
+    [InlineData("2026-08-09T12:34:56Z ")]
+    [InlineData("2026-08-09T24:00:00Z")]
+    [InlineData("2026-08-09T12:60:00Z")]
+    [InlineData("2026-08-09T12:34:60Z")]
+    [InlineData("2026-02-30T00:00:00Z")]
+    [InlineData("2026-13-01T00:00:00Z")]
+    [InlineData("0000-01-01T00:00:00Z")]
+    [InlineData("2026-08-09T12:34:56+24:00")]
+    [InlineData("２０２６-08-09T12:34:56Z")]
+    public void RefusesWhatRfc3339DoesNotAllow(string input)
+    {
+        Assert.False(GoogleTimestamp.TryParse(input, out _));
+        Assert.Throws<FormatException>(() => GoogleTimestamp.Parse(input));
+    }
+
+    /// <summary>
+    /// What RFC 3339 does allow is read, including the forms that look unusual.
+    /// </summary>
+    /// <remarks>
+    /// Section 5.6 allows <c>t</c> and <c>z</c> in lower case, and section 4.3 gives <c>-00:00</c>
+    /// as UTC with an unknown local offset. An offset is two digits of hours up to 23, which is wider
+    /// than any zone in use; the instant it names is still exact.
+    /// </remarks>
+    [Theory]
+    [InlineData("2026-08-09t12:34:56z", "2026-08-09T12:34:56Z")]
+    [InlineData("2026-08-09T12:34:56.5Z", "2026-08-09T12:34:56.500Z")]
+    [InlineData("2026-08-09T12:34:56-00:00", "2026-08-09T12:34:56Z")]
+    [InlineData("2026-08-09T23:30:00+23:59", "2026-08-08T23:31:00Z")]
+    [InlineData("2026-08-09T00:00:00.1234567-04:00", "2026-08-09T04:00:00.123456700Z")]
+    [InlineData("2026-08-09T12:34:56.123456700Z", "2026-08-09T12:34:56.123456700Z")]
+    [InlineData("2026-08-09T12:34:56.5000000000Z", "2026-08-09T12:34:56.500Z")]
+    [InlineData("0001-01-01T00:00:00Z", "0001-01-01T00:00:00Z")]
+    [InlineData("9999-12-31T23:59:59.9999999Z", "9999-12-31T23:59:59.999999900Z")]
+    public void ReadsEveryFormRfc3339Allows(string input, string expected)
+        => Assert.Equal(expected, GoogleTimestamp.Parse(input).ToString());
+
     [Fact]
     public void RejectsPrecisionItCannotRepresent()
     {
         // DateTimeOffset resolves to 100ns. Silently truncating health data timestamps would be
-        // worse than refusing them, so a 9-digit fraction is rejected.
+        // worse than refusing them, so a fraction with a digit finer than that is rejected.
         Assert.False(GoogleTimestamp.TryParse("2026-08-09T12:34:56.123456789Z", out _));
         Assert.Throws<FormatException>(() => GoogleTimestamp.Parse("2026-08-09T12:34:56.123456789Z"));
     }
