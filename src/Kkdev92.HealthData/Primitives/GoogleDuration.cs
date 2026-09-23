@@ -20,24 +20,47 @@ namespace Kkdev92.HealthData;
 /// Discovery revision 20260826 uses this format in 28 places, including every <c>utcOffset</c>
 /// on a health record.
 /// </para>
+/// <para>
+/// The range is a protobuf <c>Duration</c>'s: 315,576,000,000 seconds either side of zero, about
+/// ten thousand years. Nothing wider is held. The service cannot accept a value past it, and
+/// holding one anyway gave <see cref="ToTimeSpan"/> a tick count that wrapped around into a wrong
+/// answer.
+/// </para>
 /// </remarks>
 public readonly struct GoogleDuration : IEquatable<GoogleDuration>
 {
     /// <summary>Nanoseconds in one second.</summary>
     private const int NanosPerSecond = 1_000_000_000;
 
+    /// <summary>
+    /// The most seconds a protobuf <c>Duration</c> carries in either direction: ten thousand years
+    /// of 365.25 days.
+    /// </summary>
+    private const long MaxSeconds = 315_576_000_000;
+
     /// <summary>Creates a duration from whole seconds and a nanosecond adjustment.</summary>
-    /// <param name="seconds">Whole seconds.</param>
+    /// <param name="seconds">Whole seconds, from -315,576,000,000 to 315,576,000,000.</param>
     /// <param name="nanos">
     /// Nanoseconds in the range -999,999,999 to 999,999,999. When <paramref name="seconds"/> is
     /// non-zero the two must share a sign, matching the protobuf duration contract.
     /// </param>
+    /// <exception cref="ArgumentOutOfRangeException">Either value is outside its range.</exception>
+    /// <exception cref="ArgumentException">The two have opposite signs.</exception>
     public GoogleDuration(long seconds, int nanos)
     {
+        // Neither message quotes the value. A duration can be part of a health record, and an
+        // exception message is where it would be logged.
+        if (seconds is < -MaxSeconds or > MaxSeconds)
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(seconds),
+                "Seconds must be between -315576000000 and 315576000000, the range of a protobuf Duration.");
+        }
+
         if (nanos is <= -NanosPerSecond or >= NanosPerSecond)
         {
             throw new ArgumentOutOfRangeException(
-                nameof(nanos), nanos, "Nanoseconds must be between -999999999 and 999999999.");
+                nameof(nanos), "Nanoseconds must be between -999999999 and 999999999.");
         }
 
         if (seconds > 0 && nanos < 0)
@@ -74,6 +97,10 @@ public readonly struct GoogleDuration : IEquatable<GoogleDuration>
         => TimeSpan.FromTicks((Seconds * TimeSpan.TicksPerSecond) + (Nanos / 100));
 
     /// <summary>Creates a duration from a <see cref="TimeSpan"/>.</summary>
+    /// <exception cref="ArgumentOutOfRangeException">
+    /// The span is longer than a protobuf <c>Duration</c> carries, about ten thousand years either
+    /// way. A <see cref="TimeSpan"/> reaches nearly three times as far.
+    /// </exception>
     public static GoogleDuration FromTimeSpan(TimeSpan value)
     {
         var seconds = value.Ticks / TimeSpan.TicksPerSecond;
@@ -82,7 +109,10 @@ public readonly struct GoogleDuration : IEquatable<GoogleDuration>
     }
 
     /// <summary>Parses the wire representation, for example <c>"1.5s"</c>.</summary>
-    /// <exception cref="FormatException">The value is not a valid Google duration.</exception>
+    /// <exception cref="FormatException">
+    /// The value is not a valid Google duration, including one outside the range a protobuf
+    /// <c>Duration</c> carries.
+    /// </exception>
     public static GoogleDuration Parse(string value)
         => TryParse(value, out var result)
             ? result
@@ -119,7 +149,9 @@ public readonly struct GoogleDuration : IEquatable<GoogleDuration>
             return false;
         }
 
-        if (!long.TryParse(wholePart, NumberStyles.None, CultureInfo.InvariantCulture, out var seconds))
+        // The range is symmetric, so it is checked before the sign is applied.
+        if (!long.TryParse(wholePart, NumberStyles.None, CultureInfo.InvariantCulture, out var seconds)
+            || seconds > MaxSeconds)
         {
             return false;
         }
