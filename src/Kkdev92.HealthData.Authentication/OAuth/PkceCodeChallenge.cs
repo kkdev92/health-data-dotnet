@@ -1,3 +1,4 @@
+using System.Buffers;
 using System.Buffers.Text;
 using System.Security.Cryptography;
 using System.Text;
@@ -23,6 +24,9 @@ public sealed class PkceCodeChallenge
     /// <summary>The RFC 7636 unreserved character set for a code verifier.</summary>
     private const string VerifierAlphabet =
         "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~";
+
+    /// <summary>The same set, for checking a verifier against it in one pass.</summary>
+    private static readonly SearchValues<char> VerifierCharacters = SearchValues.Create(VerifierAlphabet);
 
     private PkceCodeChallenge(string codeVerifier, string codeChallenge)
     {
@@ -79,7 +83,7 @@ public sealed class PkceCodeChallenge
         ArgumentOutOfRangeException.ThrowIfLessThan(codeVerifier.Length, 43);
         ArgumentOutOfRangeException.ThrowIfGreaterThan(codeVerifier.Length, 128);
 
-        if (codeVerifier.Any(c => !VerifierAlphabet.Contains(c, StringComparison.Ordinal)))
+        if (codeVerifier.AsSpan().ContainsAnyExcept(VerifierCharacters))
         {
             throw new ArgumentException(
                 "A code verifier may contain only the RFC 7636 unreserved characters.",

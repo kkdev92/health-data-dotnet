@@ -626,6 +626,36 @@ public sealed class OAuthTests
         Assert.Equal(original.CodeChallenge, restored.CodeChallenge);
     }
 
+    /// <summary>
+    /// A verifier may use the RFC 7636 unreserved characters, every one of them, and nothing else.
+    /// </summary>
+    /// <remarks>
+    /// Checked character by character across the whole range, so a character let through that the
+    /// RFC does not allow — or one refused that it does — cannot hide between examples.
+    /// </remarks>
+    [Fact]
+    public void AVerifierMayUseExactlyTheUnreservedCharacters()
+    {
+        const string Unreserved = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~";
+
+        for (var code = 0; code <= char.MaxValue; code++)
+        {
+            var character = (char)code;
+
+            // 43 characters, the shortest verifier RFC 7636 allows.
+            var verifier = new string('a', 42) + character;
+
+            if (Unreserved.Contains(character, StringComparison.Ordinal))
+            {
+                Assert.Equal(verifier, PkceCodeChallenge.FromVerifier(verifier).CodeVerifier);
+            }
+            else
+            {
+                Assert.Throws<ArgumentException>(() => PkceCodeChallenge.FromVerifier(verifier));
+            }
+        }
+    }
+
     [Theory]
     [InlineData("too-short")]
     [InlineData("has spaces in it and is long enough to pass the length check aaaaa")]

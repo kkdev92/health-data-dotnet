@@ -79,7 +79,7 @@ public readonly struct GoogleFieldMask : IEquatable<GoogleFieldMask>
     {
         ArgumentNullException.ThrowIfNull(value);
 
-        if (value.Trim().Length == 0)
+        if (string.IsNullOrWhiteSpace(value))
         {
             throw new FormatException(
                 "A field mask cannot be empty. The wire meaning of an empty mask is undefined - "
