@@ -91,17 +91,14 @@ public readonly struct GoogleDuration : IEquatable<GoogleDuration>
 
     /// <summary>Attempts to parse the wire representation.</summary>
     public static bool TryParse(string? value, out GoogleDuration result)
+        => TryParse(value.AsSpan(), out result);
+
+    /// <summary>Attempts to parse the wire representation from characters that need not be a string.</summary>
+    internal static bool TryParse(ReadOnlySpan<char> text, out GoogleDuration result)
     {
         result = default;
 
-        if (string.IsNullOrEmpty(value) || value[^1] != 's')
-        {
-            return false;
-        }
-
-        var body = value.AsSpan(0, value.Length - 1);
-
-        if (body.IsEmpty)
+        if (text is not [.. var body, 's'] || body.IsEmpty)
         {
             return false;
         }
