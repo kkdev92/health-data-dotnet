@@ -1,4 +1,3 @@
-using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
@@ -223,7 +222,4 @@ public sealed class HealthDataTransport(HttpClient httpClient, HealthDataClientO
 
     /// <summary>Returns the write contract for a generated type.</summary>
     public static JsonTypeInfo<T> WriteInfo<T>() => HealthDataJson.WriteInfo<T>();
-
-    /// <summary>Exposed so generated resources can report the configured status handling.</summary>
-    internal static bool IsSuccess(HttpStatusCode statusCode) => (int)statusCode is >= 200 and < 300;
 }

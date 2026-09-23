@@ -1,4 +1,7 @@
 using System.Diagnostics;
+using System.Globalization;
+using System.Net;
+using Kkdev92.HealthData.Http;
 
 namespace Kkdev92.HealthData.Diagnostics;
 
@@ -74,7 +77,7 @@ public static class HealthDataDiagnostics
     /// Returning null when unsampled is the point: no tags are computed and no allocation is made
     /// on the hot path.
     /// </remarks>
-    public static Activity? StartOperation(Http.HealthDataOperationDescriptor descriptor, Uri baseAddress)
+    public static Activity? StartOperation(HealthDataOperationDescriptor descriptor, Uri baseAddress)
     {
         ArgumentNullException.ThrowIfNull(descriptor);
         ArgumentNullException.ThrowIfNull(baseAddress);
@@ -95,7 +98,7 @@ public static class HealthDataDiagnostics
     }
 
     /// <summary>Records the outcome of an operation.</summary>
-    public static void RecordResponse(Activity? activity, System.Net.HttpStatusCode statusCode)
+    public static void RecordResponse(Activity? activity, HttpStatusCode statusCode)
     {
         if (activity is null)
         {
@@ -108,7 +111,7 @@ public static class HealthDataDiagnostics
         {
             // The status code is the error type, per OpenTelemetry convention. The service's
             // message is deliberately not recorded.
-            activity.SetTag(HealthDataActivityTags.ErrorType, ((int)statusCode).ToString(System.Globalization.CultureInfo.InvariantCulture));
+            activity.SetTag(HealthDataActivityTags.ErrorType, ((int)statusCode).ToString(CultureInfo.InvariantCulture));
             activity.SetStatus(ActivityStatusCode.Error);
         }
         else

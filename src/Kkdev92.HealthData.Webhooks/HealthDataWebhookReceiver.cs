@@ -1,4 +1,6 @@
 using System.Net;
+using System.Security.Cryptography;
+using System.Text;
 using System.Text.Json;
 
 namespace Kkdev92.HealthData.Webhooks;
@@ -147,7 +149,7 @@ public sealed class HealthDataWebhookReceiver
 
         _endpointSecrets = endpointSecrets
             .Where(s => !string.IsNullOrEmpty(s))
-            .Select(System.Text.Encoding.UTF8.GetBytes)
+            .Select(Encoding.UTF8.GetBytes)
             .ToArray();
     }
 
@@ -237,14 +239,14 @@ public sealed class HealthDataWebhookReceiver
             return false;
         }
 
-        var presented = System.Text.Encoding.UTF8.GetBytes(authorizationHeader);
+        var presented = Encoding.UTF8.GetBytes(authorizationHeader);
         var matched = false;
 
         foreach (var secret in _endpointSecrets)
         {
             // Every candidate, even after one matched: returning early would make the time taken
             // depend on which secret it was, which is the thing FixedTimeEquals exists to avoid.
-            matched |= System.Security.Cryptography.CryptographicOperations.FixedTimeEquals(presented, secret);
+            matched |= CryptographicOperations.FixedTimeEquals(presented, secret);
         }
 
         return matched;

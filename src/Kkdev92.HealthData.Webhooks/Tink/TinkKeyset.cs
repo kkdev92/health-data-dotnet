@@ -13,9 +13,6 @@ internal sealed class TinkEcdsaPublicKey
     public required ECParameters Parameters { get; init; }
 
     public required HashAlgorithmName HashAlgorithm { get; init; }
-
-    /// <summary>The 5-byte prefix a signature from this key carries.</summary>
-    public required byte[] OutputPrefix { get; init; }
 }
 
 /// <summary>
@@ -160,7 +157,6 @@ internal static class TinkKeysetParser
             KeyId = keyId,
             HashAlgorithm = HashAlgorithmName.SHA256,
             Parameters = parameters,
-            OutputPrefix = BuildOutputPrefix(keyId),
         };
     }
 
@@ -251,17 +247,5 @@ internal static class TinkKeysetParser
         }
 
         throw new InvalidOperationException($"A P-256 coordinate cannot be {value.Length} bytes.");
-    }
-
-    /// <summary>
-    /// Builds the 5-byte prefix Tink prepends to a signature: version <c>0x01</c> then the key id
-    /// big-endian.
-    /// </summary>
-    private static byte[] BuildOutputPrefix(uint keyId)
-    {
-        var prefix = new byte[5];
-        prefix[0] = 0x01;
-        System.Buffers.Binary.BinaryPrimitives.WriteUInt32BigEndian(prefix.AsSpan(1), keyId);
-        return prefix;
     }
 }

@@ -100,13 +100,15 @@ dotnet_diagnostic.CA1848.severity = none
 dotnet_diagnostic.CA1707.severity = none
 
 #### Shipped code ####
-# The three rules below are off at this analysis level and are turned on here deliberately. Each
-# was found by measuring what a stricter level would say, and each had real instances that are now
+# The rules below are off at this analysis level and are turned on here deliberately. Each was
+# found by measuring what a stricter level would say, and each had real instances that are now
 # fixed; enabling them is what stops the next one being written.
 #
-# Scoped to src/ because all three are about code a consumer runs. The generator, the samples and
-# the benchmarks are console programs that ship to nobody: they have no synchronization context to
-# resume onto, which is the situation CA2007 documents as not applicable.
+# Scoped to src/, for two reasons. The three CA rules are about code a consumer runs: the
+# generator, the samples and the benchmarks are console programs that ship to nobody, with no
+# synchronization context to resume onto, which is the situation CA2007 documents as not
+# applicable. And IDE0005 is reported on build only for a project that generates its XML
+# documentation file, which src/ does and the rest of the repository does not.
 
 [src/**.cs]
 # CA2007: a library must not resume on a caller's context. Every explicit await already said so,
@@ -119,6 +121,14 @@ dotnet_diagnostic.CA1849.severity = warning
 # CA1859: an interface return type on a private method costs a virtual call for an abstraction
 # nobody outside the type can use.
 dotnet_diagnostic.CA1859.severity = warning
+
+# IDE0005: a using directive nothing reads. It survives every edit that removed its last reader,
+# and it says a file depends on something it does not.
+dotnet_diagnostic.IDE0005.severity = warning
+
+# IDE0370: a null-forgiving operator on a value the compiler already knows is not null. Every `!`
+# is a claim the next reader has to check, so one that proves nothing still costs that.
+dotnet_diagnostic.IDE0370.severity = warning
 
 #### Generated code ####
 # Generated sources carry their own guarantees and are verified byte-for-byte by

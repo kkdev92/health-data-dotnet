@@ -1,3 +1,4 @@
+using System.Buffers.Binary;
 using System.Security.Cryptography;
 using Kkdev92.HealthData.Webhooks.Tink;
 
@@ -182,7 +183,7 @@ public sealed class HealthDataWebhookSignatureVerifier(HealthDataWebhookKeyProvi
             return false;
         }
 
-        keyId = System.Buffers.Binary.BinaryPrimitives.ReadUInt32BigEndian(decoded[1..TinkPrefixLength]);
+        keyId = BinaryPrimitives.ReadUInt32BigEndian(decoded[1..TinkPrefixLength]);
         derSignature = decoded[TinkPrefixLength..].ToArray();
         return true;
     }
