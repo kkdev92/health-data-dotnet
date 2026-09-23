@@ -53,16 +53,7 @@ public sealed record ListSubscriptionsRequest
     /// The copy is exact but for the page token. Nothing is mutated, so the original request stays valid
     /// and re-sendable.
     /// </remarks>
-    public ListSubscriptionsRequest WithPageToken(string? pageToken)
-    {
-        return new()
-        {
-            Filter = Filter,
-            PageSize = PageSize,
-            PageToken = pageToken,
-            Parent = Parent,
-        };
-    }
+    public ListSubscriptionsRequest WithPageToken(string? pageToken) => this with { PageToken = pageToken };
 
     /// <summary>Returns the type name.</summary>
     /// <remarks>

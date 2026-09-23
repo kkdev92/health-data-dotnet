@@ -253,25 +253,14 @@ internal sealed class ResourceEmitter(ApiContract contract, IReadOnlySet<string>
                 : "The copy is exact but for the page token. Nothing is mutated, so the original "
                   + "request stays valid and re-sendable.");
 
-        using (writer.Block($"public {typeName} WithPageToken(string? pageToken)"))
-        {
-            using (writer.Block("return new()", closing: "};"))
-            {
-                foreach (var parameter in operation.Parameters)
-                {
-                    var value = !inBody && parameter.WireName == "pageToken"
-                        ? "pageToken"
-                        : $"{parameter.CSharpName}";
+        // A with-expression rather than every property listed out. The request is a record, so the
+        // compiler copies it, and a property added to the contract later is carried along instead
+        // of silently dropped by a list the generator forgot to extend.
+        var replaced = inBody
+            ? "Body = Body.WithPageToken(pageToken)"
+            : $"{operation.Parameters.Single(p => p.WireName == "pageToken").CSharpName} = pageToken";
 
-                    writer.Line($"{parameter.CSharpName} = {value},");
-                }
-
-                if (operation.RequestSchema is not null)
-                {
-                    writer.Line(inBody ? "Body = Body.WithPageToken(pageToken)," : "Body = Body,");
-                }
-            }
-        }
+        writer.Line($"public {typeName} WithPageToken(string? pageToken) => this with {{ {replaced} }};");
     }
 
 
@@ -373,10 +362,7 @@ internal sealed class ResourceEmitter(ApiContract contract, IReadOnlySet<string>
         {
             writer.Line("ArgumentNullException.ThrowIfNull(request);");
             writer.Line();
-            writer.Line($"var builder = new HealthDataRequestBuilder({CodeWriter.Literal(operation.PathTemplate)})");
-            EmitParameterBinding(writer, operation);
-
-            writer.Line("    ;");
+            EmitRequestBuilder(writer, operation);
             writer.Line();
 
             if (operation.RequestSchema is { } bodySchema)
@@ -470,11 +456,7 @@ internal sealed class ResourceEmitter(ApiContract contract, IReadOnlySet<string>
                 writer.Line("ArgumentNullException.ThrowIfNull(request);");
                 writer.Line("ArgumentNullException.ThrowIfNull(destination);");
                 writer.Line();
-                writer.Line($"var builder = new HealthDataRequestBuilder({CodeWriter.Literal(operation.PathTemplate)})");
-                EmitParameterBinding(writer, operation);
-
-                writer.Line("    .AddQuery(\"alt\", \"media\")");
-                writer.Line("    ;");
+                EmitRequestBuilder(writer, operation, ".AddQuery(\"alt\", \"media\")");
                 writer.Line();
                 writer.Line(
                     $"await _transport.DownloadAsync({descriptor}, builder.Build(), destination, cancellationToken).ConfigureAwait(false);");
@@ -537,7 +519,35 @@ internal sealed class ResourceEmitter(ApiContract contract, IReadOnlySet<string>
     /// drifted the moment names became types: one rendered the name and the other passed the
     /// object, and only the compiler noticed.
     /// </remarks>
-    private void EmitParameterBinding(CodeWriter writer, OperationContract operation)
+    /// <summary>
+    /// Writes the request builder for an operation, ending the chain on its last call.
+    /// </summary>
+    /// <param name="writer">Where the statement is written.</param>
+    /// <param name="operation">The operation whose parameters are bound.</param>
+    /// <param name="extraCalls">Calls to append after the operation's own parameters.</param>
+    /// <remarks>
+    /// The semicolon goes on the last call rather than on a line of its own. Generated code is read
+    /// by people debugging a request, and a dangling semicolon is the one thing a hand-written
+    /// chain would never have.
+    /// </remarks>
+    private void EmitRequestBuilder(CodeWriter writer, OperationContract operation, params string[] extraCalls)
+    {
+        List<string> statement =
+        [
+            $"var builder = new HealthDataRequestBuilder({CodeWriter.Literal(operation.PathTemplate)})",
+            .. ParameterBindings(operation).Select(call => $"    {call}"),
+            .. extraCalls.Select(call => $"    {call}"),
+        ];
+
+        statement[^1] += ";";
+
+        foreach (var line in statement)
+        {
+            writer.Line(line);
+        }
+    }
+
+    private IEnumerable<string> ParameterBindings(OperationContract operation)
     {
         foreach (var parameter in operation.Parameters.Where(p => p.Location == ParameterLocation.Path))
         {
@@ -547,12 +557,12 @@ internal sealed class ResourceEmitter(ApiContract contract, IReadOnlySet<string>
                 ? $"request.{parameter.CSharpName}"
                 : $"request.{parameter.CSharpName}.ToString()";
 
-            writer.Line($"    .SetPath({CodeWriter.Literal(parameter.WireName)}, {value})");
+            yield return $".SetPath({CodeWriter.Literal(parameter.WireName)}, {value})";
         }
 
         foreach (var parameter in operation.Parameters.Where(p => p.Location == ParameterLocation.Query))
         {
-            writer.Line($"    .AddQuery({CodeWriter.Literal(parameter.WireName)}, request.{parameter.CSharpName})");
+            yield return $".AddQuery({CodeWriter.Literal(parameter.WireName)}, request.{parameter.CSharpName})";
         }
     }
 

@@ -32,7 +32,7 @@ public sealed partial record DataTypeName
     public const string Pattern = "^users/[^/]+/dataTypes/[^/]+$";
 
     [GeneratedRegex(Pattern)]
-    private static partial Regex Matcher();
+    private static partial Regex Matcher { get; }
 
     /// <summary>Parses the wire form of a DataTypeName.</summary>
     /// <param name="value">A name of the form <c>users/{userId}/dataTypes/{dataTypeId}</c>.</param>
@@ -41,7 +41,7 @@ public sealed partial record DataTypeName
     {
         ArgumentNullException.ThrowIfNull(value);
 
-        if (!Matcher().IsMatch(value))
+        if (!Matcher.IsMatch(value))
         {
             throw new FormatException(
                 $"'{value}' is not a DataTypeName. The service requires the form users/{{userId}}/dataTypes/{{dataTypeId}}, matching {Pattern}.");
@@ -54,7 +54,7 @@ public sealed partial record DataTypeName
     /// <remarks>For a name from somewhere unverified. A name this SDK built always parses.</remarks>
     public static bool TryParse([NotNullWhen(true)] string? value, [NotNullWhen(true)] out DataTypeName? name)
     {
-        if (value is null || !Matcher().IsMatch(value))
+        if (value is null || !Matcher.IsMatch(value))
         {
             name = null;
             return false;
@@ -84,7 +84,6 @@ public sealed partial record DataTypeName
 
         return DataPointName.Parse($"{_value}/dataPoints/{dataPointId}");
     }
-
 
     /// <summary>Returns the wire form of the name.</summary>
     public override string ToString() => _value;

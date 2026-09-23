@@ -32,7 +32,7 @@ public sealed partial record SubscriberName
     public const string Pattern = "^projects/[^/]+/subscribers/[^/]+$";
 
     [GeneratedRegex(Pattern)]
-    private static partial Regex Matcher();
+    private static partial Regex Matcher { get; }
 
     /// <summary>Parses the wire form of a SubscriberName.</summary>
     /// <param name="value">A name of the form <c>projects/{projectId}/subscribers/{subscriberId}</c>.</param>
@@ -41,7 +41,7 @@ public sealed partial record SubscriberName
     {
         ArgumentNullException.ThrowIfNull(value);
 
-        if (!Matcher().IsMatch(value))
+        if (!Matcher.IsMatch(value))
         {
             throw new FormatException(
                 $"'{value}' is not a SubscriberName. The service requires the form projects/{{projectId}}/subscribers/{{subscriberId}}, matching {Pattern}.");
@@ -54,7 +54,7 @@ public sealed partial record SubscriberName
     /// <remarks>For a name from somewhere unverified. A name this SDK built always parses.</remarks>
     public static bool TryParse([NotNullWhen(true)] string? value, [NotNullWhen(true)] out SubscriberName? name)
     {
-        if (value is null || !Matcher().IsMatch(value))
+        if (value is null || !Matcher.IsMatch(value))
         {
             name = null;
             return false;
@@ -84,7 +84,6 @@ public sealed partial record SubscriberName
 
         return SubscriptionName.Parse($"{_value}/subscriptions/{subscriptionId}");
     }
-
 
     /// <summary>Returns the wire form of the name.</summary>
     public override string ToString() => _value;

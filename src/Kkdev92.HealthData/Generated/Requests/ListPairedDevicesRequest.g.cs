@@ -40,15 +40,7 @@ public sealed record ListPairedDevicesRequest
     /// The copy is exact but for the page token. Nothing is mutated, so the original request stays valid
     /// and re-sendable.
     /// </remarks>
-    public ListPairedDevicesRequest WithPageToken(string? pageToken)
-    {
-        return new()
-        {
-            PageSize = PageSize,
-            PageToken = pageToken,
-            Parent = Parent,
-        };
-    }
+    public ListPairedDevicesRequest WithPageToken(string? pageToken) => this with { PageToken = pageToken };
 
     /// <summary>Returns the type name.</summary>
     /// <remarks>

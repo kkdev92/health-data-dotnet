@@ -66,7 +66,7 @@ internal sealed class ResourceNameEmitter(ApiContract contract)
             EmitParentAccessor(writer, name);
             EmitChildBuilders(writer, children);
 
-            writer.Line();
+            // Every section above ends with a blank line of its own.
             writer.XmlDoc("summary", "Returns the wire form of the name.");
             writer.Line("public override string ToString() => _value;");
         }
@@ -80,7 +80,7 @@ internal sealed class ResourceNameEmitter(ApiContract contract)
         writer.Line($"public const string Pattern = {CodeWriter.Literal(name.Pattern)};");
         writer.Line();
         writer.Line($"[GeneratedRegex(Pattern)]");
-        writer.Line("private static partial Regex Matcher();");
+        writer.Line("private static partial Regex Matcher { get; }");
         writer.Line();
     }
 
@@ -97,7 +97,7 @@ internal sealed class ResourceNameEmitter(ApiContract contract)
             writer.Line("ArgumentNullException.ThrowIfNull(value);");
             writer.Line();
 
-            using (writer.Block("if (!Matcher().IsMatch(value))"))
+            using (writer.Block("if (!Matcher.IsMatch(value))"))
             {
                 writer.Line("throw new FormatException(");
                 // The example carries {placeholders}; doubled so the emitted interpolated
@@ -119,7 +119,7 @@ internal sealed class ResourceNameEmitter(ApiContract contract)
         using (writer.Block(
             $"public static bool TryParse([NotNullWhen(true)] string? value, [NotNullWhen(true)] out {name.CSharpName}? name)"))
         {
-            using (writer.Block("if (value is null || !Matcher().IsMatch(value))"))
+            using (writer.Block("if (value is null || !Matcher.IsMatch(value))"))
             {
                 writer.Line("name = null;");
                 writer.Line("return false;");

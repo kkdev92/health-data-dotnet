@@ -32,7 +32,7 @@ public sealed partial record IrnProfileName
     public const string Pattern = "^users/[^/]+/irnProfile$";
 
     [GeneratedRegex(Pattern)]
-    private static partial Regex Matcher();
+    private static partial Regex Matcher { get; }
 
     /// <summary>Parses the wire form of a IrnProfileName.</summary>
     /// <param name="value">A name of the form <c>users/{userId}/irnProfile</c>.</param>
@@ -41,7 +41,7 @@ public sealed partial record IrnProfileName
     {
         ArgumentNullException.ThrowIfNull(value);
 
-        if (!Matcher().IsMatch(value))
+        if (!Matcher.IsMatch(value))
         {
             throw new FormatException(
                 $"'{value}' is not a IrnProfileName. The service requires the form users/{{userId}}/irnProfile, matching {Pattern}.");
@@ -54,7 +54,7 @@ public sealed partial record IrnProfileName
     /// <remarks>For a name from somewhere unverified. A name this SDK built always parses.</remarks>
     public static bool TryParse([NotNullWhen(true)] string? value, [NotNullWhen(true)] out IrnProfileName? name)
     {
-        if (value is null || !Matcher().IsMatch(value))
+        if (value is null || !Matcher.IsMatch(value))
         {
             name = null;
             return false;
@@ -72,7 +72,6 @@ public sealed partial record IrnProfileName
     /// <summary>The UserName this name belongs to.</summary>
     public UserName User => UserName.Parse(
         string.Join('/', _value.Split('/')[..2]));
-
 
     /// <summary>Returns the wire form of the name.</summary>
     public override string ToString() => _value;

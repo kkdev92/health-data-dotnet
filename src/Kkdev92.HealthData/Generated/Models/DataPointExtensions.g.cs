@@ -162,183 +162,56 @@ public static class DataPointExtensions
     {
         ArgumentNullException.ThrowIfNull(value);
 
-        if (value.ActiveEnergyBurned is not null)
+        return value switch
         {
-            return DataPointKind.ActiveEnergyBurned;
-        }
-        else if (value.ActiveMinutes is not null)
-        {
-            return DataPointKind.ActiveMinutes;
-        }
-        else if (value.ActiveZoneMinutes is not null)
-        {
-            return DataPointKind.ActiveZoneMinutes;
-        }
-        else if (value.ActivityLevel is not null)
-        {
-            return DataPointKind.ActivityLevel;
-        }
-        else if (value.Altitude is not null)
-        {
-            return DataPointKind.Altitude;
-        }
-        else if (value.BasalEnergyBurned is not null)
-        {
-            return DataPointKind.BasalEnergyBurned;
-        }
-        else if (value.BloodGlucose is not null)
-        {
-            return DataPointKind.BloodGlucose;
-        }
-        else if (value.BodyFat is not null)
-        {
-            return DataPointKind.BodyFat;
-        }
-        else if (value.CoreBodyTemperature is not null)
-        {
-            return DataPointKind.CoreBodyTemperature;
-        }
-        else if (value.DailyHeartRateVariability is not null)
-        {
-            return DataPointKind.DailyHeartRateVariability;
-        }
-        else if (value.DailyHeartRateZones is not null)
-        {
-            return DataPointKind.DailyHeartRateZones;
-        }
-        else if (value.DailyOxygenSaturation is not null)
-        {
-            return DataPointKind.DailyOxygenSaturation;
-        }
-        else if (value.DailyRespiratoryRate is not null)
-        {
-            return DataPointKind.DailyRespiratoryRate;
-        }
-        else if (value.DailyRestingHeartRate is not null)
-        {
-            return DataPointKind.DailyRestingHeartRate;
-        }
-        else if (value.DailySleepTemperatureDerivations is not null)
-        {
-            return DataPointKind.DailySleepTemperatureDerivations;
-        }
-        else if (value.DailyVo2Max is not null)
-        {
-            return DataPointKind.DailyVo2Max;
-        }
-        else if (value.Distance is not null)
-        {
-            return DataPointKind.Distance;
-        }
-        else if (value.Electrocardiogram is not null)
-        {
-            return DataPointKind.Electrocardiogram;
-        }
-        else if (value.Exercise is not null)
-        {
-            return DataPointKind.Exercise;
-        }
-        else if (value.Floors is not null)
-        {
-            return DataPointKind.Floors;
-        }
-        else if (value.Food is not null)
-        {
-            return DataPointKind.Food;
-        }
-        else if (value.FoodMeasurementUnit is not null)
-        {
-            return DataPointKind.FoodMeasurementUnit;
-        }
-        else if (value.HeartRate is not null)
-        {
-            return DataPointKind.HeartRate;
-        }
-        else if (value.HeartRateVariability is not null)
-        {
-            return DataPointKind.HeartRateVariability;
-        }
-        else if (value.Height is not null)
-        {
-            return DataPointKind.Height;
-        }
-        else if (value.HydrationLog is not null)
-        {
-            return DataPointKind.HydrationLog;
-        }
-        else if (value.IrregularRhythmNotification is not null)
-        {
-            return DataPointKind.IrregularRhythmNotification;
-        }
-        else if (value.MenstrualPeriod is not null)
-        {
-            return DataPointKind.MenstrualPeriod;
-        }
-        else if (value.Moods is not null)
-        {
-            return DataPointKind.Moods;
-        }
-        else if (value.NutritionLog is not null)
-        {
-            return DataPointKind.NutritionLog;
-        }
-        else if (value.OvulationTest is not null)
-        {
-            return DataPointKind.OvulationTest;
-        }
-        else if (value.OxygenSaturation is not null)
-        {
-            return DataPointKind.OxygenSaturation;
-        }
-        else if (value.RespiratoryRateSleepSummary is not null)
-        {
-            return DataPointKind.RespiratoryRateSleepSummary;
-        }
-        else if (value.RunVo2Max is not null)
-        {
-            return DataPointKind.RunVo2Max;
-        }
-        else if (value.SedentaryPeriod is not null)
-        {
-            return DataPointKind.SedentaryPeriod;
-        }
-        else if (value.Sleep is not null)
-        {
-            return DataPointKind.Sleep;
-        }
-        else if (value.Steps is not null)
-        {
-            return DataPointKind.Steps;
-        }
-        else if (value.SwimLengthsData is not null)
-        {
-            return DataPointKind.SwimLengthsData;
-        }
-        else if (value.Symptoms is not null)
-        {
-            return DataPointKind.Symptoms;
-        }
-        else if (value.TimeInHeartRateZone is not null)
-        {
-            return DataPointKind.TimeInHeartRateZone;
-        }
-        else if (value.Vo2Max is not null)
-        {
-            return DataPointKind.Vo2Max;
-        }
-        else if (value.Weight is not null)
-        {
-            return DataPointKind.Weight;
-        }
+            { ActiveEnergyBurned: not null } => DataPointKind.ActiveEnergyBurned,
+            { ActiveMinutes: not null } => DataPointKind.ActiveMinutes,
+            { ActiveZoneMinutes: not null } => DataPointKind.ActiveZoneMinutes,
+            { ActivityLevel: not null } => DataPointKind.ActivityLevel,
+            { Altitude: not null } => DataPointKind.Altitude,
+            { BasalEnergyBurned: not null } => DataPointKind.BasalEnergyBurned,
+            { BloodGlucose: not null } => DataPointKind.BloodGlucose,
+            { BodyFat: not null } => DataPointKind.BodyFat,
+            { CoreBodyTemperature: not null } => DataPointKind.CoreBodyTemperature,
+            { DailyHeartRateVariability: not null } => DataPointKind.DailyHeartRateVariability,
+            { DailyHeartRateZones: not null } => DataPointKind.DailyHeartRateZones,
+            { DailyOxygenSaturation: not null } => DataPointKind.DailyOxygenSaturation,
+            { DailyRespiratoryRate: not null } => DataPointKind.DailyRespiratoryRate,
+            { DailyRestingHeartRate: not null } => DataPointKind.DailyRestingHeartRate,
+            { DailySleepTemperatureDerivations: not null } => DataPointKind.DailySleepTemperatureDerivations,
+            { DailyVo2Max: not null } => DataPointKind.DailyVo2Max,
+            { Distance: not null } => DataPointKind.Distance,
+            { Electrocardiogram: not null } => DataPointKind.Electrocardiogram,
+            { Exercise: not null } => DataPointKind.Exercise,
+            { Floors: not null } => DataPointKind.Floors,
+            { Food: not null } => DataPointKind.Food,
+            { FoodMeasurementUnit: not null } => DataPointKind.FoodMeasurementUnit,
+            { HeartRate: not null } => DataPointKind.HeartRate,
+            { HeartRateVariability: not null } => DataPointKind.HeartRateVariability,
+            { Height: not null } => DataPointKind.Height,
+            { HydrationLog: not null } => DataPointKind.HydrationLog,
+            { IrregularRhythmNotification: not null } => DataPointKind.IrregularRhythmNotification,
+            { MenstrualPeriod: not null } => DataPointKind.MenstrualPeriod,
+            { Moods: not null } => DataPointKind.Moods,
+            { NutritionLog: not null } => DataPointKind.NutritionLog,
+            { OvulationTest: not null } => DataPointKind.OvulationTest,
+            { OxygenSaturation: not null } => DataPointKind.OxygenSaturation,
+            { RespiratoryRateSleepSummary: not null } => DataPointKind.RespiratoryRateSleepSummary,
+            { RunVo2Max: not null } => DataPointKind.RunVo2Max,
+            { SedentaryPeriod: not null } => DataPointKind.SedentaryPeriod,
+            { Sleep: not null } => DataPointKind.Sleep,
+            { Steps: not null } => DataPointKind.Steps,
+            { SwimLengthsData: not null } => DataPointKind.SwimLengthsData,
+            { Symptoms: not null } => DataPointKind.Symptoms,
+            { TimeInHeartRateZone: not null } => DataPointKind.TimeInHeartRateZone,
+            { Vo2Max: not null } => DataPointKind.Vo2Max,
+            { Weight: not null } => DataPointKind.Weight,
 
-        // Unknown rather than None when the payload carried a member this contract has
-        // never heard of: nothing typed to hand back, but not nothing there.
-        if (value.ExtensionData is { Count: > 0 })
-        {
-            return DataPointKind.Unknown;
-        }
-
-        return DataPointKind.None;
+            // Unknown rather than None when the payload carried a member this contract has
+            // never heard of: nothing typed to hand back, but not nothing there.
+            { ExtensionData.Count: > 0 } => DataPointKind.Unknown,
+            _ => DataPointKind.None,
+        };
     }
 
     /// <summary>Returns the populated member, or null when none is set.</summary>
@@ -351,8 +224,7 @@ public static class DataPointExtensions
     {
         ArgumentNullException.ThrowIfNull(value);
 
-        return
-             (object?)value.ActiveEnergyBurned
+        return (object?)value.ActiveEnergyBurned
             ?? (object?)value.ActiveMinutes
             ?? (object?)value.ActiveZoneMinutes
             ?? (object?)value.ActivityLevel
@@ -393,7 +265,6 @@ public static class DataPointExtensions
             ?? (object?)value.Symptoms
             ?? (object?)value.TimeInHeartRateZone
             ?? (object?)value.Vo2Max
-            ?? (object?)value.Weight
-            ;
+            ?? (object?)value.Weight;
     }
 }

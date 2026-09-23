@@ -37,8 +37,7 @@ public sealed class DataPointsResource
         ArgumentNullException.ThrowIfNull(request);
 
         var builder = new HealthDataRequestBuilder("v4/{+parent}/dataPoints:batchDelete")
-            .SetPath("parent", request.Parent.ToString())
-            ;
+            .SetPath("parent", request.Parent.ToString());
 
         using var content = HealthDataTransport.CreateJsonContent(request.Body, HealthDataTransport.WriteInfo<BatchDeleteDataPointsRequest>());
         return await _transport.SendAsync(HealthDataGeneratedOperations.UsersDataTypesDataPointsBatchDelete, builder.Build(), content, HealthDataTransport.ReadInfo<Operation>(), cancellationToken).ConfigureAwait(false);
@@ -52,8 +51,7 @@ public sealed class DataPointsResource
         ArgumentNullException.ThrowIfNull(request);
 
         var builder = new HealthDataRequestBuilder("v4/{+parent}/dataPoints")
-            .SetPath("parent", request.Parent.ToString())
-            ;
+            .SetPath("parent", request.Parent.ToString());
 
         using var content = HealthDataTransport.CreateJsonContent(request.Body, HealthDataTransport.WriteInfo<DataPoint>());
         return await _transport.SendAsync(HealthDataGeneratedOperations.UsersDataTypesDataPointsCreate, builder.Build(), content, HealthDataTransport.ReadInfo<Operation>(), cancellationToken).ConfigureAwait(false);
@@ -67,8 +65,7 @@ public sealed class DataPointsResource
         ArgumentNullException.ThrowIfNull(request);
 
         var builder = new HealthDataRequestBuilder("v4/{+parent}/dataPoints:dailyRollUp")
-            .SetPath("parent", request.Parent.ToString())
-            ;
+            .SetPath("parent", request.Parent.ToString());
 
         using var content = HealthDataTransport.CreateJsonContent(request.Body, HealthDataTransport.WriteInfo<DailyRollUpDataPointsRequest>());
         return await _transport.SendAsync(HealthDataGeneratedOperations.UsersDataTypesDataPointsDailyRollUp, builder.Build(), content, HealthDataTransport.ReadInfo<DailyRollUpDataPointsResponse>(), cancellationToken).ConfigureAwait(false);
@@ -93,8 +90,7 @@ public sealed class DataPointsResource
 
         var builder = new HealthDataRequestBuilder("v4/{+name}:exportExerciseTcx")
             .SetPath("name", request.Name.ToString())
-            .AddQuery("partialData", request.PartialData)
-            ;
+            .AddQuery("partialData", request.PartialData);
 
         return await _transport.SendAsync(HealthDataGeneratedOperations.UsersDataTypesDataPointsExportExerciseTcx, builder.Build(), null, HealthDataTransport.ReadInfo<ExportExerciseTcxResponse>(), cancellationToken).ConfigureAwait(false);
     }
@@ -112,8 +108,7 @@ public sealed class DataPointsResource
         var builder = new HealthDataRequestBuilder("v4/{+name}:exportExerciseTcx")
             .SetPath("name", request.Name.ToString())
             .AddQuery("partialData", request.PartialData)
-            .AddQuery("alt", "media")
-            ;
+            .AddQuery("alt", "media");
 
         await _transport.DownloadAsync(HealthDataGeneratedOperations.UsersDataTypesDataPointsExportExerciseTcx, builder.Build(), destination, cancellationToken).ConfigureAwait(false);
     }
@@ -126,8 +121,7 @@ public sealed class DataPointsResource
         ArgumentNullException.ThrowIfNull(request);
 
         var builder = new HealthDataRequestBuilder("v4/{+name}")
-            .SetPath("name", request.Name.ToString())
-            ;
+            .SetPath("name", request.Name.ToString());
 
         return await _transport.SendAsync(HealthDataGeneratedOperations.UsersDataTypesDataPointsGet, builder.Build(), null, HealthDataTransport.ReadInfo<DataPoint>(), cancellationToken).ConfigureAwait(false);
     }
@@ -143,8 +137,7 @@ public sealed class DataPointsResource
             .SetPath("parent", request.Parent.ToString())
             .AddQuery("filter", request.Filter)
             .AddQuery("pageSize", request.PageSize)
-            .AddQuery("pageToken", request.PageToken)
-            ;
+            .AddQuery("pageToken", request.PageToken);
 
         return await _transport.SendAsync(HealthDataGeneratedOperations.UsersDataTypesDataPointsList, builder.Build(), null, HealthDataTransport.ReadInfo<ListDataPointsResponse>(), cancellationToken).ConfigureAwait(false);
     }
@@ -176,8 +169,7 @@ public sealed class DataPointsResource
         ArgumentNullException.ThrowIfNull(request);
 
         var builder = new HealthDataRequestBuilder("v4/{+name}")
-            .SetPath("name", request.Name.ToString())
-            ;
+            .SetPath("name", request.Name.ToString());
 
         using var content = HealthDataTransport.CreateJsonContent(request.Body, HealthDataTransport.WriteInfo<DataPoint>());
         return await _transport.SendAsync(HealthDataGeneratedOperations.UsersDataTypesDataPointsPatch, builder.Build(), content, HealthDataTransport.ReadInfo<Operation>(), cancellationToken).ConfigureAwait(false);
@@ -195,8 +187,7 @@ public sealed class DataPointsResource
             .AddQuery("dataSourceFamily", request.DataSourceFamily)
             .AddQuery("filter", request.Filter)
             .AddQuery("pageSize", request.PageSize)
-            .AddQuery("pageToken", request.PageToken)
-            ;
+            .AddQuery("pageToken", request.PageToken);
 
         return await _transport.SendAsync(HealthDataGeneratedOperations.UsersDataTypesDataPointsReconcile, builder.Build(), null, HealthDataTransport.ReadInfo<ReconcileDataPointsResponse>(), cancellationToken).ConfigureAwait(false);
     }
@@ -228,8 +219,7 @@ public sealed class DataPointsResource
         ArgumentNullException.ThrowIfNull(request);
 
         var builder = new HealthDataRequestBuilder("v4/{+parent}/dataPoints:rollUp")
-            .SetPath("parent", request.Parent.ToString())
-            ;
+            .SetPath("parent", request.Parent.ToString());
 
         using var content = HealthDataTransport.CreateJsonContent(request.Body, HealthDataTransport.WriteInfo<RollUpDataPointsRequest>());
         return await _transport.SendAsync(HealthDataGeneratedOperations.UsersDataTypesDataPointsRollUp, builder.Build(), content, HealthDataTransport.ReadInfo<RollUpDataPointsResponse>(), cancellationToken).ConfigureAwait(false);

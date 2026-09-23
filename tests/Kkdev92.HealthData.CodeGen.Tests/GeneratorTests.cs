@@ -286,6 +286,32 @@ public sealed class GeneratorTests
         }
     }
 
+    /// <summary>
+    /// Generated code is laid out as a person would write it: no statement ends on a line of its
+    /// own, and no two blank lines sit together.
+    /// </summary>
+    /// <remarks>
+    /// Generated sources are what somebody debugging a request steps into, so they are held to the
+    /// same layout as the handwritten code around them. Checked over the real contract, because a
+    /// layout slip shows up only in the shapes the contract actually has.
+    /// </remarks>
+    [Fact]
+    public void GeneratedCodeHasNoLoneSemicolonsOrDoubledBlankLines()
+    {
+        foreach (var file in Generate().Files)
+        {
+            var lines = file.Content.Split('\n');
+
+            for (var i = 0; i < lines.Length; i++)
+            {
+                Assert.False(lines[i].Trim() == ";", $"{file.RelativePath}:{i + 1} is a semicolon on its own.");
+                Assert.False(
+                    i > 0 && lines[i].Length == 0 && lines[i - 1].Length == 0,
+                    $"{file.RelativePath}:{i + 1} is a second blank line in a row.");
+            }
+        }
+    }
+
     [Fact]
     public void WireNamesSurviveGenerationUnchanged()
     {
