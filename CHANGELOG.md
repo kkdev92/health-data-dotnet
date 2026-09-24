@@ -55,6 +55,9 @@ Dates are UTC, taken from when the packages went to nuget.org.
   the `Content-Length` are unchanged.
 - Building a request URL no longer splits a resource name into segments and joins them back when
   nothing in it needs escaping, which is the usual case.
+- Writing a data point no longer allocates to check that it carries one measurement. The check
+  gathered the name of every measurement it found into a list that only a refusal reads; it now
+  counts them, and names them only when it refuses the request.
 
 ### Fixed
 
