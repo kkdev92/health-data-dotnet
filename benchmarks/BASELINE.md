@@ -48,9 +48,9 @@ row came from the short job and was not usable: a 4.4 ms deviation against a 15.
 **Reading allocates only the object graph.** That comes to about 0.9 KB per data point on the
 large page. Each `DataPoint` carries a nested measurement plus the physical-time/UTC-offset pair.
 Every int64, timestamp and duration value used to be read into a string that was parsed and
-dropped, one string per value. The 1,000-item page has one such value per point and the
-10,000-item page three, which is why they allocate 24 KB and 1.2 MB less than in the previous
-baseline.
+dropped. Measured before and after that change, the strings cost 32 bytes a point on the
+1,000-item page, which has one such value per point, and 136 bytes on the 10,000-item page, which
+has three. That is why both pages allocate less than in the previous baseline.
 
 **Writing checks every measurement.** The write-contract row takes longer than in the first
 baseline, at the same allocation. Since 0.2.0-alpha, a data point is checked for carrying more than
@@ -103,8 +103,8 @@ rest of the gap is the machine on the day.
 **The convenience layer is free.** Across ten pages, enumerating allocates no more than driving
 the page token by hand (0.1 KB less in this run), and the timing difference sits inside the error
 bars. Callers do not pay for `EnumerateAsync` over the raw list call, which is what keeping the raw
-call primary and enumeration additive assumes. Both allocate 25 KB less than in the previous
-baseline, because they no longer read each value into a string first.
+call primary and enumeration additive assumes. Both allocate less than in the previous baseline,
+for the same reason as the pages above: an item's count is no longer read into a string first.
 
 ## Running these
 
