@@ -152,23 +152,47 @@ public static class HealthDataJson
 
         typeInfo.OnSerializing = value =>
         {
-            List<string>? set = null;
+            var carried = 0;
 
-            foreach (var (name, get) in members)
+            foreach (var (_, get) in members)
             {
                 if (get(value) is not null)
                 {
-                    (set ??= []).Add(name);
+                    carried++;
                 }
             }
 
-            if (set is { Count: > 1 })
+            if (carried > 1)
             {
-                throw new InvalidOperationException(
-                    $"A {typeName} carries one measurement, and this one has {set.Count}: "
-                    + $"{string.Join(", ", set)}. The service accepts exactly one, so this request "
-                    + "would be refused. Send one measurement per data point.");
+                throw CarriesMoreThanOne(typeName, members, value);
             }
         };
+    }
+
+    /// <summary>
+    /// The refusal for a union that carries more than one alternative, naming each one it carries.
+    /// </summary>
+    /// <remarks>
+    /// Kept out of the check that throws it. The check runs for every point written, and a valid
+    /// point has no use for the names. Gathered inline, they also made the optimized check slower
+    /// on the valid path, which never reaches them.
+    /// </remarks>
+    private static InvalidOperationException CarriesMoreThanOne(
+        string typeName, List<(string Name, Func<object, object?> Get)> members, object value)
+    {
+        List<string> names = [];
+
+        foreach (var (name, get) in members)
+        {
+            if (get(value) is not null)
+            {
+                names.Add(name);
+            }
+        }
+
+        return new InvalidOperationException(
+            $"A {typeName} carries one measurement, and this one has {names.Count}: "
+            + $"{string.Join(", ", names)}. The service accepts exactly one, so this request "
+            + "would be refused. Send one measurement per data point.");
     }
 }

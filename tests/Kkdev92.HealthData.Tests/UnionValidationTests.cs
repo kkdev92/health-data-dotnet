@@ -51,6 +51,38 @@ public sealed class UnionValidationTests
     }
 
     [Fact]
+    public void TheRefusalCountsAndNamesEveryMeasurement()
+    {
+        var thrown = Assert.Throws<InvalidOperationException>(() => Write(new DataPoint
+        {
+            Weight = new Weight { WeightGrams = 70000 },
+            Steps = new Steps { Count = 100 },
+            HeartRate = new HeartRate { BeatsPerMinute = 60 },
+        }));
+
+        // In the order the contract lists them, not the order they were set.
+        Assert.Equal(
+            "A DataPoint carries one measurement, and this one has 3: heartRate, steps, weight. The service "
+            + "accepts exactly one, so this request would be refused. Send one measurement per data point.",
+            thrown.Message);
+    }
+
+    [Fact]
+    public void CheckingAPointWithOneMeasurementAllocatesNothing()
+    {
+        // The check runs for every point written, and a valid point is the usual case. Only a refusal
+        // needs the names, so only a refusal should pay for collecting them.
+        var check = HealthDataJson.WriteInfo<DataPoint>().OnSerializing!;
+        var point = new DataPoint { Steps = new Steps { Count = 100 } };
+
+        check(point);
+        var before = GC.GetAllocatedBytesForCurrentThread();
+        check(point);
+
+        Assert.Equal(0L, GC.GetAllocatedBytesForCurrentThread() - before);
+    }
+
+    [Fact]
     public void AMeasurementBesideItsMetadataIsFine()
     {
         // dataSource is on every data point and is not an alternative. Counting it as one would
