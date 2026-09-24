@@ -34,8 +34,8 @@ Dates are UTC, taken from when the packages went to nuget.org.
   `HealthDataUnionMembers.ByType` are frozen, and the write contract no longer reads them: it reads
   its own copy of the names, taken as each table is initialized. Declared read-only, the tables
   could be changed through a cast to `Dictionary`, and an element of their arrays can always be
-  assigned; either would have switched off the output-only rule or the one-measurement rule for
-  every request the process sent.
+  assigned. Either, done before the SDK first wrote a type, would have switched off the output-only
+  rule or the one-measurement rule for that type in every request the process sent.
 - `GoogleDuration` holds what a protobuf `Duration` can: seconds from -315,576,000,000 to
   315,576,000,000, about ten thousand years either way. The constructor and `FromTimeSpan` throw
   `ArgumentOutOfRangeException` past that, and `Parse` and `TryParse` refuse it, as protobuf's own
