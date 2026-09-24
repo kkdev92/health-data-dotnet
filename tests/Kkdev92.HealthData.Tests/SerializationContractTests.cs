@@ -172,6 +172,58 @@ public sealed class SerializationContractTests
         Assert.False(HealthDataUnionMembers.ByType is IDictionary<Type, string[]> { IsReadOnly: false });
     }
 
+    /// <summary>
+    /// Rewriting the names in the public tables does not change what the write contract does.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// The tables are frozen, but their values are arrays, and an array's elements can always be
+    /// assigned. A caller that rewrote the output-only names for a type would stop those fields
+    /// being stripped from requests; one that rewrote a union's members would let two measurements
+    /// through in one data point.
+    /// </para>
+    /// <para>
+    /// Checked in a load context of its own, because the rewrite is to shared static state and
+    /// would otherwise reach every other test in this process.
+    /// </para>
+    /// </remarks>
+    [Fact]
+    public void RewritingThePublicTablesDoesNotChangeTheWriteContract()
+    {
+        var context = new AssemblyLoadContext(nameof(RewritingThePublicTablesDoesNotChangeTheWriteContract), isCollectible: true);
+
+        try
+        {
+            var assembly = context.LoadFromAssemblyPath(typeof(HealthDataJson).Assembly.Location);
+            Type Load(Type type) => assembly.GetType(type.FullName!, throwOnError: true)!;
+
+            IReadOnlyDictionary<Type, string[]> Table(Type owner)
+                => (IReadOnlyDictionary<Type, string[]>)Load(owner).GetField("ByType")!.GetValue(null)!;
+
+            JsonTypeInfo WriteInfo(Type model)
+                => (JsonTypeInfo)Load(typeof(HealthDataJson)).GetMethod(nameof(HealthDataJson.WriteInfo))!
+                    .MakeGenericMethod(model).Invoke(null, null)!;
+
+            var profile = Load(typeof(Profile));
+            var dataPoint = Load(typeof(DataPoint));
+
+            Array.Fill(Table(typeof(HealthDataOutputOnlyProperties))[profile], "rewritten");
+            Array.Fill(Table(typeof(HealthDataUnionMembers))[dataPoint], "rewritten");
+
+            Assert.DoesNotContain(WriteInfo(profile).Properties, property => property.Name == "membershipStartDate");
+
+            var point = Activator.CreateInstance(dataPoint)!;
+            dataPoint.GetProperty(nameof(DataPoint.HeartRate))!.SetValue(point, Activator.CreateInstance(Load(typeof(HeartRate))));
+            dataPoint.GetProperty(nameof(DataPoint.Steps))!.SetValue(point, Activator.CreateInstance(Load(typeof(Steps))));
+
+            Assert.Throws<InvalidOperationException>(() => JsonSerializer.Serialize(point, WriteInfo(dataPoint)));
+        }
+        finally
+        {
+            context.Unload();
+        }
+    }
+
     [Fact]
     public void ReflectionIsDisabled()
     {

@@ -25,8 +25,8 @@ public static class HealthDataOutputOnlyProperties
 {
     /// <summary>Wire property names that are output only, keyed by model type.</summary>
     /// <remarks>
-    /// Frozen. The write contract is built from this table, so a table that could be changed would be a way
-    /// to switch the rule off.
+    /// Frozen, and for reading: the write contract is built from a copy taken as this class initializes, so
+    /// changing a name in one of these arrays changes nothing the SDK sends.
     /// </remarks>
     public static readonly IReadOnlyDictionary<Type, string[]> ByType = new Dictionary<Type, string[]>
     {
@@ -58,4 +58,8 @@ public static class HealthDataOutputOnlyProperties
         [typeof(StageSummary)] = ["count", "minutes", "type"],
         [typeof(Subscriber)] = ["createTime", "state", "updateTime"],
     }.ToFrozenDictionary();
+
+    /// <summary>The same names as the write contract reads them, which nothing outside can reach.</summary>
+    internal static readonly FrozenDictionary<Type, FrozenSet<string>> ForWriteContract =
+        ByType.ToFrozenDictionary(entry => entry.Key, entry => entry.Value.ToFrozenSet(StringComparer.Ordinal));
 }

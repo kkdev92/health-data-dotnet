@@ -25,8 +25,8 @@ public static class HealthDataUnionMembers
 {
     /// <summary>Wire property names that are alternatives, keyed by model type.</summary>
     /// <remarks>
-    /// Frozen. The write contract is built from this table, so a table that could be changed would be a way
-    /// to switch the rule off.
+    /// Frozen, and for reading: the write contract is built from a copy taken as this class initializes, so
+    /// changing a name in one of these arrays changes nothing the SDK sends.
     /// </remarks>
     public static readonly IReadOnlyDictionary<Type, string[]> ByType = new Dictionary<Type, string[]>
     {
@@ -34,4 +34,8 @@ public static class HealthDataUnionMembers
         [typeof(DataPoint)] = ["activeEnergyBurned", "activeMinutes", "activeZoneMinutes", "activityLevel", "altitude", "basalEnergyBurned", "bloodGlucose", "bodyFat", "coreBodyTemperature", "dailyHeartRateVariability", "dailyHeartRateZones", "dailyOxygenSaturation", "dailyRespiratoryRate", "dailyRestingHeartRate", "dailySleepTemperatureDerivations", "dailyVo2Max", "distance", "electrocardiogram", "exercise", "floors", "food", "foodMeasurementUnit", "heartRate", "heartRateVariability", "height", "hydrationLog", "irregularRhythmNotification", "menstrualPeriod", "moods", "nutritionLog", "ovulationTest", "oxygenSaturation", "respiratoryRateSleepSummary", "runVo2Max", "sedentaryPeriod", "sleep", "steps", "swimLengthsData", "symptoms", "timeInHeartRateZone", "vo2Max", "weight"],
         [typeof(RollupDataPoint)] = ["activeEnergyBurned", "activeMinutes", "activeZoneMinutes", "activityLevel", "altitude", "bloodGlucose", "bodyFat", "caloriesInHeartRateZone", "coreBodyTemperature", "distance", "floors", "heartRate", "hydrationLog", "nutritionLog", "runVo2Max", "sedentaryPeriod", "steps", "swimLengthsData", "timeInHeartRateZone", "totalCalories", "weight"],
     }.ToFrozenDictionary();
+
+    /// <summary>The same names as the write contract reads them, which nothing outside can reach.</summary>
+    internal static readonly FrozenDictionary<Type, FrozenSet<string>> ForWriteContract =
+        ByType.ToFrozenDictionary(entry => entry.Key, entry => entry.Value.ToFrozenSet(StringComparer.Ordinal));
 }

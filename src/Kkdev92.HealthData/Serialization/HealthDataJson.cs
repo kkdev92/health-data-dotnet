@@ -91,14 +91,15 @@ public static class HealthDataJson
     {
         ArgumentNullException.ThrowIfNull(typeInfo);
 
-        if (!HealthDataOutputOnlyProperties.ByType.TryGetValue(typeInfo.Type, out var outputOnly))
+        // The copy, not the public table: an element of the public table's arrays can be assigned.
+        if (!HealthDataOutputOnlyProperties.ForWriteContract.TryGetValue(typeInfo.Type, out var outputOnly))
         {
             return;
         }
 
         for (var i = typeInfo.Properties.Count - 1; i >= 0; i--)
         {
-            if (Array.IndexOf(outputOnly, typeInfo.Properties[i].Name) >= 0)
+            if (outputOnly.Contains(typeInfo.Properties[i].Name))
             {
                 typeInfo.Properties.RemoveAt(i);
             }
@@ -129,7 +130,8 @@ public static class HealthDataJson
     {
         ArgumentNullException.ThrowIfNull(typeInfo);
 
-        if (!HealthDataUnionMembers.ByType.TryGetValue(typeInfo.Type, out var alternatives))
+        // The copy, for the same reason as the output-only table.
+        if (!HealthDataUnionMembers.ForWriteContract.TryGetValue(typeInfo.Type, out var alternatives))
         {
             return;
         }
@@ -140,7 +142,7 @@ public static class HealthDataJson
 
         foreach (var property in typeInfo.Properties)
         {
-            if (property.Get is { } get && Array.IndexOf(alternatives, property.Name) >= 0)
+            if (property.Get is { } get && alternatives.Contains(property.Name))
             {
                 members.Add((property.Name, get));
             }

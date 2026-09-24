@@ -728,10 +728,7 @@ internal sealed class CSharpEmitter(
         using (writer.Block("public static class HealthDataOutputOnlyProperties"))
         {
             writer.XmlDoc("summary", "Wire property names that are output only, keyed by model type.");
-            writer.XmlDoc(
-                "remarks",
-                "Frozen. The write contract is built from this table, so a table that could be changed " +
-                "would be a way to switch the rule off.");
+            writer.XmlDoc("remarks", ReadOnlyCopyRemarks);
 
             using (writer.Block(
                 "public static readonly IReadOnlyDictionary<Type, string[]> ByType = new Dictionary<Type, string[]>",
@@ -746,6 +743,8 @@ internal sealed class CSharpEmitter(
                     writer.Line($"[typeof({schema.CSharpName})] = [{string.Join(", ", names)}],");
                 }
             }
+
+            EmitWriteContractCopy(writer);
         }
 
         return new GeneratedFile("Generated/Serialization/HealthDataOutputOnlyProperties.g.cs", writer.ToString());
@@ -883,10 +882,7 @@ internal sealed class CSharpEmitter(
         using (writer.Block("public static class HealthDataUnionMembers"))
         {
             writer.XmlDoc("summary", "Wire property names that are alternatives, keyed by model type.");
-            writer.XmlDoc(
-                "remarks",
-                "Frozen. The write contract is built from this table, so a table that could be changed " +
-                "would be a way to switch the rule off.");
+            writer.XmlDoc("remarks", ReadOnlyCopyRemarks);
 
             using (writer.Block(
                 "public static readonly IReadOnlyDictionary<Type, string[]> ByType = new Dictionary<Type, string[]>",
@@ -907,9 +903,33 @@ internal sealed class CSharpEmitter(
                     writer.Line($"[typeof({schema.CSharpName})] = [{string.Join(", ", names)}],");
                 }
             }
+
+            EmitWriteContractCopy(writer);
         }
 
         return new GeneratedFile("Generated/Serialization/HealthDataUnionMembers.g.cs", writer.ToString());
+    }
+
+    /// <summary>The remarks on a public table that the write contract reads a copy of.</summary>
+    private const string ReadOnlyCopyRemarks =
+        "Frozen, and for reading: the write contract is built from a copy taken as this class " +
+        "initializes, so changing a name in one of these arrays changes nothing the SDK sends.";
+
+    /// <summary>
+    /// Emits the copy of a table's names that the write contract reads.
+    /// </summary>
+    /// <remarks>
+    /// The public table is frozen, but its values are arrays, and an array's elements can always be
+    /// assigned. A copy taken in the same static initializer is out of reach: nothing outside the
+    /// class can run before its type initializer finishes, so the copy cannot see a changed name.
+    /// Sets rather than arrays, because the write contract only ever asks whether a name is there.
+    /// </remarks>
+    private static void EmitWriteContractCopy(CodeWriter writer)
+    {
+        writer.Line();
+        writer.XmlDoc("summary", "The same names as the write contract reads them, which nothing outside can reach.");
+        writer.Line("internal static readonly FrozenDictionary<Type, FrozenSet<string>> ForWriteContract =");
+        writer.Line("    ByType.ToFrozenDictionary(entry => entry.Key, entry => entry.Value.ToFrozenSet(StringComparer.Ordinal));");
     }
 
     /// <summary>
