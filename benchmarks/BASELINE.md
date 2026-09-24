@@ -1,6 +1,7 @@
 # Benchmark baseline
 
-First recorded baseline for the SDK's per-request cost targets.
+The SDK's per-request cost, as last measured. Each re-measurement replaces the tables, and the
+notes under each table say what moved since the previous baseline and why.
 
 ## What this measures, and what it does not
 
@@ -11,69 +12,99 @@ They are a regression tripwire, not a marketing claim.
 ## Environment
 
 ```text
-date        2026-08-10
-runtime     .NET 10.0.10, win-arm64
-sdk         10.0.302
-config      --job short (BenchmarkDotNet ShortRun)
-machine     developer laptop, not an isolated CI runner
+date        2026-09-24
+commit      7e9672c
+runtime     .NET 10.0.12, win-arm64
+sdk         10.0.401
+tool        BenchmarkDotNet 0.15.8
+config      --job short (BenchmarkDotNet ShortRun); the 10,000-item page on the default job
+machine     developer laptop (Snapdragon X, X1E80100), not an isolated CI runner
 ```
 
 > `--job short` trades accuracy for wall-clock time. Treat single-digit percentage differences as
 > noise, and re-measure with the default job before acting on anything. A developer laptop also
 > has background load a CI runner would not.
 
+Times taken on different days on this machine differ by more than most of the changes noted
+below. The notes compare with the previous baseline by allocation, which does not vary from run to
+run. Where a change's effect on time mattered, it was measured before and after in one process,
+and those numbers are in the pull request that made the change.
+
 ## Serialization
 
 | Benchmark | Mean | Allocated |
 |---|---:|---:|
-| Profile deserialize | 776 ns | 944 B |
-| DataPoint page deserialize (1,000 items) | 485 µs | 681 KB |
-| Large heart-rate response (10,000 items) | 15.4 ms ⚠️ | 9.7 MB |
-| Request serialize, write contract | 491 ns | 688 B |
-| Request serialize with output-only stripping | 151 ns | 264 B |
+| Profile deserialize | 728 ns | 944 B |
+| DataPoint page deserialize (1,000 items) | 488 µs | 657 KB |
+| Large heart-rate response (10,000 items) | 18.2 ms | 8.5 MB |
+| Request serialize, write contract | 682 ns | 688 B |
+| Request serialize with output-only stripping | 155 ns | 264 B |
 
-⚠️ The 10,000-item figure had a standard deviation of 4.4 ms against a 15.4 ms mean, and triggered
-Gen2 collections. It is not a usable number yet; it needs the default job and a dedicated run. It
-is recorded only so the order of magnitude is on file.
+The 10,000-item row comes from a default-job run of its own, with a standard deviation of 0.7 ms.
+It was measured the same day at `f379138`, which differs from `7e9672c` only in how requests are
+written, so nothing this row reads changed in between. The previous baseline's figure for this
+row came from the short job and was not usable: a 4.4 ms deviation against a 15.4 ms mean.
 
-Roughly **1 KB allocated per data point** on the large page. That is dominated by the object graph
-itself: each `DataPoint` carries a nested measurement plus the physical-time/UTC-offset pair.
+**Reading allocates only the object graph.** That comes to about 0.9 KB per data point on the
+large page. Each `DataPoint` carries a nested measurement plus the physical-time/UTC-offset pair.
+Every int64, timestamp and duration value used to be read into a string that was parsed and
+dropped. Measured before and after that change, the strings cost 32 bytes a point on the
+1,000-item page, which has one such value per point, and 136 bytes on the 10,000-item page, which
+has three. That is why both pages allocate less than in the previous baseline.
+
+**Writing checks every measurement.** The write-contract row takes longer than in the first
+baseline, at the same allocation. Since 0.2.0-alpha, a data point is checked for carrying more than
+one measurement before it is written, which reads each of its forty-two measurement properties.
+Measured on its own, the check takes about 125 ns, most of the difference, and it allocates
+nothing.
 
 ## Request construction
 
 | Benchmark | Mean | Allocated |
 |---|---:|---:|
-| URI: path with custom-method suffix | 154 ns | 1,032 B |
-| URI: path and four query parameters | 314 ns | 2,240 B |
-| URI: escaping a reserved character | 207 ns | 1,256 B |
-| GoogleTimestamp parse | 141 ns | 0 B |
-| GoogleTimestamp format | 241 ns | 72 B |
-| GoogleDuration parse | 7.6 ns | 0 B |
-| GoogleDuration format, fractional | 29.9 ns | 88 B |
+| URI: path only | 97 ns | 816 B |
+| URI: path with custom-method suffix | 97 ns | 712 B |
+| URI: path and four query parameters | 340 ns | 1,920 B |
+| URI: escaping a reserved character | 273 ns | 1,256 B |
+| GoogleTimestamp parse | 38.5 ns | 0 B |
+| GoogleTimestamp format | 137 ns | 72 B |
+| GoogleDuration parse | 11.8 ns | 0 B |
+| GoogleDuration format, fractional | 33.7 ns | 88 B |
 | Open enum: read / construct / compare | below measurement floor | 0 B |
 
 **Open enums cost nothing.** All three operations were indistinguishable from an empty method and
 allocated zero bytes, which is what ADR-0005 needed to be true: tolerating unknown values must not
 be paid for on every access.
 
-**URI construction allocates 1–2 KB per request**, which is the largest fixed per-call cost here.
-It comes from `UriTemplate` splitting the resource name on `/` and rejoining it, plus the builder's
-intermediate strings. Holding down URI construction allocation is an explicit goal, so this is
-the clearest optimization target on the list. It is recorded, not fixed: correctness
-was pinned first, and the escaping rules now have golden tests to optimize against.
+**URI construction allocates 0.7–1.9 KB per request.** A resource name that needs no escaping,
+which is almost every name, is now appended as it is. It used to be split on `/`, each segment
+escaped, and the segments joined again, whatever the name contained. That is the 320 bytes gone
+from the custom-method and query rows. A name with a reserved character still goes through the
+split, because each segment has to be escaped on its own, so that row did not move. What remains
+is the builder itself: its parameter dictionary and query list, the variable names cut out of the
+template, and the `StringBuilder` that assembles the result.
+
+**A timestamp parses in about a quarter of the time it did.** `GoogleTimestamp` reads RFC 3339
+with a parser of its own instead of `DateTimeOffset.TryParse`. The change was made so that it stops
+accepting forms RFC 3339 does not allow, and the speed came with it.
+
+`GoogleDuration` parse reads slower than in the previous baseline. Against the 0.5.0-alpha build in
+one process, the current one was 1.6 ns slower for `"-14400s"` and no different for `"1.5s"`. The
+rest of the gap is the machine on the day.
 
 ## Pagination
 
 | Benchmark | Mean | Ratio | Allocated |
 |---|---:|---:|---:|
-| Enumerate every item across pages (10 × 100) | 501 µs | 1.00 | 802.6 KB |
-| Raw list loop, driving the token by hand | 480 µs | 0.96 | 801.9 KB |
-| Single page, no enumeration | 46.7 µs | 0.09 | 79.8 KB |
+| Enumerate every item across pages (10 × 100) | 545 µs | 1.00 | 777.5 KB |
+| Raw list loop, driving the token by hand | 521 µs | 0.96 | 777.6 KB |
+| Single page, no enumeration | 50.3 µs | 0.09 | 77.4 KB |
 
-**The convenience layer is free.** Enumerating costs 0.7 KB more than driving the page token by
-hand across ten pages, about 0.1%, and the timing difference sits inside the error bars. Callers
-do not pay for `EnumerateAsync` over the raw list call, which is what keeping the raw call
-primary and enumeration additive assumes.
+**The convenience layer is free.** Across ten pages, enumerating allocates no more than driving
+the page token by hand (0.1 KB less in this run), and the timing difference sits inside the error
+bars. Callers do not pay for `EnumerateAsync` over the raw list call, which is what keeping the raw
+call primary and enumeration additive assumes. Both allocate less than in the previous baseline,
+for the same reason as the pages above: an item's count is no longer read into a string first.
 
 ## Running these
 

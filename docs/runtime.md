@@ -317,6 +317,6 @@ Nothing in the public surface requires a consumer to add a `TrimmerRootDescripto
 
 Client-side overhead is measured and recorded in
 [`../benchmarks/BASELINE.md`](../benchmarks/BASELINE.md). Two results worth knowing here: open
-enums cost nothing measurable and allocate zero bytes, and `EnumerateAsync` costs about 0.1% more
-allocation than driving the page token by hand, which is why the raw list call stays primary and
-enumeration is purely additive.
+enums cost nothing measurable and allocate zero bytes, and `EnumerateAsync` costs nothing
+measurable over driving the page token by hand, in time or in allocation. That is why the raw list
+call can stay primary and enumeration purely additive.
