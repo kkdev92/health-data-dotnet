@@ -402,7 +402,7 @@
       "allOf; every other operation is anyOf. Re-read the per-method pages on a revision bump, not",
       "just Discovery: this exception is invisible from Discovery alone."
     ],
-    "comparedOn": "2026-09-14",
+    "comparedOn": "2026-09-27",
     "inDiscoveryOnly": [
       {
         "scope": "https://www.googleapis.com/auth/cloud-platform",
@@ -410,15 +410,15 @@
       },
       {
         "scope": "https://www.googleapis.com/auth/googlehealth.logged_symptoms.readonly",
-        "note": "Added by Discovery revision 20260909 and accepted on every read operation that returns data points, but listed by neither the Scopes guide nor any per-method reference page on 2026-09-14. These are the read half of the Women's Health scopes whose writeonly counterparts shipped on 2026-08-17; the data type page still documents create, update and batchDelete only. Recorded as Discovery-only rather than withheld, because an accepted-scope list only causes harm when it is too small."
+        "note": "Added by Discovery revision 20260909 and accepted on every read operation that returns data points, but listed by neither the Scopes guide nor any per-method reference page on 2026-09-27. These are the read half of the Women's Health scopes whose writeonly counterparts shipped on 2026-08-17; the data type page still documents create, update and batchDelete only. Recorded as Discovery-only rather than withheld, because an accepted-scope list only causes harm when it is too small."
       },
       {
         "scope": "https://www.googleapis.com/auth/googlehealth.mindfulness.readonly",
-        "note": "Added by Discovery revision 20260909 and accepted on every read operation that returns data points, but listed by neither the Scopes guide nor any per-method reference page on 2026-09-14. These are the read half of the Women's Health scopes whose writeonly counterparts shipped on 2026-08-17; the data type page still documents create, update and batchDelete only. Recorded as Discovery-only rather than withheld, because an accepted-scope list only causes harm when it is too small."
+        "note": "Added by Discovery revision 20260909 and accepted on every read operation that returns data points, but listed by neither the Scopes guide nor any per-method reference page on 2026-09-27. These are the read half of the Women's Health scopes whose writeonly counterparts shipped on 2026-08-17; the data type page still documents create, update and batchDelete only. Recorded as Discovery-only rather than withheld, because an accepted-scope list only causes harm when it is too small."
       },
       {
         "scope": "https://www.googleapis.com/auth/googlehealth.reproductive_health.readonly",
-        "note": "Added by Discovery revision 20260909 and accepted on every read operation that returns data points, but listed by neither the Scopes guide nor any per-method reference page on 2026-09-14. These are the read half of the Women's Health scopes whose writeonly counterparts shipped on 2026-08-17; the data type page still documents create, update and batchDelete only. Recorded as Discovery-only rather than withheld, because an accepted-scope list only causes harm when it is too small."
+        "note": "Added by Discovery revision 20260909 and accepted on every read operation that returns data points, but listed by neither the Scopes guide nor any per-method reference page on 2026-09-27. These are the read half of the Women's Health scopes whose writeonly counterparts shipped on 2026-08-17; the data type page still documents create, update and batchDelete only. Recorded as Discovery-only rather than withheld, because an accepted-scope list only causes harm when it is too small."
       }
     ],
     "inScopesGuideOnly": [

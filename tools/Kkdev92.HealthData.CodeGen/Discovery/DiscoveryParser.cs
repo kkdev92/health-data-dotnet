@@ -531,7 +531,7 @@ internal static class DiscoveryParser
     /// Computes the transitive closure of schemas reachable from the allowlisted operations.
     /// </summary>
     /// <remarks>
-    /// Without this, generation emits dead types. Discovery revision 20260909 declares 151
+    /// Without this, generation emits dead types. Discovery revision 20260923 declares 151
     /// schemas, of which 139 are reachable once the SMART Health Links operations are excluded.
     /// </remarks>
     private static IReadOnlyList<string> ComputeReachableSchemas(

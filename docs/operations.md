@@ -1,6 +1,6 @@
 # Operations
 
-The 25 operations this SDK exposes from Google Health API `v4`, Discovery revision `20260909`.
+The 25 operations this SDK exposes from Google Health API `v4`, Discovery revision `20260923`.
 
 This table is maintained by hand from the committed snapshot. The descriptors it describes are
 generated — they are available at runtime on `HealthDataGeneratedOperations`, and those cannot
@@ -83,6 +83,13 @@ Scope groups:
 
 Read operations accept the `.writeonly` scopes as well — Discovery added them at revision
 `20260826` — and the three Women's Health `.readonly` scopes arrived at revision `20260909`.
+
+On `Reconcile`, `RollUp` and `DailyRollUp`, a caller that holds only a `.writeonly` scope for the
+data type reads only the data it wrote itself. Discovery revision `20260923` says so on their
+`dataSourceFamily`: the request is implicitly restricted to `users/me/dataSourceFamilies/self-sources`
+— data points whose data source was registered through this API with the caller's OAuth client
+ID — and naming any other family fails with `PERMISSION_DENIED`. A family that matches no data
+points returns an empty list, not an error. The per-method reference pages do not say this yet.
 
 A Discovery `scopes` array means **any one** of the listed scopes is accepted, not all of them —
 with a single documented exception. `ExportExerciseTcx` needs both of its scopes together, which

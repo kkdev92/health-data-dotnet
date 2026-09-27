@@ -17,6 +17,28 @@ Dates are UTC, taken from when the packages went to nuget.org.
 
 ## [Unreleased]
 
+### Added
+
+- Twelve known values on the open enum `Moods.Types.Moods`: `Depressed`, `Good`, `LowEnergy`,
+  `ObsessiveThoughts`, `Panic`, `Playful`, `Pleased`, `Sensitive`, `Sleepy`, `Swings`, `Unhappy`
+  and `VerySelfCritical`. Discovery revision `20260923` declares them. Being an open enum, it
+  already round-tripped these values as unrecognised ones; they now have names. The per-method
+  reference page does not list them yet.
+
+### Changed
+
+- Generated from Google Health API `v4`, Discovery revision `20260923`, up from `20260909`. No
+  operation, schema, property or scope was added, removed or altered, and the public API gains the
+  twelve `Moods.Types.Moods` values and nothing else.
+- The generated documentation carries what the revision adds to Google's descriptions: the range
+  a value must fall in, on the measurement fields Google now bounds (for example
+  `HeartRate.BeatsPerMinute`, `[1, 300]`); that `Profile.Name` and `Settings.Name` are read-only;
+  and the `users/me/dataSourceFamilies/self-sources` family on `ReconcileRequest`,
+  `RollUpDataPointsRequest` and `DailyRollUpDataPointsRequest`. That last one matters to a caller
+  holding only a `.writeonly` scope for a data type: those reads are implicitly restricted to the
+  data it wrote itself, and naming any other family fails with `PERMISSION_DENIED`. These are the
+  service's rules; this package does not check them before sending a request.
+
 ## [0.6.0-alpha] - 2026-09-24
 
 Generated from Google Health API `v4`, Discovery revision `20260909` — the same contract and the
