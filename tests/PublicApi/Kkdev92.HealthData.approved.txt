@@ -1533,6 +1533,7 @@ struct Kkdev92.HealthData.Models.Moods+Types+Moods
     Kkdev92.HealthData.Models.Moods+Types+Moods Confused { get; }
     Kkdev92.HealthData.Models.Moods+Types+Moods Content { get; }
     Kkdev92.HealthData.Models.Moods+Types+Moods Curious { get; }
+    Kkdev92.HealthData.Models.Moods+Types+Moods Depressed { get; }
     Kkdev92.HealthData.Models.Moods+Types+Moods Disappointed { get; }
     Kkdev92.HealthData.Models.Moods+Types+Moods Discouraged { get; }
     Kkdev92.HealthData.Models.Moods+Types+Moods Disgusted { get; }
@@ -1544,6 +1545,7 @@ struct Kkdev92.HealthData.Models.Moods+Types+Moods
     Kkdev92.HealthData.Models.Moods+Types+Moods Fatigued { get; }
     Kkdev92.HealthData.Models.Moods+Types+Moods FromValue(System.String value)
     Kkdev92.HealthData.Models.Moods+Types+Moods Frustrated { get; }
+    Kkdev92.HealthData.Models.Moods+Types+Moods Good { get; }
     Kkdev92.HealthData.Models.Moods+Types+Moods Grateful { get; }
     Kkdev92.HealthData.Models.Moods+Types+Moods Guilty { get; }
     Kkdev92.HealthData.Models.Moods+Types+Moods Happy { get; }
@@ -1558,19 +1560,29 @@ struct Kkdev92.HealthData.Models.Moods+Types+Moods
     Kkdev92.HealthData.Models.Moods+Types+Moods Lonely { get; }
     Kkdev92.HealthData.Models.Moods+Types+Moods Longing { get; }
     Kkdev92.HealthData.Models.Moods+Types+Moods Loving { get; }
+    Kkdev92.HealthData.Models.Moods+Types+Moods LowEnergy { get; }
     Kkdev92.HealthData.Models.Moods+Types+Moods MoodUnspecified { get; }
     Kkdev92.HealthData.Models.Moods+Types+Moods Neutral { get; }
+    Kkdev92.HealthData.Models.Moods+Types+Moods ObsessiveThoughts { get; }
     Kkdev92.HealthData.Models.Moods+Types+Moods Overwhelmed { get; }
+    Kkdev92.HealthData.Models.Moods+Types+Moods Panic { get; }
     Kkdev92.HealthData.Models.Moods+Types+Moods Passionate { get; }
     Kkdev92.HealthData.Models.Moods+Types+Moods Peaceful { get; }
+    Kkdev92.HealthData.Models.Moods+Types+Moods Playful { get; }
+    Kkdev92.HealthData.Models.Moods+Types+Moods Pleased { get; }
     Kkdev92.HealthData.Models.Moods+Types+Moods Proud { get; }
     Kkdev92.HealthData.Models.Moods+Types+Moods Relieved { get; }
     Kkdev92.HealthData.Models.Moods+Types+Moods Sad { get; }
     Kkdev92.HealthData.Models.Moods+Types+Moods Satisfied { get; }
     Kkdev92.HealthData.Models.Moods+Types+Moods Scared { get; }
+    Kkdev92.HealthData.Models.Moods+Types+Moods Sensitive { get; }
+    Kkdev92.HealthData.Models.Moods+Types+Moods Sleepy { get; }
     Kkdev92.HealthData.Models.Moods+Types+Moods Stressed { get; }
     Kkdev92.HealthData.Models.Moods+Types+Moods Surprised { get; }
+    Kkdev92.HealthData.Models.Moods+Types+Moods Swings { get; }
+    Kkdev92.HealthData.Models.Moods+Types+Moods Unhappy { get; }
     Kkdev92.HealthData.Models.Moods+Types+Moods VeryCalm { get; }
+    Kkdev92.HealthData.Models.Moods+Types+Moods VerySelfCritical { get; }
     Kkdev92.HealthData.Models.Moods+Types+Moods VeryStressed { get; }
     Kkdev92.HealthData.Models.Moods+Types+Moods Worried { get; }
     System.Boolean Equals(Kkdev92.HealthData.Models.Moods+Types+Moods other)
