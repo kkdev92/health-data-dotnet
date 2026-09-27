@@ -17,6 +17,13 @@ Dates are UTC, taken from when the packages went to nuget.org.
 
 ## [Unreleased]
 
+## [0.7.0-alpha] - 2026-09-27
+
+Generated from Google Health API `v4`, Discovery revision `20260923`. The public API gains the
+twelve `Moods.Types.Moods` values below and nothing else, and no behaviour of this package
+changed: the rest of the revision is Google's descriptions, which the generated documentation now
+carries.
+
 ### Added
 
 - Twelve known values on the open enum `Moods.Types.Moods`: `Depressed`, `Good`, `LowEnergy`,
@@ -464,7 +471,8 @@ First public build. Generated from Google Health API `v4`, Discovery revision `2
   reported as a bare status with the RFC 6749 reason discarded, which made the seven-day refresh
   expiry indistinguishable from a malformed request. Both were invisible to fixtures.
 
-[Unreleased]: https://github.com/kkdev92/health-data-dotnet/compare/v0.6.0-alpha...HEAD
+[Unreleased]: https://github.com/kkdev92/health-data-dotnet/compare/v0.7.0-alpha...HEAD
+[0.7.0-alpha]: https://github.com/kkdev92/health-data-dotnet/releases/tag/v0.7.0-alpha
 [0.6.0-alpha]: https://github.com/kkdev92/health-data-dotnet/releases/tag/v0.6.0-alpha
 [0.5.0-alpha]: https://github.com/kkdev92/health-data-dotnet/releases/tag/v0.5.0-alpha
 [0.4.0-alpha]: https://github.com/kkdev92/health-data-dotnet/releases/tag/v0.4.0-alpha
