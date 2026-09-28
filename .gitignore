@@ -101,8 +101,5 @@ application_default_credentials.json
 # Browser automation scratch output. Snapshots of whatever page was open, which is
 # nobody else's business and never part of a change.
 .playwright-cli/
-
-
-# ブラウザ操作ツールのローカル設定。成果物ではない。
+# The browser automation tool's local settings. Not part of any change.
 .playwright/
-.playwright-cli/
