@@ -209,8 +209,8 @@ internal static partial class ResourceNameResolver
     /// </para>
     /// <para>
     /// The <c>ies</c> rule is not speculative. <c>dataSourceFamilies</c> is in this contract's own
-    /// descriptions — <c>users/me/dataSourceFamilies/{data_source_family}</c> on reconcile and both
-    /// roll-ups — as a resource with no operations of its own yet. Stripping the trailing <c>s</c>
+    /// descriptions — <c>users/me/dataSourceFamilies/{data_source_family}</c> on list, reconcile and
+    /// both roll-ups — as a resource with no operations of its own yet. Stripping the trailing <c>s</c>
     /// produced <c>DataSourceFamilieName</c>, which compiles and ships and reads as a typo.
     /// </para>
     /// <para>

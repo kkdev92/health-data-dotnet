@@ -20,7 +20,7 @@ public sealed class ScopeClassificationTests
     [Fact]
     public void EveryScopeIsInExactlyOneList()
     {
-        // 23: twelve read, ten write, and cloud-platform. Discovery revision 20260923 declares 21 of
+        // 23: twelve read, ten write, and cloud-platform. Discovery revision 20260928 declares 21 of
         // them; semantics.json adds nutrition.readonly, which Discovery has never carried, and
         // location.writeonly, which it carried until revision 20260826 withdrew it while three
         // method reference pages went on documenting it. Asserted rather than derived, so a scope

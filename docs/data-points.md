@@ -158,6 +158,13 @@ device from the same vendor report the same platform. `DataSource` carries `Plat
 `RecordingMethod`, `Application` and `Device`, and it is `Device.DisplayName` that tells two
 devices apart.
 
+**A data source family narrows the set without making it one source.** `DataSourceFamily` on
+`ListDataPointsRequest` restricts a listing to one family —
+`users/me/dataSourceFamilies/google-wearables`, for instance, is Google and Fitbit tracker devices
+without manually logged data. Two trackers are still two sources in that one family, so their
+points can still overlap. The rules for the parameter are in
+[operations.md](operations.md#clientusersdatapoints).
+
 **Use a roll-up for the figure.** `RollUpAsync` and `DailyRollUpAsync` aggregate across sources
 and answer with one number for the person. Reach for `list` when the question is *which device*,
 not *how much*.

@@ -15,6 +15,7 @@ The ranking that decides which one wins when they disagree is in
 | Discovery document | <https://health.googleapis.com/$discovery/rest?version=v4> |
 | Data types | <https://developers.google.com/health/data-types> |
 | Endpoints | <https://developers.google.com/health/endpoints> |
+| Filters | <https://developers.google.com/health/filters> |
 | OAuth scopes | <https://developers.google.com/health/scopes> |
 | Setup and consent | <https://developers.google.com/health/setup> |
 | Error catalogue | <https://developers.google.com/health/reference/rest/v4/errors> |
@@ -28,7 +29,7 @@ specification file was derived from them:
 
 | Spec file | Derived from | Verified |
 |---|---|---|
-| `spec/v4/discovery.json` | The Discovery endpoint | Revision `20260923`, SHA-256 recorded in `metadata.json` |
+| `spec/v4/discovery.json` | The Discovery endpoint | Revision `20260928`, SHA-256 recorded in `metadata.json` |
 | `spec/v4/data-types.json` | The Data types page | 2026-08-09 |
 | `spec/v4/errors.json` | The error catalogue | 2026-08-09 |
 

@@ -17,6 +17,34 @@ Dates are UTC, taken from when the packages went to nuget.org.
 
 ## [Unreleased]
 
+### Added
+
+- `ListDataPointsRequest.DataSourceFamily`, sent as the `dataSourceFamily` query parameter that
+  Discovery revision `20260928` adds to `dataPoints.list`. It restricts a listing to one data
+  source family, given as a full resource name such as
+  `users/me/dataSourceFamilies/google-wearables`; the families are `all-sources` (the default),
+  `google-wearables`, `google-sources` and `self-sources`. `EnumerateAsync` keeps it on every page.
+  Left unset, nothing is sent, so existing calls are unchanged. Only Discovery documents the
+  parameter on `list` so far: the per-method reference page does not list it, and the Filters
+  guide names `reconcile`, `rollUp` and `dailyRollUp` as the operations that take a family.
+
+### Changed
+
+- Generated from Google Health API `v4`, Discovery revision `20260928`, up from `20260923`. The
+  public API gains `ListDataPointsRequest.DataSourceFamily` and nothing else; no operation, schema
+  or scope was added, removed or altered.
+- The generated documentation carries Google's rules for the new parameter. `list` now says what
+  `reconcile`, `rollUp` and `dailyRollUp` already did: a caller holding only a `.writeonly` scope
+  for the data type reads only the data it wrote itself. On the `sleep`, `food` and
+  `food-measurement-unit` data types, `list` cannot filter by family: a request that names one
+  fails with `INVALID_ARGUMENT`, and one that is restricted only by the caller's scopes fails with
+  `PERMISSION_DENIED`. These are the service's rules; this package does not check them before
+  sending a request.
+- `HeartRateVariability.Metadata` is no longer described as metadata used in first-party surfaces;
+  its documentation now reads "Additional information about the heart rate variability
+  measurement". The 0.5.0-alpha entry's expectation that a third-party token would not populate it
+  rested on the earlier wording.
+
 ## [0.7.0-alpha] - 2026-09-27
 
 Generated from Google Health API `v4`, Discovery revision `20260923`. The public API gains the

@@ -258,7 +258,7 @@ public sealed class ResourceNameTests
     /// <remarks>
     /// <para>
     /// Not hypothetical. <c>dataSourceFamilies</c> is in this contract already — it appears in the
-    /// description of <c>reconcile</c> and both roll-ups as
+    /// description of <c>list</c>, <c>reconcile</c> and both roll-ups as
     /// <c>users/me/dataSourceFamilies/{data_source_family}</c> — and it is a resource with no
     /// operations of its own yet. A revision that gives it one arrives here.
     /// </para>
