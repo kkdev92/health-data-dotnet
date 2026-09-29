@@ -2923,6 +2923,7 @@ class Kkdev92.HealthData.Requests.ListDataPointsRequest
     System.Boolean Equals(Kkdev92.HealthData.Requests.ListDataPointsRequest other)
     System.Boolean Equals(System.Object obj)
     System.Int32 GetHashCode()
+    System.String DataSourceFamily { get; set; }
     System.String Filter { get; set; }
     System.String PageToken { get; set; }
     System.String ToString()

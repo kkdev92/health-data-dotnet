@@ -211,17 +211,20 @@ public sealed class OperationContractTests
             new ListDataPointsRequest
             {
                 Parent = UserName.Me.DataType("heart-rate"),
+                DataSourceFamily = "users/me/dataSourceFamilies/google-wearables",
                 Filter = "start_time >= \"2026-08-01T00:00:00Z\"",
                 PageSize = 1000,
                 PageToken = "CBI",
             },
             TestContext.Current.CancellationToken);
 
+        // The family is a resource name; its slashes are escaped like any other query value.
         AssertRequest(
             handler,
             HttpMethod.Get,
             "v4/users/me/dataTypes/heart-rate/dataPoints" +
-            "?filter=start_time%20%3E%3D%20%222026-08-01T00%3A00%3A00Z%22&pageSize=1000&pageToken=CBI");
+            "?dataSourceFamily=users%2Fme%2FdataSourceFamilies%2Fgoogle-wearables" +
+            "&filter=start_time%20%3E%3D%20%222026-08-01T00%3A00%3A00Z%22&pageSize=1000&pageToken=CBI");
     }
 
     [Fact]

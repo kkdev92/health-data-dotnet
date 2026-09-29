@@ -123,7 +123,12 @@ public sealed class RuntimeBehaviourTests
         var names = new List<string>();
 
         await foreach (var point in client.Users.DataPoints.EnumerateAsync(
-            new ListDataPointsRequest { Parent = UserName.Me.DataType("steps"), PageSize = 2 },
+            new ListDataPointsRequest
+            {
+                Parent = UserName.Me.DataType("steps"),
+                DataSourceFamily = "users/me/dataSourceFamilies/google-wearables",
+                PageSize = 2,
+            },
             TestContext.Current.CancellationToken))
         {
             names.Add(point.Name!);
@@ -133,11 +138,17 @@ public sealed class RuntimeBehaviourTests
         Assert.Equal(3, handler.RequestedUrls.Count);
 
         // The first request carries no token; later requests carry the one the service returned,
-        // and every request keeps the caller's page size.
+        // and every request keeps the caller's page size and data source family.
         Assert.DoesNotContain("pageToken", handler.RequestedUrls[0], StringComparison.Ordinal);
         Assert.Contains("pageToken=T2", handler.RequestedUrls[1], StringComparison.Ordinal);
         Assert.Contains("pageToken=T3", handler.RequestedUrls[2], StringComparison.Ordinal);
         Assert.All(handler.RequestedUrls, url => Assert.Contains("pageSize=2", url, StringComparison.Ordinal));
+        Assert.All(
+            handler.RequestedUrls,
+            url => Assert.Contains(
+                "dataSourceFamily=users%2Fme%2FdataSourceFamilies%2Fgoogle-wearables",
+                url,
+                StringComparison.Ordinal));
     }
 
     [Fact]
