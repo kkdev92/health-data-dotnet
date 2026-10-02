@@ -17,6 +17,12 @@ Dates are UTC, taken from when the packages went to nuget.org.
 
 ## [Unreleased]
 
+## [0.9.0-alpha] - 2026-10-02
+
+Generated from Google Health API `v4`, Discovery revision `20261001`. One change is breaking:
+`HealthDataScopes.LocationWriteonly` is removed, because no Google source documents the scope any
+more. Otherwise the public API is unchanged, and four read operations accept two more scopes.
+
 ### Breaking
 
 - `HealthDataScopes.LocationWriteonly` is removed, and `HealthDataScopes.All` and
@@ -527,7 +533,8 @@ First public build. Generated from Google Health API `v4`, Discovery revision `2
   reported as a bare status with the RFC 6749 reason discarded, which made the seven-day refresh
   expiry indistinguishable from a malformed request. Both were invisible to fixtures.
 
-[Unreleased]: https://github.com/kkdev92/health-data-dotnet/compare/v0.8.0-alpha...HEAD
+[Unreleased]: https://github.com/kkdev92/health-data-dotnet/compare/v0.9.0-alpha...HEAD
+[0.9.0-alpha]: https://github.com/kkdev92/health-data-dotnet/releases/tag/v0.9.0-alpha
 [0.8.0-alpha]: https://github.com/kkdev92/health-data-dotnet/releases/tag/v0.8.0-alpha
 [0.7.0-alpha]: https://github.com/kkdev92/health-data-dotnet/releases/tag/v0.7.0-alpha
 [0.6.0-alpha]: https://github.com/kkdev92/health-data-dotnet/releases/tag/v0.6.0-alpha
