@@ -293,30 +293,34 @@ var tokens = await oauth.ExchangeCodeAsync(code, pkce, cancellationToken);
 ## Scopes
 
 Scopes come from the Discovery document plus the per-method reference pages, because **no single
-Google source lists them all.** All three were compared on 2026-08-12, the `location.writeonly`
-row again on 2026-08-31, and every row on 2026-09-29 against revision `20260928`:
+Google source lists them all.** All three were compared on 2026-08-12, and every row again on
+2026-10-02 against revision `20261001`:
 
 | Scope | Discovery | Per-method pages | Scopes guide |
 |---|---|---|---|
-| `googlehealth.location.writeonly` | ❌ withdrawn at revision `20260826` | ✅ `create`, `patch`, `batchDelete`; never `reconcile` | ❌ not listed |
 | `googlehealth.nutrition.readonly` | ❌ no operation declares it | ✅ 6 read operations | ✅ listed |
-| `googlehealth.ecg.readonly` · `irn.readonly` | ✅ but not on `dataPoints.list` | ✅ on `dataPoints.list` | ✅ listed |
-| `googlehealth.logged_symptoms.readonly` · `mindfulness.readonly` · `reproductive_health.readonly` | ✅ added at revision `20260909`, on every data point read and `users.getIdentity` | ❌ not listed | ❌ not listed |
+| `googlehealth.logged_symptoms.readonly` · `mindfulness.readonly` · `reproductive_health.readonly` | ✅ added at revision `20260909`, on every data point read and `users.getIdentity` | ✅ the same operations, since the pages were updated on 2026-10-01 | ❌ not listed |
 | `cloud-platform` | ✅ project administration | ✅ | ❌ (not an end-user scope) |
 
-The two sources omit each other's scopes in both directions, so an operation's accepted list is
-the **union** of them. That choice is asymmetric on purpose: a list that is too long makes a token
-provider offer a scope the service may refuse, which surfaces as a 403 on a call that was going to
-fail anyway — while a list that is too short means the provider is never told about a scope that
-would have worked. Only one of those can silently prevent a valid request.
+The two sources have omitted each other's scopes in both directions, so an operation's accepted
+list is the **union** of them. That choice is asymmetric on purpose: a list that is too long makes
+a token provider offer a scope the service may refuse, which surfaces as a 403 on a call that was
+going to fail anyway — while a list that is too short means the provider is never told about a
+scope that would have worked. Only one of those can silently prevent a valid request.
 
 `nutrition.readonly` is generated even though Discovery declares it nowhere. It is accepted by
 every read operation according to their own reference pages, and a scope with no constant is a
-scope callers cannot name. `location.writeonly` is now generated the same way, for the same reason:
-Discovery withdrew it at revision `20260826` while three method pages still document it, and
-dropping the constant would remove a scope Google still says it accepts. Because the Discovery snapshot is a verbatim, hash-checked copy, the
+scope callers cannot name. Because the Discovery snapshot is a verbatim, hash-checked copy, the
 addition is declared in `spec/v4/semantics.json` rather than edited into the snapshot. These are
 recorded [documentation conflicts](architecture.md#known-documentation-conflicts).
+
+The union reaches only as far as some source still documents a scope. `location.writeonly` was
+generated on the same basis as `nutrition.readonly` after Discovery withdrew it at revision
+`20260826`, because the reference pages for `create`, `patch` and `batchDelete` went on listing it.
+Those pages stopped when they were updated on 2026-10-01, and the Scopes guide never listed it, so
+no source documents it as accepted any more: no operation accepts it and `HealthDataScopes` has no
+constant for it. For GPS routes and location tracking, Google's Workouts guide lists
+`activity_and_fitness.writeonly` as the scope to write with.
 
 ### Which scopes to ask for
 
@@ -326,7 +330,7 @@ scope is which from its name:
 ```csharp
 HealthDataScopes.All         // every scope this contract declares
 HealthDataScopes.ReadOnly    // 12 - reads a person's data
-HealthDataScopes.WriteOnly   // 10 - adds, edits or deletes it
+HealthDataScopes.WriteOnly   // 9 - adds, edits or deletes it
 HealthDataScopes.Project     // cloud-platform, for the subscriber operations
 ```
 

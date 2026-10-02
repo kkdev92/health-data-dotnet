@@ -17,6 +17,28 @@ Dates are UTC, taken from when the packages went to nuget.org.
 
 ## [Unreleased]
 
+### Breaking
+
+- `HealthDataScopes.LocationWriteonly` is removed, and `HealthDataScopes.All` and
+  `HealthDataScopes.WriteOnly` no longer include `googlehealth.location.writeonly`. No operation
+  accepts it any more: `dataPoints.create`, `patch` and `batchDelete` no longer list it. Discovery
+  withdrew the scope at revision `20260826`, but the reference pages for those three operations
+  went on listing it, which is why 0.3.0-alpha kept the constant and said the decision would be
+  revisited if they stopped. They stopped when they were updated on 2026-10-01, and the Scopes guide
+  never listed it, so no Google source documents it as accepted. Code that names the constant no
+  longer compiles. For GPS routes and location tracking, Google's Workouts guide lists
+  `activity_and_fitness.writeonly` (`HealthDataScopes.ActivityAndFitnessWriteonly`) as the scope to
+  write with.
+
+### Changed
+
+- Generated from Google Health API `v4`, Discovery revision `20261001`, up from `20260928`. No
+  operation, schema or property changed.
+- `dataPoints.get`, `rollUp`, `dailyRollUp` and `reconcile` accept `ecg.readonly` and
+  `irn.readonly`, which Discovery revision `20260929` added to them and their reference pages now
+  list. `dataPoints.list` already accepted both. The scopes a token provider is given for those four
+  operations now include them.
+
 ## [0.8.0-alpha] - 2026-09-29
 
 Generated from Google Health API `v4`, Discovery revision `20260928`. The public API gains

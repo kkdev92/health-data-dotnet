@@ -108,7 +108,7 @@ var value = point.GetKind() switch
 | | |
 |---|---|
 | Google Health API version | `v4` |
-| Discovery revision | `20260928` |
+| Discovery revision | `20261001` |
 | Operations exposed | 25 of 27 |
 
 The Google Health API version and this package's version are **independent axes**. A new Google
