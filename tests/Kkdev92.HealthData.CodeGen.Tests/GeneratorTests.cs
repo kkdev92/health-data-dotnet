@@ -104,7 +104,7 @@ public sealed class GeneratorTests
         }
 
         // Seven write scopes on reconcile, not eight: Discovery revision 20260826 withdrew
-        // location.writeonly, and reconcile's page never listed it.
+        // location.writeonly, and reconcile's page did not list it either.
         var reconcile = contract.Operations
             .Single(op => op.Id == "health.users.dataTypes.dataPoints.reconcile");
 

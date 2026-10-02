@@ -317,7 +317,7 @@ recorded [documentation conflicts](architecture.md#known-documentation-conflicts
 The union reaches only as far as some source still documents a scope. `location.writeonly` was
 generated on the same basis as `nutrition.readonly` after Discovery withdrew it at revision
 `20260826`, because the reference pages for `create`, `patch` and `batchDelete` went on listing it.
-Those pages stopped when they were updated on 2026-10-01, and the Scopes guide never listed it, so
+Those pages stopped when they were updated on 2026-10-01, and the Scopes guide does not list it, so
 no source documents it as accepted any more: no operation accepts it and `HealthDataScopes` has no
 constant for it. For GPS routes and location tracking, Google's Workouts guide lists
 `activity_and_fitness.writeonly` as the scope to write with.

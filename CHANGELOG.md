@@ -25,7 +25,7 @@ Dates are UTC, taken from when the packages went to nuget.org.
   withdrew the scope at revision `20260826`, but the reference pages for those three operations
   went on listing it, which is why 0.3.0-alpha kept the constant and said the decision would be
   revisited if they stopped. They stopped when they were updated on 2026-10-01, and the Scopes guide
-  never listed it, so no Google source documents it as accepted. Code that names the constant no
+  does not list it, so no Google source documents it as accepted. Code that names the constant no
   longer compiles. For GPS routes and location tracking, Google's Workouts guide lists
   `activity_and_fitness.writeonly` (`HealthDataScopes.ActivityAndFitnessWriteonly`) as the scope to
   write with.
