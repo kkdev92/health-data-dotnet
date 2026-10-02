@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- https://learn.microsoft.com/dotnet/fundamentals/package-validation/diagnostic-ids -->
+<!--
+  HealthDataScopes.LocationWriteonly was removed on purpose. Discovery withdrew the scope at
+  revision 20260826, and the per-method reference pages that went on documenting it for
+  dataPoints create, patch and batchDelete have stopped, so no source documents it as accepted
+  any more. CHANGELOG.md records it as a breaking change.
+
+  This is needed only while the validation baseline is a release that still had the constant.
+  Delete the file in the release that moves PackageValidationBaselineVersion to 0.9.0-alpha or
+  later: package validation fails on a suppression that no longer matches anything.
+-->
+<Suppressions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>F:Kkdev92.HealthData.HealthDataScopes.LocationWriteonly</Target>
+    <Left>lib/net10.0/Kkdev92.HealthData.dll</Left>
+    <Right>lib/net10.0/Kkdev92.HealthData.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+</Suppressions>

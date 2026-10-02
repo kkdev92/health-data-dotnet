@@ -227,7 +227,6 @@ static class Kkdev92.HealthData.HealthDataScopes
     const System.String HealthMetricsAndMeasurementsWriteonly
     const System.String IrnReadonly
     const System.String LocationReadonly
-    const System.String LocationWriteonly
     const System.String LoggedSymptomsReadonly
     const System.String LoggedSymptomsWriteonly
     const System.String MindfulnessReadonly

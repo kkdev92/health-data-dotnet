@@ -69,27 +69,27 @@ public sealed class GeneratorTests
     [Fact]
     public void EveryOperationAcceptsAtLeastWhatItsPerMethodPageLists()
     {
-        // Discovery is not complete, and neither are the reference pages. Compared against the
-        // per-method pages on 2026-08-31, six operations accept scopes Discovery does not declare
-        // for them, while Discovery declares writeonly scopes for the read operations that no page
-        // lists. The union is what gets generated, so this pins both directions at once — the
-        // failure that matters is a scope quietly disappearing from an accepted list.
+        // Discovery is not complete, and neither are the reference pages. nutrition.readonly is on
+        // the page of every operation below and in no Discovery entry, while for more than a
+        // month Discovery declared writeonly scopes for the read operations that no page listed.
+        // The union is what gets generated, so this pins both directions at once — the failure
+        // that matters is a scope quietly disappearing from an accepted list.
         //
         // The counts grew at revision 20260826, which added seven writeonly scopes to each read
-        // operation, and again at 20260909, which added logged_symptoms.readonly,
-        // mindfulness.readonly and reproductive_health.readonly to all six. No reference page lists
-        // that second group yet. reconcile went the other way: location.writeonly left Discovery,
-        // and its page never listed it, so with no source left it is no longer accepted there.
+        // operation, at 20260909, which added logged_symptoms.readonly, mindfulness.readonly and
+        // reproductive_health.readonly to all six, and at 20260929, which added ecg.readonly and
+        // irn.readonly to the five data-point reads — list's page already listed those two. The
+        // pages caught up with Discovery on 2026-10-01.
         var spec = SpecLoader.Load(RepositoryRoot.Value, "v4");
         var contract = DiscoveryParser.Parse(spec);
 
         var expected = new Dictionary<string, int>(StringComparer.Ordinal)
         {
             ["health.users.dataTypes.dataPoints.list"] = 17,
-            ["health.users.dataTypes.dataPoints.get"] = 15,
-            ["health.users.dataTypes.dataPoints.rollUp"] = 15,
-            ["health.users.dataTypes.dataPoints.dailyRollUp"] = 15,
-            ["health.users.dataTypes.dataPoints.reconcile"] = 15,
+            ["health.users.dataTypes.dataPoints.get"] = 17,
+            ["health.users.dataTypes.dataPoints.rollUp"] = 17,
+            ["health.users.dataTypes.dataPoints.dailyRollUp"] = 17,
+            ["health.users.dataTypes.dataPoints.reconcile"] = 17,
             ["health.users.getIdentity"] = 11,
         };
 
@@ -103,24 +103,37 @@ public sealed class GeneratorTests
                 operation.Scopes);
         }
 
-        // reconcile must keep the write scopes its page leaves out. Seven, not eight: Discovery
-        // revision 20260826 withdrew location.writeonly, and unlike create, patch and batchDelete
-        // — whose pages still list it — reconcile's page never did.
+        // Seven write scopes on reconcile, not eight: Discovery revision 20260826 withdrew
+        // location.writeonly, and reconcile's page did not list it either.
         var reconcile = contract.Operations
             .Single(op => op.Id == "health.users.dataTypes.dataPoints.reconcile");
 
         Assert.Equal(7, reconcile.Scopes.Count(s => s.EndsWith(".writeonly", StringComparison.Ordinal)));
-        Assert.DoesNotContain("https://www.googleapis.com/auth/googlehealth.location.writeonly", reconcile.Scopes);
+    }
 
-        // The three write operations keep it, because their pages still document it and the
-        // per-method reference outranks Discovery. Dropping the constant would be a breaking
-        // change made on one source of two.
+    [Fact]
+    public void AScopeNoSourceListsAnyMoreIsNeitherAcceptedNorGenerated()
+    {
+        // location.writeonly rested on the pages of create, patch and batchDelete alone after
+        // Discovery revision 20260826 withdrew it, and was kept on that basis. Those pages stopped
+        // listing it on 2026-10-01, so no source documents it as accepted anywhere. A token
+        // provider told about it would offer a scope the service does not accept, and a caller
+        // asking for every write scope would ask Google for one it no longer documents.
+        const string withdrawn = "https://www.googleapis.com/auth/googlehealth.location.writeonly";
+
+        var spec = SpecLoader.Load(RepositoryRoot.Value, "v4");
+        var contract = DiscoveryParser.Parse(spec);
+
+        Assert.DoesNotContain(contract.Operations, op => op.Scopes.Contains(withdrawn));
+        Assert.DoesNotContain(contract.Scopes, scope => scope.Url == withdrawn);
+
         foreach (var id in new[] { "create", "patch", "batchDelete" })
         {
             var operation = contract.Operations
                 .Single(op => op.Id == $"health.users.dataTypes.dataPoints.{id}");
 
-            Assert.Contains("https://www.googleapis.com/auth/googlehealth.location.writeonly", operation.Scopes);
+            Assert.Equal(7, operation.Scopes.Count);
+            Assert.All(operation.Scopes, s => Assert.EndsWith(".writeonly", s, StringComparison.Ordinal));
         }
     }
 
@@ -138,7 +151,7 @@ public sealed class GeneratorTests
 
         Assert.Equal("NutritionReadonly", nutrition.CSharpName);
         Assert.Equal("See your Google Health nutrition data.", nutrition.Description);
-        Assert.Equal(23, contract.Scopes.Count);
+        Assert.Equal(22, contract.Scopes.Count);
     }
 
     [Fact]
@@ -255,7 +268,7 @@ public sealed class GeneratorTests
         foreach (var file in files)
         {
             Assert.StartsWith("// <auto-generated />", file.Content, StringComparison.Ordinal);
-            Assert.Contains("Discovery revision: 20260928", file.Content, StringComparison.Ordinal);
+            Assert.Contains("Discovery revision: 20261001", file.Content, StringComparison.Ordinal);
             Assert.Contains(spec.DiscoverySha256, file.Content, StringComparison.Ordinal);
 
             // No machine path may leak into generated source.

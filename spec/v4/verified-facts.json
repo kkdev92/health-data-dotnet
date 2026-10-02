@@ -15,7 +15,7 @@
     "all is reported as unreadable rather than as a change, since 'no scopes found' is much more",
     "likely to mean the check broke than that Google removed authorization."
   ],
-  "verifiedOn": "2026-08-31",
+  "verifiedOn": "2026-10-02",
   "methods": [
     {
       "operation": "health.users.dataTypes.dataPoints.exportExerciseTcx",
@@ -34,12 +34,22 @@
       "url": "https://developers.google.com/health/reference/rest/v4/users.dataTypes.dataPoints/list",
       "scopes": [
         "https://www.googleapis.com/auth/googlehealth.activity_and_fitness.readonly",
+        "https://www.googleapis.com/auth/googlehealth.activity_and_fitness.writeonly",
         "https://www.googleapis.com/auth/googlehealth.ecg.readonly",
         "https://www.googleapis.com/auth/googlehealth.health_metrics_and_measurements.readonly",
+        "https://www.googleapis.com/auth/googlehealth.health_metrics_and_measurements.writeonly",
         "https://www.googleapis.com/auth/googlehealth.irn.readonly",
         "https://www.googleapis.com/auth/googlehealth.location.readonly",
+        "https://www.googleapis.com/auth/googlehealth.logged_symptoms.readonly",
+        "https://www.googleapis.com/auth/googlehealth.logged_symptoms.writeonly",
+        "https://www.googleapis.com/auth/googlehealth.mindfulness.readonly",
+        "https://www.googleapis.com/auth/googlehealth.mindfulness.writeonly",
         "https://www.googleapis.com/auth/googlehealth.nutrition.readonly",
-        "https://www.googleapis.com/auth/googlehealth.sleep.readonly"
+        "https://www.googleapis.com/auth/googlehealth.nutrition.writeonly",
+        "https://www.googleapis.com/auth/googlehealth.reproductive_health.readonly",
+        "https://www.googleapis.com/auth/googlehealth.reproductive_health.writeonly",
+        "https://www.googleapis.com/auth/googlehealth.sleep.readonly",
+        "https://www.googleapis.com/auth/googlehealth.sleep.writeonly"
       ]
     },
     {
@@ -47,10 +57,22 @@
       "url": "https://developers.google.com/health/reference/rest/v4/users.dataTypes.dataPoints/get",
       "scopes": [
         "https://www.googleapis.com/auth/googlehealth.activity_and_fitness.readonly",
+        "https://www.googleapis.com/auth/googlehealth.activity_and_fitness.writeonly",
+        "https://www.googleapis.com/auth/googlehealth.ecg.readonly",
         "https://www.googleapis.com/auth/googlehealth.health_metrics_and_measurements.readonly",
+        "https://www.googleapis.com/auth/googlehealth.health_metrics_and_measurements.writeonly",
+        "https://www.googleapis.com/auth/googlehealth.irn.readonly",
         "https://www.googleapis.com/auth/googlehealth.location.readonly",
+        "https://www.googleapis.com/auth/googlehealth.logged_symptoms.readonly",
+        "https://www.googleapis.com/auth/googlehealth.logged_symptoms.writeonly",
+        "https://www.googleapis.com/auth/googlehealth.mindfulness.readonly",
+        "https://www.googleapis.com/auth/googlehealth.mindfulness.writeonly",
         "https://www.googleapis.com/auth/googlehealth.nutrition.readonly",
-        "https://www.googleapis.com/auth/googlehealth.sleep.readonly"
+        "https://www.googleapis.com/auth/googlehealth.nutrition.writeonly",
+        "https://www.googleapis.com/auth/googlehealth.reproductive_health.readonly",
+        "https://www.googleapis.com/auth/googlehealth.reproductive_health.writeonly",
+        "https://www.googleapis.com/auth/googlehealth.sleep.readonly",
+        "https://www.googleapis.com/auth/googlehealth.sleep.writeonly"
       ]
     },
     {
@@ -58,10 +80,22 @@
       "url": "https://developers.google.com/health/reference/rest/v4/users.dataTypes.dataPoints/rollUp",
       "scopes": [
         "https://www.googleapis.com/auth/googlehealth.activity_and_fitness.readonly",
+        "https://www.googleapis.com/auth/googlehealth.activity_and_fitness.writeonly",
+        "https://www.googleapis.com/auth/googlehealth.ecg.readonly",
         "https://www.googleapis.com/auth/googlehealth.health_metrics_and_measurements.readonly",
+        "https://www.googleapis.com/auth/googlehealth.health_metrics_and_measurements.writeonly",
+        "https://www.googleapis.com/auth/googlehealth.irn.readonly",
         "https://www.googleapis.com/auth/googlehealth.location.readonly",
+        "https://www.googleapis.com/auth/googlehealth.logged_symptoms.readonly",
+        "https://www.googleapis.com/auth/googlehealth.logged_symptoms.writeonly",
+        "https://www.googleapis.com/auth/googlehealth.mindfulness.readonly",
+        "https://www.googleapis.com/auth/googlehealth.mindfulness.writeonly",
         "https://www.googleapis.com/auth/googlehealth.nutrition.readonly",
-        "https://www.googleapis.com/auth/googlehealth.sleep.readonly"
+        "https://www.googleapis.com/auth/googlehealth.nutrition.writeonly",
+        "https://www.googleapis.com/auth/googlehealth.reproductive_health.readonly",
+        "https://www.googleapis.com/auth/googlehealth.reproductive_health.writeonly",
+        "https://www.googleapis.com/auth/googlehealth.sleep.readonly",
+        "https://www.googleapis.com/auth/googlehealth.sleep.writeonly"
       ]
     },
     {
@@ -69,10 +103,22 @@
       "url": "https://developers.google.com/health/reference/rest/v4/users.dataTypes.dataPoints/dailyRollUp",
       "scopes": [
         "https://www.googleapis.com/auth/googlehealth.activity_and_fitness.readonly",
+        "https://www.googleapis.com/auth/googlehealth.activity_and_fitness.writeonly",
+        "https://www.googleapis.com/auth/googlehealth.ecg.readonly",
         "https://www.googleapis.com/auth/googlehealth.health_metrics_and_measurements.readonly",
+        "https://www.googleapis.com/auth/googlehealth.health_metrics_and_measurements.writeonly",
+        "https://www.googleapis.com/auth/googlehealth.irn.readonly",
         "https://www.googleapis.com/auth/googlehealth.location.readonly",
+        "https://www.googleapis.com/auth/googlehealth.logged_symptoms.readonly",
+        "https://www.googleapis.com/auth/googlehealth.logged_symptoms.writeonly",
+        "https://www.googleapis.com/auth/googlehealth.mindfulness.readonly",
+        "https://www.googleapis.com/auth/googlehealth.mindfulness.writeonly",
         "https://www.googleapis.com/auth/googlehealth.nutrition.readonly",
-        "https://www.googleapis.com/auth/googlehealth.sleep.readonly"
+        "https://www.googleapis.com/auth/googlehealth.nutrition.writeonly",
+        "https://www.googleapis.com/auth/googlehealth.reproductive_health.readonly",
+        "https://www.googleapis.com/auth/googlehealth.reproductive_health.writeonly",
+        "https://www.googleapis.com/auth/googlehealth.sleep.readonly",
+        "https://www.googleapis.com/auth/googlehealth.sleep.writeonly"
       ]
     },
     {
@@ -80,12 +126,24 @@
       "url": "https://developers.google.com/health/reference/rest/v4/users.dataTypes.dataPoints/reconcile",
       "scopes": [
         "https://www.googleapis.com/auth/googlehealth.activity_and_fitness.readonly",
+        "https://www.googleapis.com/auth/googlehealth.activity_and_fitness.writeonly",
+        "https://www.googleapis.com/auth/googlehealth.ecg.readonly",
         "https://www.googleapis.com/auth/googlehealth.health_metrics_and_measurements.readonly",
+        "https://www.googleapis.com/auth/googlehealth.health_metrics_and_measurements.writeonly",
+        "https://www.googleapis.com/auth/googlehealth.irn.readonly",
         "https://www.googleapis.com/auth/googlehealth.location.readonly",
+        "https://www.googleapis.com/auth/googlehealth.logged_symptoms.readonly",
+        "https://www.googleapis.com/auth/googlehealth.logged_symptoms.writeonly",
+        "https://www.googleapis.com/auth/googlehealth.mindfulness.readonly",
+        "https://www.googleapis.com/auth/googlehealth.mindfulness.writeonly",
         "https://www.googleapis.com/auth/googlehealth.nutrition.readonly",
-        "https://www.googleapis.com/auth/googlehealth.sleep.readonly"
+        "https://www.googleapis.com/auth/googlehealth.nutrition.writeonly",
+        "https://www.googleapis.com/auth/googlehealth.reproductive_health.readonly",
+        "https://www.googleapis.com/auth/googlehealth.reproductive_health.writeonly",
+        "https://www.googleapis.com/auth/googlehealth.sleep.readonly",
+        "https://www.googleapis.com/auth/googlehealth.sleep.writeonly"
       ],
-      "note": "This page lists five readonly scopes. Discovery declares twelve for the same operation, adding eight writeonly ones the page omits. The generated set is the union of both; the page shrinking further is expected, not a signal to drop scopes."
+      "note": "This page listed five readonly scopes until it was updated on 2026-10-01, while Discovery declared the writeonly and Women's Health readonly scopes for the same operation. It now lists seventeen: everything Discovery revision 20261001 declares, plus nutrition.readonly. The generated set is the union of both. A page that shrinks is a question to look at rather than a signal to drop scopes on its own, because this one left out scopes Discovery declared for more than a month."
     },
     {
       "operation": "health.users.getIdentity",
@@ -95,8 +153,11 @@
         "https://www.googleapis.com/auth/googlehealth.ecg.readonly",
         "https://www.googleapis.com/auth/googlehealth.health_metrics_and_measurements.readonly",
         "https://www.googleapis.com/auth/googlehealth.irn.readonly",
+        "https://www.googleapis.com/auth/googlehealth.logged_symptoms.readonly",
+        "https://www.googleapis.com/auth/googlehealth.mindfulness.readonly",
         "https://www.googleapis.com/auth/googlehealth.nutrition.readonly",
         "https://www.googleapis.com/auth/googlehealth.profile.readonly",
+        "https://www.googleapis.com/auth/googlehealth.reproductive_health.readonly",
         "https://www.googleapis.com/auth/googlehealth.settings.readonly",
         "https://www.googleapis.com/auth/googlehealth.sleep.readonly"
       ],
@@ -108,14 +169,13 @@
       "scopes": [
         "https://www.googleapis.com/auth/googlehealth.activity_and_fitness.writeonly",
         "https://www.googleapis.com/auth/googlehealth.health_metrics_and_measurements.writeonly",
-        "https://www.googleapis.com/auth/googlehealth.location.writeonly",
         "https://www.googleapis.com/auth/googlehealth.logged_symptoms.writeonly",
         "https://www.googleapis.com/auth/googlehealth.mindfulness.writeonly",
         "https://www.googleapis.com/auth/googlehealth.nutrition.writeonly",
         "https://www.googleapis.com/auth/googlehealth.reproductive_health.writeonly",
         "https://www.googleapis.com/auth/googlehealth.sleep.writeonly"
       ],
-      "note": "Watched because location.writeonly now rests on this page alone. Discovery revision 20260826 withdrew the scope; this page still lists it, and the SDK keeps the constant on that basis. If the page stops listing it, the constant has no source left and the decision has to be revisited."
+      "note": "Watched because location.writeonly rested on this page alone after Discovery revision 20260826 withdrew it. The page stopped listing it when it was updated on 2026-10-01, the decision was revisited, and the SDK no longer generates the scope. If it reappears here or in Discovery, that is a question to look at again."
     },
     {
       "operation": "health.users.dataTypes.dataPoints.patch",
@@ -123,14 +183,13 @@
       "scopes": [
         "https://www.googleapis.com/auth/googlehealth.activity_and_fitness.writeonly",
         "https://www.googleapis.com/auth/googlehealth.health_metrics_and_measurements.writeonly",
-        "https://www.googleapis.com/auth/googlehealth.location.writeonly",
         "https://www.googleapis.com/auth/googlehealth.logged_symptoms.writeonly",
         "https://www.googleapis.com/auth/googlehealth.mindfulness.writeonly",
         "https://www.googleapis.com/auth/googlehealth.nutrition.writeonly",
         "https://www.googleapis.com/auth/googlehealth.reproductive_health.writeonly",
         "https://www.googleapis.com/auth/googlehealth.sleep.writeonly"
       ],
-      "note": "Watched because location.writeonly now rests on this page alone. Discovery revision 20260826 withdrew the scope; this page still lists it, and the SDK keeps the constant on that basis. If the page stops listing it, the constant has no source left and the decision has to be revisited."
+      "note": "Watched because location.writeonly rested on this page alone after Discovery revision 20260826 withdrew it. The page stopped listing it when it was updated on 2026-10-01, the decision was revisited, and the SDK no longer generates the scope. If it reappears here or in Discovery, that is a question to look at again."
     },
     {
       "operation": "health.users.dataTypes.dataPoints.batchDelete",
@@ -138,14 +197,13 @@
       "scopes": [
         "https://www.googleapis.com/auth/googlehealth.activity_and_fitness.writeonly",
         "https://www.googleapis.com/auth/googlehealth.health_metrics_and_measurements.writeonly",
-        "https://www.googleapis.com/auth/googlehealth.location.writeonly",
         "https://www.googleapis.com/auth/googlehealth.logged_symptoms.writeonly",
         "https://www.googleapis.com/auth/googlehealth.mindfulness.writeonly",
         "https://www.googleapis.com/auth/googlehealth.nutrition.writeonly",
         "https://www.googleapis.com/auth/googlehealth.reproductive_health.writeonly",
         "https://www.googleapis.com/auth/googlehealth.sleep.writeonly"
       ],
-      "note": "Watched because location.writeonly now rests on this page alone. Discovery revision 20260826 withdrew the scope; this page still lists it, and the SDK keeps the constant on that basis. If the page stops listing it, the constant has no source left and the decision has to be revisited."
+      "note": "Watched because location.writeonly rested on this page alone after Discovery revision 20260826 withdrew it. The page stopped listing it when it was updated on 2026-10-01, the decision was revisited, and the SDK no longer generates the scope. If it reappears here or in Discovery, that is a question to look at again."
     }
   ],
   "guides": [

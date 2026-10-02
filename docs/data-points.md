@@ -277,8 +277,9 @@ records both per type for exactly this reason.
 Results come back **ordered by interval start time, descending**.
 
 `ReconcileAsync` returns `ReconciledDataPoint` values — the merged view across sources. It is a
-**GET** with no side effects despite the `:reconcile` verb, and it accepts any one of all thirteen
-read and write scopes, because it reconciles across all of them.
+**GET** with no side effects despite the `:reconcile` verb, and it accepts the same scopes as the
+other reads: any one of the seventeen in the read group in
+[operations.md](operations.md#clientusersdatapoints).
 
 ## Writing
 

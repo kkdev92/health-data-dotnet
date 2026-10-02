@@ -1,6 +1,6 @@
 # Operations
 
-The 25 operations this SDK exposes from Google Health API `v4`, Discovery revision `20260928`.
+The 25 operations this SDK exposes from Google Health API `v4`, Discovery revision `20261001`.
 
 This table is maintained by hand from the committed snapshot. The descriptors it describes are
 generated — they are available at runtime on `HealthDataGeneratedOperations`, and those cannot
@@ -76,13 +76,16 @@ Scope groups:
 
 | Group | Scopes | Used by |
 |---|---|---|
-| read | the eight `.readonly` scopes — `activity_and_fitness` · `health_metrics_and_measurements` · `location` · `logged_symptoms` · `mindfulness` · `nutrition` · `reproductive_health` · `sleep` — and every `.writeonly` one except `location.writeonly`; fifteen in all | `Get`, `RollUp`, `DailyRollUp`, `Reconcile` |
-| read, wider | the fifteen above plus `ecg.readonly` and `irn.readonly` | `List` |
-| write | `activity_and_fitness` · `health_metrics_and_measurements` · `location` · `logged_symptoms` · `mindfulness` · `nutrition` · `reproductive_health` · `sleep`, all `.writeonly` | `Create`, `Patch`, `BatchDelete` |
+| read | the ten `.readonly` scopes for data — `activity_and_fitness` · `ecg` · `health_metrics_and_measurements` · `irn` · `location` · `logged_symptoms` · `mindfulness` · `nutrition` · `reproductive_health` · `sleep` — and the seven `.writeonly` scopes of the write group; seventeen in all | `Get`, `List`, `RollUp`, `DailyRollUp`, `Reconcile` |
+| write | `activity_and_fitness` · `health_metrics_and_measurements` · `logged_symptoms` · `mindfulness` · `nutrition` · `reproductive_health` · `sleep`, all `.writeonly` | `Create`, `Patch`, `BatchDelete` |
 | TCX | `activity_and_fitness.readonly` **and** `location.readonly` | `ExportExerciseTcx` |
 
 Read operations accept the `.writeonly` scopes as well — Discovery added them at revision
-`20260826` — and the three Women's Health `.readonly` scopes arrived at revision `20260909`.
+`20260826` — the three Women's Health `.readonly` scopes arrived at revision `20260909`, and
+`ecg.readonly` and `irn.readonly`, which `List` already accepted, reached the other four at
+revision `20260929`. The per-method reference pages have listed all of them since they were
+updated on 2026-10-01. No operation accepts `location.writeonly` any more;
+[authentication.md](authentication.md#scopes) says why.
 
 On `List`, `Reconcile`, `RollUp` and `DailyRollUp`, a caller that holds only a `.writeonly` scope
 for the data type reads only the data it wrote itself. Discovery says so on their
@@ -90,15 +93,16 @@ for the data type reads only the data it wrote itself. Discovery says so on thei
 is implicitly restricted to `users/me/dataSourceFamilies/self-sources` — data points whose data
 source was registered through this API with the caller's OAuth client ID — and naming any other
 family fails with `PERMISSION_DENIED`. A family that matches no data points returns an empty list,
-not an error. The per-method reference pages do not say this yet.
+not an error. The per-method reference pages have said so too since they were updated on
+2026-10-01.
 
 `List` cannot filter by family on the `sleep`, `food` and `food-measurement-unit` data types: the
 request fails with `INVALID_ARGUMENT` when it names a family, and with `PERMISSION_DENIED` when the
 restriction is only implied by the caller's scopes, so a caller that holds only the `.writeonly`
 scope for one of them cannot list it at all. For `sleep`, Discovery points to `Reconcile` instead.
-Only Discovery documents the parameter on `List` so far: its per-method reference page does not
-list it, and the [Filters guide](https://developers.google.com/health/filters) names `Reconcile`,
-`RollUp` and `DailyRollUp` as the operations that take a family.
+The per-method reference page has documented the parameter on `List`, these rules included, since
+it was updated on 2026-10-01; the [Filters guide](https://developers.google.com/health/filters)
+still names only `Reconcile`, `RollUp` and `DailyRollUp` as the operations that take a family.
 
 A Discovery `scopes` array means **any one** of the listed scopes is accepted, not all of them —
 with a single documented exception. `ExportExerciseTcx` needs both of its scopes together, which
