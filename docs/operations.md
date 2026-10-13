@@ -1,6 +1,6 @@
 # Operations
 
-The 25 operations this SDK exposes from Google Health API `v4`, Discovery revision `20261001`.
+The 25 operations this SDK exposes from Google Health API `v4`, Discovery revision `20261012`.
 
 This table is maintained by hand from the committed snapshot. The descriptors it describes are
 generated — they are available at runtime on `HealthDataGeneratedOperations`, and those cannot
@@ -101,8 +101,8 @@ request fails with `INVALID_ARGUMENT` when it names a family, and with `PERMISSI
 restriction is only implied by the caller's scopes, so a caller that holds only the `.writeonly`
 scope for one of them cannot list it at all. For `sleep`, Discovery points to `Reconcile` instead.
 The per-method reference page has documented the parameter on `List`, these rules included, since
-it was updated on 2026-10-01; the [Filters guide](https://developers.google.com/health/filters)
-still names only `Reconcile`, `RollUp` and `DailyRollUp` as the operations that take a family.
+it was updated on 2026-10-01, and the [Filters guide](https://developers.google.com/health/filters)
+has named `List` beside `Reconcile`, `RollUp` and `DailyRollUp` since it was updated on 2026-10-02.
 
 A Discovery `scopes` array means **any one** of the listed scopes is accepted, not all of them —
 with a single documented exception. `ExportExerciseTcx` needs both of its scopes together, which
@@ -125,9 +125,9 @@ Things worth knowing, each verified against Discovery rather than a guide:
 - `RollUp` carries its page size and token **inside the request body** rather than the query. It
   still gets an `EnumerateAsync` helper: where the cursor travels is a detail of the request, and
   its response returns a next page token like any other list.
-- `DailyRollUp` accepts a page token and its response **never returns one**, so it is the one
-  operation with no `EnumerateAsync`. There is nothing to follow. The generated model says so on
-  the property itself.
+- `DailyRollUp` pages the same way, inside the request body, and gets an `EnumerateAsync` helper
+  too. Its response has declared a next page token since revision `20261002`; before then it
+  declared none and there was no helper. The per-method reference does not show the token yet.
 
 ## `client.Users.PairedDevices`
 

@@ -704,7 +704,7 @@
                   ],
                   "parameters": {
                     "parent": {
-                      "description": "Optional. Parent (data type) for the Data Point collection Format: \u0060users/me/dataTypes/{data_type}\u0060, e.g.: - \u0060users/me/dataTypes/steps\u0060 - \u0060users/me/dataTypes/-\u0060 For a list of the supported data types see the DataPoint data union field. Deleting data points across multiple data type collections is supported following https://aip.dev/159. If this is set, the parent of all of the data points specified in \u0060names\u0060 must match this field.",
+                      "description": "Optional. Parent (data type) for the Data Point collection Format: \u0060users/{user}/dataTypes/{data_type}\u0060, e.g.: - \u0060users/me/dataTypes/steps\u0060 - \u0060users/1234567890/dataTypes/steps\u0060 - \u0060users/me/dataTypes/-\u0060 - \u0060users/1234567890/dataTypes/-\u0060 The \u0060{user}\u0060 can be either the alias \u0060me\u0060 or the authenticated user\u0027s numeric Health User ID (retrieved via GetIdentity). For a list of the supported data types see the DataPoint data union field. Deleting data points across multiple data type collections is supported following https://aip.dev/159. If this is set, the parent of all of the data points specified in \u0060names\u0060 must match this field.",
                       "location": "path",
                       "pattern": "^users/[^/]\u002B/dataTypes/[^/]\u002B$",
                       "required": true,
@@ -738,7 +738,7 @@
                   ],
                   "parameters": {
                     "parent": {
-                      "description": "Required. The parent resource name where the data point will be created. Format: \u0060users/{user}/dataTypes/{data_type}\u0060",
+                      "description": "Required. The parent resource name where the data point will be created. Format: \u0060users/{user}/dataTypes/{data_type}\u0060, e.g.: - \u0060users/me/dataTypes/steps\u0060 - \u0060users/1234567890/dataTypes/steps\u0060 The \u0060{user}\u0060 can be either the alias \u0060me\u0060 or the authenticated user\u0027s numeric Health User ID (retrieved via GetIdentity).",
                       "location": "path",
                       "pattern": "^users/[^/]\u002B/dataTypes/[^/]\u002B$",
                       "required": true,
@@ -772,7 +772,7 @@
                   ],
                   "parameters": {
                     "parent": {
-                      "description": "Required. Parent data type of the Data Point collection. Format: \u0060users/{user}/dataTypes/{data_type}\u0060, e.g.: - \u0060users/me/dataTypes/steps\u0060 - \u0060users/me/dataTypes/distance\u0060 For a list of the supported data types see the DailyRollupDataPoint value union field.",
+                      "description": "Required. Parent data type of the Data Point collection. Format: \u0060users/{user}/dataTypes/{data_type}\u0060, e.g.: - \u0060users/me/dataTypes/steps\u0060 - \u0060users/1234567890/dataTypes/steps\u0060 - \u0060users/me/dataTypes/distance\u0060 - \u0060users/1234567890/dataTypes/distance\u0060 The \u0060{user}\u0060 can be either the alias \u0060me\u0060 or the authenticated user\u0027s numeric Health User ID (retrieved via GetIdentity). For a list of the supported data types see the DailyRollupDataPoint value union field.",
                       "location": "path",
                       "pattern": "^users/[^/]\u002B/dataTypes/[^/]\u002B$",
                       "required": true,
@@ -806,7 +806,7 @@
                   ]
                 },
                 "exportExerciseTcx": {
-                  "description": "Exports exercise data in TCX format. **IMPORTANT:** HTTP clients must append \u0060?alt=media\u0060 to the request URL to download the raw TCX file. Example: \u0060https://health.googleapis.com/v4/users/me/dataTypes/exercise/dataPoints/EXERCISE_ID:exportExerciseTcx?alt=media\u0060 Without \u0060alt=media\u0060, the server returns a JSON response (\u0060ExportExerciseTcxResponse\u0060) which is intended primarily for gRPC clients. **Note:** While the Authorization section below states that any one of the listed scopes is accepted, this specific method requires the user to provide both one of the \u0060activity_and_fitness\u0060 scopes (\u0060normal\u0060 or \u0060readonly\u0060) AND one of the \u0060location\u0060 scopes (\u0060normal\u0060 or \u0060readonly\u0060) in their access token to succeed.",
+                  "description": "Exports exercise data in TCX format. **IMPORTANT:** HTTP clients must append \u0060?alt=media\u0060 to the request URL to download the raw TCX file. ## Examples: ## \u0060https://health.googleapis.com/v4/users/me/dataTypes/exercise/dataPoints/EXERCISE_ID:exportExerciseTcx?alt=media\u0060 \u0060https://health.googleapis.com/v4/users/1234567890/dataTypes/exercise/dataPoints/EXERCISE_ID:exportExerciseTcx?alt=media\u0060 Without \u0060alt=media\u0060, the server returns a JSON response (\u0060ExportExerciseTcxResponse\u0060) which is intended primarily for gRPC clients. **Note:** While the Authorization section below states that any one of the listed scopes is accepted, this specific method requires the user to provide both one of the \u0060activity_and_fitness\u0060 scopes (\u0060normal\u0060 or \u0060readonly\u0060) AND one of the \u0060location\u0060 scopes (\u0060normal\u0060 or \u0060readonly\u0060) in their access token to succeed.",
                   "flatPath": "v4/users/{usersId}/dataTypes/{dataTypesId}/dataPoints/{dataPointsId}:exportExerciseTcx",
                   "httpMethod": "GET",
                   "id": "health.users.dataTypes.dataPoints.exportExerciseTcx",
@@ -815,7 +815,7 @@
                   ],
                   "parameters": {
                     "name": {
-                      "description": "Required. The resource name of the exercise data point to export. Format: \u0060users/{user}/dataTypes/exercise/dataPoints/{data_point}\u0060 Example: \u0060users/me/dataTypes/exercise/dataPoints/2026443605080188808\u0060 The \u0060{user}\u0060 is the alias \u0060\u0022me\u0022\u0060 currently. Future versions may support user IDs. The \u0060{data_point}\u0060 ID maps to the exercise ID, which is a long integer.",
+                      "description": "Required. The resource name of the exercise data point to export. Format: \u0060users/{user}/dataTypes/exercise/dataPoints/{data_point}\u0060 Examples: - \u0060users/me/dataTypes/exercise/dataPoints/2026443605080188808\u0060 - \u0060users/1234567890/dataTypes/exercise/dataPoints/2026443605080188808\u0060 The \u0060{user}\u0060 can be either the alias \u0060me\u0060 or the authenticated user\u0027s numeric Health User ID (retrieved via GetIdentity). The \u0060{data_point}\u0060 ID maps to the exercise ID, which is a long integer.",
                       "location": "path",
                       "pattern": "^users/[^/]\u002B/dataTypes/[^/]\u002B/dataPoints/[^/]\u002B$",
                       "required": true,
@@ -848,7 +848,7 @@
                   ],
                   "parameters": {
                     "name": {
-                      "description": "Required. The name of the data point to retrieve. Format: \u0060users/{user}/dataTypes/{data_type}/dataPoints/{data_point}\u0060 See DataPoint.name for examples and possible values.",
+                      "description": "Required. The name of the data point to retrieve. Format: \u0060users/{user}/dataTypes/{data_type}/dataPoints/{data_point}\u0060 ## Examples: ## \u0060users/me/dataTypes/sleep/dataPoints/a1b2c3d4-e5f6-7890-1234-567890abcdef\u0060 \u0060users/1234567890/dataTypes/sleep/dataPoints/a1b2c3d4-e5f6-7890-1234-567890abcdef\u0060 The \u0060{user}\u0060 can be either the alias \u0060me\u0060 or the authenticated user\u0027s numeric Health User ID (retrieved via GetIdentity). See DataPoint.name for examples and possible values.",
                       "location": "path",
                       "pattern": "^users/[^/]\u002B/dataTypes/[^/]\u002B/dataPoints/[^/]\u002B$",
                       "required": true,
@@ -888,7 +888,7 @@
                   ],
                   "parameters": {
                     "dataSourceFamily": {
-                      "description": "Optional. The data source family name to filter by. If empty, data points from all available data sources will be returned. Format: \u0060users/me/dataSourceFamilies/{data_source_family}\u0060 The supported values are: - \u0060users/me/dataSourceFamilies/all-sources\u0060 - Default value. Includes data from all available data sources. - \u0060users/me/dataSourceFamilies/google-wearables\u0060 - Includes data from Google and Fitbit tracker devices (such as Fitbit trackers and Pixel Watch). Excludes manually logged data. - \u0060users/me/dataSourceFamilies/google-sources\u0060 - Includes first-party Google data, such as data from tracker devices, manually logged data, and Health Connect. - \u0060users/me/dataSourceFamilies/self-sources\u0060 - Includes only the data the calling client wrote through this API, that is, data points whose data source was registered through this API with the same OAuth client ID as the caller. Callers that were only granted write scopes for the requested data types may only read the data they wrote themselves: their requests are implicitly restricted to \u0060self-sources\u0060, and requesting any other data source family fails with \u0060PERMISSION_DENIED\u0060. If no data point matches the requested data source family, the response is an empty list rather than an error. Filtering by data source family is not supported for the \u0060sleep\u0060, \u0060food\u0060 and \u0060food-measurement-unit\u0060 data types, because the underlying listing implementation cannot restrict results by data source. Such requests fail with \u0060INVALID_ARGUMENT\u0060 when the data source family is set explicitly, and with \u0060PERMISSION_DENIED\u0060 when the restriction is only implied by the caller\u0027s scopes. For \u0060sleep\u0060, use ReconcileDataPoints instead.",
+                      "description": "Optional. The data source family name to filter by. If empty, data points from all available data sources will be returned. Format: \u0060users/{user}/dataSourceFamilies/{data_source_family}\u0060 The \u0060{user}\u0060 can be either the alias \u0060me\u0060 or the authenticated user\u0027s numeric Health User ID, retrieved via GetIdentity (e.g. \u0060users/me/dataSourceFamilies/...\u0060 or \u0060users/1234567890/dataSourceFamilies/...\u0060). The supported values are: - \u0060users/{user}/dataSourceFamilies/all-sources\u0060 - Default value. Includes data from all available data sources. - \u0060users/{user}/dataSourceFamilies/google-wearables\u0060 - Includes data from Google and Fitbit tracker devices (such as Fitbit trackers and Pixel Watch). Excludes manually logged data. - \u0060users/{user}/dataSourceFamilies/google-sources\u0060 - Includes first-party Google data, such as data from tracker devices, manually logged data, and Health Connect. - \u0060users/{user}/dataSourceFamilies/self-sources\u0060 - Includes only the data the calling client wrote through this API, that is, data points whose data source was registered through this API with the same OAuth client ID as the caller. Callers that were only granted write scopes for the requested data types may only read the data they wrote themselves: their requests are implicitly restricted to \u0060self-sources\u0060, and requesting any other data source family fails with \u0060PERMISSION_DENIED\u0060. If no data point matches the requested data source family, the response is an empty list rather than an error. Filtering by data source family is not supported for the \u0060sleep\u0060, \u0060food\u0060 and \u0060food-measurement-unit\u0060 data types, because the underlying listing implementation cannot restrict results by data source. Such requests fail with \u0060INVALID_ARGUMENT\u0060 when the data source family is set explicitly, and with \u0060PERMISSION_DENIED\u0060 when the restriction is only implied by the caller\u0027s scopes. For \u0060sleep\u0060, use ReconcileDataPoints instead.",
                       "location": "query",
                       "type": "string"
                     },
@@ -909,7 +909,7 @@
                       "type": "string"
                     },
                     "parent": {
-                      "description": "Required. Parent data type of the Data Point collection. Format: \u0060users/me/dataTypes/{data_type}\u0060, e.g.: - \u0060users/me/dataTypes/steps\u0060 - \u0060users/me/dataTypes/weight\u0060 For a list of the supported data types see the DataPoint data union field.",
+                      "description": "Required. Parent data type of the Data Point collection. Format: \u0060users/{user}/dataTypes/{data_type}\u0060, e.g.: - \u0060users/me/dataTypes/steps\u0060 - \u0060users/1234567890/dataTypes/steps\u0060 - \u0060users/me/dataTypes/weight\u0060 - \u0060users/1234567890/dataTypes/weight\u0060 The \u0060{user}\u0060 can be either the alias \u0060me\u0060 or the authenticated user\u0027s numeric Health User ID (retrieved via GetIdentity). For a list of the supported data types see the DataPoint data union field.",
                       "location": "path",
                       "pattern": "^users/[^/]\u002B/dataTypes/[^/]\u002B$",
                       "required": true,
@@ -949,7 +949,7 @@
                   ],
                   "parameters": {
                     "name": {
-                      "description": "Identifier. Data point name, only supported for the subset of identifiable data types. For the majority of the data types, individual data points do not need to be identified and this field would be empty. Format: \u0060users/{user}/dataTypes/{data_type}/dataPoints/{data_point}\u0060 Example: \u0060users/abcd1234/dataTypes/sleep/dataPoints/a1b2c3d4-e5f6-7890-1234-567890abcdef\u0060 The \u0060{user}\u0060 ID is a system-generated identifier, as described in Identity.health_user_id. The \u0060{data_type}\u0060 ID corresponds to the kebab-case version of the field names in the DataPoint data union field, e.g. \u0060heart-rate\u0060 for the \u0060heart_rate\u0060 field. The \u0060{data_point}\u0060 ID can be client-provided or system-generated. If client-provided, it must be a string of 4-63 characters, containing only lowercase letters, numbers, and hyphens.",
+                      "description": "Identifier. Data point name, only supported for the subset of identifiable data types. For the majority of the data types, individual data points do not need to be identified and this field would be empty. Format: \u0060users/{user}/dataTypes/{data_type}/dataPoints/{data_point}\u0060 ## Examples: ## \u0060users/me/dataTypes/sleep/dataPoints/a1b2c3d4-e5f6-7890-1234-567890abcdef\u0060 \u0060users/1234567890/dataTypes/sleep/dataPoints/a1b2c3d4-e5f6-7890-1234-567890abcdef\u0060 The \u0060{user}\u0060 can be either the alias \u0060me\u0060 or the authenticated user\u0027s numeric Health User ID, which can be retrieved by calling GetIdentity (see Identity.health_user_id). The \u0060{data_type}\u0060 ID corresponds to the kebab-case version of the field names in the DataPoint data union field, e.g. \u0060heart-rate\u0060 for the \u0060heart_rate\u0060 field. The \u0060{data_point}\u0060 ID can be client-provided or system-generated. If client-provided, it must be a string of 4-63 characters, containing only lowercase letters, numbers, and hyphens.",
                       "location": "path",
                       "pattern": "^users/[^/]\u002B/dataTypes/[^/]\u002B/dataPoints/[^/]\u002B$",
                       "required": true,
@@ -983,7 +983,7 @@
                   ],
                   "parameters": {
                     "dataSourceFamily": {
-                      "description": "Optional. The data source family name to reconcile. If empty, data points from all data sources will be reconciled. Format: \u0060users/me/dataSourceFamilies/{data_source_family}\u0060 - \u0060users/me/dataSourceFamilies/all-sources\u0060 - Default value. Includes data from all available data sources. - \u0060users/me/dataSourceFamilies/google-wearables\u0060 - Includes data from Google and Fitbit tracker devices (such as Fitbit trackers and Pixel Watch). Excludes manually logged data. - \u0060users/me/dataSourceFamilies/google-sources\u0060 - Includes first-party Google data, such as data from tracker devices, manually logged data, and Health Connect. - \u0060users/me/dataSourceFamilies/self-sources\u0060 - Includes only the data the calling client wrote through this API, that is, data points whose data source was registered through this API with the same OAuth client ID as the caller. Callers that were only granted write scopes for the requested data type may only read the data they wrote themselves: their requests are implicitly restricted to \u0060self-sources\u0060, and requesting any other data source family fails with \u0060PERMISSION_DENIED\u0060. If no data point matches the requested data source family, the response is an empty list rather than an error.",
+                      "description": "Optional. The data source family name to reconcile. If empty, data points from all data sources will be reconciled. Format: \u0060users/{user}/dataSourceFamilies/{data_source_family}\u0060 The \u0060{user}\u0060 can be either the alias \u0060me\u0060 or the authenticated user\u0027s numeric Health User ID, retrieved via GetIdentity (e.g. \u0060users/me/dataSourceFamilies/...\u0060 or \u0060users/1234567890/dataSourceFamilies/...\u0060). The supported values are: - \u0060users/{user}/dataSourceFamilies/all-sources\u0060 - Default value. Includes data from all available data sources. - \u0060users/{user}/dataSourceFamilies/google-wearables\u0060 - Includes data from Google and Fitbit tracker devices (such as Fitbit trackers and Pixel Watch). Excludes manually logged data. - \u0060users/{user}/dataSourceFamilies/google-sources\u0060 - Includes first-party Google data, such as data from tracker devices, manually logged data, and Health Connect. - \u0060users/{user}/dataSourceFamilies/self-sources\u0060 - Includes only the data the calling client wrote through this API, that is, data points whose data source was registered through this API with the same OAuth client ID as the caller. Callers that were only granted write scopes for the requested data type may only read the data they wrote themselves: their requests are implicitly restricted to \u0060self-sources\u0060, and requesting any other data source family fails with \u0060PERMISSION_DENIED\u0060. If no data point matches the requested data source family, the response is an empty list rather than an error.",
                       "location": "query",
                       "type": "string"
                     },
@@ -1004,7 +1004,7 @@
                       "type": "string"
                     },
                     "parent": {
-                      "description": "Required. Parent data type of the Data Point collection. Format: \u0060users/me/dataTypes/{data_type}\u0060, e.g.: - \u0060users/me/dataTypes/steps\u0060 - \u0060users/me/dataTypes/heart-rate\u0060 For a list of the supported data types see the DataPoint data union field.",
+                      "description": "Required. Parent data type of the Data Point collection. Format: \u0060users/{user}/dataTypes/{data_type}\u0060, e.g.: - \u0060users/me/dataTypes/steps\u0060 - \u0060users/1234567890/dataTypes/steps\u0060 - \u0060users/me/dataTypes/heart-rate\u0060 - \u0060users/1234567890/dataTypes/heart-rate\u0060 The \u0060{user}\u0060 can be either the alias \u0060me\u0060 or the authenticated user\u0027s numeric Health User ID (retrieved via GetIdentity). For a list of the supported data types see the DataPoint data union field.",
                       "location": "path",
                       "pattern": "^users/[^/]\u002B/dataTypes/[^/]\u002B$",
                       "required": true,
@@ -1044,7 +1044,7 @@
                   ],
                   "parameters": {
                     "parent": {
-                      "description": "Required. Parent data type of the Data Point collection. Format: \u0060users/{user}/dataTypes/{data_type}\u0060, e.g.: - \u0060users/me/dataTypes/steps\u0060 - \u0060users/me/dataTypes/distance\u0060 For a list of the supported data types see the RollupDataPoint value union field.",
+                      "description": "Required. Parent data type of the Data Point collection. Format: \u0060users/{user}/dataTypes/{data_type}\u0060, e.g.: - \u0060users/me/dataTypes/steps\u0060 - \u0060users/1234567890/dataTypes/steps\u0060 - \u0060users/me/dataTypes/distance\u0060 - \u0060users/1234567890/dataTypes/distance\u0060 The \u0060{user}\u0060 can be either the alias \u0060me\u0060 or the authenticated user\u0027s numeric Health User ID (retrieved via GetIdentity). For a list of the supported data types see the RollupDataPoint value union field.",
                       "location": "path",
                       "pattern": "^users/[^/]\u002B/dataTypes/[^/]\u002B$",
                       "required": true,
@@ -1149,7 +1149,7 @@
       }
     }
   },
-  "revision": "20261001",
+  "revision": "20261012",
   "rootUrl": "https://health.googleapis.com/",
   "schemas": {
     "ActiveEnergyBurned": {
@@ -2004,7 +2004,7 @@
       "id": "DailyRollUpDataPointsRequest",
       "properties": {
         "dataSourceFamily": {
-          "description": "Optional. The data source family name to roll up. If empty, data points from all available data sources will be rolled up. Format: \u0060users/me/dataSourceFamilies/{data_source_family}\u0060 The supported values are: - \u0060users/me/dataSourceFamilies/all-sources\u0060 - Default value. Includes data from all available data sources. - \u0060users/me/dataSourceFamilies/google-wearables\u0060 - Includes data from Google and Fitbit tracker devices (such as Fitbit trackers and Pixel Watch). Excludes manually logged data. - \u0060users/me/dataSourceFamilies/google-sources\u0060 - Includes first-party Google data, such as data from tracker devices, manually logged data, and Health Connect. - \u0060users/me/dataSourceFamilies/self-sources\u0060 - Includes only the data the calling client wrote through this API, that is, data points whose data source was registered through this API with the same OAuth client ID as the caller. Callers that were only granted write scopes for the requested data type may only read the data they wrote themselves: their requests are implicitly restricted to \u0060self-sources\u0060, and requesting any other data source family fails with \u0060PERMISSION_DENIED\u0060. If no data point matches the requested data source family, the response is an empty list rather than an error.",
+          "description": "Optional. The data source family name to roll up. If empty, data points from all available data sources will be rolled up. Format: \u0060users/{user}/dataSourceFamilies/{data_source_family}\u0060 The \u0060{user}\u0060 can be either the alias \u0060me\u0060 or the authenticated user\u0027s numeric Health User ID, retrieved via GetIdentity (e.g. \u0060users/me/dataSourceFamilies/...\u0060 or \u0060users/1234567890/dataSourceFamilies/...\u0060). The supported values are: - \u0060users/{user}/dataSourceFamilies/all-sources\u0060 - Default value. Includes data from all available data sources. - \u0060users/{user}/dataSourceFamilies/google-wearables\u0060 - Includes data from Google and Fitbit tracker devices (such as Fitbit trackers and Pixel Watch). Excludes manually logged data. - \u0060users/{user}/dataSourceFamilies/google-sources\u0060 - Includes first-party Google data, such as data from tracker devices, manually logged data, and Health Connect. - \u0060users/{user}/dataSourceFamilies/self-sources\u0060 - Includes only the data the calling client wrote through this API, that is, data points whose data source was registered through this API with the same OAuth client ID as the caller. Callers that were only granted write scopes for the requested data type may only read the data they wrote themselves: their requests are implicitly restricted to \u0060self-sources\u0060, and requesting any other data source family fails with \u0060PERMISSION_DENIED\u0060. If no data point matches the requested data source family, the response is an empty list rather than an error.",
           "type": "string"
         },
         "pageSize": {
@@ -2013,7 +2013,7 @@
           "type": "integer"
         },
         "pageToken": {
-          "description": "Optional. The \u0060next_page_token\u0060 from a previous request, if any. All other request fields need to be the same as in the initial request when the page token is specified.",
+          "description": "Optional. The next_page_token from a previous request, if any. All other request fields need to be the same as in the initial request when the page token is specified.",
           "type": "string"
         },
         "range": {
@@ -2032,6 +2032,10 @@
       "description": "Response containing the list of rolled up data points.",
       "id": "DailyRollUpDataPointsResponse",
       "properties": {
+        "nextPageToken": {
+          "description": "A token, which can be sent as \u0060page_token\u0060 to retrieve the next page. If this field is omitted, there are no subsequent pages.",
+          "type": "string"
+        },
         "rollupDataPoints": {
           "description": "Values for each aggregation time window.",
           "items": {
@@ -2347,7 +2351,7 @@
           "description": "Optional. Data for points in the \u0060moods\u0060 sample data type collection."
         },
         "name": {
-          "description": "Identifier. Data point name, only supported for the subset of identifiable data types. For the majority of the data types, individual data points do not need to be identified and this field would be empty. Format: \u0060users/{user}/dataTypes/{data_type}/dataPoints/{data_point}\u0060 Example: \u0060users/abcd1234/dataTypes/sleep/dataPoints/a1b2c3d4-e5f6-7890-1234-567890abcdef\u0060 The \u0060{user}\u0060 ID is a system-generated identifier, as described in Identity.health_user_id. The \u0060{data_type}\u0060 ID corresponds to the kebab-case version of the field names in the DataPoint data union field, e.g. \u0060heart-rate\u0060 for the \u0060heart_rate\u0060 field. The \u0060{data_point}\u0060 ID can be client-provided or system-generated. If client-provided, it must be a string of 4-63 characters, containing only lowercase letters, numbers, and hyphens.",
+          "description": "Identifier. Data point name, only supported for the subset of identifiable data types. For the majority of the data types, individual data points do not need to be identified and this field would be empty. Format: \u0060users/{user}/dataTypes/{data_type}/dataPoints/{data_point}\u0060 ## Examples: ## \u0060users/me/dataTypes/sleep/dataPoints/a1b2c3d4-e5f6-7890-1234-567890abcdef\u0060 \u0060users/1234567890/dataTypes/sleep/dataPoints/a1b2c3d4-e5f6-7890-1234-567890abcdef\u0060 The \u0060{user}\u0060 can be either the alias \u0060me\u0060 or the authenticated user\u0027s numeric Health User ID, which can be retrieved by calling GetIdentity (see Identity.health_user_id). The \u0060{data_type}\u0060 ID corresponds to the kebab-case version of the field names in the DataPoint data union field, e.g. \u0060heart-rate\u0060 for the \u0060heart_rate\u0060 field. The \u0060{data_point}\u0060 ID can be client-provided or system-generated. If client-provided, it must be a string of 4-63 characters, containing only lowercase letters, numbers, and hyphens.",
           "type": "string"
         },
         "nutritionLog": {
@@ -3455,7 +3459,7 @@
       "id": "GoogleDevicesandservicesHealthV4DataType",
       "properties": {
         "name": {
-          "description": "Identifier. The resource name of the data type. Format: \u0060users/{user}/dataTypes/{data_type}\u0060 See DataPoint.name for examples and possible values.",
+          "description": "Identifier. The resource name of the data type. Format: \u0060users/{user}/dataTypes/{data_type}\u0060, e.g.: - \u0060users/me/dataTypes/steps\u0060 - \u0060users/1234567890/dataTypes/steps\u0060 The \u0060{user}\u0060 can be either the alias \u0060me\u0060 or the authenticated user\u0027s numeric Health User ID (retrieved via GetIdentity). See DataPoint.name for examples and possible values.",
           "type": "string"
         }
       },
@@ -3488,7 +3492,7 @@
       "id": "GoogleDevicesandservicesHealthV4betaDataType",
       "properties": {
         "name": {
-          "description": "Identifier. The resource name of the data type. Format: \u0060users/{user}/dataTypes/{data_type}\u0060 See DataPoint.name for examples and possible values.",
+          "description": "Identifier. The resource name of the data type. Format: \u0060users/{user}/dataTypes/{data_type}\u0060, e.g.: - \u0060users/me/dataTypes/steps\u0060 - \u0060users/1234567890/dataTypes/steps\u0060 The \u0060{user}\u0060 can be either the alias \u0060me\u0060 or the authenticated user\u0027s numeric Health User ID (retrieved via GetIdentity). See DataPoint.name for examples and possible values.",
           "type": "string"
         }
       },
@@ -5001,7 +5005,7 @@
           "description": "Data for points in the \u0060daily-vo2-max\u0060 daily data type collection."
         },
         "dataPointName": {
-          "description": "Identifier. Data point name, only supported for the subset of identifiable data types. For the majority of the data types, individual data points do not need to be identified and this field would be empty. Format: \u0060users/{user}/dataTypes/{data_type}/dataPoints/{data_point}\u0060 Example: \u0060users/abcd1234/dataTypes/sleep/dataPoints/a1b2c3d4-e5f6-7890-1234-567890abcdef\u0060 The \u0060{user}\u0060 ID is a system-generated identifier, as described in Identity.health_user_id. The \u0060{data_type}\u0060 ID corresponds to the kebab-case version of the field names in the DataPoint data union field, e.g. \u0060heart-rate\u0060 for the \u0060heart_rate\u0060 field. The \u0060{data_point}\u0060 ID can be client-provided or system-generated. If client-provided, it must be a string of 4-63 characters, containing only lowercase letters, numbers, and hyphens.",
+          "description": "Identifier. Data point name, only supported for the subset of identifiable data types. For the majority of the data types, individual data points do not need to be identified and this field would be empty. Format: \u0060users/{user}/dataTypes/{data_type}/dataPoints/{data_point}\u0060 ## Examples: ## \u0060users/me/dataTypes/sleep/dataPoints/a1b2c3d4-e5f6-7890-1234-567890abcdef\u0060 \u0060users/1234567890/dataTypes/sleep/dataPoints/a1b2c3d4-e5f6-7890-1234-567890abcdef\u0060 The \u0060{user}\u0060 can be either the alias \u0060me\u0060 or the authenticated user\u0027s numeric Health User ID, which can be retrieved by calling GetIdentity (see Identity.health_user_id). The \u0060{data_type}\u0060 ID corresponds to the kebab-case version of the field names in the DataPoint data union field, e.g. \u0060heart-rate\u0060 for the \u0060heart_rate\u0060 field. The \u0060{data_point}\u0060 ID can be client-provided or system-generated. If client-provided, it must be a string of 4-63 characters, containing only lowercase letters, numbers, and hyphens.",
           "type": "string"
         },
         "distance": {
@@ -5150,7 +5154,7 @@
       "id": "RollUpDataPointsRequest",
       "properties": {
         "dataSourceFamily": {
-          "description": "Optional. The data source family name to roll up. If empty, data points from all available data sources will be rolled up. Format: \u0060users/me/dataSourceFamilies/{data_source_family}\u0060 The supported values are: - \u0060users/me/dataSourceFamilies/all-sources\u0060 - Default value. Includes data from all available data sources. - \u0060users/me/dataSourceFamilies/google-wearables\u0060 - Includes data from Google and Fitbit tracker devices (such as Fitbit trackers and Pixel Watch). Excludes manually logged data. - \u0060users/me/dataSourceFamilies/google-sources\u0060 - Includes first-party Google data, such as data from tracker devices, manually logged data, and Health Connect. - \u0060users/me/dataSourceFamilies/self-sources\u0060 - Includes only the data the calling client wrote through this API, that is, data points whose data source was registered through this API with the same OAuth client ID as the caller. Callers that were only granted write scopes for the requested data type may only read the data they wrote themselves: their requests are implicitly restricted to \u0060self-sources\u0060, and requesting any other data source family fails with \u0060PERMISSION_DENIED\u0060. If no data point matches the requested data source family, the response is an empty list rather than an error.",
+          "description": "Optional. The data source family name to roll up. If empty, data points from all available data sources will be rolled up. Format: \u0060users/{user}/dataSourceFamilies/{data_source_family}\u0060 The \u0060{user}\u0060 can be either the alias \u0060me\u0060 or the authenticated user\u0027s numeric Health User ID, retrieved via GetIdentity (e.g. \u0060users/me/dataSourceFamilies/...\u0060 or \u0060users/1234567890/dataSourceFamilies/...\u0060). The supported values are: - \u0060users/{user}/dataSourceFamilies/all-sources\u0060 - Default value. Includes data from all available data sources. - \u0060users/{user}/dataSourceFamilies/google-wearables\u0060 - Includes data from Google and Fitbit tracker devices (such as Fitbit trackers and Pixel Watch). Excludes manually logged data. - \u0060users/{user}/dataSourceFamilies/google-sources\u0060 - Includes first-party Google data, such as data from tracker devices, manually logged data, and Health Connect. - \u0060users/{user}/dataSourceFamilies/self-sources\u0060 - Includes only the data the calling client wrote through this API, that is, data points whose data source was registered through this API with the same OAuth client ID as the caller. Callers that were only granted write scopes for the requested data type may only read the data they wrote themselves: their requests are implicitly restricted to \u0060self-sources\u0060, and requesting any other data source family fails with \u0060PERMISSION_DENIED\u0060. If no data point matches the requested data source family, the response is an empty list rather than an error.",
           "type": "string"
         },
         "pageSize": {

@@ -80,7 +80,7 @@ public enum PaginationKind
 
     /// <summary>
     /// The request accepts a page token but the response returns none, so results cannot be
-    /// enumerated. Currently only <c>dataPoints.dailyRollUp</c>.
+    /// enumerated.
     /// </summary>
     RequestOnly,
 }

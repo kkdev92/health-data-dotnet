@@ -57,9 +57,11 @@ Only the parent needs rebuilding. A name inside a request **body** is fine as it
 
 The rule is not one you can derive. `list` and `create` are the same path and disagree;
 `pairedDevices.list` has the same shape and is accepted; it is not reads against writes, and it is
-not the URL template. It is not stated in Discovery either, so the generator cannot know it and no
-type here encodes it. The sharp end is that `list` returns the names that `list` will not take
-back.
+not the URL template. Discovery does not state it either: revision `20261012` describes the parent
+of every operation in the table as taking either `me` or the numeric id, which is not what the
+table records. The table has not been measured again since that wording appeared, and `me` works
+either way. So the generator cannot know the rule and no type here encodes it. The sharp end is
+that `list` returns the names that `list` will not take back.
 
 The refusal is `400 INVALID_ARGUMENT`, `"Request contains an invalid argument."`, with **no**
 `details` — so `HealthDataApiException.Error.Details` is empty and `Reason` falls back to the
@@ -298,19 +300,20 @@ API. That is Google's contract, verified against Discovery, not an omission here
 | Method | Aggregates | Pagination |
 |---|---|---|
 | `RollUpAsync` | Over a requested interval | Page size and token travel **in the request body** |
-| `DailyRollUpAsync` | Per calendar day | Request accepts a page token; the response returns none |
+| `DailyRollUpAsync` | Per calendar day | Page size and token travel **in the request body** |
 
 Both are `POST` but neither writes anything, so both are classified `SemanticallySafe` and are
 retried when retry is enabled.
 
-`RollUp` has an `EnumerateAsync` helper like every other paged operation. Where the cursor travels
-is a detail of the request — its body carries a `WithPageToken` copy, generated from the same
+Both have an `EnumerateAsync` helper like every other paged operation. Where the cursor travels is
+a detail of the request — each body carries a `WithPageToken` copy, generated from the same
 declaration — and what decides whether enumeration is possible is the response, which returns a
 next page token.
 
-`DailyRollUp` is the one operation without one, and not by preference: it accepts a page token and
-its response returns none, so there is nothing to follow. The generated model says so on the
-property itself.
+`DailyRollUp`'s response has declared that token since Discovery revision `20261002`; before then
+its request accepted a page token with nothing to follow, and it had no helper. The per-method
+reference does not show the token yet, and whether the live service returns one has not been
+checked. If it never does, enumeration returns the one page.
 
 Roll-up results are `RollupDataPoint`, a second union with its own `GetKind()` and 21 measurement
 members — a smaller set, because not every measurement aggregates.
@@ -354,7 +357,8 @@ On `RollUp`, setting `PageSize` explicitly is then the way through: there is no 
 within the ceiling is accepted and the response is unaffected — `308` here returns every window the
 cap can cover. `DailyRollUp` has a floor as well as a ceiling, so when the range needs more windows
 than the cap allows there is no value that satisfies both and the combination cannot be requested
-at all. Widen the window or shorten the range.
+at all. Widen the window or shorten the range. Both bounds were measured before Discovery declared a
+next page token for `DailyRollUp`, and have not been measured again since.
 
 **`RollUp` and `Rollup` are both correct, and the difference is not a typo here.** Discovery spells
 the methods `rollUp` and `dailyRollUp`, and the schemas `RollupDataPoint` and

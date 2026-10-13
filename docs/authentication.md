@@ -294,7 +294,7 @@ var tokens = await oauth.ExchangeCodeAsync(code, pkce, cancellationToken);
 
 Scopes come from the Discovery document plus the per-method reference pages, because **no single
 Google source lists them all.** All three were compared on 2026-08-12, and every row again on
-2026-10-02 against revision `20261001`:
+2026-10-13 against revision `20261012`:
 
 | Scope | Discovery | Per-method pages | Scopes guide |
 |---|---|---|---|

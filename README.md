@@ -274,8 +274,10 @@ return Results.StatusCode((int)result.StatusCode);
   user-facing operation. See
   [`docs/authentication.md`](docs/authentication.md#two-credential-contexts-not-one)
 - **A name from the service cannot always be used as a parent.** `list` returns names carrying the
-  numeric user id, and five of the six data point collection operations refuse it — build parents
-  from `UserName.Me`. Measured, and not derivable from the contract; see
+  numeric user id, and five of the six data point collection operations refused it when measured —
+  build parents from `UserName.Me`, which works either way. Discovery revision `20261012` describes
+  the parent of each of those operations as taking either `me` or the numeric id; the refusals have
+  not been measured again since. See
   [`docs/data-points.md`](docs/data-points.md#use-usernameme-for-a-parent-even-when-you-have-a-name-from-the-service)
 - **Following the cursor can return fewer records than exist.** The service drops records sharing a
   timestamp with the last record of a page — no error, no duplicate, enumeration just ends short.
@@ -290,8 +292,6 @@ return Results.StatusCode((int)result.StatusCode);
 - **No long-running operation polling.** Google's API declares no operations resource, so this
   package does not invent one that would have to guess a URL
 - **No token storage.** Persistence, encryption and key management stay with your application
-- **`dataPoints.dailyRollUp` has no enumeration helper.** Its request accepts a page token but its
-  response returns none, so there is no cursor to follow
 
 ---
 
@@ -330,7 +330,7 @@ Full detail is in [`docs/code-generation.md`](docs/code-generation.md).
 | Native AOT | supported and exercised in CI on a real consumer application |
 | Trimming | `IsAotCompatible`; the trim and AOT analyzers report no IL warnings |
 | SDK (to build) | the floor in `global.json`; `rollForward: latestFeature` takes a newer one |
-| Google Health API | `v4`, Discovery revision `20261001`, snapshot verified 2026-10-02 |
+| Google Health API | `v4`, Discovery revision `20261012`, snapshot verified 2026-10-13 |
 
 The Google Health API version and this package's version are **independent axes**. A new Google
 API version does not by itself cause a major bump.

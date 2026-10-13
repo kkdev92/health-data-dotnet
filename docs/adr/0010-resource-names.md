@@ -115,6 +115,9 @@ same rule as everywhere else: *the response returns a next page token*. `dailyRo
 one operation without one, and now says so on the property itself — it accepts a cursor and returns
 none, so there is nothing to follow.
 
+> Later: Discovery revision `20261002` gave the `dailyRollUp` response a next page token, so the
+> same rule now gives it an `EnumerateAsync` as well, and every operation that pages has one.
+
 ### Costs
 
 - **Breaking.** Every `Name`/`Parent` assignment changes. In this repository that was 150 compile

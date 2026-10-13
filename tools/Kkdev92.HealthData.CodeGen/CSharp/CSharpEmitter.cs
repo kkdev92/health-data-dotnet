@@ -445,10 +445,11 @@ internal sealed class CSharpEmitter(
 
                 writer.XmlDoc("summary", property.Description ?? property.WireName);
 
-                // A cursor the service accepts and never returns. dailyRollUp takes a page token
-                // like every other paged call and answers without a next one, so a loop written
-                // the usual way either stops after one page or never stops at all. Saying so on
-                // the property is the only place a caller is looking when they write that loop.
+                // A cursor the service accepts and never returns: the request takes a page token
+                // like every other paged call, and the response answers without a next one, so a
+                // loop written the usual way either stops after one page or never stops at all.
+                // Saying so on the property is the only place a caller is looking when they write
+                // that loop.
                 if (CursorWithNoAnswer(schema, property))
                 {
                     writer.XmlDoc(
