@@ -347,7 +347,7 @@ internal enum PaginationKind
 
     /// <summary>
     /// The request is paginated but the response carries no continuation token, so no
-    /// enumeration helper may be generated. Currently only <c>dataPoints.dailyRollUp</c>.
+    /// enumeration helper may be generated.
     /// </summary>
     RequestOnly,
 }

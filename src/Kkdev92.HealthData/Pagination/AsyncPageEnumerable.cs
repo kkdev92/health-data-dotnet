@@ -13,9 +13,9 @@ namespace Kkdev92.HealthData.Pagination;
 /// stream the caller can stop consuming.
 /// </para>
 /// <para>
-/// Not every paginated request can be enumerated. <c>dataPoints.dailyRollUp</c> accepts a page
-/// token but returns none, so no enumeration helper is generated for it; that asymmetry is
-/// enforced by the generator's validator rather than discovered at run time.
+/// Not every paginated request can be enumerated. An operation whose request accepts a page token
+/// while its response returns none gets no enumeration helper; that asymmetry is enforced by the
+/// generator's validator rather than discovered at run time.
 /// </para>
 /// </remarks>
 public static class AsyncPageEnumerable

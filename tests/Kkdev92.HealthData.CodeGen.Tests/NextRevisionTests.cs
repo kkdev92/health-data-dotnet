@@ -156,7 +156,9 @@ public sealed class NextRevisionTests
         var emitter = new CSharpEmitter(contract, unions: SpecLoader.ReadUnions(spec));
         var resource = emitter.Emit().Single(file => file.RelativePath == "Generated/Resources/DataPointsResource.g.cs");
 
-        Assert.Equal(3, CountOccurrences(resource.Content, "public IAsyncEnumerable<"));
+        // list, reconcile, rollUp and dailyRollUp, and not get.
+        Assert.Equal(4, CountOccurrences(resource.Content, "public IAsyncEnumerable<"));
+        Assert.DoesNotContain("EnumerateAsync(GetDataPointsRequest", resource.Content, StringComparison.Ordinal);
     }
 
     [Fact]

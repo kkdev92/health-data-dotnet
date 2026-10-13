@@ -396,15 +396,15 @@ internal sealed class ResourceEmitter(ApiContract contract, IReadOnlySet<string>
     /// Writes the streaming overload, for an operation whose response carries a cursor.
     /// </summary>
     /// <remarks>
-    /// Nothing is written for an operation without one. dailyRollUp accepts a page token and
-    /// returns none, so there is nothing to follow and no overload is generated — which is
-    /// enforced by the validator rather than discovered here.
+    /// Nothing is written for an operation without one. An operation that accepts a page token
+    /// and returns none has nothing to follow, so no overload is generated — which is enforced by
+    /// the validator rather than discovered here.
     /// </remarks>
     private void EmitEnumerateOverload(CodeWriter writer, OperationContract operation, string requestType)
     {
         // Every operation whose response carries a cursor gets a streaming overload, whether the
-        // cursor goes out in the query or in the body. Only dailyRollUp is left out, and not by
-        // preference: it returns no next page token, so there is nothing to follow.
+        // cursor goes out in the query or in the body. An operation is left out only when its
+        // response returns no next page token, and not by preference: there is nothing to follow.
         if (operation.Pagination?.Kind is PaginationKind.Query or PaginationKind.Body &&
             operation.Pagination.Items is { } itemsProperty &&
             operation.ResponseSchema is { } listSchema)

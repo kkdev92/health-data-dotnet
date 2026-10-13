@@ -235,19 +235,49 @@ public sealed class RuntimeBehaviourTests
     }
 
     [Fact]
-    public void DailyRollUpHasNoEnumerateOverload()
+    public async Task EnumerateFollowsTheDailyRollUpCursorInTheBody()
     {
-        // Its request accepts a page token but its response returns none, so enumeration is
-        // impossible. The generator must not have invented one.
-        var methods = typeof(DataPointsResource).GetMethods().Select(m => m.Name).ToArray();
+        // dailyRollUp pages the way rollUp does: the cursor goes out in the body and comes back in
+        // the response. The service requires every other field to match the first request, so the
+        // window and page size the caller set have to reach every page unchanged.
+        using var handler = new SequenceHandler(
+            """{"rollupDataPoints":[{"steps":{"countSum":"11"}}],"nextPageToken":"T2"}""",
+            """{"rollupDataPoints":[{"steps":{"countSum":"22"}}]}""");
 
-        Assert.Contains("EnumerateAsync", methods);
-        Assert.Equal(PaginationKind.RequestOnly,
+        var client = CreateClient(handler);
+
+        var counts = new List<long?>();
+
+        await foreach (var day in client.Users.DataPoints.EnumerateAsync(
+            new DailyRollUpRequest
+            {
+                Parent = UserName.Me.DataType("steps"),
+                Body = new DailyRollUpDataPointsRequest { WindowSizeDays = 7, PageSize = 2 },
+            },
+            TestContext.Current.CancellationToken))
+        {
+            counts.Add(day.Steps?.CountSum);
+        }
+
+        Assert.Equal([11L, 22L], counts);
+        Assert.Equal(2, handler.RequestedBodies.Count);
+
+        Assert.DoesNotContain("pageToken", handler.RequestedBodies[0], StringComparison.Ordinal);
+        Assert.Contains("\"pageToken\":\"T2\"", handler.RequestedBodies[1], StringComparison.Ordinal);
+        Assert.All(handler.RequestedBodies, body => Assert.Contains("\"windowSizeDays\":7", body, StringComparison.Ordinal));
+        Assert.All(handler.RequestedBodies, body => Assert.Contains("\"pageSize\":2", body, StringComparison.Ordinal));
+        Assert.All(handler.RequestedUrls, url => Assert.DoesNotContain("pageToken", url, StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public void EveryOperationWhoseResponseReturnsACursorHasAnEnumerateOverload()
+    {
+        Assert.Equal(PaginationKind.Body,
             HealthDataGeneratedOperations.UsersDataTypesDataPointsDailyRollUp.Pagination);
 
-        // Six: the five that page by query parameter, and rollUp, which pages inside its body.
-        // Where the cursor travels is not a reason to withhold enumeration — whether the response
-        // returns one is, and dailyRollUp is the only operation where it does not.
+        // Seven: the five that page by query parameter, and rollUp and dailyRollUp, which page
+        // inside their bodies. Where the cursor travels is not a reason to withhold enumeration —
+        // whether the response returns one is.
         var enumerateCount = new[]
             {
                 typeof(DataPointsResource), typeof(PairedDevicesResource),
@@ -255,18 +285,18 @@ public sealed class RuntimeBehaviourTests
             }
                 .Sum(t => t.GetMethods().Count(m => m.Name == "EnumerateAsync"));
 
-        Assert.Equal(6, enumerateCount);
+        Assert.Equal(7, enumerateCount);
 
-        // The one that must not exist, named rather than counted: a count stays green if the
-        // missing overload is replaced by an extra one somewhere else.
-        var dailyRollUp = typeof(DataPointsResource)
+        // The two that page in the body, named rather than counted: a count stays green if one
+        // overload goes missing while an extra one appears somewhere else.
+        var dataPoints = typeof(DataPointsResource)
             .GetMethods()
             .Where(m => m.Name == "EnumerateAsync")
             .Select(m => m.GetParameters()[0].ParameterType.Name)
             .ToArray();
 
-        Assert.DoesNotContain("DailyRollUpRequest", dailyRollUp);
-        Assert.Contains("RollUpRequest", dailyRollUp);
+        Assert.Contains("DailyRollUpRequest", dataPoints);
+        Assert.Contains("RollUpRequest", dataPoints);
     }
 
     [Fact]

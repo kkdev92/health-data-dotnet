@@ -129,9 +129,11 @@
     },
     "health.users.dataTypes.dataPoints.dailyRollUp": {
       "pagination": {
-        "kind": "requestOnly",
+        "kind": "body",
         "pageSize": "pageSize",
-        "pageToken": "pageToken"
+        "pageToken": "pageToken",
+        "nextPageToken": "nextPageToken",
+        "items": "rollupDataPoints"
       },
       "scopeRequirement": {
         "combination": "anyOf",
@@ -157,14 +159,12 @@
       },
       "scopeNote": "Discovery revision 20260826 added the seven writeonly scopes to this read operation, revision 20260909 added logged_symptoms.readonly, mindfulness.readonly and reproductive_health.readonly, and revision 20260929 added ecg.readonly and irn.readonly. Since the per-method reference was updated on 2026-10-01 it lists all of them, and it still contributes nutrition.readonly, which Discovery omits. The union is recorded because nutrition.readonly comes from the page alone, and an accepted-scope list only causes harm when it is too small: a provider cannot select a token it is not told about. Verified against the per-method page on 2026-10-02.",
       "retryClassification": "semanticallySafe",
-      "rationale": "DailyRollUpDataPointsRequest declares pageSize and pageToken, but DailyRollUpDataPointsResponse has no nextPageToken. The generator must therefore NOT emit an EnumerateAsync overload for this operation.",
-      "knownDocumentationConflict": true,
-      "conflict": "Request is paginated but the response provides no continuation token. Re-check on every Discovery revision bump; if a nextPageToken appears, switch kind to \"body\".",
+      "rationale": "POST is used to carry a request body, but the operation only aggregates existing data. Page size and page token live in the request body, not the query string. Until Discovery revision 20261002 the response declared no nextPageToken, so the request was paginated with nothing to follow and the kind was requestOnly; that revision added the token, and the kind is now body like rollUp. The per-method and RPC reference pages, last updated 2026-10-01, do not show the token yet.",
       "sources": [
         {
           "url": "https://health.googleapis.com/$discovery/rest?version=v4",
           "kind": "discovery",
-          "verifiedOn": "2026-08-09"
+          "verifiedOn": "2026-10-13"
         },
         {
           "url": "https://health.googleapis.com/v4/users/me/dataTypes/{dataType}/dataPoints:rollUp",
@@ -172,7 +172,7 @@
           "verifiedOn": "2026-08-21"
         }
       ],
-      "pageSizeNote": "pageSize does not bound the response: a request returning 1,686 points returns the same 1,686 with pageSize set to 1440, and the count was unchanged across eleven shapes and four data types. It bounds the query instead. The ceiling is floor(range cap / window) — whole windows that fit the data type's cap — and the check ignores the range requested, so a one-day request is refused on the same boundary as a ninety-day one. Boundaries land on that value exactly, including for windows that do not divide the cap, and the rule holds for both the 90-day and the 14-day types. The refusal is INVALID_ROLLUP_QUERY_DURATION, which names the duration rather than the field at fault. Left unset, the service behaves as though pageSize were ceil(range / window), and that implied value is subject to the same ceiling — so a range needing more windows than the cap allows is refused with nothing set. Measured against the live service on 2026-08-21. dailyRollUp additionally requires pageSize to be at least ceil(range / window), refusing smaller values as INVALID_DATA_POINT_NAME — again not the field at fault. The two bounds round in opposite directions: the ceiling truncates, the floor counts a partial window as a window, so twenty days of seven-day windows requires 3 and ten days of three-day windows requires 4. The floor counts windows and not days: eighty-four days of seven-day windows accepts 12 and rejects 84. Because the bounds are independent, a range needing more windows than the cap allows leaves no accepted value and cannot be requested. rollUp has no floor, so there an explicit pageSize within the ceiling is the way to request such a range."
+      "pageSizeNote": "pageSize does not bound the response: a request returning 1,686 points returns the same 1,686 with pageSize set to 1440, and the count was unchanged across eleven shapes and four data types. It bounds the query instead. The ceiling is floor(range cap / window) — whole windows that fit the data type's cap — and the check ignores the range requested, so a one-day request is refused on the same boundary as a ninety-day one. Boundaries land on that value exactly, including for windows that do not divide the cap, and the rule holds for both the 90-day and the 14-day types. The refusal is INVALID_ROLLUP_QUERY_DURATION, which names the duration rather than the field at fault. Left unset, the service behaves as though pageSize were ceil(range / window), and that implied value is subject to the same ceiling — so a range needing more windows than the cap allows is refused with nothing set. Measured against the live service on 2026-08-21. dailyRollUp additionally requires pageSize to be at least ceil(range / window), refusing smaller values as INVALID_DATA_POINT_NAME — again not the field at fault. The two bounds round in opposite directions: the ceiling truncates, the floor counts a partial window as a window, so twenty days of seven-day windows requires 3 and ten days of three-day windows requires 4. The floor counts windows and not days: eighty-four days of seven-day windows accepts 12 and rejects 84. Because the bounds are independent, a range needing more windows than the cap allows leaves no accepted value and cannot be requested. rollUp has no floor, so there an explicit pageSize within the ceiling is the way to request such a range. These measurements predate the nextPageToken that Discovery revision 20261002 added to the response, and have not been repeated since."
     },
     "health.users.dataTypes.dataPoints.exportExerciseTcx": {
       "responseKind": "mediaOrJson",
@@ -364,7 +364,7 @@
       "allOf; every other operation is anyOf. Re-read the per-method pages on a revision bump, not",
       "just Discovery: this exception is invisible from Discovery alone."
     ],
-    "comparedOn": "2026-10-02",
+    "comparedOn": "2026-10-13",
     "inDiscoveryOnly": [
       {
         "scope": "https://www.googleapis.com/auth/cloud-platform",
@@ -372,15 +372,15 @@
       },
       {
         "scope": "https://www.googleapis.com/auth/googlehealth.logged_symptoms.readonly",
-        "note": "Added by Discovery revision 20260909 and accepted on every read operation that returns data points. The per-method reference pages of those operations and of users.getIdentity have listed it since they were updated on 2026-10-01; the Scopes guide still does not on 2026-10-02. These are the read half of the Women's Health scopes whose writeonly counterparts shipped on 2026-08-17; the data type page still documents create, update and batchDelete only for its four Women's Health types."
+        "note": "Added by Discovery revision 20260909 and accepted on every read operation that returns data points. The per-method reference pages of those operations and of users.getIdentity have listed it since they were updated on 2026-10-01; the Scopes guide still does not on 2026-10-13. These are the read half of the Women's Health scopes whose writeonly counterparts shipped on 2026-08-17; the data type page still documents create, update and batchDelete only for its four Women's Health types."
       },
       {
         "scope": "https://www.googleapis.com/auth/googlehealth.mindfulness.readonly",
-        "note": "Added by Discovery revision 20260909 and accepted on every read operation that returns data points. The per-method reference pages of those operations and of users.getIdentity have listed it since they were updated on 2026-10-01; the Scopes guide still does not on 2026-10-02. These are the read half of the Women's Health scopes whose writeonly counterparts shipped on 2026-08-17; the data type page still documents create, update and batchDelete only for its four Women's Health types."
+        "note": "Added by Discovery revision 20260909 and accepted on every read operation that returns data points. The per-method reference pages of those operations and of users.getIdentity have listed it since they were updated on 2026-10-01; the Scopes guide still does not on 2026-10-13. These are the read half of the Women's Health scopes whose writeonly counterparts shipped on 2026-08-17; the data type page still documents create, update and batchDelete only for its four Women's Health types."
       },
       {
         "scope": "https://www.googleapis.com/auth/googlehealth.reproductive_health.readonly",
-        "note": "Added by Discovery revision 20260909 and accepted on every read operation that returns data points. The per-method reference pages of those operations and of users.getIdentity have listed it since they were updated on 2026-10-01; the Scopes guide still does not on 2026-10-02. These are the read half of the Women's Health scopes whose writeonly counterparts shipped on 2026-08-17; the data type page still documents create, update and batchDelete only for its four Women's Health types."
+        "note": "Added by Discovery revision 20260909 and accepted on every read operation that returns data points. The per-method reference pages of those operations and of users.getIdentity have listed it since they were updated on 2026-10-01; the Scopes guide still does not on 2026-10-13. These are the read half of the Women's Health scopes whose writeonly counterparts shipped on 2026-08-17; the data type page still documents create, update and batchDelete only for its four Women's Health types."
       }
     ],
     "inScopesGuideOnly": [

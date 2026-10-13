@@ -114,9 +114,11 @@ internal static class ContractValidator
     /// Cross-checks declared pagination against the actual response schema.
     /// </summary>
     /// <remarks>
-    /// This is what catches the <c>dataPoints.dailyRollUp</c> asymmetry automatically: its request
-    /// declares <c>pageToken</c> but its response has no <c>nextPageToken</c>, so it must be
-    /// declared <c>requestOnly</c> and must not get an enumeration helper.
+    /// This is what catches a paging asymmetry automatically. An operation whose request declares
+    /// <c>pageToken</c> while its response has no <c>nextPageToken</c> must be declared
+    /// <c>requestOnly</c> and must not get an enumeration helper; and when a contract refresh gives
+    /// such a response a <c>nextPageToken</c>, generation stops until the declaration is
+    /// promoted, so the operation cannot be left without its helper.
     /// </remarks>
     private static void ValidatePagination(SpecSet spec, ApiContract contract, List<string> errors, List<string> warnings)
     {

@@ -17,6 +17,27 @@ Dates are UTC, taken from when the packages went to nuget.org.
 
 ## [Unreleased]
 
+### Added
+
+- `DataPointsResource.EnumerateAsync(DailyRollUpRequest)`, which streams the days of a daily
+  roll-up across pages, and the members it is built from:
+  `DailyRollUpDataPointsResponse.NextPageToken`, and `WithPageToken` on `DailyRollUpRequest` and
+  `DailyRollUpDataPointsRequest`. Discovery revision `20261002` gave the `dailyRollUp` response a
+  next page token; until then the operation accepted a page token and returned none, so it had no
+  enumeration helper. The per-method reference page does not show the token yet, and whether the
+  live service returns one has not been checked. If it never does, enumeration returns the one page.
+
+### Changed
+
+- Generated from Google Health API `v4`, Discovery revision `20261012`, up from `20261001`. The
+  public API gains the four members above and nothing else; no operation, schema or scope was added
+  or removed.
+- The generated documentation for the parent or name of every data point operation now says the
+  user segment may be either the alias `me` or the user's numeric Health User ID, with an example of
+  each. When measured, five of the six data point collection operations refused a parent carrying
+  the numeric id. That has not been measured again, so the advice to build parents from
+  `UserName.Me` stands; `me` is accepted either way.
+
 ## [0.9.0-alpha] - 2026-10-02
 
 Generated from Google Health API `v4`, Discovery revision `20261001`. One change is breaking:

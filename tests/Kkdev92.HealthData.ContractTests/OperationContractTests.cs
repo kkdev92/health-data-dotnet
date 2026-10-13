@@ -601,9 +601,7 @@ public sealed class OperationContractTests
 
         Assert.Equal(PaginationKind.Query, byId["health.users.dataTypes.dataPoints.list"].Pagination);
         Assert.Equal(PaginationKind.Body, byId["health.users.dataTypes.dataPoints.rollUp"].Pagination);
-
-        // Paginated request, no continuation token in the response: cannot be enumerated.
-        Assert.Equal(PaginationKind.RequestOnly, byId["health.users.dataTypes.dataPoints.dailyRollUp"].Pagination);
+        Assert.Equal(PaginationKind.Body, byId["health.users.dataTypes.dataPoints.dailyRollUp"].Pagination);
 
         Assert.Equal(PaginationKind.None, byId["health.users.getProfile"].Pagination);
     }

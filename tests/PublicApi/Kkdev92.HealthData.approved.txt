@@ -1,4 +1,5 @@
 class Kkdev92.HealthData.DataPointsResource
+    IAsyncEnumerable<Kkdev92.HealthData.Models.DailyRollupDataPoint> EnumerateAsync(Kkdev92.HealthData.Requests.DailyRollUpRequest request, System.Threading.CancellationToken cancellationToken = default)
     IAsyncEnumerable<Kkdev92.HealthData.Models.DataPoint> EnumerateAsync(Kkdev92.HealthData.Requests.ListDataPointsRequest request, System.Threading.CancellationToken cancellationToken = default)
     IAsyncEnumerable<Kkdev92.HealthData.Models.ReconciledDataPoint> EnumerateAsync(Kkdev92.HealthData.Requests.ReconcileRequest request, System.Threading.CancellationToken cancellationToken = default)
     IAsyncEnumerable<Kkdev92.HealthData.Models.RollupDataPoint> EnumerateAsync(Kkdev92.HealthData.Requests.RollUpRequest request, System.Threading.CancellationToken cancellationToken = default)
@@ -671,6 +672,7 @@ struct Kkdev92.HealthData.Models.DailyRestingHeartRateMetadata+Types+Calculation
 class Kkdev92.HealthData.Models.DailyRollUpDataPointsRequest
     .ctor()
     Kkdev92.HealthData.Models.CivilTimeInterval Range { get; set; }
+    Kkdev92.HealthData.Models.DailyRollUpDataPointsRequest WithPageToken(System.String pageToken)
     Nullable<System.Int32> PageSize { get; set; }
     Nullable<System.Int32> WindowSizeDays { get; set; }
     System.String DataSourceFamily { get; set; }
@@ -678,6 +680,7 @@ class Kkdev92.HealthData.Models.DailyRollUpDataPointsRequest
 class Kkdev92.HealthData.Models.DailyRollUpDataPointsResponse
     .ctor()
     IReadOnlyList<Kkdev92.HealthData.Models.DailyRollupDataPoint> RollupDataPoints { get; set; }
+    System.String NextPageToken { get; set; }
 class Kkdev92.HealthData.Models.DailyRollupDataPoint
     .ctor()
     IDictionary<System.String, System.Text.Json.JsonElement> ExtensionData { get; set; }
@@ -2835,6 +2838,7 @@ class Kkdev92.HealthData.Requests.DailyRollUpRequest
     Kkdev92.HealthData.Models.DailyRollUpDataPointsRequest Body { get; set; }
     Kkdev92.HealthData.Names.DataTypeName Parent { get; set; }
     Kkdev92.HealthData.Requests.DailyRollUpRequest <Clone>$()
+    Kkdev92.HealthData.Requests.DailyRollUpRequest WithPageToken(System.String pageToken)
     System.Boolean Equals(Kkdev92.HealthData.Requests.DailyRollUpRequest other)
     System.Boolean Equals(System.Object obj)
     System.Int32 GetHashCode()
