@@ -17,6 +17,16 @@ Dates are UTC, taken from when the packages went to nuget.org.
 
 ## [Unreleased]
 
+## [0.10.1-alpha] - 2026-10-24
+
+Generated from Google Health API `v4`, Discovery revision `20261012` — the same contract and the
+same public surface as 0.10.0-alpha. Only a dependency floor moves.
+
+### Changed
+
+- `Kkdev92.HealthData.DependencyInjection` depends on `Microsoft.Extensions.Http` and
+  `Microsoft.Extensions.Options` 10.0.13 or later, up from 10.0.12.
+
 ## [0.10.0-alpha] - 2026-10-13
 
 Generated from Google Health API `v4`, Discovery revision `20261012`. Nothing is breaking: the
@@ -560,7 +570,8 @@ First public build. Generated from Google Health API `v4`, Discovery revision `2
   reported as a bare status with the RFC 6749 reason discarded, which made the seven-day refresh
   expiry indistinguishable from a malformed request. Both were invisible to fixtures.
 
-[Unreleased]: https://github.com/kkdev92/health-data-dotnet/compare/v0.10.0-alpha...HEAD
+[Unreleased]: https://github.com/kkdev92/health-data-dotnet/compare/v0.10.1-alpha...HEAD
+[0.10.1-alpha]: https://github.com/kkdev92/health-data-dotnet/releases/tag/v0.10.1-alpha
 [0.10.0-alpha]: https://github.com/kkdev92/health-data-dotnet/releases/tag/v0.10.0-alpha
 [0.9.0-alpha]: https://github.com/kkdev92/health-data-dotnet/releases/tag/v0.9.0-alpha
 [0.8.0-alpha]: https://github.com/kkdev92/health-data-dotnet/releases/tag/v0.8.0-alpha
