@@ -294,12 +294,13 @@ var tokens = await oauth.ExchangeCodeAsync(code, pkce, cancellationToken);
 
 Scopes come from the Discovery document plus the per-method reference pages, because **no single
 Google source lists them all.** All three were compared on 2026-08-12, and every row again on
-2026-10-13 against revision `20261012`:
+2026-11-04 against revision `20261102`:
 
 | Scope | Discovery | Per-method pages | Scopes guide |
 |---|---|---|---|
 | `googlehealth.nutrition.readonly` | ❌ no operation declares it | ✅ 6 read operations | ✅ listed |
 | `googlehealth.logged_symptoms.readonly` · `mindfulness.readonly` · `reproductive_health.readonly` | ✅ added at revision `20260909`, on every data point read and `users.getIdentity` | ✅ the same operations, since the pages were updated on 2026-10-01 | ❌ not listed |
+| `googlehealth.location.readonly` and the nine `.writeonly` scopes, on `users.getIdentity` | ✅ added at revision `20261030` | ❌ not listed; the page was last updated on 2026-10-01 | ✅ listed |
 | `cloud-platform` | ✅ project administration | ✅ | ❌ (not an end-user scope) |
 
 The two sources have omitted each other's scopes in both directions, so an operation's accepted

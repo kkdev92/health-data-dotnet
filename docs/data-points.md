@@ -57,7 +57,7 @@ Only the parent needs rebuilding. A name inside a request **body** is fine as it
 
 The rule is not one you can derive. `list` and `create` are the same path and disagree;
 `pairedDevices.list` has the same shape and is accepted; it is not reads against writes, and it is
-not the URL template. Discovery does not state it either: revision `20261012` describes the parent
+not the URL template. Discovery does not state it either: revision `20261102` describes the parent
 of every operation in the table as taking either `me` or the numeric id, which is not what the
 table records. The table has not been measured again since that wording appeared, and `me` works
 either way. So the generator cannot know the rule and no type here encodes it. The sharp end is
@@ -320,10 +320,16 @@ members — a smaller set, because not every measurement aggregates.
 
 ### `PageSize` on a roll-up bounds the query, not the response
 
-Both roll-up requests carry `PageSize` because Discovery declares it, and the description it
-carries — a maximum number of points, 1440 by default — is Google's own, reproduced as given. The
-service does not behave that way. Setting it does not reduce what comes back: a response of 1,686
-points is still 1,686 with `PageSize` at 1440.
+Both roll-up requests carry `PageSize` because Discovery declares it, and the description each
+carries is Google's own, reproduced as given. On `RollUp` it is a maximum number of points, 1440 by
+default, and the service does not behave that way. Setting it does not reduce what comes back: a
+response of 1,686 points is still 1,686 with `PageSize` at 1440.
+
+On `DailyRollUp`, revision `20261102` describes 90 by default and at most, and 14 for
+`calories-in-heart-rate-zone`, `heart-rate`, `active-minutes` and `total-calories`, where revision
+`20261012` repeated `RollUp`'s figures. For one-day windows, those are the ceilings below under a
+90-day and a 14-day cap. The measurements on this page predate that description and have not been
+repeated against it.
 
 What it does is bound the query. Two checks use it, they round in opposite directions, and neither
 names it when it refuses:

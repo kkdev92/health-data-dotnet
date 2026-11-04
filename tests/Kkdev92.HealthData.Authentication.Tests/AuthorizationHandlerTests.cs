@@ -246,6 +246,23 @@ public sealed class ScopeRequirementTests
     }
 
     [Fact]
+    public void LookingUpTheIdentityAcceptsEveryEndUserScope()
+    {
+        // Discovery revision 20261030 added location.readonly and all nine writeonly scopes to
+        // users.getIdentity. With nutrition.readonly, which only its per-method page lists, the
+        // accepted list is every read and every write scope, so a token granted nothing but a
+        // writeonly scope is one a provider may hand over for it. No project scope is among them.
+        var request = HealthDataTokenRequest.FromDescriptor(HealthDataGeneratedOperations.UsersGetIdentity);
+
+        Assert.Equal(HealthDataScopeCombination.AnyOf, request.Scopes.Combination);
+        Assert.Equal(
+            [.. HealthDataScopes.ReadOnly.Concat(HealthDataScopes.WriteOnly).Order(StringComparer.Ordinal)],
+            [.. request.Scopes.Scopes.Order(StringComparer.Ordinal)]);
+        Assert.True(request.Scopes.IsSatisfiedBy([HealthDataScopes.SleepWriteonly]));
+        Assert.False(request.Scopes.IsSatisfiedBy([HealthDataScopes.CloudPlatform]));
+    }
+
+    [Fact]
     public void ADescriptorThatSaysNothingStillMeansAnyOf()
     {
         // The combination is a property with a default rather than a required member, so a

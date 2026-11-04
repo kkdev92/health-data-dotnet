@@ -17,6 +17,20 @@ Dates are UTC, taken from when the packages went to nuget.org.
 
 ## [Unreleased]
 
+### Changed
+
+- Generated from Google Health API `v4`, Discovery revision `20261102`, up from `20261012`. No
+  operation, schema, scope or public member was added or removed.
+- `GetIdentityAsync` accepts every end-user scope, read or write. Discovery revision `20261030` added
+  `location.readonly` and all nine `.writeonly` scopes to `users.getIdentity`, so the scopes its
+  descriptor offers an `IHealthDataAccessTokenProvider` grow from eleven to twenty-one, and a grant
+  holding only write scopes now satisfies it. The per-method reference page does not list those ten
+  yet, and whether the live service accepts a write-only token there has not been checked.
+- The generated documentation for `DailyRollUpDataPointsRequest.PageSize` now gives 90 as the
+  default and the maximum, and 14 for `calories-in-heart-rate-zone`, `heart-rate`, `active-minutes`
+  and `total-calories`, instead of repeating the figures `RollUpDataPointsRequest` documents. The
+  SDK sends `PageSize` as set and enforces neither.
+
 ## [0.10.1-alpha] - 2026-10-24
 
 Generated from Google Health API `v4`, Discovery revision `20261012` — the same contract and the
