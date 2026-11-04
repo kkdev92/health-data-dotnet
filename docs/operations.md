@@ -1,6 +1,6 @@
 # Operations
 
-The 25 operations this SDK exposes from Google Health API `v4`, Discovery revision `20261012`.
+The 25 operations this SDK exposes from Google Health API `v4`, Discovery revision `20261102`.
 
 This table is maintained by hand from the committed snapshot. The descriptors it describes are
 generated — they are available at runtime on `HealthDataGeneratedOperations`, and those cannot
@@ -45,13 +45,20 @@ Scope names are shown without the `https://www.googleapis.com/auth/googlehealth.
 |---|---|---|---|---|---|
 | `GetProfileAsync` | GET | `v4/{+name}` | `Profile` | `profile.readonly` | `Safe` |
 | `GetSettingsAsync` | GET | `v4/{+name}` | `Settings` | `settings.readonly` | `Safe` |
-| `GetIdentityAsync` | GET | `v4/{+name}` | `Identity` | any of 7 read scopes | `Safe` |
+| `GetIdentityAsync` | GET | `v4/{+name}` | `Identity` | any end-user scope, read or write | `Safe` |
 | `GetIrnProfileAsync` | GET | `v4/{+name}` | `IrnProfile` | `irn.readonly` | `Safe` |
 | `UpdateProfileAsync` | PATCH | `v4/{+name}` | `Profile` | `profile.writeonly` | `Never` |
 | `UpdateSettingsAsync` | PATCH | `v4/{+name}` | `Settings` | `settings.writeonly` | `Never` |
 
 The resource names are fixed by Discovery: `users/{user}/profile`, `.../settings`,
 `.../identity`, `.../irnProfile`.
+
+`GetIdentityAsync` accepts any of the twenty-one end-user scopes, `.writeonly` ones included, so a
+token provider may answer it with a grant that holds only write scopes. Discovery added
+`location.readonly` and the nine `.writeonly` scopes at revision `20261030`. Its per-method
+reference, last updated on 2026-10-01, does not list those ten yet, and it contributes
+`nutrition.readonly`, which Discovery omits. Whether the service accepts a write-only token here has
+not been checked.
 
 ## `client.Users.DataPoints`
 
