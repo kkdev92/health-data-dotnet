@@ -57,7 +57,7 @@ Only the parent needs rebuilding. A name inside a request **body** is fine as it
 
 The rule is not one you can derive. `list` and `create` are the same path and disagree;
 `pairedDevices.list` has the same shape and is accepted; it is not reads against writes, and it is
-not the URL template. Discovery does not state it either: revision `20261102` describes the parent
+not the URL template. Discovery does not state it either: revision `20261113` describes the parent
 of every operation in the table as taking either `me` or the numeric id, which is not what the
 table records. The table has not been measured again since that wording appeared, and `me` works
 either way. So the generator cannot know the rule and no type here encodes it. The sharp end is

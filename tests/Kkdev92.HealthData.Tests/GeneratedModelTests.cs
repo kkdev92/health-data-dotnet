@@ -98,6 +98,36 @@ public sealed class GeneratedModelTests
     }
 
     [Fact]
+    public void OvulationTestCarriesItsTestType()
+    {
+        // Discovery revision 20261113 added testType, and OWN_METHOD on result for an ovulation
+        // day the user identified without a test kit. Before it, a testType in a response was
+        // dropped as an unknown property, and a request had no way to carry one.
+        const string payload = """
+            {
+              "result": "OWN_METHOD",
+              "testType": "OWN_METHOD"
+            }
+            """;
+
+        var read = JsonSerializer.Deserialize(payload, HealthDataJson.ReadInfo<OvulationTest>())!;
+
+        Assert.Equal(OvulationTest.Types.Result.OwnMethod, read.Result);
+        Assert.Equal(OvulationTest.Types.TestType.OwnMethod, read.TestType);
+
+        var test = new OvulationTest
+        {
+            Result = OvulationTest.Types.Result.Positive,
+            TestType = OvulationTest.Types.TestType.Strip,
+        };
+
+        var written = JsonSerializer.Serialize(test, HealthDataJson.WriteInfo<OvulationTest>());
+
+        Assert.Contains("\"result\":\"POSITIVE\"", written, StringComparison.Ordinal);
+        Assert.Contains("\"testType\":\"STRIP\"", written, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void UnknownDataPointMemberDoesNotBreakDeserialization()
     {
         // DataPoint is a union of 42 measurement members — 43 message-typed properties less

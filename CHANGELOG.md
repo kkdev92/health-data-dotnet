@@ -17,10 +17,25 @@ Dates are UTC, taken from when the packages went to nuget.org.
 
 ## [Unreleased]
 
+### Added
+
+- `OvulationTest.TestType`, typed as the new open enum `OvulationTest.Types.TestType` with the
+  known values `TestTypeUnspecified`, `Strip`, `Digital` and `OwnMethod`. Discovery revision
+  `20261113` declares the property as optional; Google's reference page for the data point
+  resource does not list it yet. Until now a `testType` in a response was dropped as an unknown
+  property, and a request could not carry one.
+- Known values on two open enums: `OwnMethod` on `OvulationTest.Types.Result`, for an ovulation
+  day the user identified by their own method rather than with a test kit, and `LimbsSwelling`,
+  `FaceSwelling` and `NasalCongestion` on `Symptoms.Types.Symptoms`. Being open enums, they
+  already round-tripped these values as unrecognised ones; they now have names. The reference
+  page does not list them yet either.
+
 ### Changed
 
-- Generated from Google Health API `v4`, Discovery revision `20261102`, up from `20261012`. No
-  operation, schema, scope or public member was added or removed.
+- Generated from Google Health API `v4`, Discovery revision `20261113`, up from `20261012`. No
+  operation, schema or scope was added or removed. Besides the members listed under Added, the
+  public API gains only the two `HealthDataJsonContext` properties that carry the type
+  information for `OvulationTest.Types.TestType`.
 - `GetIdentityAsync` accepts every end-user scope, read or write. Discovery revision `20261030` added
   `location.readonly` and all nine `.writeonly` scopes to `users.getIdentity`, so the scopes its
   descriptor offers an `IHealthDataAccessTokenProvider` grow from eleven to twenty-one, and a grant

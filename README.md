@@ -55,7 +55,7 @@ rather the SDK be boring about it._
 
 ## Features
 
-- **Generated From a Committed Snapshot**: 25 operations, 139 models and 58 open enums are emitted from `spec/v4`, and CI compares the checked-in sources byte for byte
+- **Generated From a Committed Snapshot**: 25 operations, 139 models and 59 open enums are emitted from `spec/v4`, and CI compares the checked-in sources byte for byte
 - **Zero Third-Party Runtime Dependencies**: the core, authentication and webhook packages resolve to the BCL and nothing else
 - **Reflection-Free Serialization**: `System.Text.Json` source generation only, with reflection disabled, so a missing contract fails loudly instead of at run time under AOT
 - **Native AOT and Trimming**: a real consumer application is published with `PublishAot=true` in CI, because a library that merely builds proves nothing
@@ -275,7 +275,7 @@ return Results.StatusCode((int)result.StatusCode);
   [`docs/authentication.md`](docs/authentication.md#two-credential-contexts-not-one)
 - **A name from the service cannot always be used as a parent.** `list` returns names carrying the
   numeric user id, and five of the six data point collection operations refused it when measured —
-  build parents from `UserName.Me`, which works either way. Discovery revision `20261102` describes
+  build parents from `UserName.Me`, which works either way. Discovery revision `20261113` describes
   the parent of each of those operations as taking either `me` or the numeric id; the refusals have
   not been measured again since. See
   [`docs/data-points.md`](docs/data-points.md#use-usernameme-for-a-parent-even-when-you-have-a-name-from-the-service)
@@ -330,7 +330,7 @@ Full detail is in [`docs/code-generation.md`](docs/code-generation.md).
 | Native AOT | supported and exercised in CI on a real consumer application |
 | Trimming | `IsAotCompatible`; the trim and AOT analyzers report no IL warnings |
 | SDK (to build) | the floor in `global.json`; `rollForward: latestFeature` takes a newer one |
-| Google Health API | `v4`, Discovery revision `20261102`, snapshot verified 2026-11-04 |
+| Google Health API | `v4`, Discovery revision `20261113`, snapshot verified 2026-11-14 |
 
 The Google Health API version and this package's version are **independent axes**. A new Google
 API version does not by itself cause a major bump.

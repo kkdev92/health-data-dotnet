@@ -18,7 +18,7 @@ generated from a committed Discovery snapshot by a deterministic offline code ge
 > Two things worth knowing before you hit them. `list` returns resource names carrying the numeric
 > user id, and five of the six data point collection operations refused that form as a `Parent`
 > when measured — build parents from `UserName.Me`, which works either way, even though Discovery
-> revision `20261102` describes both forms as accepted. And a token cannot carry both scope
+> revision `20261113` describes both forms as accepted. And a token cannot carry both scope
 > families: adding `cloud-platform` to an end user's grant stops every user-facing operation
 > working. A name inside a request body is fine as it arrived; it is only the parent that has to be
 > rebuilt.
@@ -110,7 +110,7 @@ var value = point.GetKind() switch
 | | |
 |---|---|
 | Google Health API version | `v4` |
-| Discovery revision | `20261102` |
+| Discovery revision | `20261113` |
 | Operations exposed | 25 of 27 |
 
 The Google Health API version and this package's version are **independent axes**. A new Google
