@@ -1,12 +1,12 @@
 {
   "api": "Google Health API",
   "version": "v4",
-  "revision": "20261102",
+  "revision": "20261113",
   "title": "Google Health API",
   "source": "https://health.googleapis.com/$discovery/rest?version=v4",
   "rootUrl": "https://health.googleapis.com/",
-  "sha256": "e271af20ca6a00e7ba3d36cce01b6702174126cc2fdad746cd1a43f02baa89b2",
-  "byteLength": 311567,
+  "sha256": "349d018b12c8cb8b2e0c4ae8134329bfc24e259196a37e706341434c3de55512",
+  "byteLength": 312359,
   "retrievedAtUtc": "2026-08-09T00:00:00Z",
   "canonicalized": true,
   "notes": [

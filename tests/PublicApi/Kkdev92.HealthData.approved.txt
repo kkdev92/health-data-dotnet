@@ -1789,9 +1789,11 @@ class Kkdev92.HealthData.Models.OvulationTest
     .ctor()
     Kkdev92.HealthData.Models.ObservationSampleTime SampleTime { get; set; }
     Nullable<Kkdev92.HealthData.Models.OvulationTest+Types+Result> Result { get; set; }
+    Nullable<Kkdev92.HealthData.Models.OvulationTest+Types+TestType> TestType { get; set; }
     static class Kkdev92.HealthData.Models.OvulationTest+Types
 static class Kkdev92.HealthData.Models.OvulationTest+Types
     struct Kkdev92.HealthData.Models.OvulationTest+Types+Result
+    struct Kkdev92.HealthData.Models.OvulationTest+Types+TestType
 struct Kkdev92.HealthData.Models.OvulationTest+Types+Result
     .ctor(System.String Value)
     Kkdev92.HealthData.Models.OvulationTest+Types+Result EstrogenSurge { get; }
@@ -1800,8 +1802,22 @@ struct Kkdev92.HealthData.Models.OvulationTest+Types+Result
     Kkdev92.HealthData.Models.OvulationTest+Types+Result LuteinizingHormoneSurge { get; }
     Kkdev92.HealthData.Models.OvulationTest+Types+Result Negative { get; }
     Kkdev92.HealthData.Models.OvulationTest+Types+Result OvulationTestResultUnspecified { get; }
+    Kkdev92.HealthData.Models.OvulationTest+Types+Result OwnMethod { get; }
     Kkdev92.HealthData.Models.OvulationTest+Types+Result Positive { get; }
     System.Boolean Equals(Kkdev92.HealthData.Models.OvulationTest+Types+Result other)
+    System.Boolean Equals(System.Object obj)
+    System.Int32 GetHashCode()
+    System.String ToString()
+    System.String Value { get; set; }
+    System.Void Deconstruct(System.String& Value)
+struct Kkdev92.HealthData.Models.OvulationTest+Types+TestType
+    .ctor(System.String Value)
+    Kkdev92.HealthData.Models.OvulationTest+Types+TestType Digital { get; }
+    Kkdev92.HealthData.Models.OvulationTest+Types+TestType FromValue(System.String value)
+    Kkdev92.HealthData.Models.OvulationTest+Types+TestType OwnMethod { get; }
+    Kkdev92.HealthData.Models.OvulationTest+Types+TestType Strip { get; }
+    Kkdev92.HealthData.Models.OvulationTest+Types+TestType TestTypeUnspecified { get; }
+    System.Boolean Equals(Kkdev92.HealthData.Models.OvulationTest+Types+TestType other)
     System.Boolean Equals(System.Object obj)
     System.Int32 GetHashCode()
     System.String ToString()
@@ -2398,6 +2414,7 @@ struct Kkdev92.HealthData.Models.Symptoms+Types+Symptoms
     Kkdev92.HealthData.Models.Symptoms+Types+Symptoms DryHair { get; }
     Kkdev92.HealthData.Models.Symptoms+Types+Symptoms DrySkin { get; }
     Kkdev92.HealthData.Models.Symptoms+Types+Symptoms Exhaustion { get; }
+    Kkdev92.HealthData.Models.Symptoms+Types+Symptoms FaceSwelling { get; }
     Kkdev92.HealthData.Models.Symptoms+Types+Symptoms Fainting { get; }
     Kkdev92.HealthData.Models.Symptoms+Types+Symptoms Fatigue { get; }
     Kkdev92.HealthData.Models.Symptoms+Types+Symptoms FeelGood { get; }
@@ -2417,7 +2434,9 @@ struct Kkdev92.HealthData.Models.Symptoms+Types+Symptoms
     Kkdev92.HealthData.Models.Symptoms+Types+Symptoms Insomnia { get; }
     Kkdev92.HealthData.Models.Symptoms+Types+Symptoms JointPain { get; }
     Kkdev92.HealthData.Models.Symptoms+Types+Symptoms LegCramps { get; }
+    Kkdev92.HealthData.Models.Symptoms+Types+Symptoms LimbsSwelling { get; }
     Kkdev92.HealthData.Models.Symptoms+Types+Symptoms MilkyNippleDischarge { get; }
+    Kkdev92.HealthData.Models.Symptoms+Types+Symptoms NasalCongestion { get; }
     Kkdev92.HealthData.Models.Symptoms+Types+Symptoms Nausea { get; }
     Kkdev92.HealthData.Models.Symptoms+Types+Symptoms NightSweats { get; }
     Kkdev92.HealthData.Models.Symptoms+Types+Symptoms NormalDigestion { get; }
@@ -3218,6 +3237,7 @@ class Kkdev92.HealthData.Serialization.HealthDataJsonContext
     JsonTypeInfo<Kkdev92.HealthData.Models.Operation> Operation { get; }
     JsonTypeInfo<Kkdev92.HealthData.Models.OutOfBedSegment> OutOfBedSegment { get; }
     JsonTypeInfo<Kkdev92.HealthData.Models.OvulationTest+Types+Result> OvulationTestResult { get; }
+    JsonTypeInfo<Kkdev92.HealthData.Models.OvulationTest+Types+TestType> OvulationTestTestType { get; }
     JsonTypeInfo<Kkdev92.HealthData.Models.OvulationTest> OvulationTest { get; }
     JsonTypeInfo<Kkdev92.HealthData.Models.OxygenSaturation> OxygenSaturation { get; }
     JsonTypeInfo<Kkdev92.HealthData.Models.PairedDevice+Types+DeviceType> PairedDeviceDeviceType { get; }
@@ -3325,6 +3345,7 @@ class Kkdev92.HealthData.Serialization.HealthDataJsonContext
     JsonTypeInfo<Nullable<Kkdev92.HealthData.Models.NutrientQuantityRollup+Types+Nutrient>> NullableNutrientQuantityRollupNutrient { get; }
     JsonTypeInfo<Nullable<Kkdev92.HealthData.Models.NutritionLog+Types+MealType>> NullableNutritionLogMealType { get; }
     JsonTypeInfo<Nullable<Kkdev92.HealthData.Models.OvulationTest+Types+Result>> NullableOvulationTestResult { get; }
+    JsonTypeInfo<Nullable<Kkdev92.HealthData.Models.OvulationTest+Types+TestType>> NullableOvulationTestTestType { get; }
     JsonTypeInfo<Nullable<Kkdev92.HealthData.Models.PairedDevice+Types+DeviceType>> NullablePairedDeviceDeviceType { get; }
     JsonTypeInfo<Nullable<Kkdev92.HealthData.Models.Settings+Types+DistanceUnit>> NullableSettingsDistanceUnit { get; }
     JsonTypeInfo<Nullable<Kkdev92.HealthData.Models.Settings+Types+GlucoseUnit>> NullableSettingsGlucoseUnit { get; }

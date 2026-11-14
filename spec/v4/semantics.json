@@ -164,7 +164,7 @@
         {
           "url": "https://health.googleapis.com/$discovery/rest?version=v4",
           "kind": "discovery",
-          "verifiedOn": "2026-11-04"
+          "verifiedOn": "2026-11-14"
         },
         {
           "url": "https://health.googleapis.com/v4/users/me/dataTypes/{dataType}/dataPoints:rollUp",
@@ -338,7 +338,7 @@
           "https://www.googleapis.com/auth/googlehealth.sleep.writeonly"
         ]
       },
-      "scopeNote": "Discovery omits nutrition.readonly for this operation; the per-method reference lists 11 scopes in total. Discovery revision 20260909 added logged_symptoms.readonly, mindfulness.readonly and reproductive_health.readonly, which the per-method reference has listed since it was updated on 2026-10-01. Discovery revision 20261030 added location.readonly and all nine writeonly scopes, which brings the union to every end-user scope; the per-method reference, last updated on 2026-10-01, does not list those ten yet. The union is recorded because nutrition.readonly comes from the page alone and the ten from Discovery alone, and an accepted-scope list only causes harm when it is too small: a provider cannot select a token it is not told about. Verified against Discovery revision 20261102 and the per-method page on 2026-11-04."
+      "scopeNote": "Discovery omits nutrition.readonly for this operation; the per-method reference lists 11 scopes in total. Discovery revision 20260909 added logged_symptoms.readonly, mindfulness.readonly and reproductive_health.readonly, which the per-method reference has listed since it was updated on 2026-10-01. Discovery revision 20261030 added location.readonly and all nine writeonly scopes, which brings the union to every end-user scope; the per-method reference, last updated on 2026-10-01, does not list those ten yet. The union is recorded because nutrition.readonly comes from the page alone and the ten from Discovery alone, and an accepted-scope list only causes harm when it is too small: a provider cannot select a token it is not told about. Verified against Discovery revision 20261113 and the per-method page on 2026-11-14."
     }
   },
   "resourceNaming": {
@@ -374,7 +374,7 @@
       "allOf; every other operation is anyOf. Re-read the per-method pages on a revision bump, not",
       "just Discovery: this exception is invisible from Discovery alone."
     ],
-    "comparedOn": "2026-11-04",
+    "comparedOn": "2026-11-14",
     "inDiscoveryOnly": [
       {
         "scope": "https://www.googleapis.com/auth/cloud-platform",
@@ -382,15 +382,15 @@
       },
       {
         "scope": "https://www.googleapis.com/auth/googlehealth.logged_symptoms.readonly",
-        "note": "Added by Discovery revision 20260909 and accepted on every read operation that returns data points. The per-method reference pages of those operations and of users.getIdentity have listed it since they were updated on 2026-10-01; the Scopes guide still does not on 2026-11-04. These are the read half of the Women's Health scopes whose writeonly counterparts shipped on 2026-08-17; the data type page still documents create, update and batchDelete only for its four Women's Health types."
+        "note": "Added by Discovery revision 20260909 and accepted on every read operation that returns data points. The per-method reference pages of those operations and of users.getIdentity have listed it since they were updated on 2026-10-01; the Scopes guide still does not on 2026-11-14. These are the read half of the Women's Health scopes whose writeonly counterparts shipped on 2026-08-17; the data type page still documents create, update and batchDelete only for its four Women's Health types."
       },
       {
         "scope": "https://www.googleapis.com/auth/googlehealth.mindfulness.readonly",
-        "note": "Added by Discovery revision 20260909 and accepted on every read operation that returns data points. The per-method reference pages of those operations and of users.getIdentity have listed it since they were updated on 2026-10-01; the Scopes guide still does not on 2026-11-04. These are the read half of the Women's Health scopes whose writeonly counterparts shipped on 2026-08-17; the data type page still documents create, update and batchDelete only for its four Women's Health types."
+        "note": "Added by Discovery revision 20260909 and accepted on every read operation that returns data points. The per-method reference pages of those operations and of users.getIdentity have listed it since they were updated on 2026-10-01; the Scopes guide still does not on 2026-11-14. These are the read half of the Women's Health scopes whose writeonly counterparts shipped on 2026-08-17; the data type page still documents create, update and batchDelete only for its four Women's Health types."
       },
       {
         "scope": "https://www.googleapis.com/auth/googlehealth.reproductive_health.readonly",
-        "note": "Added by Discovery revision 20260909 and accepted on every read operation that returns data points. The per-method reference pages of those operations and of users.getIdentity have listed it since they were updated on 2026-10-01; the Scopes guide still does not on 2026-11-04. These are the read half of the Women's Health scopes whose writeonly counterparts shipped on 2026-08-17; the data type page still documents create, update and batchDelete only for its four Women's Health types."
+        "note": "Added by Discovery revision 20260909 and accepted on every read operation that returns data points. The per-method reference pages of those operations and of users.getIdentity have listed it since they were updated on 2026-10-01; the Scopes guide still does not on 2026-11-14. These are the read half of the Women's Health scopes whose writeonly counterparts shipped on 2026-08-17; the data type page still documents create, update and batchDelete only for its four Women's Health types."
       }
     ],
     "inScopesGuideOnly": [

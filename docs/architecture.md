@@ -45,8 +45,8 @@ enforced by tests:
 ### Known documentation conflicts
 
 This table is canonical; other documents point here rather than restating it. Verified
-2026-08-10 against Discovery revision `20260805`; the scopes row re-verified 2026-11-04 against
-revision `20261102`.
+2026-08-10 against Discovery revision `20260805`; the scopes row re-verified 2026-11-14 against
+revision `20261113`.
 
 | Topic | Google's sources disagree | Resolution | Detail |
 |---|---|---|---|
