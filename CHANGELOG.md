@@ -17,6 +17,13 @@ Dates are UTC, taken from when the packages went to nuget.org.
 
 ## [Unreleased]
 
+## [0.11.0-alpha] - 2026-11-19
+
+Generated from Google Health API `v4`, Discovery revision `20261113`. Nothing is breaking: the
+public API gains `OvulationTest.TestType` and its open enum, four known values on two existing open
+enums, and the two `HealthDataJsonContext` properties for the new enum, and nothing else in it
+changed. A dependency floor also moves.
+
 ### Added
 
 - `OvulationTest.TestType`, typed as the new open enum `OvulationTest.Types.TestType` with the
@@ -45,6 +52,8 @@ Dates are UTC, taken from when the packages went to nuget.org.
   default and the maximum, and 14 for `calories-in-heart-rate-zone`, `heart-rate`, `active-minutes`
   and `total-calories`, instead of repeating the figures `RollUpDataPointsRequest` documents. The
   SDK sends `PageSize` as set and enforces neither.
+- `Kkdev92.HealthData.DependencyInjection` depends on `Microsoft.Extensions.Http` and
+  `Microsoft.Extensions.Options` 10.0.15 or later, up from 10.0.13.
 
 ## [0.10.1-alpha] - 2026-10-24
 
@@ -599,7 +608,8 @@ First public build. Generated from Google Health API `v4`, Discovery revision `2
   reported as a bare status with the RFC 6749 reason discarded, which made the seven-day refresh
   expiry indistinguishable from a malformed request. Both were invisible to fixtures.
 
-[Unreleased]: https://github.com/kkdev92/health-data-dotnet/compare/v0.10.1-alpha...HEAD
+[Unreleased]: https://github.com/kkdev92/health-data-dotnet/compare/v0.11.0-alpha...HEAD
+[0.11.0-alpha]: https://github.com/kkdev92/health-data-dotnet/releases/tag/v0.11.0-alpha
 [0.10.1-alpha]: https://github.com/kkdev92/health-data-dotnet/releases/tag/v0.10.1-alpha
 [0.10.0-alpha]: https://github.com/kkdev92/health-data-dotnet/releases/tag/v0.10.0-alpha
 [0.9.0-alpha]: https://github.com/kkdev92/health-data-dotnet/releases/tag/v0.9.0-alpha
