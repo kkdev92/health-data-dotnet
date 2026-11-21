@@ -32,6 +32,7 @@ class Kkdev92.HealthData.Webhooks.HealthDataNotificationData
     System.String DataType { get; set; }
     System.String HealthUserId { get; set; }
     System.String Operation { get; set; }
+    System.String RecordId { get; set; }
     System.String Version { get; set; }
 class Kkdev92.HealthData.Webhooks.HealthDataNotificationInterval
     .ctor()
@@ -68,7 +69,7 @@ enum Kkdev92.HealthData.Webhooks.WebhookRequestKind
     const Kkdev92.HealthData.Webhooks.WebhookRequestKind UnauthorizedChallenge
     const Kkdev92.HealthData.Webhooks.WebhookRequestKind UnauthorizedNotification
 class Kkdev92.HealthData.Webhooks.WebhookRequestResult
-    Kkdev92.HealthData.Webhooks.HealthDataNotification Notification { get; }
+    IReadOnlyList<Kkdev92.HealthData.Webhooks.HealthDataNotification> Notifications { get; }
     Kkdev92.HealthData.Webhooks.WebhookRequestKind Kind { get; }
     Kkdev92.HealthData.Webhooks.WebhookSignatureResult Signature { get; }
     System.Net.HttpStatusCode StatusCode { get; }

@@ -13,7 +13,11 @@ namespace Kkdev92.HealthData.Webhooks;
 /// <c>...WebhookNotificationCloudLog</c> in Discovery is a Cloud Logging record, not this.
 /// </para>
 /// <para>
-/// Shape verified against the Webhooks guide on 2026-08-10.
+/// One request carries 1 to 99 of these, which the receiver returns as
+/// <see cref="WebhookRequestResult.Notifications"/>.
+/// </para>
+/// <para>
+/// Shape verified against the Webhooks guide on 2026-11-21.
 /// </para>
 /// </remarks>
 public sealed class HealthDataNotification
@@ -61,6 +65,17 @@ public sealed class HealthDataNotificationData
     /// <summary>The time ranges affected.</summary>
     [JsonPropertyName("intervals")]
     public IReadOnlyList<HealthDataNotificationInterval>? Intervals { get; init; }
+
+    /// <summary>
+    /// The identifier of the changed record, for identifiable data such as a sleep session.
+    /// </summary>
+    /// <remarks>
+    /// Known only from the guide's examples, which carry it for a sleep session, both deleted and
+    /// updated, and not for time-series data such as steps. The guide does not describe the field
+    /// beyond them, so treat it as optional. It points at one of the user's records. Do not log it.
+    /// </remarks>
+    [JsonPropertyName("recordId")]
+    public string? RecordId { get; init; }
 
     /// <summary>True when this notification reports an addition or modification.</summary>
     public bool IsUpsert => string.Equals(Operation, HealthDataNotificationOperations.Upsert, StringComparison.Ordinal);
@@ -179,4 +194,5 @@ public sealed class HealthDataCivilIso8601TimeInterval
 
 [JsonSourceGenerationOptions(GenerationMode = JsonSourceGenerationMode.Metadata)]
 [JsonSerializable(typeof(HealthDataNotification))]
+[JsonSerializable(typeof(HealthDataNotification[]))]
 internal sealed partial class WebhookJsonContext : JsonSerializerContext;

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- https://learn.microsoft.com/dotnet/fundamentals/package-validation/diagnostic-ids -->
+<!--
+  WebhookRequestResult.Notification was removed on purpose, replaced by Notifications. The
+  Webhooks guide delivers every request body as a JSON array of 1 to 99 notifications, and a
+  single property could only ever hand over part of a delivery. CHANGELOG.md records it as a
+  breaking change.
+
+  This is needed only while the validation baseline is a release that still had the property.
+  Delete the file in the release that moves PackageValidationBaselineVersion to the release that
+  shipped this change, or later: package validation fails on a suppression that no longer matches
+  anything.
+-->
+<Suppressions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:Kkdev92.HealthData.Webhooks.WebhookRequestResult.get_Notification</Target>
+    <Left>lib/net10.0/Kkdev92.HealthData.Webhooks.dll</Left>
+    <Right>lib/net10.0/Kkdev92.HealthData.Webhooks.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+</Suppressions>

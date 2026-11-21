@@ -17,6 +17,35 @@ Dates are UTC, taken from when the packages went to nuget.org.
 
 ## [Unreleased]
 
+### Breaking
+
+- `WebhookRequestResult.Notification` is replaced by `WebhookRequestResult.Notifications`, which
+  holds every notification a request delivered, in the order they arrived. The Webhooks guide
+  delivers a request body as a JSON array of 1 to 99 notifications, for any mix of users and data
+  types, and the `204` acknowledges all of them at once, so a single property could only ever hand
+  over part of a delivery. Code that reads `Notification` no longer compiles; capture every entry
+  of `Notifications` before returning the status. Where the property was null — for anything but a
+  verified notification — the list is empty.
+
+### Added
+
+- `HealthDataNotificationData.RecordId`, the identifier of the changed record, which the guide's
+  examples carry for identifiable data such as a sleep session. Until now it was dropped as an
+  unknown property.
+
+### Fixed
+
+- `HealthDataWebhookReceiver.HandleAsync` reads a body that is a JSON array of notifications, which
+  is how the guide says every notification request is delivered, a single notification included.
+  It read the body as one object and threw `JsonException` on an array after the signature had
+  verified, so an endpoint built as documented answered `500`, which Google retries until the
+  batch expires. A bare object, which earlier versions of the guide showed for a lone
+  notification, is still read, as a batch of one.
+- The endpoint sample in the webhooks documentation allows a request body of 1 MiB rather than
+  64 KiB. The guide states no size limit, a full batch can pass the old ceiling, and the `413` the
+  sample answers past its limit is one of the responses Google discards a batch on without
+  retrying. An endpoint copied from the sample should raise its limit the same way.
+
 ## [0.11.0-alpha] - 2026-11-19
 
 Generated from Google Health API `v4`, Discovery revision `20261113`. Nothing is breaking: the
