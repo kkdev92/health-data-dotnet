@@ -15,7 +15,7 @@
     "all is reported as unreadable rather than as a change, since 'no scopes found' is much more",
     "likely to mean the check broke than that Google removed authorization."
   ],
-  "verifiedOn": "2026-10-02",
+  "verifiedOn": "2026-11-21",
   "methods": [
     {
       "operation": "health.users.dataTypes.dataPoints.exportExerciseTcx",
@@ -211,9 +211,13 @@
       "id": "webhooks.delivery",
       "url": "https://developers.google.com/health/webhooks",
       "mustContain": [
-        "stores pending notifications for up to 7 days",
+        "retains pending notifications in the delivery queue for up to 24 hours",
         "retries can cause duplicate notifications",
-        "Notifications older than 7 days are discarded"
+        "Notifications older than 24 hours expire, are permanently discarded, and cannot be recovered",
+        "Acknowledges delivery of the notification batch",
+        "request timeout, or unreachable endpoint",
+        "Permanently discards the notification batch without retry",
+        "responds with a status code below 400"
       ],
       "note": "docs/webhooks.md states these as the delivery contract. If the wording moves, the documentation is making a promise on Google's behalf that Google no longer makes."
     },

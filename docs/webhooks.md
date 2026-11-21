@@ -137,6 +137,10 @@ new HealthDataWebhookReceiver(verifier, new[] { currentSecret, previousSecret })
 Every candidate is compared, so the time taken does not say which one matched. Drop the old one
 once nothing is arriving with it.
 
+A notification that arrives with a secret the receiver does not accept is answered `401`, and
+Google discards it instead of retrying, so a gap in the rotation loses those notifications rather
+than delaying them ([Delivery semantics](#delivery-semantics)).
+
 This is a different thing from the signing key rotation below: that one is Google's and the SDK
 follows it for you, this one is yours.
 
@@ -297,30 +301,42 @@ and none of it can be changed from the receiving side — so the receiver has to
 | Behaviour | What Google's guide says |
 |---|---|
 | Duplicates | Retries can cause the same notification to be delivered more than once |
-| Retry trigger | Any status other than `204`, or a timeout |
+| Acknowledged | Any status below `400`, such as `200`, `202` or `204` |
+| Retried | `408`, `429`, any `5xx`, a timeout, or an unreachable endpoint |
+| Discarded | Any other `4xx`, such as `400`, `401`, `403` or `404`: the batch is dropped without a retry |
 | Backoff | Exponential |
-| Pending storage | Up to **7 days** while the endpoint is unavailable |
-| Recovery | Once the endpoint answers `204` again, the stored backlog is delivered |
-| Loss | Notifications older than 7 days are discarded and cannot be recovered |
+| Pending storage | Up to **24 hours** while delivery is being retried |
+| Recovery | Once the endpoint answers below `400` again, the remaining queue is delivered |
+| Loss | Notifications older than 24 hours expire and cannot be recovered |
 | Batching | Up to **99 messages** per batch, pushed as they become available |
 
-Four consequences worth designing for:
+Five consequences worth designing for:
 
 - **Make processing idempotent.** Google recommends this explicitly, especially for `UPSERT`. A
   handler that increments a counter or enqueues a downstream job will do it twice.
 - **Answer `204` quickly and do the work elsewhere.** The response is an acknowledgement, not a
   result. Anything slow inside the handler risks a timeout, and a timeout is a retry — which is to
   say, a duplicate.
-- **Expect a burst after an outage.** A recovered endpoint receives up to seven days of backlog as
+- **Choose the failure status on purpose.** A `5xx` asks Google to try again; most `4xx` responses
+  tell it to discard the batch. This package answers `401` when a notification's credential or
+  signature does not check out: the right answer to a forgery, and a final one for a genuine
+  notification refused because of a mistake on the receiving side, such as a misconfigured
+  endpoint secret. Having no usable keys is different: when the keyset cannot be fetched and
+  nothing recent enough is cached, the receiver [throws](#key-rotation-and-failure-behaviour)
+  instead, the sample endpoint answers `500`, and that is retried.
+- **Expect a burst after an outage.** A recovered endpoint receives up to 24 hours of backlog as
   fast as it can be delivered. Whatever the handler enqueues into needs to absorb that.
-- **Treat a notification as a signal, not a record.** It carries no measurements, and 7-day
-  expiry means the stream is not a complete history. Re-read from the API; that is the source of
-  truth.
+- **Treat a notification as a signal, not a record.** It carries no measurements, and between the
+  24-hour expiry and the responses that discard a batch outright, the stream is not a complete
+  history. Re-read from the API; that is the source of truth.
 
 The sample above enqueues before answering `204`, which is deliberate: acknowledging first and
 enqueuing after would lose the notification if the enqueue failed, and Google's retry only helps
-while the response is not yet `204`. Keep that enqueue small and bounded — a durable write, not
-the processing — and return a non-`204` if it fails, so the retry does its job.
+while nothing has been acknowledged. Keep that enqueue small and bounded — a durable write, not
+the processing — and if it fails, answer with a `5xx` rather than a `4xx`, so the retry does its
+job. In the sample, an exception from the enqueue already does: ASP.NET Core answers an exception
+thrown before the response has started with `500`, unless an exception handler of yours chooses
+another status.
 
 ## Privacy
 
