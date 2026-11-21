@@ -228,6 +228,17 @@
         "Google-Health-API-Webhooks"
       ],
       "note": "The User-Agent the receiver documentation names."
+    },
+    {
+      "id": "webhooks.payload",
+      "url": "https://developers.google.com/health/webhooks",
+      "mustContain": [
+        "Push notification request bodies are always delivered as a JSON array",
+        "containing 1 to 99 notification objects",
+        "even when a delivery contains a single notification",
+        "\"recordId\""
+      ],
+      "note": "HealthDataWebhookReceiver reads a request body as an array of notifications, and HealthDataNotificationData carries recordId. If the wording moves, the receiver may be reading a shape Google no longer sends."
     }
   ]
 }

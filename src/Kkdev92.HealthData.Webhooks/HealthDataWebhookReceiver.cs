@@ -34,7 +34,7 @@ public enum WebhookRequestKind
 /// The result of handling a webhook request.
 /// </summary>
 /// <remarks>
-/// The parsed notification is reachable only through <see cref="Notification"/>, which is
+/// The parsed notifications are reachable only through <see cref="Notifications"/>, which is
 /// populated only when the signature verified. That is the receive-verify-parse ordering made
 /// structural rather than a rule to remember.
 /// </remarks>
@@ -43,12 +43,12 @@ public sealed class WebhookRequestResult
     private WebhookRequestResult(
         WebhookRequestKind kind,
         HttpStatusCode statusCode,
-        HealthDataNotification? notification,
+        IReadOnlyList<HealthDataNotification> notifications,
         WebhookSignatureResult? signature)
     {
         Kind = kind;
         StatusCode = statusCode;
-        Notification = notification;
+        Notifications = notifications;
         Signature = signature;
     }
 
@@ -58,26 +58,35 @@ public sealed class WebhookRequestResult
     /// <summary>The status the endpoint should return.</summary>
     public HttpStatusCode StatusCode { get; }
 
-    /// <summary>The parsed notification, present only for a verified notification.</summary>
-    public HealthDataNotification? Notification { get; }
+    /// <summary>
+    /// The parsed notifications, in the order they arrived. Empty unless the request was a verified
+    /// notification.
+    /// </summary>
+    /// <remarks>
+    /// One request carries a batch: the Webhooks guide delivers every body as a JSON array of 1 to
+    /// 99 notifications, for any mix of users and data types, and the status acknowledges the whole
+    /// batch at once. Capture every one of them before returning the status; a notification left
+    /// behind here is not delivered again.
+    /// </remarks>
+    public IReadOnlyList<HealthDataNotification> Notifications { get; }
 
     /// <summary>The signature outcome, when a signature was checked.</summary>
     public WebhookSignatureResult? Signature { get; }
 
-    internal static WebhookRequestResult ForNotification(HealthDataNotification notification, WebhookSignatureResult signature)
-        => new(WebhookRequestKind.Notification, HttpStatusCode.NoContent, notification, signature);
+    internal static WebhookRequestResult ForNotifications(IReadOnlyList<HealthDataNotification> notifications, WebhookSignatureResult signature)
+        => new(WebhookRequestKind.Notification, HttpStatusCode.NoContent, notifications, signature);
 
     internal static WebhookRequestResult AuthorizedChallenge()
-        => new(WebhookRequestKind.AuthorizedChallenge, HttpStatusCode.Created, null, null);
+        => new(WebhookRequestKind.AuthorizedChallenge, HttpStatusCode.Created, [], null);
 
     internal static WebhookRequestResult UnauthorizedChallenge()
-        => new(WebhookRequestKind.UnauthorizedChallenge, HttpStatusCode.Unauthorized, null, null);
+        => new(WebhookRequestKind.UnauthorizedChallenge, HttpStatusCode.Unauthorized, [], null);
 
     internal static WebhookRequestResult UnauthorizedNotification()
-        => new(WebhookRequestKind.UnauthorizedNotification, HttpStatusCode.Unauthorized, null, null);
+        => new(WebhookRequestKind.UnauthorizedNotification, HttpStatusCode.Unauthorized, [], null);
 
     internal static WebhookRequestResult Rejected(WebhookSignatureResult signature)
-        => new(WebhookRequestKind.Rejected, HttpStatusCode.Unauthorized, null, signature);
+        => new(WebhookRequestKind.Rejected, HttpStatusCode.Unauthorized, [], signature);
 }
 
 /// <summary>
@@ -103,7 +112,7 @@ public sealed class WebhookRequestResult
 /// </para>
 /// <para>
 /// Respond first, work later. The guide says to answer a notification immediately; queue the
-/// parsed notification and return, rather than doing the processing inline.
+/// parsed notifications and return, rather than doing the processing inline.
 /// </para>
 /// </remarks>
 public sealed class HealthDataWebhookReceiver
@@ -219,10 +228,59 @@ public sealed class HealthDataWebhookReceiver
             return WebhookRequestResult.Rejected(signature);
         }
 
-        var notification = JsonSerializer.Deserialize(rawBody.Span, WebhookJsonContext.Default.HealthDataNotification)
-            ?? new HealthDataNotification();
+        return WebhookRequestResult.ForNotifications(ReadNotifications(rawBody.Span), signature);
+    }
 
-        return WebhookRequestResult.ForNotification(notification, signature);
+    /// <summary>Reads a verified body as the batch of notifications it carries.</summary>
+    /// <remarks>
+    /// <para>
+    /// The Webhooks guide delivers every request body as a JSON array of 1 to 99 notification
+    /// objects, "even when a delivery contains a single notification". Earlier versions of the
+    /// guide showed a lone notification as a bare object and only a batch as an array, so a bare
+    /// object is still read, as a batch of one.
+    /// </para>
+    /// <para>
+    /// An empty array is a batch with nothing in it, and a null where a notification should be is
+    /// read as an empty notification, as a null body always was. Anything else that does not read
+    /// as notifications throws. That is deliberate: the signature says Google sent it, and an
+    /// endpoint that lets the exception escape answers 500, which Google retries. The batch then
+    /// waits at Google for a receiver that can read it, where a 4xx or a 204 would lose it.
+    /// </para>
+    /// </remarks>
+    private static HealthDataNotification[] ReadNotifications(ReadOnlySpan<byte> body)
+    {
+        if (!StartsWithArray(body))
+        {
+            return [JsonSerializer.Deserialize(body, WebhookJsonContext.Default.HealthDataNotification) ?? new HealthDataNotification()];
+        }
+
+        var batch = JsonSerializer.Deserialize(body, WebhookJsonContext.Default.HealthDataNotificationArray) ?? [];
+
+        // The declared element type is not nullable, but nothing on the wire enforces that.
+        for (var i = 0; i < batch.Length; i++)
+        {
+            batch[i] ??= new HealthDataNotification();
+        }
+
+        return batch;
+    }
+
+    /// <summary>Whether the first JSON token of the body opens an array.</summary>
+    /// <remarks>
+    /// Anything that is not JSON at all goes down the object path, which reports it exactly as it
+    /// did before arrays were read.
+    /// </remarks>
+    private static bool StartsWithArray(ReadOnlySpan<byte> body)
+    {
+        try
+        {
+            var reader = new Utf8JsonReader(body);
+            return reader.Read() && reader.TokenType == JsonTokenType.StartArray;
+        }
+        catch (JsonException)
+        {
+            return false;
+        }
     }
 
     /// <summary>Whether the request carries the configured endpoint credential.</summary>

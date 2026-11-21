@@ -238,7 +238,8 @@ var result = await receiver.HandleAsync(rawBody, signatureHeader, authorizationH
 
 if (result.Kind is WebhookRequestKind.Notification)
 {
-    await queue.EnqueueAsync(result.Notification!, ct);
+    // One request carries up to 99 notifications, and the status acknowledges all of them.
+    await queue.EnqueueAsync(result.Notifications, ct);
 }
 
 return Results.StatusCode((int)result.StatusCode);

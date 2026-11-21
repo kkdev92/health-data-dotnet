@@ -64,14 +64,14 @@ sequenceDiagram
     end
     V->>V: ECDSA P-256 / SHA-256 over the raw bytes
     alt signature valid
-        V->>V: parse the notification
-        V-->>E: Notification + 204
+        V->>V: parse the notifications
+        V-->>E: Notifications + 204
     else anything else
         V-->>E: rejected, nothing parsed
     end
 ```
 
-The order is mandatory and this package makes it structural. `WebhookRequestResult.Notification`
+The order is mandatory and this package makes it structural. `WebhookRequestResult.Notifications`
 is populated only when the signature verified, so there is no parsed notification to mistake for a
 trustworthy one.
 
@@ -148,9 +148,10 @@ follows it for you, this one is yours.
 
 ```csharp
 // This endpoint is on the public internet and anyone can post to it, so how much arrives is the
-// sender's choice rather than yours. A notification is a few kilobytes; this is a ceiling, not an
-// expectation.
-const int MaximumBodyBytes = 64 * 1024;
+// sender's choice rather than yours. A delivery is up to 99 notifications, each up to about a
+// kilobyte in the guide's examples; this is a ceiling, not an expectation. Keep it well above any
+// real delivery: a 413 is one of the 4xx responses Google discards a batch on, without a retry.
+const int MaximumBodyBytes = 1024 * 1024;
 
 app.MapPost("/google-health/webhook", async (HttpRequest request, HealthDataWebhookReceiver receiver, CancellationToken ct) =>
 {
@@ -170,10 +171,11 @@ app.MapPost("/google-health/webhook", async (HttpRequest request, HealthDataWebh
     if (result.Kind is WebhookRequestKind.Notification)
     {
         // Capture, then acknowledge — not the other way round. The 204 is what stops Google
-        // retrying, so anything lost before it is sent is lost for good. This must stay a small
-        // durable write: the guide requires a prompt 204, and a slow handler is retried, which
-        // means the same notification arrives twice. The processing happens off this thread.
-        await queue.EnqueueAsync(result.Notification!, ct);
+        // retrying, and it acknowledges every notification in the request at once, so anything
+        // lost before it is sent is lost for good. This must stay one small durable write for the
+        // whole batch: the guide requires a prompt 204, and a slow handler is retried, which means
+        // the same notifications arrive twice. The processing happens off this thread.
+        await queue.EnqueueAsync(result.Notifications, ct);
     }
 
     return Results.StatusCode((int)result.StatusCode);
@@ -267,28 +269,50 @@ Handwritten models, not generated: the payload has no schema in the Discovery do
 is nothing to generate them from. The similarly named `...WebhookNotificationCloudLog` in
 Discovery is a Cloud Logging record, not this.
 
+Every request body is a JSON array of 1 to 99 notifications, even when there is only one, and one
+array can mix users and data types. `HandleAsync` returns them as
+`WebhookRequestResult.Notifications`, in the order they arrived. Earlier versions of the guide
+showed a lone notification as a bare object; that is still read, as a batch of one.
+
 ```json
-{
-  "data": {
-    "version": "1",
-    "clientProvidedSubscriptionName": "...",
-    "healthUserId": "...",
-    "operation": "UPSERT",
-    "dataType": "steps",
-    "intervals": [
-      {
-        "physicalTimeInterval":     { "startTime": "...", "endTime": "..." },
-        "civilDateTimeInterval":    { "startDateTime": { "date": {...}, "time": {...} }, "endDateTime": {...} },
-        "civilIso8601TimeInterval": { "startTime": "2026-03-07T17:29:00", "endTime": "..." }
-      }
-    ]
+[
+  {
+    "data": {
+      "version": "1",
+      "clientProvidedSubscriptionName": "...",
+      "healthUserId": "...",
+      "operation": "UPSERT",
+      "dataType": "steps",
+      "intervals": [
+        {
+          "physicalTimeInterval":     { "startTime": "...", "endTime": "..." },
+          "civilDateTimeInterval":    { "startDateTime": { "date": {...}, "time": {...} }, "endDateTime": {...} },
+          "civilIso8601TimeInterval": { "startTime": "2026-03-07T17:29:00", "endTime": "..." }
+        }
+      ]
+    }
+  },
+  {
+    "data": {
+      "version": "1",
+      "clientProvidedSubscriptionName": "...",
+      "healthUserId": "...",
+      "operation": "DELETE",
+      "dataType": "sleep",
+      "intervals": [ ... ],
+      "recordId": "..."
+    }
   }
-}
+]
 ```
 
 `operation` is `UPSERT` for any addition or modification and `DELETE` when a user deletes data. It
 is surfaced as a string rather than an enum, for the same reason wire enums are open elsewhere: a
 value added later must not break an existing receiver ([ADR-0005](adr/0005-open-enums.md)).
+
+`recordId` identifies the record that changed. The guide shows it for identifiable data such as a
+sleep session and not for time-series data such as steps, and does not describe it further, so
+treat it as optional.
 
 A notification says only *that* something changed and *when*. Read the data back through the API;
 the notification carries no measurements.
@@ -308,7 +332,7 @@ and none of it can be changed from the receiving side — so the receiver has to
 | Pending storage | Up to **24 hours** while delivery is being retried |
 | Recovery | Once the endpoint answers below `400` again, the remaining queue is delivered |
 | Loss | Notifications older than 24 hours expire and cannot be recovered |
-| Batching | Up to **99 messages** per batch, pushed as they become available |
+| Batching | Every delivery is a JSON array of **1 to 99** notifications, for any mix of users and data types, pushed as they become available |
 
 Five consequences worth designing for:
 
@@ -331,7 +355,7 @@ Five consequences worth designing for:
   history. Re-read from the API; that is the source of truth.
 
 The sample above enqueues before answering `204`, which is deliberate: acknowledging first and
-enqueuing after would lose the notification if the enqueue failed, and Google's retry only helps
+enqueuing after would lose the batch if the enqueue failed, and Google's retry only helps
 while nothing has been acknowledged. Keep that enqueue small and bounded — a durable write, not
 the processing — and if it fails, answer with a `5xx` rather than a `4xx`, so the retry does its
 job. In the sample, an exception from the enqueue already does: ASP.NET Core answers an exception
@@ -340,6 +364,7 @@ another status.
 
 ## Privacy
 
-`healthUserId` is a user identifier and `dataType` reveals a health category. Neither belongs in a
-log, and neither does the raw payload — including while debugging. The wider rule, and what the
-SDK itself emits, is in [runtime.md](runtime.md#diagnostics).
+`healthUserId` is a user identifier, `recordId` points at one of that user's records, and
+`dataType` reveals a health category. None of them belongs in a log, and neither does the raw
+payload — including while debugging. The wider rule, and what the SDK itself emits, is in
+[runtime.md](runtime.md#diagnostics).

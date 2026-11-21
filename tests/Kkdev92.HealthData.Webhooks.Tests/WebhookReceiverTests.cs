@@ -1,5 +1,6 @@
 using System.Net;
 using System.Text;
+using System.Text.Json;
 using Kkdev92.HealthData.Http;
 using Kkdev92.HealthData.TestSupport;
 using Kkdev92.HealthData.Webhooks;
@@ -22,6 +23,12 @@ public sealed class WebhookReceiverTests
                                   "endDateTime":{"date":{"year":2026,"month":3,"day":7},"time":{"hours":17,"minutes":34}}},
          "civilIso8601TimeInterval":{"startTime":"2026-03-07T17:29:00","endTime":"2026-03-07T17:34:00"}}]}}
         """;
+
+    /// <summary>
+    /// One notification as Google delivers it: the guide sends every request body as a JSON array,
+    /// "even when a delivery contains a single notification".
+    /// </summary>
+    private const string BatchOfOneJson = "[" + NotificationJson + "]";
 
     private static (HealthDataWebhookReceiver Receiver, TinkTestKey Key, HealthDataWebhookKeyProvider Provider)
         Create(string? secret = Secret)
@@ -49,6 +56,7 @@ public sealed class WebhookReceiverTests
         // stricter value satisfies both.
         Assert.Equal(WebhookRequestKind.AuthorizedChallenge, result.Kind);
         Assert.Equal(HttpStatusCode.Created, result.StatusCode);
+        Assert.Empty(result.Notifications);
     }
 
     [Fact]
@@ -66,6 +74,7 @@ public sealed class WebhookReceiverTests
 
         Assert.Equal(WebhookRequestKind.UnauthorizedChallenge, result.Kind);
         Assert.Equal(HttpStatusCode.Unauthorized, result.StatusCode);
+        Assert.Empty(result.Notifications);
     }
 
     [Fact]
@@ -133,7 +142,7 @@ public sealed class WebhookReceiverTests
         Assert.Equal(HttpStatusCode.Unauthorized, result.StatusCode);
 
         // Nothing parsed, for the same reason an unverified payload is never parsed.
-        Assert.Null(result.Notification);
+        Assert.Empty(result.Notifications);
     }
 
     /// <summary>
@@ -173,14 +182,14 @@ public sealed class WebhookReceiverTests
         using var _ = key;
         using var __ = provider;
 
-        var body = Encoding.UTF8.GetBytes(NotificationJson);
+        var body = Encoding.UTF8.GetBytes(BatchOfOneJson);
 
         var result = await receiver.HandleAsync(body, key.Sign(body), Secret, TestContext.Current.CancellationToken);
 
         Assert.Equal(WebhookRequestKind.Notification, result.Kind);
         Assert.Equal(HttpStatusCode.NoContent, result.StatusCode);
 
-        var data = result.Notification!.Data!;
+        var data = Assert.Single(result.Notifications).Data!;
         Assert.Equal("1", data.Version);
         Assert.Equal("my-sub", data.ClientProvidedSubscriptionName);
         Assert.Equal("steps", data.DataType);
@@ -194,6 +203,122 @@ public sealed class WebhookReceiverTests
         Assert.Equal(2026, interval.CivilDateTimeInterval!.StartDateTime!.Date!.Year);
         Assert.Equal(17, interval.CivilDateTimeInterval.StartDateTime.Time!.Hours);
         Assert.Equal("2026-03-07T17:29:00", interval.CivilIso8601TimeInterval!.StartTime);
+    }
+
+    /// <summary>
+    /// Every notification in a batch is returned, in the order it arrived.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// The guide delivers a request body as a JSON array of 1 to 99 notifications, and one array
+    /// can mix users and data types; this is the shape of its batch example. The 204 acknowledges
+    /// the whole batch, so a receiver that handed over only one of them would lose the rest.
+    /// </para>
+    /// <para>
+    /// The receiver used to read the body as a single object and threw on an array after the
+    /// signature had verified, so an endpoint built as documented answered 500 to every batch.
+    /// </para>
+    /// </remarks>
+    [Fact]
+    public async Task EveryNotificationInABatchIsReturnedInOrder()
+    {
+        var (receiver, key, provider) = Create();
+        using var _ = key;
+        using var __ = provider;
+
+        var body = Encoding.UTF8.GetBytes("""
+            [{"data":{"version":"1","healthUserId":"user-1","operation":"UPSERT","dataType":"steps"}},
+             {"data":{"version":"1","healthUserId":"user-1","operation":"UPSERT","dataType":"weight"}},
+             {"data":{"version":"1","healthUserId":"user-2","operation":"UPSERT","dataType":"steps"}},
+             {"data":{"version":"1","healthUserId":"user-2","operation":"DELETE","dataType":"sleep","recordId":"9875412"}}]
+            """);
+
+        var result = await receiver.HandleAsync(body, key.Sign(body), Secret, TestContext.Current.CancellationToken);
+
+        Assert.Equal(WebhookRequestKind.Notification, result.Kind);
+        Assert.Equal(HttpStatusCode.NoContent, result.StatusCode);
+
+        (string?, string?)[] expected = [("user-1", "steps"), ("user-1", "weight"), ("user-2", "steps"), ("user-2", "sleep")];
+        Assert.Equal(expected, result.Notifications.Select(n => (n.Data?.HealthUserId, n.Data?.DataType)));
+
+        var deleted = result.Notifications[3].Data!;
+        Assert.True(deleted.IsDelete);
+        Assert.Equal("9875412", deleted.RecordId);
+        Assert.Null(result.Notifications[0].Data!.RecordId);
+    }
+
+    /// <summary>A bare object, the shape earlier versions of the guide showed, is a batch of one.</summary>
+    [Fact]
+    public async Task ABareNotificationObjectIsReadAsABatchOfOne()
+    {
+        var (receiver, key, provider) = Create();
+        using var _ = key;
+        using var __ = provider;
+
+        var body = Encoding.UTF8.GetBytes(NotificationJson);
+
+        var result = await receiver.HandleAsync(body, key.Sign(body), Secret, TestContext.Current.CancellationToken);
+
+        Assert.Equal(WebhookRequestKind.Notification, result.Kind);
+        Assert.Equal(HttpStatusCode.NoContent, result.StatusCode);
+        Assert.Equal("user-1", Assert.Single(result.Notifications).Data!.HealthUserId);
+    }
+
+    /// <summary>
+    /// An empty batch is acknowledged, and a null in a batch is an empty notification rather than a
+    /// null entry.
+    /// </summary>
+    /// <remarks>
+    /// The guide promises 1 to 99, so neither should arrive. Neither carries anything that a retry
+    /// would bring back, so neither is a reason to refuse the batch, and a caller iterating the
+    /// list never meets a null.
+    /// </remarks>
+    [Theory]
+    [InlineData("[]", 0)]
+    [InlineData("[null]", 1)]
+    [InlineData("""[null,{"data":{"healthUserId":"user-1"}}]""", 2)]
+    public async Task AnEmptyBatchOrANullEntryIsStillAcknowledged(string json, int count)
+    {
+        var (receiver, key, provider) = Create();
+        using var _ = key;
+        using var __ = provider;
+
+        var body = Encoding.UTF8.GetBytes(json);
+
+        var result = await receiver.HandleAsync(body, key.Sign(body), Secret, TestContext.Current.CancellationToken);
+
+        Assert.Equal(WebhookRequestKind.Notification, result.Kind);
+        Assert.Equal(HttpStatusCode.NoContent, result.StatusCode);
+        Assert.Equal(count, result.Notifications.Count);
+        Assert.All(result.Notifications, n => Assert.NotNull(n));
+    }
+
+    /// <summary>
+    /// A body Google signed that does not read as notifications throws rather than being
+    /// acknowledged or refused.
+    /// </summary>
+    /// <remarks>
+    /// An endpoint that lets the exception escape answers 500, which Google retries, so the batch
+    /// waits at Google for up to a day for a receiver that can read it. A 204 would acknowledge
+    /// what was never read, and most 4xx responses make Google discard the batch.
+    /// </remarks>
+    [Theory]
+    [InlineData("[1]")]
+    [InlineData("[[]]")]
+    [InlineData("""[{"data":1}]""")]
+    [InlineData("""[{"data":{}}""")]
+    [InlineData("\"just a string\"")]
+    [InlineData("not json at all")]
+    public async Task ASignedBodyThatIsNotNotificationsThrows(string json)
+    {
+        var (receiver, key, provider) = Create();
+        using var _ = key;
+        using var __ = provider;
+
+        var body = Encoding.UTF8.GetBytes(json);
+
+        await Assert.ThrowsAnyAsync<JsonException>(
+            () => receiver.HandleAsync(body, key.Sign(body), Secret, TestContext.Current.CancellationToken));
     }
 
     [Fact]
@@ -212,7 +337,7 @@ public sealed class WebhookReceiverTests
 
         // The ordering made structural: there is no parsed notification to mistake for a
         // trustworthy one.
-        Assert.Null(result.Notification);
+        Assert.Empty(result.Notifications);
     }
 
     [Fact]
@@ -230,9 +355,11 @@ public sealed class WebhookReceiverTests
         var result = await receiver.HandleAsync(body, key.Sign(body), Secret, TestContext.Current.CancellationToken);
 
         Assert.Equal(WebhookRequestKind.Notification, result.Kind);
-        Assert.Equal("ARCHIVED", result.Notification!.Data!.Operation);
-        Assert.False(result.Notification.Data.IsUpsert);
-        Assert.False(result.Notification.Data.IsDelete);
+
+        var data = Assert.Single(result.Notifications).Data!;
+        Assert.Equal("ARCHIVED", data.Operation);
+        Assert.False(data.IsUpsert);
+        Assert.False(data.IsDelete);
     }
 
     /// <summary>

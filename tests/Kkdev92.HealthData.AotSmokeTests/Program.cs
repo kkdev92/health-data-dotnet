@@ -190,10 +190,16 @@ Check("container resolves a client", scope.ServiceProvider.GetRequiredService<He
 // signature over the raw bytes. Google's own keys can only verify Google's signatures, so this is
 // the only way to reach the verified path — which is the path that runs the source-generated JSON
 // context and the ECDSA import, and therefore the part worth proving under AOT.
+// A batch, because the guide delivers every request body as a JSON array of notifications.
 const string notificationPayload =
-    """{"data":{"version":"1","clientProvidedSubscriptionName":"sub","healthUserId":"user-1","operation":"UPSERT","dataType":"steps","intervals":[]}}""";
+    """[{"data":{"version":"1","clientProvidedSubscriptionName":"sub","healthUserId":"user-1","operation":"UPSERT","dataType":"steps","intervals":[]}},{"data":{"version":"1","clientProvidedSubscriptionName":"sub","healthUserId":"user-2","operation":"DELETE","dataType":"sleep","intervals":[],"recordId":"record-1"}}]""";
 
 var notificationBytes = System.Text.Encoding.UTF8.GetBytes(notificationPayload);
+
+// The bare object earlier versions of the guide showed for a lone notification: the other type the
+// source-generated context has to carry.
+var bareNotificationBytes = System.Text.Encoding.UTF8.GetBytes(
+    """{"data":{"version":"1","healthUserId":"user-3","operation":"UPSERT","dataType":"weight"}}""");
 
 using var webhookKey = new TinkTestKey(keyId: 1);
 using var keyProvider = new HealthDataWebhookKeyProvider(
@@ -206,8 +212,24 @@ var received = await receiver.HandleAsync(
     notificationBytes, webhookKey.Sign(notificationBytes), "smoke-secret");
 
 Check("notification verifies", received.Kind == WebhookRequestKind.Notification);
-Check("notification deserializes", received.Notification!.Data!.HealthUserId == "user-1");
-Check("notification operation read", received.Notification.Data.IsUpsert);
+Check(
+    "every notification in the batch deserializes",
+    received.Notifications.Count == 2
+        && received.Notifications[0].Data?.HealthUserId == "user-1"
+        && received.Notifications[1].Data?.HealthUserId == "user-2");
+Check(
+    "notification operation read",
+    received.Notifications[0].Data?.IsUpsert == true && received.Notifications[1].Data?.IsDelete == true);
+Check("notification record id read", received.Notifications[1].Data?.RecordId == "record-1");
+
+var receivedBare = await receiver.HandleAsync(
+    bareNotificationBytes, webhookKey.Sign(bareNotificationBytes), "smoke-secret");
+
+Check(
+    "a bare notification object is a batch of one",
+    receivedBare.Kind == WebhookRequestKind.Notification
+        && receivedBare.Notifications.Count == 1
+        && receivedBare.Notifications[0].Data?.HealthUserId == "user-3");
 Check(
     "challenge detection works",
     HealthDataWebhookReceiver.IsVerificationChallenge("""{"type":"verification"}"""u8)
