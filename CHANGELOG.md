@@ -17,6 +17,14 @@ Dates are UTC, taken from when the packages went to nuget.org.
 
 ## [Unreleased]
 
+## [0.12.0-alpha] - 2026-11-21
+
+Generated from Google Health API `v4`, Discovery revision `20261113`, as 0.11.0-alpha was, and
+nothing generated from it changed. One change is breaking, in the Webhooks package:
+`WebhookRequestResult.Notification` is replaced by `WebhookRequestResult.Notifications`, because
+the guide delivers every request body as an array of notifications. The public API otherwise gains
+only `HealthDataNotificationData.RecordId`.
+
 ### Breaking
 
 - `WebhookRequestResult.Notification` is replaced by `WebhookRequestResult.Notifications`, which
@@ -637,7 +645,8 @@ First public build. Generated from Google Health API `v4`, Discovery revision `2
   reported as a bare status with the RFC 6749 reason discarded, which made the seven-day refresh
   expiry indistinguishable from a malformed request. Both were invisible to fixtures.
 
-[Unreleased]: https://github.com/kkdev92/health-data-dotnet/compare/v0.11.0-alpha...HEAD
+[Unreleased]: https://github.com/kkdev92/health-data-dotnet/compare/v0.12.0-alpha...HEAD
+[0.12.0-alpha]: https://github.com/kkdev92/health-data-dotnet/releases/tag/v0.12.0-alpha
 [0.11.0-alpha]: https://github.com/kkdev92/health-data-dotnet/releases/tag/v0.11.0-alpha
 [0.10.1-alpha]: https://github.com/kkdev92/health-data-dotnet/releases/tag/v0.10.1-alpha
 [0.10.0-alpha]: https://github.com/kkdev92/health-data-dotnet/releases/tag/v0.10.0-alpha
