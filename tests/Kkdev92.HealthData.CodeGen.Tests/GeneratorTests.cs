@@ -80,8 +80,9 @@ public sealed class GeneratorTests
         // reproductive_health.readonly to all six, and at 20260929, which added ecg.readonly and
         // irn.readonly to the five data-point reads — list's page already listed those two. The
         // pages caught up with Discovery on 2026-10-01. getIdentity grew again at 20261030, which
-        // added location.readonly and all nine writeonly scopes; its page does not list those ten
-        // yet, so here the union is the page's eleven and the ten that only Discovery lists.
+        // added location.readonly and all nine writeonly scopes; its page has listed those ten
+        // since 2026-11-23, so here the union is the page's twenty-one: Discovery's twenty and
+        // nutrition.readonly, which only the page lists.
         var spec = SpecLoader.Load(RepositoryRoot.Value, "v4");
         var contract = DiscoveryParser.Parse(spec);
 

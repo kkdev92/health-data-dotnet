@@ -55,8 +55,8 @@ The resource names are fixed by Discovery: `users/{user}/profile`, `.../settings
 
 `GetIdentityAsync` accepts any of the twenty-one end-user scopes, `.writeonly` ones included, so a
 token provider may answer it with a grant that holds only write scopes. Discovery added
-`location.readonly` and the nine `.writeonly` scopes at revision `20261030`. Its per-method
-reference, last updated on 2026-10-01, does not list those ten yet, and it contributes
+`location.readonly` and the nine `.writeonly` scopes at revision `20261030`, and the per-method
+reference has listed those ten since it was updated on 2026-11-23. The reference also lists
 `nutrition.readonly`, which Discovery omits. Whether the service accepts a write-only token here has
 not been checked.
 
