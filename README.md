@@ -35,6 +35,8 @@ rather the SDK be boring about it._
 
 ## Table of Contents
 
+Before reporting a problem or working on this project, read the [project guide](https://github.com/kkdev92/health-data-dotnet/blob/HEAD/PROJECT_GUIDE.md).
+
 - [Features](#features)
 - [Installation](#installation)
 - [Quick Start](#quick-start)
@@ -393,35 +395,13 @@ The index, with a reading order for each kind of reader, is in [`docs/`](docs/RE
 
 ## Contributing
 
-```bash
-dotnet restore HealthData.slnx
-dotnet build   HealthData.slnx -c Release
-dotnet test --solution HealthData.slnx -c Release -- --filter-not-trait Category=Package
-```
-
-Read [CONTRIBUTING.md](CONTRIBUTING.md) first — particularly the rules that are not negotiable,
-and the note on never hand-editing anything under `Generated/`.
-
-Helpful things when reporting bugs:
-
-- The package and version, `dotnet --version`, and whether you publish with Native AOT
-- The exception type, `ex.Message`, `OperationId` and the HTTP status — the message is filtered,
-  which is why it is the one to paste
-- `Reason` only when it looks like `SOMETHING_LIKE_THIS`. It is unfiltered on purpose, so anything
-  else in it arrived off the wire as sent
-- Whether it fails while composing the client, while building the request, or on the response
-
-**Never paste health data, tokens or resource names into an issue.** A resource name embeds both
-the user and the data type. A redacted reproduction is always enough.
-
-The same goes for your own OAuth client id and client secret, and for a webhook endpoint secret.
-Those identify a project rather than a person, so they do not look like personal data and are the
-easiest thing to paste without noticing — out of an authorization URL or an `appsettings` fragment.
-An issue is public and stays that way.
+Start with the [project guide](https://github.com/kkdev92/health-data-dotnet/blob/HEAD/PROJECT_GUIDE.md) for development and verification. To submit an issue or pull request, see the [shared contribution guidelines](https://github.com/kkdev92/.github/blob/main/CONTRIBUTING.md).
 
 ---
 
 ## Support & Maintenance Policy
+
+For a bug report, follow the [reporting instructions](https://github.com/kkdev92/health-data-dotnet/blob/HEAD/PROJECT_GUIDE.md#reporting-a-problem).
 
 This is a personal project maintained in spare time. It is active, but support is best-effort:
 I'll do my best to review issues and PRs, and releases may be a bit slow sometimes — thank you for
