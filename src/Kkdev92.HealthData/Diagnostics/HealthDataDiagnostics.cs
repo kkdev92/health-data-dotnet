@@ -55,7 +55,7 @@ public static class HealthDataActivityTags
 /// Consumers should be aware that .NET's built-in HTTP client instrumentation does record
 /// <c>url.full</c>, and that its redaction covers only the query string, not the path. Anyone
 /// exporting traces from an application that uses this SDK should redact or drop that attribute.
-/// This is called out in SECURITY.md.
+/// This is called out in PROJECT_GUIDE.md.
 /// </para>
 /// </remarks>
 public static class HealthDataDiagnostics
